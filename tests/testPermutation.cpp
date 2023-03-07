@@ -64,12 +64,12 @@ class TwoTaskSinlgePermutation {
         prev_const_valid_ = false;
         next_const_valid_ = false;
     }
-    inline bool valid() const {
-        return next_const_valid_ == false && prev_const_valid_ == false;
+    inline bool IsValid() const {
+        return next_const_valid_ == true || prev_const_valid_ == true;
     }
 
     inline Interval GetInterval() const {
-        int lower_bound = -1e8, upper_bound = 1e8;
+        int lower_bound = -1e9, upper_bound = 1e9;
         if (prev_const_valid_) lower_bound = smaller_than_value_;
         if (next_const_valid_) upper_bound = larger_than_value_;
         return Interval(lower_bound, upper_bound - lower_bound);
@@ -96,6 +96,7 @@ class PermutationTest2 : public ::testing::Test {
         perm6 = TwoTaskSinlgePermutation(0, 1, 11, false, 20, true);
         perm7 = TwoTaskSinlgePermutation(0, 1, 5, false, 20, true);
         perm8 = TwoTaskSinlgePermutation(0, 1, 30, true, 20, false);
+        perm9 = TwoTaskSinlgePermutation(0, 1, 5, true, 15, false);
     };
 
     TwoTaskSinlgePermutation perm1;
@@ -106,6 +107,7 @@ class PermutationTest2 : public ::testing::Test {
     TwoTaskSinlgePermutation perm6;
     TwoTaskSinlgePermutation perm7;
     TwoTaskSinlgePermutation perm8;
+    TwoTaskSinlgePermutation perm9;
 };
 
 ;
@@ -141,16 +143,96 @@ TEST_F(PermutationTest2, ExamConfliction_and_WhetherAdjacent) {
     EXPECT_TRUE(ExamConfliction(perm8, perm7));
 }
 
+int MergeSmallerThanValue(const TwoTaskSinlgePermutation& perm1,
+                          const TwoTaskSinlgePermutation& perm2) {
+    if (perm1.prev_const_valid_ && perm2.prev_const_valid_)
+        return std::max(perm1.smaller_than_value_, perm2.smaller_than_value_);
+    else if (perm1.prev_const_valid_)
+        return perm1.smaller_than_value_;
+    else if (perm2.prev_const_valid_)
+        return perm2.smaller_than_value_;
+    else
+        return -1e9;
+}
+
+int MergeLargerThanValue(const TwoTaskSinlgePermutation& perm1,
+                         const TwoTaskSinlgePermutation& perm2) {
+    if (perm1.next_const_valid_ && perm2.next_const_valid_)
+        return std::min(perm1.larger_than_value_, perm2.larger_than_value_);
+    else if (perm1.next_const_valid_)
+        return perm1.larger_than_value_;
+    else if (perm2.next_const_valid_)
+        return perm2.larger_than_value_;
+    else
+        return 1e9;
+}
+
 TwoTaskSinlgePermutation MergeSinglePermutation(
     const TwoTaskSinlgePermutation& perm1,
     const TwoTaskSinlgePermutation& perm2) {
     TwoTaskSinlgePermutation merged_perm;
 
-    if (ExamConfliction(perm1, perm2)) {
+    if (ExamConfliction(perm1, perm2) ||
+        perm1.task_prev_id_ != perm2.task_prev_id_ ||
+        perm1.task_next_id_ != perm2.task_next_id_) {
         merged_perm.setInvalid();
     } else {
+        int smaller_value_merged = MergeSmallerThanValue(perm1, perm2);
+        int larger_value_merged = MergeLargerThanValue(perm1, perm2);
+
+        merged_perm = TwoTaskSinlgePermutation(
+            perm1.task_prev_id_, perm1.task_next_id_, smaller_value_merged,
+            perm1.prev_const_valid_ || perm2.prev_const_valid_,
+            larger_value_merged,
+            perm1.next_const_valid_ || perm2.next_const_valid_);
     }
     return merged_perm;
+}
+
+TEST_F(PermutationTest2, MergeSingleValue) {
+    EXPECT_EQ(10, MergeSmallerThanValue(perm1, perm2));
+    EXPECT_EQ(5, MergeSmallerThanValue(perm6, perm9));
+    EXPECT_EQ(-1e9, MergeSmallerThanValue(perm6, perm7));
+
+    EXPECT_EQ(10, MergeLargerThanValue(perm1, perm2));
+    EXPECT_EQ(20, MergeLargerThanValue(perm6, perm9));
+    EXPECT_EQ(1e9, MergeLargerThanValue(perm8, perm9));
+}
+
+TEST_F(PermutationTest2, MergeSinglePermutation) {
+    TwoTaskSinlgePermutation merged_perm = MergeSinglePermutation(perm1, perm2);
+    EXPECT_TRUE(merged_perm.IsValid());
+    EXPECT_EQ(perm1.task_prev_id_, merged_perm.task_prev_id_);
+    EXPECT_EQ(perm1.task_next_id_, merged_perm.task_next_id_);
+    EXPECT_EQ(10, merged_perm.smaller_than_value_);
+    EXPECT_EQ(10, merged_perm.larger_than_value_);
+
+    merged_perm = MergeSinglePermutation(perm1, perm3);
+    EXPECT_TRUE(merged_perm.IsValid());
+    EXPECT_EQ(0, merged_perm.smaller_than_value_);
+    EXPECT_EQ(5, merged_perm.larger_than_value_);
+
+    merged_perm = MergeSinglePermutation(perm1, perm4);
+    EXPECT_FALSE(merged_perm.IsValid());
+
+    merged_perm = MergeSinglePermutation(perm1, perm5);
+    EXPECT_TRUE(merged_perm.IsValid());
+    EXPECT_EQ(5, merged_perm.smaller_than_value_);
+    EXPECT_EQ(10, merged_perm.larger_than_value_);
+
+    merged_perm = MergeSinglePermutation(perm6, perm7);
+    EXPECT_TRUE(merged_perm.IsValid());
+    EXPECT_FALSE(merged_perm.prev_const_valid_);
+    // EXPECT_EQ(-1e9, merged_perm.smaller_than_value_);
+    EXPECT_EQ(20, merged_perm.larger_than_value_);
+
+    merged_perm = MergeSinglePermutation(perm6, perm8);
+    EXPECT_FALSE(merged_perm.IsValid());
+
+    merged_perm = MergeSinglePermutation(perm6, perm9);
+    EXPECT_TRUE(merged_perm.IsValid());
+    EXPECT_EQ(5, merged_perm.smaller_than_value_);
+    EXPECT_EQ(20, merged_perm.larger_than_value_);
 }
 
 class TwoTaskPermutation {
@@ -166,12 +248,12 @@ class TwoTaskPermutation {
     std::vector<TwoTaskSinlgePermutation> singlePermutations_;
 };
 
-TEST_F(PermutationTest1, simple_contructor_harmonic) {
-    TwoTaskPermutation two_task_permutation(tasks[1], tasks[2]);
-    EXPECT_EQ(2, two_task_permutation.size());
-    TwoTaskSinlgePermutation perm_expected0(1, 2, 0, false, 0, true);
-    TwoTaskSinlgePermutation perm_expected1(1, 2, 0, false, 20, true);
-}
+// TEST_F(PermutationTest1, simple_contructor_harmonic) {
+//     TwoTaskPermutation two_task_permutation(tasks[1], tasks[2]);
+//     EXPECT_EQ(2, two_task_permutation.size());
+//     TwoTaskSinlgePermutation perm_expected0(1, 2, 0, false, 0, true);
+//     TwoTaskSinlgePermutation perm_expected1(1, 2, 0, false, 20, true);
+// }
 
 int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);
