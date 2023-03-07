@@ -1,6 +1,6 @@
 #include "JobCEC.h"
 
-namespace OrderOptDAG_SPACE {
+namespace DAG_SPACE {
 
 double GetStartTime(JobCEC jobCEC, const VectorDynamic &x,
                     const RegularTaskSystem::TaskSetInfoDerived &tasksInfo) {
@@ -121,4 +121,4 @@ double GetHyperPeriodDiff(
     return (finishHpIndex - startHpIndex) * tasksInfo.hyperPeriod;
 }
 
-}  // namespace OrderOptDAG_SPACE
+}  // namespace DAG_SPACE

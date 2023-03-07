@@ -1,6 +1,6 @@
 #include "sources/Utils/BatchUtils.h"
 
-namespace OrderOptDAG_SPACE {
+namespace DAG_SPACE {
 
 std::string GetResFileName(const std::string &pathDataset,
                            const std::string &file, int batchTestMethod_) {
@@ -26,8 +26,7 @@ std::string GetResFileName(const std::string &pathDataset,
 }
 // TOTEST: read & write
 void WriteToResultFile(const std::string &pathDataset, const std::string &file,
-                       OrderOptDAG_SPACE::ScheduleResult &res,
-                       int batchTestMethod_) {
+                       DAG_SPACE::ScheduleResult &res, int batchTestMethod_) {
     std::string resFile = GetResFileName(pathDataset, file, batchTestMethod_);
     std::ofstream outfileWrite;
     outfileWrite.open(resFile, std::ofstream::out |
@@ -81,10 +80,10 @@ void WriteToResultFile(const std::string &pathDataset, const std::string &file,
 //   outfileWrite.close();
 // }
 
-OrderOptDAG_SPACE::ScheduleResult ReadFromResultFile(
-    const std::string &pathDataset, const std::string &file,
-    int batchTestMethod_) {
-    OrderOptDAG_SPACE::ScheduleResult result;
+DAG_SPACE::ScheduleResult ReadFromResultFile(const std::string &pathDataset,
+                                             const std::string &file,
+                                             int batchTestMethod_) {
+    DAG_SPACE::ScheduleResult result;
     std::string resFile = GetResFileName(pathDataset, file, batchTestMethod_);
     std::ifstream cResultFile(resFile.data());
     // double timeTaken = 0, obj = 0;
@@ -120,4 +119,4 @@ std::vector<std::string> ReadFilesInDirectory(const char *path) {
     std::sort(files.begin(), files.end());
     return files;
 }
-}  // namespace OrderOptDAG_SPACE
+}  // namespace DAG_SPACE

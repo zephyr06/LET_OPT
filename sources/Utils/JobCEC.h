@@ -5,7 +5,7 @@
 #include "sources/TaskModel/RegularTasks.h"
 #include "unordered_map"
 
-namespace OrderOptDAG_SPACE {
+namespace DAG_SPACE {
 struct JobCEC {
     int taskId;
     LLint jobId;
@@ -95,11 +95,11 @@ inline double GetExecutionTime(
 double GetHyperPeriodDiff(
     const JobCEC &jobStart, const JobCEC &jobFinish,
     const RegularTaskSystem::TaskSetInfoDerived &tasksInfo);
-}  // namespace OrderOptDAG_SPACE
+}  // namespace DAG_SPACE
 
 template <>
-struct std::hash<OrderOptDAG_SPACE::JobCEC> {
-    std::size_t operator()(const OrderOptDAG_SPACE::JobCEC &jobCEC) const {
+struct std::hash<DAG_SPACE::JobCEC> {
+    std::size_t operator()(const DAG_SPACE::JobCEC &jobCEC) const {
         std::string str =
             std::to_string(jobCEC.taskId) + ", " + std::to_string(jobCEC.jobId);
         return std::hash<std::string>{}(str);
