@@ -1,148 +1,18 @@
 %YAML:1.0
-
-# optimization settings
-TotalMethodUnderComparison: 7 # 0: LS initial, 1: Verucchi20, 2: Wang21, 3: TOM, 4: TOM_Fast, 5: TOM_FastLP
-BatchTestOnlyOneMethod: -1
-# test_n3_v6 test_n3_v12 test_n3_v18 test_n3_v26 test_n3_v11 test_n5_v79 test_n10_v4 test_n15_v1 test_n30_v1
-# test_n4_v5&4 FastOptimization fails
-testDataSetName: test_n2_v3
-printSchedule: 0
-PrintOutput: 0
-# band orig
-ReOrderProblem: "orig"
 debugMode: 0
-RepeatExecution: 0
-NumericalPrecision: 1e-3
-doScheduleOptimization: 0
-doScheduleOptimizationOnlyOnce: 0
-considerSensorFusion: 0 
-selectInitialFromPool: 0 # 0 means not using this method
-FastOptimization: 0
-EnableHardJobORder: 1
-LPTolerance: 1e-3
-MakeProgressOnlyMax: 1
-#*************************************************************
-# Get away from local optimal setting
-RandomAccept: 0 # chance to take a possibly better solution
-#*************************************************************
+printSchedule: 0
+TIME_LIMIT: 600 # seconds, -1 means unlimited time
 
-# task-set settings
-coreNumberAva: 2 
-processorAssignmentMode: 1 # 0 means using given processor assignment, 1 means using deciding by the scheduling algorithm
+
+
+#*************************************************************
+# Task set settings
 priorityMode: orig
-# task set generator settings
-parallelFactor: 0.4 # percentage of edges in generated dag
-TaskSetType: 3 # 1 means total random, 2 means automobile tasksets, 3 means automobile with WATERS distribution
-timeScaleFactor: 10 # used to scale minimum period to 1 or larger, as currently only support integer periods
-
 
 #*************************************************************
-# MakeProgress's weight parameters
-weightInMpRTDA: 0.5
-weightInMpSf: 0.5
-weightInMpSfPunish: 100
-weightInMpRTDAPunish: 1000
-makeProgressTimeLimit: 120 # seconds, -1 means unlimited time
-enableFastSearch: 0
-enableSmallJobGroupCheck: 0
-bigJobGroupCheck: 0
-subJobGroupMaxSize: 10
-
-#*************************************************************
-# factors to be included
-weightDDL_factor: 1e0
-weightDAG_factor: 0
-weightSF_factor: 0 
-RtdaWeight: 1e0
-DataAgeThreshold: 1e3
-ReactionTimeThreshold: 1e3
-NumCauseEffectChain: 2
-whether_shuffle_CE_chain: 0
-makespanWeight: 0
-sensorFusionTolerance: 6409
-freshTol: 253533
-withAddedSensorFusionError: 1
-#*************************************************************
-
 # used in SA
 coolingRateSA: 0.1
 randomInitialize: 0
 temperatureSA: 100000000
 SA_iteration: 100000
-#*************************************************************
-# Verucchi20 settings
-kVerucchiTimeLimit: 600 # seconds, -1 means unlimited time
-kVerucchiReactionCost: 15.0
-kVerucchiMaxReaction: 400000.0
-kVerucchiDataAgeCost: 15.0
-kVerucchiMaxDataAge: 400000.0
-kVerucchiCoreCost: 0.0
-#*************************************************************
-#*************************************************************
-# Wang RTSS21IC_NLP settings
-kWangRtss21IcNlpTimeLimit: 600 # seconds, -1 means unlimited time
 
-#*************************************************************
-
-# Cplex settings
-kCplexInequalityThreshold: 1e-3
-#*************************************************************
-# Global optimization settings
-kGlobalOptimizationTimeLimit: 200
-#*************************************************************
-
-
-
-
-#*************************************************************
-# Used only in old optimization system
-initializeMethod: 5
-recordActionValue: 0
-PrintInitial: 1
-numericalJaobian: 0
-exactJacobian: 0
-deltaOptimizer: 1e-5
-optimizerType: 2 # 1 means dogleg, 2 means LM
-runMode: compare
-AcceptSchedulError: 1e-2
-
-
-# Get away from local optimal setting
-whetherRandomNoiseModelSigma: 0
-RandomDrawWeightMaxLoop: 8 # must be >=1
-ResetInnerWeightLoopMax: 5 # must be >=1
-ResetRandomWeightThreshold: 5e-3
-RoundingThreshold: 1e-3
-
-# optimizer settings
-whether_ls: 1
-deltaInitialDogleg: 1e5
-initialLambda: 1e-6
-lowerLambda: 1e-20
-upperLambda: 1e50
-# verbosityLM: "SILENCE"
-verbosityLM: "SUMMARY"
-# verbosityLM: "TRYDELTA"
-relativeErrorTolerance: 1e-5
-setUseFixedLambdaFactor: 1
-setDiagonalDamping: 0
-maxIterations: 10000
-
-
-# Elimination settings
-MaxEliminateDetectIterations: 25
-stepJacobianIteration: 1.5
-toleranceEliminator: 1
-tightEliminate: 0
-zeroJacobianDetectTol: 1e-4
-
-
-# no need to adjust
-noiseModelSigma: 1
-saveGraph: 0
-
-# not used
-barrierBase: 100
-punishmentInBarrier: 1e2
-weightLogBarrier: -1.0
-#*************************************************************
