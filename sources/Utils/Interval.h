@@ -5,11 +5,8 @@
 struct Interval {
     double start;
     double length;
-    LLint indexInSTV;
 
-    Interval(double s1, double l1) : start(s1), length(l1) { indexInSTV = 0; }
-    Interval(double s1, double l1, LLint i)
-        : start(s1), length(l1), indexInSTV(i) {}
+    Interval(double s1, double l1) : start(s1), length(l1) {}
 
     inline bool IfBelong(double x) { return x >= start && x <= start + length; }
     // whether interval x belongs to this
@@ -36,6 +33,5 @@ inline bool compare(Interval &i1, Interval &i2) {
 double Overlap(Interval &v1, Interval &v2);
 
 bool WhetherAdjacent(const Interval &v1, const Interval &v2);
-
 
 double IntervalOverlapError(std::vector<Interval> &intervalVec);

@@ -39,8 +39,11 @@ class TwoTaskSinlgePermutation {
         : task_prev_id_(task_prev_id),
           task_next_id_(task_next_id),
           smaller_than_value_(smaller_than_value),
-          larger_than_value_(larger_than_value) {
-        if (larger_than_value < smaller_than_value)
+          prev_const_valid_(prev_const_valid),
+          larger_than_value_(larger_than_value),
+          next_const_valid_(next_const_valid) {
+        if (larger_than_value < smaller_than_value && prev_const_valid &&
+            next_const_valid)
             CoutError(
                 "Invalid arguments in TwoTaskSinlgePermutation's constructor!");
     }
@@ -68,7 +71,7 @@ class TwoTaskSinlgePermutation {
     inline Interval GetInterval() const {
         int lower_bound = -1e8, upper_bound = 1e8;
         if (prev_const_valid_) lower_bound = smaller_than_value_;
-        if (upper_bound) upper_bound = larger_than_value_;
+        if (next_const_valid_) upper_bound = larger_than_value_;
         return Interval(lower_bound, upper_bound - lower_bound);
     }
 
@@ -76,9 +79,9 @@ class TwoTaskSinlgePermutation {
     int task_prev_id_;
     int task_next_id_;
     int smaller_than_value_;
+    bool prev_const_valid_;
     int larger_than_value_;
-    bool prev_const_valid_ = true;
-    bool next_const_valid_ = true;
+    bool next_const_valid_;
 };
 
 class PermutationTest2 : public ::testing::Test {
@@ -89,6 +92,10 @@ class PermutationTest2 : public ::testing::Test {
         perm3 = TwoTaskSinlgePermutation(0, 1, 0, true, 5, true);
         perm4 = TwoTaskSinlgePermutation(0, 1, 11, true, 20, true);
         perm5 = TwoTaskSinlgePermutation(0, 1, 5, true, 20, true);
+
+        perm6 = TwoTaskSinlgePermutation(0, 1, 11, false, 20, true);
+        perm7 = TwoTaskSinlgePermutation(0, 1, 5, false, 20, true);
+        perm8 = TwoTaskSinlgePermutation(0, 1, 30, true, 20, false);
     };
 
     TwoTaskSinlgePermutation perm1;
@@ -96,7 +103,12 @@ class PermutationTest2 : public ::testing::Test {
     TwoTaskSinlgePermutation perm3;
     TwoTaskSinlgePermutation perm4;
     TwoTaskSinlgePermutation perm5;
+    TwoTaskSinlgePermutation perm6;
+    TwoTaskSinlgePermutation perm7;
+    TwoTaskSinlgePermutation perm8;
 };
+
+;
 
 /**
  * @brief
@@ -123,6 +135,10 @@ TEST_F(PermutationTest2, ExamConfliction_and_WhetherAdjacent) {
     EXPECT_FALSE(ExamConfliction(perm4, perm2));
     EXPECT_TRUE(ExamConfliction(perm4, perm3));
     EXPECT_TRUE(ExamConfliction(perm1, perm4));
+
+    EXPECT_FALSE(ExamConfliction(perm6, perm7));
+    EXPECT_FALSE(ExamConfliction(perm6, perm7));
+    EXPECT_TRUE(ExamConfliction(perm8, perm7));
 }
 
 TwoTaskSinlgePermutation MergeSinglePermutation(
