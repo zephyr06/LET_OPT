@@ -11,27 +11,27 @@ class TaskSetPermutation {};
 class PermutationTest2 : public ::testing::Test {
    protected:
     void SetUp() override {
-        perm1 = TwoTaskSinlgePermutation(0, 1, 0, true, 10, true);
-        perm2 = TwoTaskSinlgePermutation(0, 1, 10, true, 30, true);
-        perm3 = TwoTaskSinlgePermutation(0, 1, 0, true, 5, true);
-        perm4 = TwoTaskSinlgePermutation(0, 1, 11, true, 20, true);
-        perm5 = TwoTaskSinlgePermutation(0, 1, 5, true, 20, true);
+        perm1 = PermutationInequality(0, 1, 0, true, 10, true);
+        perm2 = PermutationInequality(0, 1, 10, true, 30, true);
+        perm3 = PermutationInequality(0, 1, 0, true, 5, true);
+        perm4 = PermutationInequality(0, 1, 11, true, 20, true);
+        perm5 = PermutationInequality(0, 1, 5, true, 20, true);
 
-        perm6 = TwoTaskSinlgePermutation(0, 1, 11, false, 20, true);
-        perm7 = TwoTaskSinlgePermutation(0, 1, 5, false, 20, true);
-        perm8 = TwoTaskSinlgePermutation(0, 1, 30, true, 20, false);
-        perm9 = TwoTaskSinlgePermutation(0, 1, 5, true, 15, false);
+        perm6 = PermutationInequality(0, 1, 11, false, 20, true);
+        perm7 = PermutationInequality(0, 1, 5, false, 20, true);
+        perm8 = PermutationInequality(0, 1, 30, true, 20, false);
+        perm9 = PermutationInequality(0, 1, 5, true, 15, false);
     };
 
-    TwoTaskSinlgePermutation perm1;
-    TwoTaskSinlgePermutation perm2;
-    TwoTaskSinlgePermutation perm3;
-    TwoTaskSinlgePermutation perm4;
-    TwoTaskSinlgePermutation perm5;
-    TwoTaskSinlgePermutation perm6;
-    TwoTaskSinlgePermutation perm7;
-    TwoTaskSinlgePermutation perm8;
-    TwoTaskSinlgePermutation perm9;
+    PermutationInequality perm1;
+    PermutationInequality perm2;
+    PermutationInequality perm3;
+    PermutationInequality perm4;
+    PermutationInequality perm5;
+    PermutationInequality perm6;
+    PermutationInequality perm7;
+    PermutationInequality perm8;
+    PermutationInequality perm9;
 };
 
 TEST_F(PermutationTest2, ExamConfliction_and_WhetherAdjacent) {
@@ -57,7 +57,7 @@ TEST_F(PermutationTest2, MergeSingleValue) {
 }
 
 TEST_F(PermutationTest2, MergeTwoSinglePermutations) {
-    TwoTaskSinlgePermutation merged_perm =
+    PermutationInequality merged_perm =
         MergeTwoSinglePermutations(perm1, perm2);
     EXPECT_TRUE(merged_perm.IsValid());
     EXPECT_EQ(perm1.task_prev_id_, merged_perm.task_prev_id_);
@@ -154,13 +154,13 @@ TEST_F(PermutationTest1, GetPossibleReactingJobs_harmonic_period) {
     EXPECT_EQ(1, reacting_jobs[1].jobId);
 }
 
-TEST_F(PermutationTest1, TwoTaskSinlgePermutation_constructor) {
-    TwoTaskSinlgePermutation perm1(job00, job10, tasksInfo);
+TEST_F(PermutationTest1, PermutationInequality_constructor) {
+    PermutationInequality perm1(job00, job10, tasksInfo);
     EXPECT_EQ(0, perm1.upper_bound_);
     EXPECT_TRUE(perm1.upper_bound_valid_);
     EXPECT_FALSE(perm1.lower_bound_valid_);
 
-    perm1 = TwoTaskSinlgePermutation(job01, job10, tasksInfo);
+    perm1 = PermutationInequality(job01, job10, tasksInfo);
     EXPECT_EQ(-10, perm1.upper_bound_);
     EXPECT_TRUE(perm1.upper_bound_valid_);
     EXPECT_FALSE(perm1.lower_bound_valid_);
@@ -221,11 +221,15 @@ class TwoTaskPermutation {
     }
 
     inline size_t size() const { return single_permutations_.size(); }
+    inline PermutationInequality operator[](size_t i) {
+        if (i >= size()) CoutError("Out-of-range error in TwoTaskPermutation");
+        return single_permutations_[i];
+    }
 
     bool AppendJobs(const JobCEC& job_curr, const JobCEC& job_match,
-                    TwoTaskSinlgePermutation& permutation_current) {
-        TwoTaskSinlgePermutation perm_new(job_curr, job_match, tasks_info_);
-        TwoTaskSinlgePermutation perm_merged =
+                    PermutationInequality& permutation_current) {
+        PermutationInequality perm_new(job_curr, job_match, tasks_info_);
+        PermutationInequality perm_merged =
             MergeTwoSinglePermutations(perm_new, permutation_current);
         if (perm_merged.IsValid()) {
             permutation_current = perm_merged;
@@ -235,16 +239,18 @@ class TwoTaskPermutation {
     }
 
     void AppendAllPermutations(const JobCEC& job_curr,
-                               TwoTaskSinlgePermutation& permutation_current) {
+                               PermutationInequality& permutation_current) {
         std::vector<JobCEC> jobs_possible_match = GetPossibleReactingJobs(
             job_curr, task_next_, superperiod_, tasks_info_);
         for (auto job_match : jobs_possible_match) {
-            TwoTaskSinlgePermutation permutation_current_copy =
+            PermutationInequality permutation_current_copy =
                 permutation_current;
             if (AppendJobs(job_curr, job_match, permutation_current_copy)) {
                 if (job_curr.jobId ==
                     tasks_info_.sizeOfVariables[job_curr.taskId] - 1) {
                     single_permutations_.push_back(permutation_current_copy);
+                    if (single_permutations_.size() > 1e5)
+                        CoutError("Possibly too many permutations!");
                 } else {
                     JobCEC job_next(job_curr.taskId, job_curr.jobId + 1);
                     AppendAllPermutations(job_next, permutation_current_copy);
@@ -255,8 +261,7 @@ class TwoTaskPermutation {
 
     void FindAllPermutations() {
         JobCEC job_curr(task_prev_.id, 0);
-        TwoTaskSinlgePermutation permutation_current(task_prev_.id,
-                                                     task_next_.id);
+        PermutationInequality permutation_current(task_prev_.id, task_next_.id);
         AppendAllPermutations(job_curr, permutation_current);
     }
 
@@ -265,14 +270,22 @@ class TwoTaskPermutation {
     Task task_next_;
     RegularTaskSystem::TaskSetInfoDerived tasks_info_;
     int superperiod_;
-    std::vector<TwoTaskSinlgePermutation> single_permutations_;
+    std::vector<PermutationInequality> single_permutations_;
 };
 
 // TEST_F(PermutationTest1, simple_contructor_harmonic) {
-//     TwoTaskPermutation two_task_permutation(tasks[1], tasks[2]);
+//     TwoTaskPermutation two_task_permutation(tasks[1], tasks[2], tasksInfo);
 //     EXPECT_EQ(2, two_task_permutation.size());
-//     TwoTaskSinlgePermutation perm_expected0(1, 2, 0, false, 0, true);
-//     TwoTaskSinlgePermutation perm_expected1(1, 2, 0, false, 20, true);
+//     // PermutationInequality perm_expected0(1, 2, 0, false, 0, true);
+//     EXPECT_EQ(0, two_task_permutation[0].upper_bound_);
+//     // PermutationInequality perm_expected1(1, 2, 0, false, 20, true);
+//     EXPECT_EQ(20, two_task_permutation[1].upper_bound_);
+
+//     two_task_permutation = TwoTaskPermutation(tasks[0], tasks[2], tasksInfo);
+//     EXPECT_EQ(3, two_task_permutation.size());
+//     EXPECT_EQ(-10, two_task_permutation[0].upper_bound_);
+//     EXPECT_EQ(20, two_task_permutation[1].upper_bound_);
+//     EXPECT_EQ(0, two_task_permutation[2].upper_bound_);
 // }
 
 int main(int argc, char** argv) {
