@@ -46,7 +46,12 @@ class PermutationInequality {
           lower_bound_valid_(false),
           upper_bound_(GetActivationTime(job_match, tasks_info) -
                        GetActivationTime(job_curr, tasks_info)),
-          upper_bound_valid_(true) {}
+          upper_bound_valid_(true) {
+        JobCEC job_match_prev_job(job_match.taskId, job_match.jobId - 1);
+        lower_bound_valid_ = true;
+        lower_bound_ = GetActivationTime(job_match_prev_job, tasks_info) -
+                       GetActivationTime(job_curr, tasks_info);
+    }
 
     inline bool operator==(const PermutationInequality& other) const {
         return lower_bound_valid_ == other.lower_bound_valid_ &&

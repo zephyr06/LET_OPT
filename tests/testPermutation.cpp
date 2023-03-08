@@ -158,12 +158,14 @@ TEST_F(PermutationTest1, PermutationInequality_constructor) {
     PermutationInequality perm1(job00, job10, tasksInfo);
     EXPECT_EQ(0, perm1.upper_bound_);
     EXPECT_TRUE(perm1.upper_bound_valid_);
-    EXPECT_FALSE(perm1.lower_bound_valid_);
+    EXPECT_EQ(-20, perm1.lower_bound_);
+    EXPECT_TRUE(perm1.lower_bound_valid_);
 
     perm1 = PermutationInequality(job01, job10, tasksInfo);
     EXPECT_EQ(-10, perm1.upper_bound_);
     EXPECT_TRUE(perm1.upper_bound_valid_);
-    EXPECT_FALSE(perm1.lower_bound_valid_);
+    EXPECT_EQ(-30, perm1.lower_bound_);
+    EXPECT_TRUE(perm1.lower_bound_valid_);
 }
 
 class PermutationTest3 : public ::testing::Test {
@@ -208,18 +210,30 @@ TEST_F(PermutationTest3, GetPossibleReactingJobs_non_harmonic_period) {
     EXPECT_EQ(2, reacting_jobs[1].jobId);
 }
 
-struct SinlgePermutationTwoTask {
-    SinlgePermutationTwoTask() {}
+struct PermutationTwoTask {
+    PermutationTwoTask() {}
 
-    SinlgePermutationTwoTask(
-        PermutationInequality inequality,
-        const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
+    PermutationTwoTask(PermutationInequality inequality,
+                       const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
         : inequality_(inequality) {
         int superperiod =
             GetSuperPeriod(tasks_info.tasks[inequality.task_prev_id_],
                            tasks_info.tasks[inequality.task_next_id_]);
         job_matches_.reserve(superperiod /
                              tasks_info.tasks[inequality.task_prev_id_].period);
+    }
+
+    bool AddMatchJobPair(const JobCEC& job_curr, const JobCEC& job_match) {
+        auto itr = job_matches_.find(job_curr);
+        if (itr == job_matches_.end())
+            job_matches_[job_curr] = {job_match};
+        else {
+            JobCEC last_matched_job = itr->second.back();
+            if (job_match.jobId < last_matched_job.jobId) return false;
+            job_matches_[job_curr].push_back(job_match);
+        }
+
+        return true;
     }
 
     // data members
@@ -240,48 +254,55 @@ class TwoTaskPermutation {
     }
 
     inline size_t size() const { return single_permutations_.size(); }
-    inline PermutationInequality operator[](size_t i) {
+    inline PermutationTwoTask operator[](size_t i) {
         if (i >= size()) CoutError("Out-of-range error in TwoTaskPermutation");
         return single_permutations_[i];
     }
 
+    // TODO: more cut can be added by avoiding conflicting job matches
     bool AppendJobs(const JobCEC& job_curr, const JobCEC& job_match,
-                    PermutationInequality& permutation_current) {
+                    PermutationTwoTask& permutation_current) {
         PermutationInequality perm_new(job_curr, job_match, tasks_info_);
-        PermutationInequality perm_merged =
-            MergeTwoSinglePermutations(perm_new, permutation_current);
+        PermutationInequality perm_merged = MergeTwoSinglePermutations(
+            perm_new, permutation_current.inequality_);
         if (perm_merged.IsValid()) {
-            permutation_current = perm_merged;
+            permutation_current.inequality_ = perm_merged;
+            if (!(permutation_current.AddMatchJobPair(job_curr, job_match)))
+                return false;
             return true;
         } else
             return false;
     }
 
     void AppendAllPermutations(const JobCEC& job_curr,
-                               PermutationInequality& permutation_current) {
+                               PermutationTwoTask& permutation_current) {
         std::vector<JobCEC> jobs_possible_match = GetPossibleReactingJobs(
             job_curr, task_next_, superperiod_, tasks_info_);
+
         for (auto job_match : jobs_possible_match) {
-            PermutationInequality permutation_current_copy =
-                permutation_current;
+            PermutationTwoTask permutation_current_copy = permutation_current;
             if (AppendJobs(job_curr, job_match, permutation_current_copy)) {
                 if (job_curr.jobId ==
-                    tasks_info_.sizeOfVariables[job_curr.taskId] - 1) {
+                    tasks_info_.sizeOfVariables[job_curr.taskId] -
+                        1) {  // reach end, record the current permutations
                     single_permutations_.push_back(permutation_current_copy);
+
                     if (single_permutations_.size() > 1e5)
                         CoutError("Possibly too many permutations!");
                 } else {
                     JobCEC job_next(job_curr.taskId, job_curr.jobId + 1);
                     AppendAllPermutations(job_next, permutation_current_copy);
                 }
-            }
+            } else  // skip this match because it's not feasible or useful
+                ;
         }
     }
 
     void FindAllPermutations() {
         JobCEC job_curr(task_prev_.id, 0);
-        PermutationInequality permutation_current(task_prev_.id, task_next_.id);
-        AppendAllPermutations(job_curr, permutation_current);
+        PermutationInequality perm_ineq(task_prev_.id, task_next_.id);
+        PermutationTwoTask single_permutation(perm_ineq, tasks_info_);
+        AppendAllPermutations(job_curr, single_permutation);
     }
 
     // data members
@@ -289,23 +310,40 @@ class TwoTaskPermutation {
     Task task_next_;
     RegularTaskSystem::TaskSetInfoDerived tasks_info_;
     int superperiod_;
-    std::vector<PermutationInequality> single_permutations_;
+    std::vector<PermutationTwoTask> single_permutations_;
 };
 
-// TEST_F(PermutationTest1, simple_contructor_harmonic) {
-//     TwoTaskPermutation two_task_permutation(tasks[1], tasks[2], tasksInfo);
-//     EXPECT_EQ(2, two_task_permutation.size());
-//     // PermutationInequality perm_expected0(1, 2, 0, false, 0, true);
-//     EXPECT_EQ(0, two_task_permutation[0].upper_bound_);
-//     // PermutationInequality perm_expected1(1, 2, 0, false, 20, true);
-//     EXPECT_EQ(20, two_task_permutation[1].upper_bound_);
+TEST_F(PermutationTest1, simple_contructor_harmonic) {
+    TwoTaskPermutation two_task_permutation(tasks[1], tasks[2], tasksInfo);
+    EXPECT_EQ(2, two_task_permutation.size());
+    // PermutationInequality perm_expected0(1, 2, 0, false, 0, true);
+    EXPECT_EQ(0, two_task_permutation[0].inequality_.upper_bound_);
+    // PermutationInequality perm_expected1(1, 2, 0, false, 20, true);
+    EXPECT_EQ(20, two_task_permutation[1].inequality_.upper_bound_);
 
-//     two_task_permutation = TwoTaskPermutation(tasks[0], tasks[2], tasksInfo);
-//     EXPECT_EQ(3, two_task_permutation.size());
-//     EXPECT_EQ(-10, two_task_permutation[0].upper_bound_);
-//     EXPECT_EQ(20, two_task_permutation[1].upper_bound_);
-//     EXPECT_EQ(0, two_task_permutation[2].upper_bound_);
-// }
+    two_task_permutation = TwoTaskPermutation(tasks[0], tasks[2], tasksInfo);
+
+    EXPECT_TRUE(JobCEC(2, 0) ==
+                two_task_permutation[0].job_matches_[JobCEC(0, 0)][0]);
+    EXPECT_TRUE(JobCEC(2, 0) ==
+                two_task_permutation[0].job_matches_[JobCEC(0, 1)][0]);
+    EXPECT_EQ(3, two_task_permutation.size());
+    EXPECT_EQ(-10, two_task_permutation[0].inequality_.upper_bound_);
+
+    EXPECT_TRUE(JobCEC(2, 0) ==
+                two_task_permutation[1].job_matches_[JobCEC(0, 0)][0]);
+    EXPECT_TRUE(JobCEC(2, 1) ==
+                two_task_permutation[1].job_matches_[JobCEC(0, 1)][0]);
+    EXPECT_EQ(-10, two_task_permutation[1].inequality_.lower_bound_);
+    EXPECT_EQ(0, two_task_permutation[1].inequality_.upper_bound_);
+
+    EXPECT_TRUE(JobCEC(2, 1) ==
+                two_task_permutation[2].job_matches_[JobCEC(0, 0)][0]);
+    EXPECT_TRUE(JobCEC(2, 1) ==
+                two_task_permutation[2].job_matches_[JobCEC(0, 1)][0]);
+    EXPECT_EQ(0, two_task_permutation[2].inequality_.lower_bound_);
+    EXPECT_EQ(10, two_task_permutation[2].inequality_.upper_bound_);
+}
 
 int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);
