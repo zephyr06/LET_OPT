@@ -5,24 +5,6 @@
 #include "sources/Utils/JobCEC.h"
 using namespace DAG_SPACE;
 
-class PermutationTest1 : public ::testing::Test {
-   protected:
-    void SetUp() override {
-        dagTasks = ReadDAG_Tasks(
-            GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n3_v18.csv",
-            "orig", 1);
-        tasks = dagTasks.tasks;
-        tasksInfo = TaskSetInfoDerived(tasks);
-        chain1 = {0, 2};
-        dagTasks.chains_[0] = chain1;
-    };
-
-    DAG_Model dagTasks;
-    TaskSet tasks;
-    TaskSetInfoDerived tasksInfo;
-    std::vector<int> chain1;
-};
-
 class TaskSetPermutation {};
 
 class PermutationTest2 : public ::testing::Test {
@@ -113,24 +95,129 @@ inline int GetSuperPeriod(const Task& task1, const Task& task2) {
     return std::lcm(task1.period, task2.period);
 }
 
-std::vector<JobCEC> GetPossibleReactingJobs(const JobCEC& jobCurr,
-                                            const Task& task_next) {
+std::vector<JobCEC> GetPossibleReactingJobs(
+    const JobCEC& job_curr, const Task& task_next, int superperiod,
+    const RegularTaskSystem::TaskSetInfoDerived& tasksInfo) {
+    int job_min_finish = GetActivationTime(job_curr, tasksInfo) +
+                         GetExecutionTime(job_curr, tasksInfo);
+    int job_max_finish = GetDeadline(job_curr, tasksInfo);
+    int period_next = tasksInfo.tasks[task_next.id].period;
     std::vector<JobCEC> reactingJobs;
+    reactingJobs.reserve(superperiod / tasksInfo.tasks[job_curr.taskId].period);
+    for (int i = std::floor(float(job_min_finish) / period_next);
+         i <= std::ceil(float(job_max_finish) / period_next); i++)
+        reactingJobs.push_back(JobCEC(task_next.id, i));
+
     return reactingJobs;
 }
 
-class TwoTaskPermutation {
-   public:
-    TwoTaskPermutation(const Task& task_prev, const Task& task_next)
-        : task_prev_(task_prev), task_next_(task_next) {}
+class PermutationTest1 : public ::testing::Test {
+   protected:
+    void SetUp() override {
+        dagTasks = ReadDAG_Tasks(
+            GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n3_v18.csv",
+            "orig", 1);
+        tasks = dagTasks.tasks;
+        tasksInfo = TaskSetInfoDerived(tasks);
+        chain1 = {0, 2};
+        dagTasks.chains_[0] = chain1;
+        task0 = tasks[0];
+        task1 = tasks[1];
+        task2 = tasks[2];
+    };
 
-    inline size_t size() const { return singlePermutations_.size(); }
-
-    // data members
-    Task task_prev_;
-    Task task_next_;
-    std::vector<TwoTaskSinlgePermutation> singlePermutations_;
+    DAG_Model dagTasks;
+    TaskSet tasks;
+    TaskSetInfoDerived tasksInfo;
+    std::vector<int> chain1;
+    Task task0;
+    Task task1;
+    Task task2;
 };
+
+TEST_F(PermutationTest1, GetPossibleReactingJobs_same_period) {
+    int superperiod = GetSuperPeriod(task1, task2);
+    auto reacting_jobs =
+        GetPossibleReactingJobs(JobCEC(1, 0), task2, superperiod, tasksInfo);
+    EXPECT_EQ(2, reacting_jobs.size());
+    EXPECT_EQ(0, reacting_jobs[0].jobId);
+    EXPECT_EQ(1, reacting_jobs[1].jobId);
+}
+TEST_F(PermutationTest1, GetPossibleReactingJobs_harmonic_period) {
+    int superperiod = GetSuperPeriod(task0, task1);
+    auto reacting_jobs =
+        GetPossibleReactingJobs(JobCEC(0, 0), task1, superperiod, tasksInfo);
+    EXPECT_EQ(2, reacting_jobs.size());
+    EXPECT_EQ(0, reacting_jobs[0].jobId);
+    EXPECT_EQ(1, reacting_jobs[1].jobId);
+
+    reacting_jobs =
+        GetPossibleReactingJobs(JobCEC(1, 0), task0, superperiod, tasksInfo);
+    EXPECT_EQ(3, reacting_jobs.size());
+    EXPECT_EQ(0, reacting_jobs[0].jobId);
+    EXPECT_EQ(2, reacting_jobs[reacting_jobs.size() - 1].jobId);
+
+    reacting_jobs =
+        GetPossibleReactingJobs(JobCEC(0, 1), task1, superperiod, tasksInfo);
+    EXPECT_EQ(2, reacting_jobs.size());
+    EXPECT_EQ(0, reacting_jobs[0].jobId);
+    EXPECT_EQ(1, reacting_jobs[1].jobId);
+}
+
+class PermutationTest3 : public ::testing::Test {
+   protected:
+    void SetUp() override {
+        dagTasks = ReadDAG_Tasks(
+            GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n3_v2.csv",
+            "orig", 1);
+        tasks = dagTasks.tasks;
+        tasksInfo = TaskSetInfoDerived(tasks);
+        task0 = tasks[0];
+        task1 = tasks[1];
+        task2 = tasks[2];
+    };
+
+    DAG_Model dagTasks;
+    TaskSet tasks;
+    TaskSetInfoDerived tasksInfo;
+    Task task0;
+    Task task1;
+    Task task2;
+};
+
+TEST_F(PermutationTest3, GetPossibleReactingJobs_non_harmonic_period) {
+    int superperiod = GetSuperPeriod(task0, task1);
+    auto reacting_jobs =
+        GetPossibleReactingJobs(JobCEC(0, 0), task1, superperiod, tasksInfo);
+    EXPECT_EQ(2, reacting_jobs.size());
+    EXPECT_EQ(0, reacting_jobs[0].jobId);
+    EXPECT_EQ(1, reacting_jobs[1].jobId);
+
+    reacting_jobs =
+        GetPossibleReactingJobs(JobCEC(0, 1), task1, superperiod, tasksInfo);
+    EXPECT_EQ(3, reacting_jobs.size());
+    EXPECT_EQ(0, reacting_jobs[0].jobId);
+    EXPECT_EQ(2, reacting_jobs.back().jobId);
+
+    reacting_jobs =
+        GetPossibleReactingJobs(JobCEC(0, 2), task1, superperiod, tasksInfo);
+    EXPECT_EQ(2, reacting_jobs.size());
+    EXPECT_EQ(1, reacting_jobs[0].jobId);
+    EXPECT_EQ(2, reacting_jobs[1].jobId);
+}
+
+// class TwoTaskPermutation {
+//    public:
+//     TwoTaskPermutation(const Task& task_prev, const Task& task_next)
+//         : task_prev_(task_prev), task_next_(task_next) {}
+
+//     inline size_t size() const { return singlePermutations_.size(); }
+
+//     // data members
+//     Task task_prev_;
+//     Task task_next_;
+//     std::vector<TwoTaskSinlgePermutation> singlePermutations_;
+// };
 
 // TEST_F(PermutationTest1, simple_contructor_harmonic) {
 //     TwoTaskPermutation two_task_permutation(tasks[1], tasks[2]);
