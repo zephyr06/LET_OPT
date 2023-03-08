@@ -1,6 +1,8 @@
 #include "gmock/gmock.h"  // Brings in gMock.
+#include "sources/Optimization/TwoTaskSinglePermutation.h"
 #include "sources/TaskModel/DAG_Model.h"
 #include "sources/Utils/Interval.h"
+#include "sources/Utils/JobCEC.h"
 using namespace DAG_SPACE;
 
 class PermutationTest1 : public ::testing::Test {
@@ -22,67 +24,6 @@ class PermutationTest1 : public ::testing::Test {
 };
 
 class TaskSetPermutation {};
-
-// permutation is described by
-//      o_{task_next_id} + smaller_than_value <= d_{task_prev_id} ;
-//      d_{task_prev_id} <= o_{task_next_id} + larger_than_value ;
-// This is the same as the following in the paper:
-// o_{i+1} + x < d_i < o_{i+1} + y
-// Currently, this struct only saves the first-reaction relationship, that
-// means, if J_{11} triggers J_{22}, then J_{11} cannot trigger J_{21}
-class TwoTaskSinlgePermutation {
-   public:
-    TwoTaskSinlgePermutation() {}
-    TwoTaskSinlgePermutation(int task_prev_id, int task_next_id,
-                             int smaller_than_value, bool prev_const_valid,
-                             int larger_than_value, bool next_const_valid)
-        : task_prev_id_(task_prev_id),
-          task_next_id_(task_next_id),
-          smaller_than_value_(smaller_than_value),
-          prev_const_valid_(prev_const_valid),
-          larger_than_value_(larger_than_value),
-          next_const_valid_(next_const_valid) {
-        if (larger_than_value < smaller_than_value && prev_const_valid &&
-            next_const_valid)
-            CoutError(
-                "Invalid arguments in TwoTaskSinlgePermutation's constructor!");
-    }
-
-    bool operator==(const TwoTaskSinlgePermutation& other) const {
-        return prev_const_valid_ == other.prev_const_valid_ &&
-               next_const_valid_ == other.next_const_valid_ &&
-               task_prev_id_ == other.task_prev_id_ &&
-               task_next_id_ == other.task_next_id_ &&
-               smaller_than_value_ == other.smaller_than_value_ &&
-               larger_than_value_ == other.larger_than_value_;
-    }
-    bool operator!=(const TwoTaskSinlgePermutation& other) const {
-        return !((*this) == other);
-    }
-
-    inline void setInvalid() {
-        prev_const_valid_ = false;
-        next_const_valid_ = false;
-    }
-    inline bool IsValid() const {
-        return next_const_valid_ == true || prev_const_valid_ == true;
-    }
-
-    inline Interval GetInterval() const {
-        int lower_bound = -1e9, upper_bound = 1e9;
-        if (prev_const_valid_) lower_bound = smaller_than_value_;
-        if (next_const_valid_) upper_bound = larger_than_value_;
-        return Interval(lower_bound, upper_bound - lower_bound);
-    }
-
-    // data member
-    int task_prev_id_;
-    int task_next_id_;
-    int smaller_than_value_;
-    bool prev_const_valid_;
-    int larger_than_value_;
-    bool next_const_valid_;
-};
 
 class PermutationTest2 : public ::testing::Test {
    protected:
@@ -110,27 +51,6 @@ class PermutationTest2 : public ::testing::Test {
     TwoTaskSinlgePermutation perm9;
 };
 
-;
-
-/**
- * @brief
- *
- * @param perm1
- * @param perm2
- * @return true: perm1 and perm2 have confliction
- * @return false: no confliction
- */
-bool ExamConfliction(const TwoTaskSinlgePermutation& perm1,
-                     const TwoTaskSinlgePermutation& perm2) {
-    Interval interval1 = perm1.GetInterval();
-    Interval interval2 = perm2.GetInterval();
-    if (Overlap(interval1, interval2) > 0 ||
-        WhetherAdjacent(interval1, interval2) == true)
-        return false;
-    else
-        return true;
-}
-
 TEST_F(PermutationTest2, ExamConfliction_and_WhetherAdjacent) {
     EXPECT_FALSE(ExamConfliction(perm1, perm2));
     EXPECT_FALSE(ExamConfliction(perm2, perm1));
@@ -141,52 +61,6 @@ TEST_F(PermutationTest2, ExamConfliction_and_WhetherAdjacent) {
     EXPECT_FALSE(ExamConfliction(perm6, perm7));
     EXPECT_FALSE(ExamConfliction(perm6, perm7));
     EXPECT_TRUE(ExamConfliction(perm8, perm7));
-}
-
-int MergeSmallerThanValue(const TwoTaskSinlgePermutation& perm1,
-                          const TwoTaskSinlgePermutation& perm2) {
-    if (perm1.prev_const_valid_ && perm2.prev_const_valid_)
-        return std::max(perm1.smaller_than_value_, perm2.smaller_than_value_);
-    else if (perm1.prev_const_valid_)
-        return perm1.smaller_than_value_;
-    else if (perm2.prev_const_valid_)
-        return perm2.smaller_than_value_;
-    else
-        return -1e9;
-}
-
-int MergeLargerThanValue(const TwoTaskSinlgePermutation& perm1,
-                         const TwoTaskSinlgePermutation& perm2) {
-    if (perm1.next_const_valid_ && perm2.next_const_valid_)
-        return std::min(perm1.larger_than_value_, perm2.larger_than_value_);
-    else if (perm1.next_const_valid_)
-        return perm1.larger_than_value_;
-    else if (perm2.next_const_valid_)
-        return perm2.larger_than_value_;
-    else
-        return 1e9;
-}
-
-TwoTaskSinlgePermutation MergeSinglePermutation(
-    const TwoTaskSinlgePermutation& perm1,
-    const TwoTaskSinlgePermutation& perm2) {
-    TwoTaskSinlgePermutation merged_perm;
-
-    if (ExamConfliction(perm1, perm2) ||
-        perm1.task_prev_id_ != perm2.task_prev_id_ ||
-        perm1.task_next_id_ != perm2.task_next_id_) {
-        merged_perm.setInvalid();
-    } else {
-        int smaller_value_merged = MergeSmallerThanValue(perm1, perm2);
-        int larger_value_merged = MergeLargerThanValue(perm1, perm2);
-
-        merged_perm = TwoTaskSinlgePermutation(
-            perm1.task_prev_id_, perm1.task_next_id_, smaller_value_merged,
-            perm1.prev_const_valid_ || perm2.prev_const_valid_,
-            larger_value_merged,
-            perm1.next_const_valid_ || perm2.next_const_valid_);
-    }
-    return merged_perm;
 }
 
 TEST_F(PermutationTest2, MergeSingleValue) {
@@ -233,6 +107,16 @@ TEST_F(PermutationTest2, MergeSinglePermutation) {
     EXPECT_TRUE(merged_perm.IsValid());
     EXPECT_EQ(5, merged_perm.smaller_than_value_);
     EXPECT_EQ(20, merged_perm.larger_than_value_);
+}
+
+inline int GetSuperPeriod(const Task& task1, const Task& task2) {
+    return std::lcm(task1.period, task2.period);
+}
+
+std::vector<JobCEC> GetPossibleReactingJobs(const JobCEC& jobCurr,
+                                            const Task& task_next) {
+    std::vector<JobCEC> reactingJobs;
+    return reactingJobs;
 }
 
 class TwoTaskPermutation {
