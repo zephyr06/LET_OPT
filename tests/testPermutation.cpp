@@ -1,4 +1,5 @@
 #include "gmock/gmock.h"  // Brings in gMock.
+#include "sources/Optimization/TaskSetPermutation.h"
 #include "sources/Optimization/TwoTaskSinglePermutation.h"
 #include "sources/TaskModel/DAG_Model.h"
 #include "sources/Utils/Interval.h"
@@ -89,26 +90,6 @@ TEST_F(PermutationTest2, MergeSinglePermutation) {
     EXPECT_TRUE(merged_perm.IsValid());
     EXPECT_EQ(5, merged_perm.smaller_than_value_);
     EXPECT_EQ(20, merged_perm.larger_than_value_);
-}
-
-inline int GetSuperPeriod(const Task& task1, const Task& task2) {
-    return std::lcm(task1.period, task2.period);
-}
-
-std::vector<JobCEC> GetPossibleReactingJobs(
-    const JobCEC& job_curr, const Task& task_next, int superperiod,
-    const RegularTaskSystem::TaskSetInfoDerived& tasksInfo) {
-    int job_min_finish = GetActivationTime(job_curr, tasksInfo) +
-                         GetExecutionTime(job_curr, tasksInfo);
-    int job_max_finish = GetDeadline(job_curr, tasksInfo);
-    int period_next = tasksInfo.tasks[task_next.id].period;
-    std::vector<JobCEC> reactingJobs;
-    reactingJobs.reserve(superperiod / tasksInfo.tasks[job_curr.taskId].period);
-    for (int i = std::floor(float(job_min_finish) / period_next);
-         i <= std::ceil(float(job_max_finish) / period_next); i++)
-        reactingJobs.push_back(JobCEC(task_next.id, i));
-
-    return reactingJobs;
 }
 
 class PermutationTest1 : public ::testing::Test {
