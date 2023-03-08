@@ -1,6 +1,6 @@
 #include "gmock/gmock.h"  // Brings in gMock.
+#include "sources/Optimization/PermutationInequality.h"
 #include "sources/Optimization/TaskSetPermutation.h"
-#include "sources/Optimization/TwoTaskSinglePermutation.h"
 #include "sources/TaskModel/DAG_Model.h"
 #include "sources/Utils/Interval.h"
 #include "sources/Utils/JobCEC.h"
@@ -207,6 +207,25 @@ TEST_F(PermutationTest3, GetPossibleReactingJobs_non_harmonic_period) {
     EXPECT_EQ(1, reacting_jobs[0].jobId);
     EXPECT_EQ(2, reacting_jobs[1].jobId);
 }
+
+struct SinlgePermutationTwoTask {
+    SinlgePermutationTwoTask() {}
+
+    SinlgePermutationTwoTask(
+        PermutationInequality inequality,
+        const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
+        : inequality_(inequality) {
+        int superperiod =
+            GetSuperPeriod(tasks_info.tasks[inequality.task_prev_id_],
+                           tasks_info.tasks[inequality.task_next_id_]);
+        job_matches_.reserve(superperiod /
+                             tasks_info.tasks[inequality.task_prev_id_].period);
+    }
+
+    // data members
+    PermutationInequality inequality_;
+    std::unordered_map<JobCEC, std::vector<JobCEC>> job_matches_;
+};
 
 class TwoTaskPermutation {
    public:

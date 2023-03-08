@@ -1,5 +1,5 @@
 
-#include "sources/Optimization/TwoTaskSinglePermutation.h"
+#include "sources/Optimization/PermutationInequality.h"
 
 namespace DAG_SPACE {
 

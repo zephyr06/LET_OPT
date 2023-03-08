@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sources/Optimization/TwoTaskSinglePermutation.h"
+#include "sources/Optimization/PermutationInequality.h"
 #include "sources/Utils/JobCEC.h"
 namespace DAG_SPACE {
 
