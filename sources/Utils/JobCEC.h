@@ -41,6 +41,11 @@ inline double GetDeadline(
            tasksInfo.tasks[job.taskId].deadline;
 }
 
+inline double GetPeriod(
+    JobCEC job, const RegularTaskSystem::TaskSetInfoDerived &tasksInfo) {
+    return tasksInfo.tasks[job.taskId].period;
+}
+
 inline double GetActivationTime(
     JobCEC job, const RegularTaskSystem::TaskSetInfoDerived &tasksInfo) {
     return tasksInfo.tasks[job.taskId].period * job.jobId;

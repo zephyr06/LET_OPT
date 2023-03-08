@@ -56,40 +56,41 @@ TEST_F(PermutationTest2, MergeSingleValue) {
     EXPECT_EQ(1e9, MergeLargerThanValue(perm8, perm9));
 }
 
-TEST_F(PermutationTest2, MergeSinglePermutation) {
-    TwoTaskSinlgePermutation merged_perm = MergeSinglePermutation(perm1, perm2);
+TEST_F(PermutationTest2, MergeTwoSinglePermutations) {
+    TwoTaskSinlgePermutation merged_perm =
+        MergeTwoSinglePermutations(perm1, perm2);
     EXPECT_TRUE(merged_perm.IsValid());
     EXPECT_EQ(perm1.task_prev_id_, merged_perm.task_prev_id_);
     EXPECT_EQ(perm1.task_next_id_, merged_perm.task_next_id_);
-    EXPECT_EQ(10, merged_perm.smaller_than_value_);
-    EXPECT_EQ(10, merged_perm.larger_than_value_);
+    EXPECT_EQ(10, merged_perm.lower_bound_);
+    EXPECT_EQ(10, merged_perm.upper_bound_);
 
-    merged_perm = MergeSinglePermutation(perm1, perm3);
+    merged_perm = MergeTwoSinglePermutations(perm1, perm3);
     EXPECT_TRUE(merged_perm.IsValid());
-    EXPECT_EQ(0, merged_perm.smaller_than_value_);
-    EXPECT_EQ(5, merged_perm.larger_than_value_);
+    EXPECT_EQ(0, merged_perm.lower_bound_);
+    EXPECT_EQ(5, merged_perm.upper_bound_);
 
-    merged_perm = MergeSinglePermutation(perm1, perm4);
+    merged_perm = MergeTwoSinglePermutations(perm1, perm4);
     EXPECT_FALSE(merged_perm.IsValid());
 
-    merged_perm = MergeSinglePermutation(perm1, perm5);
+    merged_perm = MergeTwoSinglePermutations(perm1, perm5);
     EXPECT_TRUE(merged_perm.IsValid());
-    EXPECT_EQ(5, merged_perm.smaller_than_value_);
-    EXPECT_EQ(10, merged_perm.larger_than_value_);
+    EXPECT_EQ(5, merged_perm.lower_bound_);
+    EXPECT_EQ(10, merged_perm.upper_bound_);
 
-    merged_perm = MergeSinglePermutation(perm6, perm7);
+    merged_perm = MergeTwoSinglePermutations(perm6, perm7);
     EXPECT_TRUE(merged_perm.IsValid());
-    EXPECT_FALSE(merged_perm.prev_const_valid_);
-    // EXPECT_EQ(-1e9, merged_perm.smaller_than_value_);
-    EXPECT_EQ(20, merged_perm.larger_than_value_);
+    EXPECT_FALSE(merged_perm.lower_bound_valid_);
+    // EXPECT_EQ(-1e9, merged_perm.lower_bound_);
+    EXPECT_EQ(20, merged_perm.upper_bound_);
 
-    merged_perm = MergeSinglePermutation(perm6, perm8);
+    merged_perm = MergeTwoSinglePermutations(perm6, perm8);
     EXPECT_FALSE(merged_perm.IsValid());
 
-    merged_perm = MergeSinglePermutation(perm6, perm9);
+    merged_perm = MergeTwoSinglePermutations(perm6, perm9);
     EXPECT_TRUE(merged_perm.IsValid());
-    EXPECT_EQ(5, merged_perm.smaller_than_value_);
-    EXPECT_EQ(20, merged_perm.larger_than_value_);
+    EXPECT_EQ(5, merged_perm.lower_bound_);
+    EXPECT_EQ(20, merged_perm.upper_bound_);
 }
 
 class PermutationTest1 : public ::testing::Test {
@@ -105,6 +106,10 @@ class PermutationTest1 : public ::testing::Test {
         task0 = tasks[0];
         task1 = tasks[1];
         task2 = tasks[2];
+        job00 = JobCEC(0, 0);
+        job01 = JobCEC(0, 1);
+        job10 = JobCEC(1, 0);
+        job20 = JobCEC(2, 0);
     };
 
     DAG_Model dagTasks;
@@ -114,6 +119,10 @@ class PermutationTest1 : public ::testing::Test {
     Task task0;
     Task task1;
     Task task2;
+    JobCEC job00;
+    JobCEC job01;
+    JobCEC job10;
+    JobCEC job20;
 };
 
 TEST_F(PermutationTest1, GetPossibleReactingJobs_same_period) {
@@ -143,6 +152,18 @@ TEST_F(PermutationTest1, GetPossibleReactingJobs_harmonic_period) {
     EXPECT_EQ(2, reacting_jobs.size());
     EXPECT_EQ(0, reacting_jobs[0].jobId);
     EXPECT_EQ(1, reacting_jobs[1].jobId);
+}
+
+TEST_F(PermutationTest1, TwoTaskSinlgePermutation_constructor) {
+    TwoTaskSinlgePermutation perm1(job00, job10, tasksInfo);
+    EXPECT_EQ(0, perm1.upper_bound_);
+    EXPECT_TRUE(perm1.upper_bound_valid_);
+    EXPECT_FALSE(perm1.lower_bound_valid_);
+
+    perm1 = TwoTaskSinlgePermutation(job01, job10, tasksInfo);
+    EXPECT_EQ(-10, perm1.upper_bound_);
+    EXPECT_TRUE(perm1.upper_bound_valid_);
+    EXPECT_FALSE(perm1.lower_bound_valid_);
 }
 
 class PermutationTest3 : public ::testing::Test {
@@ -187,18 +208,65 @@ TEST_F(PermutationTest3, GetPossibleReactingJobs_non_harmonic_period) {
     EXPECT_EQ(2, reacting_jobs[1].jobId);
 }
 
-// class TwoTaskPermutation {
-//    public:
-//     TwoTaskPermutation(const Task& task_prev, const Task& task_next)
-//         : task_prev_(task_prev), task_next_(task_next) {}
+class TwoTaskPermutation {
+   public:
+    TwoTaskPermutation(const Task& task_prev, const Task& task_next,
+                       const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
+        : task_prev_(task_prev),
+          task_next_(task_next),
+          tasks_info_(tasks_info) {
+        superperiod_ = GetSuperPeriod(task_prev, task_next);
+        single_permutations_.reserve(1e4);
+        FindAllPermutations();
+    }
 
-//     inline size_t size() const { return singlePermutations_.size(); }
+    inline size_t size() const { return single_permutations_.size(); }
 
-//     // data members
-//     Task task_prev_;
-//     Task task_next_;
-//     std::vector<TwoTaskSinlgePermutation> singlePermutations_;
-// };
+    bool AppendJobs(const JobCEC& job_curr, const JobCEC& job_match,
+                    TwoTaskSinlgePermutation& permutation_current) {
+        TwoTaskSinlgePermutation perm_new(job_curr, job_match, tasks_info_);
+        TwoTaskSinlgePermutation perm_merged =
+            MergeTwoSinglePermutations(perm_new, permutation_current);
+        if (perm_merged.IsValid()) {
+            permutation_current = perm_merged;
+            return true;
+        } else
+            return false;
+    }
+
+    void AppendAllPermutations(const JobCEC& job_curr,
+                               TwoTaskSinlgePermutation& permutation_current) {
+        std::vector<JobCEC> jobs_possible_match = GetPossibleReactingJobs(
+            job_curr, task_next_, superperiod_, tasks_info_);
+        for (auto job_match : jobs_possible_match) {
+            TwoTaskSinlgePermutation permutation_current_copy =
+                permutation_current;
+            if (AppendJobs(job_curr, job_match, permutation_current_copy)) {
+                if (job_curr.jobId ==
+                    tasks_info_.sizeOfVariables[job_curr.taskId] - 1) {
+                    single_permutations_.push_back(permutation_current_copy);
+                } else {
+                    JobCEC job_next(job_curr.taskId, job_curr.jobId + 1);
+                    AppendAllPermutations(job_next, permutation_current_copy);
+                }
+            }
+        }
+    }
+
+    void FindAllPermutations() {
+        JobCEC job_curr(task_prev_.id, 0);
+        TwoTaskSinlgePermutation permutation_current(task_prev_.id,
+                                                     task_next_.id);
+        AppendAllPermutations(job_curr, permutation_current);
+    }
+
+    // data members
+    Task task_prev_;
+    Task task_next_;
+    RegularTaskSystem::TaskSetInfoDerived tasks_info_;
+    int superperiod_;
+    std::vector<TwoTaskSinlgePermutation> single_permutations_;
+};
 
 // TEST_F(PermutationTest1, simple_contructor_harmonic) {
 //     TwoTaskPermutation two_task_permutation(tasks[1], tasks[2]);

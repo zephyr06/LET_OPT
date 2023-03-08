@@ -1,7 +1,6 @@
 
 #include "sources/Optimization/TwoTaskSinglePermutation.h"
 
-
 namespace DAG_SPACE {
 
 bool ExamConfliction(const TwoTaskSinlgePermutation& perm1,
@@ -17,29 +16,29 @@ bool ExamConfliction(const TwoTaskSinlgePermutation& perm1,
 
 int MergeSmallerThanValue(const TwoTaskSinlgePermutation& perm1,
                           const TwoTaskSinlgePermutation& perm2) {
-    if (perm1.prev_const_valid_ && perm2.prev_const_valid_)
-        return std::max(perm1.smaller_than_value_, perm2.smaller_than_value_);
-    else if (perm1.prev_const_valid_)
-        return perm1.smaller_than_value_;
-    else if (perm2.prev_const_valid_)
-        return perm2.smaller_than_value_;
+    if (perm1.lower_bound_valid_ && perm2.lower_bound_valid_)
+        return std::max(perm1.lower_bound_, perm2.lower_bound_);
+    else if (perm1.lower_bound_valid_)
+        return perm1.lower_bound_;
+    else if (perm2.lower_bound_valid_)
+        return perm2.lower_bound_;
     else
         return -1e9;
 }
 
 int MergeLargerThanValue(const TwoTaskSinlgePermutation& perm1,
                          const TwoTaskSinlgePermutation& perm2) {
-    if (perm1.next_const_valid_ && perm2.next_const_valid_)
-        return std::min(perm1.larger_than_value_, perm2.larger_than_value_);
-    else if (perm1.next_const_valid_)
-        return perm1.larger_than_value_;
-    else if (perm2.next_const_valid_)
-        return perm2.larger_than_value_;
+    if (perm1.upper_bound_valid_ && perm2.upper_bound_valid_)
+        return std::min(perm1.upper_bound_, perm2.upper_bound_);
+    else if (perm1.upper_bound_valid_)
+        return perm1.upper_bound_;
+    else if (perm2.upper_bound_valid_)
+        return perm2.upper_bound_;
     else
         return 1e9;
 }
 
-TwoTaskSinlgePermutation MergeSinglePermutation(
+TwoTaskSinlgePermutation MergeTwoSinglePermutations(
     const TwoTaskSinlgePermutation& perm1,
     const TwoTaskSinlgePermutation& perm2) {
     TwoTaskSinlgePermutation merged_perm;
@@ -54,9 +53,9 @@ TwoTaskSinlgePermutation MergeSinglePermutation(
 
         merged_perm = TwoTaskSinlgePermutation(
             perm1.task_prev_id_, perm1.task_next_id_, smaller_value_merged,
-            perm1.prev_const_valid_ || perm2.prev_const_valid_,
+            perm1.lower_bound_valid_ || perm2.lower_bound_valid_,
             larger_value_merged,
-            perm1.next_const_valid_ || perm2.next_const_valid_);
+            perm1.upper_bound_valid_ || perm2.upper_bound_valid_);
     }
     return merged_perm;
 }
