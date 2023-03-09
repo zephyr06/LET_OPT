@@ -1,5 +1,5 @@
 
-#include "sources/Optimization/TwoTaskPermutation.h"
+#include "sources/Optimization/TwoTaskPermutations.h"
 
 namespace DAG_SPACE {
 
@@ -19,8 +19,8 @@ std::vector<JobCEC> GetPossibleReactingJobs(
     return reactingJobs;
 }
 
-bool PermutationTwoTask::AddMatchJobPair(const JobCEC& job_curr,
-                                         const JobCEC& job_match) {
+bool SinglePairPermutation::AddMatchJobPair(const JobCEC& job_curr,
+                                            const JobCEC& job_match) {
     auto itr = job_matches_.find(job_curr);
     if (itr == job_matches_.end())
         job_matches_[job_curr] = {job_match};
@@ -33,9 +33,9 @@ bool PermutationTwoTask::AddMatchJobPair(const JobCEC& job_curr,
     return true;
 }
 
-bool TwoTaskPermutation::AppendJobs(const JobCEC& job_curr,
-                                    const JobCEC& job_match,
-                                    PermutationTwoTask& permutation_current) {
+bool TwoTaskPermutations::AppendJobs(
+    const JobCEC& job_curr, const JobCEC& job_match,
+    SinglePairPermutation& permutation_current) {
     PermutationInequality perm_new(job_curr, job_match, tasks_info_);
     PermutationInequality perm_merged =
         MergeTwoSinglePermutations(perm_new, permutation_current.inequality_);
@@ -48,13 +48,13 @@ bool TwoTaskPermutation::AppendJobs(const JobCEC& job_curr,
         return false;
 }
 
-void TwoTaskPermutation::AppendAllPermutations(
-    const JobCEC& job_curr, PermutationTwoTask& permutation_current) {
+void TwoTaskPermutations::AppendAllPermutations(
+    const JobCEC& job_curr, SinglePairPermutation& permutation_current) {
     std::vector<JobCEC> jobs_possible_match = GetPossibleReactingJobs(
-        job_curr, task_next_, superperiod_, tasks_info_);
+        job_curr, tasks_info_.tasks[task_next_id_], superperiod_, tasks_info_);
 
     for (auto job_match : jobs_possible_match) {
-        PermutationTwoTask permutation_current_copy = permutation_current;
+        SinglePairPermutation permutation_current_copy = permutation_current;
         if (AppendJobs(job_curr, job_match, permutation_current_copy)) {
             if (job_curr.jobId ==
                 superperiod_ / GetPeriod(job_curr, tasks_info_) -
@@ -72,10 +72,10 @@ void TwoTaskPermutation::AppendAllPermutations(
     }
 }
 
-void TwoTaskPermutation::FindAllPermutations() {
-    JobCEC job_curr(task_prev_.id, 0);
-    PermutationInequality perm_ineq(task_prev_.id, task_next_.id);
-    PermutationTwoTask single_permutation(perm_ineq, tasks_info_);
+void TwoTaskPermutations::FindAllPermutations() {
+    JobCEC job_curr(task_prev_id_, 0);
+    PermutationInequality perm_ineq(task_prev_id_, task_next_id_);
+    SinglePairPermutation single_permutation(perm_ineq, tasks_info_);
     AppendAllPermutations(job_curr, single_permutation);
 }
 

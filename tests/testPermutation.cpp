@@ -1,13 +1,11 @@
 #include "gmock/gmock.h"  // Brings in gMock.
 #include "sources/Optimization/PermutationInequality.h"
 #include "sources/Optimization/TaskSetPermutation.h"
-#include "sources/Optimization/TwoTaskPermutation.h"
+#include "sources/Optimization/TwoTaskPermutations.h"
 #include "sources/TaskModel/DAG_Model.h"
 #include "sources/Utils/Interval.h"
 #include "sources/Utils/JobCEC.h"
 using namespace DAG_SPACE;
-
-class TaskSetPermutation {};
 
 class PermutationTest2 : public ::testing::Test {
    protected:
@@ -125,6 +123,56 @@ class PermutationTest1 : public ::testing::Test {
     JobCEC job10;
     JobCEC job20;
 };
+class ChainPermutation {
+   public:
+    ChainPermutation() {}
+
+    inline size_t size() const { return permutation_chain_.size(); }
+    inline void push_back(const SinglePairPermutation& perm) {
+        permutation_chain_.push_back(perm);
+    }
+    inline void reserve(size_t n) { permutation_chain_.reserve(n); }
+    bool IsValid() const { return true; }
+
+    // data members
+    std::vector<SinglePairPermutation> permutation_chain_;
+};
+
+TEST_F(PermutationTest1, ChainPermutation_v1) {
+    // chain is 0 -> 1 -> 2
+    // TwoTaskPermutations perm01()
+    // ChainPermutation chain_perm;
+    // chain_perm.push_back()
+}
+// currently, as asusme there is only one chain
+class TaskSetPermutation {
+   public:
+    TaskSetPermutation() {}
+    TaskSetPermutation(const DAG_Model& dag_tasks)
+        : dag_tasks_(dag_tasks),
+          tasks_info_(RegularTaskSystem::TaskSetInfoDerived(dag_tasks.tasks)) {}
+
+    void FindPairPermutations(std::vector<int> chain) {
+        for (uint i = 0; i < chain.size() - 1; i++) {
+            adjacent_two_task_permutations_.push_back(
+                TwoTaskPermutations(chain[i], chain[i + 1], tasks_info_));
+        }
+    }
+
+    void IterateAllChainPermutations(uint position,
+                                     ChainPermutation& chain_perm) {
+        ;
+    }
+
+    // data members
+    DAG_Model dag_tasks_;
+    RegularTaskSystem::TaskSetInfoDerived tasks_info_;
+    std::vector<TwoTaskPermutations> adjacent_two_task_permutations_;
+    std::vector<ChainPermutation> chain_permutations_;
+    ChainPermutation best_yet_chain_;
+};
+
+TEST_F(PermutationTest1, TaskSetPermutaiton) {}
 
 TEST_F(PermutationTest1, GetPossibleReactingJobs_same_period) {
     int superperiod = GetSuperPeriod(task1, task2);
@@ -212,14 +260,14 @@ TEST_F(PermutationTest3, GetPossibleReactingJobs_non_harmonic_period) {
 }
 
 TEST_F(PermutationTest1, simple_contructor_harmonic) {
-    TwoTaskPermutation two_task_permutation(tasks[1], tasks[2], tasks_info);
+    TwoTaskPermutations two_task_permutation(1, 2, tasks_info);
     EXPECT_EQ(2, two_task_permutation.size());
     // PermutationInequality perm_expected0(1, 2, 0, false, 0, true);
     EXPECT_EQ(0, two_task_permutation[0].inequality_.upper_bound_);
     // PermutationInequality perm_expected1(1, 2, 0, false, 20, true);
     EXPECT_EQ(20, two_task_permutation[1].inequality_.upper_bound_);
 
-    two_task_permutation = TwoTaskPermutation(tasks[0], tasks[2], tasks_info);
+    two_task_permutation = TwoTaskPermutations(0, 2, tasks_info);
 
     EXPECT_TRUE(JobCEC(2, 0) ==
                 two_task_permutation[0].job_matches_[JobCEC(0, 0)][0]);
@@ -244,8 +292,8 @@ TEST_F(PermutationTest1, simple_contructor_harmonic) {
 }
 
 TEST_F(PermutationTest1, simple_contructor_harmonic_v2) {
-    TwoTaskPermutation two_task_permutation =
-        TwoTaskPermutation(tasks[2], tasks[0], tasks_info);
+    TwoTaskPermutations two_task_permutation =
+        TwoTaskPermutations(2, 0, tasks_info);
     EXPECT_EQ(3, two_task_permutation.size());
 
     int permutation_index = 0;
@@ -277,7 +325,7 @@ TEST_F(PermutationTest1, simple_contructor_harmonic_v2) {
 }
 
 TEST_F(PermutationTest3, simple_contructor_non_harmonic) {
-    TwoTaskPermutation two_task_permutation(tasks[0], tasks[1], tasks_info);
+    TwoTaskPermutations two_task_permutation(0, 1, tasks_info);
     EXPECT_EQ(5, two_task_permutation.size());
 
     int permutation_index = 0;
@@ -376,7 +424,7 @@ class PermutationTest4 : public ::testing::Test {
 TEST_F(PermutationTest4, simple_contructor_v1) {
     task0.print();
     task1.print();
-    TwoTaskPermutation two_task_permutation(task0, task1, tasks_info);
+    TwoTaskPermutations two_task_permutation(23, 22, tasks_info);
     EXPECT_EQ(3, two_task_permutation.size());
 }
 

@@ -12,11 +12,12 @@ std::vector<JobCEC> GetPossibleReactingJobs(
     const JobCEC& job_curr, const Task& task_next, int superperiod,
     const RegularTaskSystem::TaskSetInfoDerived& tasksInfo);
 
-struct PermutationTwoTask {
-    PermutationTwoTask() {}
+struct SinglePairPermutation {
+    SinglePairPermutation() {}
 
-    PermutationTwoTask(PermutationInequality inequality,
-                       const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
+    SinglePairPermutation(
+        PermutationInequality inequality,
+        const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
         : inequality_(inequality) {
         int superperiod =
             GetSuperPeriod(tasks_info.tasks[inequality.task_prev_id_],
@@ -32,36 +33,37 @@ struct PermutationTwoTask {
     std::unordered_map<JobCEC, std::vector<JobCEC>> job_matches_;
 };
 
-class TwoTaskPermutation {
+class TwoTaskPermutations {
    public:
-    TwoTaskPermutation(const Task& task_prev, const Task& task_next,
-                       const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
-        : task_prev_(task_prev),
-          task_next_(task_next),
+    TwoTaskPermutations(int task_prev_id, int task_next_id,
+                        const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
+        : task_prev_id_(task_prev_id),
+          task_next_id_(task_next_id),
           tasks_info_(tasks_info) {
-        superperiod_ = GetSuperPeriod(task_prev, task_next);
+        superperiod_ = GetSuperPeriod(tasks_info.tasks[task_prev_id],
+                                      tasks_info.tasks[task_next_id]);
         single_permutations_.reserve(1e4);
         FindAllPermutations();
     }
 
     inline size_t size() const { return single_permutations_.size(); }
-    inline PermutationTwoTask operator[](size_t i) {
-        if (i >= size()) CoutError("Out-of-range error in TwoTaskPermutation");
+    inline SinglePairPermutation operator[](size_t i) {
+        if (i >= size()) CoutError("Out-of-range error in TwoTaskPermutations");
         return single_permutations_[i];
     }
 
     bool AppendJobs(const JobCEC& job_curr, const JobCEC& job_match,
-                    PermutationTwoTask& permutation_current);
+                    SinglePairPermutation& permutation_current);
 
     void AppendAllPermutations(const JobCEC& job_curr,
-                               PermutationTwoTask& permutation_current);
+                               SinglePairPermutation& permutation_current);
 
     void FindAllPermutations();
     // data members
-    Task task_prev_;
-    Task task_next_;
+    int task_prev_id_;
+    int task_next_id_;
     RegularTaskSystem::TaskSetInfoDerived tasks_info_;
     int superperiod_;
-    std::vector<PermutationTwoTask> single_permutations_;
+    std::vector<SinglePairPermutation> single_permutations_;
 };
 }  // namespace DAG_SPACE
