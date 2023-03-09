@@ -11,6 +11,8 @@ int debugMode = (int)ConfigParameters["debugMode"];
 const int64_t TIME_LIMIT = (int)ConfigParameters["TIME_LIMIT"];
 
 // Task set settings
+const std::string testDataSetName =
+    (std::string)ConfigParameters["testDataSetName"];
 const std::string priorityMode = (std::string)ConfigParameters["priorityMode"];
 const int whether_shuffle_CE_chain =
     (int)ConfigParameters["whether_shuffle_CE_chain"];

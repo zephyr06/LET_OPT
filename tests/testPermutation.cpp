@@ -101,7 +101,7 @@ class PermutationTest1 : public ::testing::Test {
             GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n3_v18.csv",
             "orig", 1);
         tasks = dagTasks.tasks;
-        tasksInfo = TaskSetInfoDerived(tasks);
+        tasks_info = TaskSetInfoDerived(tasks);
         chain1 = {0, 2};
         dagTasks.chains_[0] = chain1;
         task0 = tasks[0];
@@ -115,7 +115,7 @@ class PermutationTest1 : public ::testing::Test {
 
     DAG_Model dagTasks;
     TaskSet tasks;
-    TaskSetInfoDerived tasksInfo;
+    TaskSetInfoDerived tasks_info;
     std::vector<int> chain1;
     Task task0;
     Task task1;
@@ -129,7 +129,7 @@ class PermutationTest1 : public ::testing::Test {
 TEST_F(PermutationTest1, GetPossibleReactingJobs_same_period) {
     int superperiod = GetSuperPeriod(task1, task2);
     auto reacting_jobs =
-        GetPossibleReactingJobs(JobCEC(1, 0), task2, superperiod, tasksInfo);
+        GetPossibleReactingJobs(JobCEC(1, 0), task2, superperiod, tasks_info);
     EXPECT_EQ(2, reacting_jobs.size());
     EXPECT_EQ(0, reacting_jobs[0].jobId);
     EXPECT_EQ(1, reacting_jobs[1].jobId);
@@ -137,32 +137,32 @@ TEST_F(PermutationTest1, GetPossibleReactingJobs_same_period) {
 TEST_F(PermutationTest1, GetPossibleReactingJobs_harmonic_period) {
     int superperiod = GetSuperPeriod(task0, task1);
     auto reacting_jobs =
-        GetPossibleReactingJobs(JobCEC(0, 0), task1, superperiod, tasksInfo);
+        GetPossibleReactingJobs(JobCEC(0, 0), task1, superperiod, tasks_info);
     EXPECT_EQ(2, reacting_jobs.size());
     EXPECT_EQ(0, reacting_jobs[0].jobId);
     EXPECT_EQ(1, reacting_jobs[1].jobId);
 
     reacting_jobs =
-        GetPossibleReactingJobs(JobCEC(1, 0), task0, superperiod, tasksInfo);
+        GetPossibleReactingJobs(JobCEC(1, 0), task0, superperiod, tasks_info);
     EXPECT_EQ(3, reacting_jobs.size());
     EXPECT_EQ(0, reacting_jobs[0].jobId);
     EXPECT_EQ(2, reacting_jobs[reacting_jobs.size() - 1].jobId);
 
     reacting_jobs =
-        GetPossibleReactingJobs(JobCEC(0, 1), task1, superperiod, tasksInfo);
+        GetPossibleReactingJobs(JobCEC(0, 1), task1, superperiod, tasks_info);
     EXPECT_EQ(2, reacting_jobs.size());
     EXPECT_EQ(0, reacting_jobs[0].jobId);
     EXPECT_EQ(1, reacting_jobs[1].jobId);
 }
 
 TEST_F(PermutationTest1, PermutationInequality_constructor) {
-    PermutationInequality perm1(job00, job10, tasksInfo);
+    PermutationInequality perm1(job00, job10, tasks_info);
     EXPECT_EQ(0, perm1.upper_bound_);
     EXPECT_TRUE(perm1.upper_bound_valid_);
     EXPECT_EQ(-20, perm1.lower_bound_);
     EXPECT_TRUE(perm1.lower_bound_valid_);
 
-    perm1 = PermutationInequality(job01, job10, tasksInfo);
+    perm1 = PermutationInequality(job01, job10, tasks_info);
     EXPECT_EQ(-10, perm1.upper_bound_);
     EXPECT_TRUE(perm1.upper_bound_valid_);
     EXPECT_EQ(-30, perm1.lower_bound_);
@@ -176,7 +176,7 @@ class PermutationTest3 : public ::testing::Test {
             GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n3_v2.csv",
             "orig", 1);
         tasks = dagTasks.tasks;
-        tasksInfo = TaskSetInfoDerived(tasks);
+        tasks_info = TaskSetInfoDerived(tasks);
         task0 = tasks[0];
         task1 = tasks[1];
         task2 = tasks[2];
@@ -184,7 +184,7 @@ class PermutationTest3 : public ::testing::Test {
 
     DAG_Model dagTasks;
     TaskSet tasks;
-    TaskSetInfoDerived tasksInfo;
+    TaskSetInfoDerived tasks_info;
     Task task0;
     Task task1;
     Task task2;
@@ -193,33 +193,33 @@ class PermutationTest3 : public ::testing::Test {
 TEST_F(PermutationTest3, GetPossibleReactingJobs_non_harmonic_period) {
     int superperiod = GetSuperPeriod(task0, task1);
     auto reacting_jobs =
-        GetPossibleReactingJobs(JobCEC(0, 0), task1, superperiod, tasksInfo);
+        GetPossibleReactingJobs(JobCEC(0, 0), task1, superperiod, tasks_info);
     EXPECT_EQ(2, reacting_jobs.size());
     EXPECT_EQ(0, reacting_jobs[0].jobId);
     EXPECT_EQ(1, reacting_jobs[1].jobId);
 
     reacting_jobs =
-        GetPossibleReactingJobs(JobCEC(0, 1), task1, superperiod, tasksInfo);
+        GetPossibleReactingJobs(JobCEC(0, 1), task1, superperiod, tasks_info);
     EXPECT_EQ(3, reacting_jobs.size());
     EXPECT_EQ(0, reacting_jobs[0].jobId);
     EXPECT_EQ(2, reacting_jobs.back().jobId);
 
     reacting_jobs =
-        GetPossibleReactingJobs(JobCEC(0, 2), task1, superperiod, tasksInfo);
+        GetPossibleReactingJobs(JobCEC(0, 2), task1, superperiod, tasks_info);
     EXPECT_EQ(2, reacting_jobs.size());
     EXPECT_EQ(1, reacting_jobs[0].jobId);
     EXPECT_EQ(2, reacting_jobs[1].jobId);
 }
 
 TEST_F(PermutationTest1, simple_contructor_harmonic) {
-    TwoTaskPermutation two_task_permutation(tasks[1], tasks[2], tasksInfo);
+    TwoTaskPermutation two_task_permutation(tasks[1], tasks[2], tasks_info);
     EXPECT_EQ(2, two_task_permutation.size());
     // PermutationInequality perm_expected0(1, 2, 0, false, 0, true);
     EXPECT_EQ(0, two_task_permutation[0].inequality_.upper_bound_);
     // PermutationInequality perm_expected1(1, 2, 0, false, 20, true);
     EXPECT_EQ(20, two_task_permutation[1].inequality_.upper_bound_);
 
-    two_task_permutation = TwoTaskPermutation(tasks[0], tasks[2], tasksInfo);
+    two_task_permutation = TwoTaskPermutation(tasks[0], tasks[2], tasks_info);
 
     EXPECT_TRUE(JobCEC(2, 0) ==
                 two_task_permutation[0].job_matches_[JobCEC(0, 0)][0]);
@@ -243,8 +243,41 @@ TEST_F(PermutationTest1, simple_contructor_harmonic) {
     EXPECT_EQ(10, two_task_permutation[2].inequality_.upper_bound_);
 }
 
+TEST_F(PermutationTest1, simple_contructor_harmonic_v2) {
+    TwoTaskPermutation two_task_permutation =
+        TwoTaskPermutation(tasks[2], tasks[0], tasks_info);
+    EXPECT_EQ(3, two_task_permutation.size());
+
+    int permutation_index = 0;
+    EXPECT_TRUE(
+        JobCEC(0, 0) ==
+        two_task_permutation[permutation_index].job_matches_[JobCEC(2, 0)][0]);
+    EXPECT_EQ(-10,
+              two_task_permutation[permutation_index].inequality_.lower_bound_);
+    EXPECT_EQ(0,
+              two_task_permutation[permutation_index].inequality_.upper_bound_);
+
+    permutation_index++;
+    EXPECT_TRUE(
+        JobCEC(0, 1) ==
+        two_task_permutation[permutation_index].job_matches_[JobCEC(2, 0)][0]);
+    EXPECT_EQ(0,
+              two_task_permutation[permutation_index].inequality_.lower_bound_);
+    EXPECT_EQ(10,
+              two_task_permutation[permutation_index].inequality_.upper_bound_);
+
+    permutation_index++;
+    EXPECT_TRUE(
+        JobCEC(0, 2) ==
+        two_task_permutation[permutation_index].job_matches_[JobCEC(2, 0)][0]);
+    EXPECT_EQ(10,
+              two_task_permutation[permutation_index].inequality_.lower_bound_);
+    EXPECT_EQ(20,
+              two_task_permutation[permutation_index].inequality_.upper_bound_);
+}
+
 TEST_F(PermutationTest3, simple_contructor_non_harmonic) {
-    TwoTaskPermutation two_task_permutation(tasks[0], tasks[1], tasksInfo);
+    TwoTaskPermutation two_task_permutation(tasks[0], tasks[1], tasks_info);
     EXPECT_EQ(5, two_task_permutation.size());
 
     int permutation_index = 0;
@@ -317,6 +350,34 @@ TEST_F(PermutationTest3, simple_contructor_non_harmonic) {
               two_task_permutation[permutation_index].inequality_.lower_bound_);
     EXPECT_EQ(10,
               two_task_permutation[permutation_index].inequality_.upper_bound_);
+}
+
+class PermutationTest4 : public ::testing::Test {
+   protected:
+    void SetUp() override {
+        dagTasks = ReadDAG_Tasks(
+            GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n30_v3.csv",
+            "orig", 1);
+        tasks = dagTasks.tasks;
+        tasks_info = TaskSetInfoDerived(tasks);
+        task0 = tasks[23];  // period 2000, execution time 36
+        task1 = tasks[22];  // period 1000, execution time 11
+        task2 = tasks[18];
+    };
+
+    DAG_Model dagTasks;
+    TaskSet tasks;
+    TaskSetInfoDerived tasks_info;
+    Task task0;
+    Task task1;
+    Task task2;
+};
+
+TEST_F(PermutationTest4, simple_contructor_v1) {
+    task0.print();
+    task1.print();
+    TwoTaskPermutation two_task_permutation(task0, task1, tasks_info);
+    EXPECT_EQ(3, two_task_permutation.size());
 }
 
 int main(int argc, char** argv) {

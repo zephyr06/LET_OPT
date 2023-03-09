@@ -15,6 +15,7 @@ extern const std::string PROJECT_PATH;
 extern cv::FileStorage ConfigParameters;
 
 // Task set settings
+extern const std::string testDataSetName;
 extern const std::string priorityMode;
 extern const int whether_shuffle_CE_chain;
 extern const double parallelFactor;

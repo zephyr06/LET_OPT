@@ -57,7 +57,7 @@ void TwoTaskPermutation::AppendAllPermutations(
         PermutationTwoTask permutation_current_copy = permutation_current;
         if (AppendJobs(job_curr, job_match, permutation_current_copy)) {
             if (job_curr.jobId ==
-                tasks_info_.sizeOfVariables[job_curr.taskId] -
+                superperiod_ / GetPeriod(job_curr, tasks_info_) -
                     1) {  // reach end, record the current permutations
                 single_permutations_.push_back(permutation_current_copy);
 

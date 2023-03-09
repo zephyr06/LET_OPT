@@ -8,6 +8,7 @@ TIME_LIMIT: 600 # seconds, -1 means unlimited time
 #*************************************************************
 # Task set settings
 priorityMode: orig
+testDataSetName: test_n5_v8
 
 #*************************************************************
 # used in SA

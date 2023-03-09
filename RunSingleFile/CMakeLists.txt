@@ -1,1 +1,1 @@
-# gtsamAddTestsGlob(EnergyOptNLP1 "*.h" "" "${CONVENIENCE_LIB_NAME}")
+gtsamAddTestsGlob(RunSingles "*RunSingle*.cpp" "" "${CONVENIENCE_LIB_NAME}")
