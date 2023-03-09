@@ -37,6 +37,9 @@ bool SinglePairPermutation::AddMatchJobPair(const JobCEC& job_curr,
     else {
         JobCEC last_matched_job = itr->second.back();
         if (job_match.jobId < last_matched_job.jobId) return false;
+        if (job_matches_[job_curr].size() > 0 &&
+            job_matches_[job_curr].back().jobId > job_match.jobId)
+            CoutError("Wrong order in AddMatchJobPair!");
         job_matches_[job_curr].push_back(job_match);
     }
 
