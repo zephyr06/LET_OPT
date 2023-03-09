@@ -63,7 +63,7 @@ void WriteToResultFile(const std::string &pathDataset, const std::string &file,
 //   std::ios_base::app
 
 //   outfileWrite << GlobalVariablesDAGOpt::coreNumberAva << std::endl;
-//   outfileWrite << tasksInfo.hyperPeriod << std::endl;
+//   outfileWrite << tasksInfo.hyper_period << std::endl;
 //   outfileWrite << tasksInfo.variableDimension << std::endl;
 //   outfileWrite << 10 << std::endl; // total hyperperiods to run
 //   outfileWrite << GlobalVariablesDAGOpt::NumCauseEffectChain << std::endl;

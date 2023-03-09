@@ -8,12 +8,12 @@ double GetStartTime(JobCEC jobCEC, const VectorDynamic &x,
         CoutError("GetStartTime receives invalid jobCEC!");
     }
     int jobNumInHyperPeriod =
-        tasksInfo.hyperPeriod / tasksInfo.tasks[jobCEC.taskId].period;
+        tasksInfo.hyper_period / tasksInfo.tasks[jobCEC.taskId].period;
 
     double res = x(IndexTran_Instance2Overall(
                      jobCEC.taskId, jobCEC.jobId % jobNumInHyperPeriod,
                      tasksInfo.sizeOfVariables)) +
-                 jobCEC.jobId / jobNumInHyperPeriod * tasksInfo.hyperPeriod;
+                 jobCEC.jobId / jobNumInHyperPeriod * tasksInfo.hyper_period;
     return res;
 }
 
@@ -118,7 +118,7 @@ double GetHyperPeriodDiff(
         jobFinish.jobId / tasksInfo.sizeOfVariables[jobFinish.taskId];
     if (finishHpIndex < startHpIndex)
         CoutError("Wrong order of jobStart and jobFinish!");
-    return (finishHpIndex - startHpIndex) * tasksInfo.hyperPeriod;
+    return (finishHpIndex - startHpIndex) * tasksInfo.hyper_period;
 }
 
 }  // namespace DAG_SPACE

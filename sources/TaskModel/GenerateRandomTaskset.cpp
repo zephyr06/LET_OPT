@@ -117,7 +117,7 @@ DAG_Model GenerateDAG(int N, double totalUtilization, int numberOfProcessor,
     double min_sf_bound = max_execution_time_in_task_set;
     double min_rtda_bound = max_execution_time_in_task_set;
     double sf_range = N * max_execution_time_in_task_set;
-    double rtda_range = N * tasksInfo.hyperPeriod;
+    double rtda_range = N * tasksInfo.hyper_period;
     dagModel.setSfBound(
         std::floor(min_sf_bound + (double(rand()) / RAND_MAX) * sf_range));
     dagModel.setRtdaBound(

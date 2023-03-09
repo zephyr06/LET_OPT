@@ -4,7 +4,6 @@
 #include "sources/Utils/JobCEC.h"
 namespace DAG_SPACE {
 
-// TODO; check whether the <= is removed, consider make IsValid() check
 // lower&upper bound consistency permutation is described by
 //      o_{task_next_id} + lower_bound <= d_{task_prev_id} ;
 //      d_{task_prev_id} <= o_{task_next_id} + upper_bound ;
@@ -32,12 +31,7 @@ class PermutationInequality {
           lower_bound_(lower_bound),
           lower_bound_valid_(lower_bound_valid),
           upper_bound_(upper_bound),
-          upper_bound_valid_(upper_bound_valid) {
-        // if (upper_bound < lower_bound && lower_bound_valid &&
-        // upper_bound_valid)
-        //     CoutError(
-        //         "Invalid arguments in PermutationInequality's constructor!");
-    }
+          upper_bound_valid_(upper_bound_valid) {}
 
     PermutationInequality(
         const JobCEC& job_curr, const JobCEC& job_match,

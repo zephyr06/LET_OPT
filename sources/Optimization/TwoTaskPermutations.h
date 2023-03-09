@@ -37,6 +37,7 @@ struct SinglePairPermutation {
 
 class TwoTaskPermutations {
    public:
+   TwoTaskPermutations(){}
     TwoTaskPermutations(int task_prev_id, int task_next_id,
                         const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
         : task_prev_id_(task_prev_id),
