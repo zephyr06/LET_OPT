@@ -345,6 +345,82 @@ TEST_F(PermutationTest1, simple_contructor_harmonic) {
     EXPECT_EQ(10, two_task_permutation[2].inequality_.upper_bound_);
 }
 
+TEST_F(PermutationTest3, simple_contructor_non_harmonic) {
+    TwoTaskPermutation two_task_permutation(tasks[0], tasks[1], tasksInfo);
+    EXPECT_EQ(5, two_task_permutation.size());
+
+    int permutation_index = 0;
+    EXPECT_TRUE(JobCEC(1, 0) ==
+                two_task_permutation[0].job_matches_[JobCEC(0, 0)][0]);
+    EXPECT_TRUE(JobCEC(1, 0) ==
+                two_task_permutation[0].job_matches_[JobCEC(0, 1)][0]);
+    EXPECT_TRUE(JobCEC(1, 1) ==
+                two_task_permutation[0].job_matches_[JobCEC(0, 2)][0]);
+    EXPECT_EQ(-15, two_task_permutation[0].inequality_.lower_bound_);
+    EXPECT_EQ(-10, two_task_permutation[0].inequality_.upper_bound_);
+
+    permutation_index++;
+    EXPECT_TRUE(
+        JobCEC(1, 0) ==
+        two_task_permutation[permutation_index].job_matches_[JobCEC(0, 0)][0]);
+    EXPECT_TRUE(
+        JobCEC(1, 1) ==
+        two_task_permutation[permutation_index].job_matches_[JobCEC(0, 1)][0]);
+    EXPECT_TRUE(
+        JobCEC(1, 1) ==
+        two_task_permutation[permutation_index].job_matches_[JobCEC(0, 2)][0]);
+    EXPECT_EQ(-10,
+              two_task_permutation[permutation_index].inequality_.lower_bound_);
+    EXPECT_EQ(-5,
+              two_task_permutation[permutation_index].inequality_.upper_bound_);
+
+    permutation_index++;
+    EXPECT_TRUE(
+        JobCEC(1, 0) ==
+        two_task_permutation[permutation_index].job_matches_[JobCEC(0, 0)][0]);
+    EXPECT_TRUE(
+        JobCEC(1, 1) ==
+        two_task_permutation[permutation_index].job_matches_[JobCEC(0, 1)][0]);
+    EXPECT_TRUE(
+        JobCEC(1, 2) ==
+        two_task_permutation[permutation_index].job_matches_[JobCEC(0, 2)][0]);
+    EXPECT_EQ(-5,
+              two_task_permutation[permutation_index].inequality_.lower_bound_);
+    EXPECT_EQ(0,
+              two_task_permutation[permutation_index].inequality_.upper_bound_);
+
+    // **********************************************************
+    permutation_index++;
+    EXPECT_TRUE(
+        JobCEC(1, 1) ==
+        two_task_permutation[permutation_index].job_matches_[JobCEC(0, 0)][0]);
+    EXPECT_TRUE(
+        JobCEC(1, 1) ==
+        two_task_permutation[permutation_index].job_matches_[JobCEC(0, 1)][0]);
+    EXPECT_TRUE(
+        JobCEC(1, 2) ==
+        two_task_permutation[permutation_index].job_matches_[JobCEC(0, 2)][0]);
+    EXPECT_EQ(0,
+              two_task_permutation[permutation_index].inequality_.lower_bound_);
+    EXPECT_EQ(5,
+              two_task_permutation[permutation_index].inequality_.upper_bound_);
+
+    permutation_index++;
+    EXPECT_TRUE(
+        JobCEC(1, 1) ==
+        two_task_permutation[permutation_index].job_matches_[JobCEC(0, 0)][0]);
+    EXPECT_TRUE(
+        JobCEC(1, 2) ==
+        two_task_permutation[permutation_index].job_matches_[JobCEC(0, 1)][0]);
+    EXPECT_TRUE(
+        JobCEC(1, 2) ==
+        two_task_permutation[permutation_index].job_matches_[JobCEC(0, 2)][0]);
+    EXPECT_EQ(5,
+              two_task_permutation[permutation_index].inequality_.lower_bound_);
+    EXPECT_EQ(10,
+              two_task_permutation[permutation_index].inequality_.upper_bound_);
+}
+
 int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);
     ::testing::InitGoogleMock(&argc, argv);
