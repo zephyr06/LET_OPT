@@ -28,7 +28,7 @@ struct SinglePairPermutation {
 
     bool AddMatchJobPair(const JobCEC& job_curr, const JobCEC& job_match);
 
-    void print()const;
+    void print() const;
 
     // data members
     PermutationInequality inequality_;
@@ -54,6 +54,7 @@ class TwoTaskPermutations {
         return single_permutations_[i];
     }
 
+    // helper function for AppendAllPermutations during iterations
     bool AppendJobs(const JobCEC& job_curr, const JobCEC& job_match,
                     SinglePairPermutation& permutation_current);
 

@@ -34,8 +34,8 @@ class PermutationTest2 : public ::testing::Test {
 };
 
 TEST_F(PermutationTest2, ExamConfliction_and_WhetherAdjacent) {
-    EXPECT_FALSE(ExamConfliction(perm1, perm2));
-    EXPECT_FALSE(ExamConfliction(perm2, perm1));
+    EXPECT_TRUE(ExamConfliction(perm1, perm2));
+    EXPECT_TRUE(ExamConfliction(perm2, perm1));
     EXPECT_FALSE(ExamConfliction(perm4, perm2));
     EXPECT_TRUE(ExamConfliction(perm4, perm3));
     EXPECT_TRUE(ExamConfliction(perm1, perm4));
@@ -58,11 +58,7 @@ TEST_F(PermutationTest2, MergeSingleValue) {
 TEST_F(PermutationTest2, MergeTwoSinglePermutations) {
     PermutationInequality merged_perm =
         MergeTwoSinglePermutations(perm1, perm2);
-    EXPECT_TRUE(merged_perm.IsValid());
-    EXPECT_EQ(perm1.task_prev_id_, merged_perm.task_prev_id_);
-    EXPECT_EQ(perm1.task_next_id_, merged_perm.task_next_id_);
-    EXPECT_EQ(10, merged_perm.lower_bound_);
-    EXPECT_EQ(10, merged_perm.upper_bound_);
+    EXPECT_FALSE(merged_perm.IsValid());
 
     merged_perm = MergeTwoSinglePermutations(perm1, perm3);
     EXPECT_TRUE(merged_perm.IsValid());
@@ -90,6 +86,21 @@ TEST_F(PermutationTest2, MergeTwoSinglePermutations) {
     EXPECT_TRUE(merged_perm.IsValid());
     EXPECT_EQ(5, merged_perm.lower_bound_);
     EXPECT_EQ(20, merged_perm.upper_bound_);
+}
+
+TEST_F(PermutationTest2, isValid) {
+    EXPECT_TRUE(perm1.IsValid());
+
+    PermutationInequality perm10(0, 1, 0, true, 0, true);
+    EXPECT_FALSE(perm10.IsValid());
+    perm10 = PermutationInequality(0, 1, 100, false, 20, true);
+    EXPECT_TRUE(perm10.IsValid());
+    perm10 = PermutationInequality(0, 1, 100, true, 20, false);
+    EXPECT_TRUE(perm10.IsValid());
+    perm10 = PermutationInequality(0, 1, 0, true, -5, true);
+    EXPECT_FALSE(perm10.IsValid());
+    perm10 = PermutationInequality(0, 1, 0, false, -5, false);
+    EXPECT_TRUE(perm10.IsValid());
 }
 
 class PermutationTest1 : public ::testing::Test {

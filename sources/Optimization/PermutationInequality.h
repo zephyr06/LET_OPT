@@ -33,9 +33,10 @@ class PermutationInequality {
           lower_bound_valid_(lower_bound_valid),
           upper_bound_(upper_bound),
           upper_bound_valid_(upper_bound_valid) {
-        if (upper_bound < lower_bound && lower_bound_valid && upper_bound_valid)
-            CoutError(
-                "Invalid arguments in PermutationInequality's constructor!");
+        // if (upper_bound < lower_bound && lower_bound_valid &&
+        // upper_bound_valid)
+        //     CoutError(
+        //         "Invalid arguments in PermutationInequality's constructor!");
     }
 
     PermutationInequality(
@@ -73,12 +74,17 @@ class PermutationInequality {
     }
 
     inline void setInvalid() {
-        lower_bound_valid_ = false;
-        upper_bound_valid_ = false;
+        lower_bound_valid_ = true;
+        upper_bound_valid_ = true;
+        lower_bound_ = upper_bound_;
     }
 
     inline bool IsValid() const {
-        return upper_bound_valid_ == true || lower_bound_valid_ == true;
+        if (lower_bound_valid_)
+            if (upper_bound_valid_)
+                if (lower_bound_ >= upper_bound_) return false;
+
+        return true;
     }
 
     inline Interval GetInterval() const {

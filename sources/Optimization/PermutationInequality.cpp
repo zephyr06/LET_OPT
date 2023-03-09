@@ -7,8 +7,7 @@ bool ExamConfliction(const PermutationInequality& perm1,
                      const PermutationInequality& perm2) {
     Interval interval1 = perm1.GetInterval();
     Interval interval2 = perm2.GetInterval();
-    if (Overlap(interval1, interval2) > 0 ||
-        WhetherAdjacent(interval1, interval2) == true)
+    if (Overlap(interval1, interval2) > 0)
         return false;
     else
         return true;
