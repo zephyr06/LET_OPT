@@ -140,9 +140,16 @@ class ChainPermutation {
 
 TEST_F(PermutationTest1, ChainPermutation_v1) {
     // chain is 0 -> 1 -> 2
-    // TwoTaskPermutations perm01()
-    // ChainPermutation chain_perm;
-    // chain_perm.push_back()
+    TwoTaskPermutations perm01(0, 1, tasks_info);
+    TwoTaskPermutations perm12(1, 2, tasks_info);
+    ChainPermutation chain_perm;
+    chain_perm.push_back(perm01[0]);
+    chain_perm.push_back(perm12[0]);
+    perm01[0].print();
+    perm01[1].print();
+    perm01[2].print();
+    perm12[0].print();
+    perm12[1].print();
 }
 // currently, as asusme there is only one chain
 class TaskSetPermutation {

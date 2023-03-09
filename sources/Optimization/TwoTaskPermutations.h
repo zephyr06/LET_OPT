@@ -28,6 +28,8 @@ struct SinglePairPermutation {
 
     bool AddMatchJobPair(const JobCEC& job_curr, const JobCEC& job_match);
 
+    void print()const;
+
     // data members
     PermutationInequality inequality_;
     std::unordered_map<JobCEC, std::vector<JobCEC>> job_matches_;

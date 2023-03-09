@@ -4,7 +4,8 @@
 #include "sources/Utils/JobCEC.h"
 namespace DAG_SPACE {
 
-// permutation is described by
+// TODO; check whether the <= is removed, consider make IsValid() check
+// lower&upper bound consistency permutation is described by
 //      o_{task_next_id} + lower_bound <= d_{task_prev_id} ;
 //      d_{task_prev_id} <= o_{task_next_id} + upper_bound ;
 // This is the same as the following in the paper:
@@ -51,6 +52,12 @@ class PermutationInequality {
         lower_bound_valid_ = true;
         lower_bound_ = GetActivationTime(job_match_prev_job, tasks_info) -
                        GetActivationTime(job_curr, tasks_info);
+    }
+
+    void print() const {
+        std::cout << "o_{" << task_next_id_ << "} + " << lower_bound_ << " < "
+                  << "d_{" << task_prev_id_ << "} <= o_{" << task_next_id_
+                  << "} + " << upper_bound_ << "\n";
     }
 
     inline bool operator==(const PermutationInequality& other) const {
