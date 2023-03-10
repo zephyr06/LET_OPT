@@ -16,8 +16,8 @@ TEST(RunSingle, v1) {
     for (uint i = 0; i < dagTasks.chains_[0].size() - 1; i++) {
         int task_id_curr = dagTasks.chains_[0][i];
         int task_id_next = dagTasks.chains_[0][i + 1];
-        TwoTaskPermutations two_task_permutation(
-            tasks[task_id_curr], tasks[task_id_next], tasks_info);
+        TwoTaskPermutations two_task_permutation(task_id_curr, task_id_next,
+                                                 tasks_info);
         std::cout << "The number of permutations of two adjacent tasks "
                   << task_id_curr << " and " << task_id_next << " is "
                   << two_task_permutation.size() << "\n";
