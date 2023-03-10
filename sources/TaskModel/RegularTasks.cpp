@@ -91,7 +91,7 @@ TaskSet ReadTaskSet(std::string path, std::string priorityType,
         }
 
         TaskSet ttt(taskSet);
-        // ttt = Reorder(ttt, priorityType);
+        ttt = Reorder(ttt, priorityType);
         return ttt;
     } else {
         std::cout << Color::red << "The path does not exist in ReadTaskSet!"

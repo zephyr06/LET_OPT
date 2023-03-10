@@ -117,4 +117,11 @@ VectorDynamic RTAVector(const TaskSet &tasks) {
     return res;
 }
 
+int GetResponseTime(const TaskSet &tasks, int index, int warm_start = 0) {
+    RTA_LL r(tasks);
+    if (warm_start < tasks[index].executionTime)
+        warm_start = tasks[index].executionTime;
+    return r.RTA_Common_Warm(warm_start, index);
+}
+
 }  // namespace DAG_SPACE
