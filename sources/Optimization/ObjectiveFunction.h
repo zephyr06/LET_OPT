@@ -1,6 +1,6 @@
 #pragma once
 #include "sources/Optimization/ChainPermutation.h"
-
+#include "sources/Optimization/Variable.h"
 namespace DAG_SPACE {
 
 class ObjectiveFunctionBase {
@@ -9,7 +9,8 @@ class ObjectiveFunctionBase {
 
     static double Obj(const DAG_Model &dag_tasks,
                       const TaskSetInfoDerived &tasks_info,
-                      const ChainPermutation &chain_perm) {
+                      const ChainPermutation &chain_perm,
+                      const VariableOD &variable_od) {
         CoutError("Base function should not be called!");
         return 0;
     }
@@ -20,7 +21,8 @@ class ObjReactionTime : public ObjectiveFunctionBase {
     static const std::string type_trait;
     static double Obj(const DAG_Model &dag_tasks,
                       const TaskSetInfoDerived &tasks_info,
-                      const ChainPermutation &chain_perm);
+                      const ChainPermutation &chain_perm,
+                      const VariableOD &variable_od);
 };
 
 // task_index_in_chain: the index of a task in a cause-effect chain

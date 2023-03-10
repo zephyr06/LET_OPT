@@ -134,35 +134,7 @@ class PermutationTest1 : public ::testing::Test {
     JobCEC job10;
     JobCEC job20;
 };
-// TEST_F(PermutationTest1, TaskSetPermutaiton) {}
-// currently, as asusme there is only one chain
-// class TaskSetPermutation {
-//    public:
-//     TaskSetPermutation() {}
-//     TaskSetPermutation(const DAG_Model& dag_tasks)
-//         : dag_tasks_(dag_tasks),
-//           tasks_info_(RegularTaskSystem::TaskSetInfoDerived(dag_tasks.tasks))
-//           {}
 
-//     void FindPairPermutations(std::vector<int> chain) {
-//         for (uint i = 0; i < chain.size() - 1; i++) {
-//             adjacent_two_task_permutations_.push_back(
-//                 TwoTaskPermutations(chain[i], chain[i + 1], tasks_info_));
-//         }
-//     }
-
-//     void IterateAllChainPermutations(uint position,
-//                                      ChainPermutation& chain_perm) {
-//         ;
-//     }
-
-//     // data members
-//     DAG_Model dag_tasks_;
-//     RegularTaskSystem::TaskSetInfoDerived tasks_info_;
-//     std::vector<TwoTaskPermutations> adjacent_two_task_permutations_;
-//     std::vector<ChainPermutation> chain_permutations_;
-//     ChainPermutation best_yet_chain_;
-// };
 TEST_F(PermutationTest1, GetPossibleReactingJobs_same_period) {
     int superperiod = GetSuperPeriod(task1, task2);
     auto reacting_jobs =

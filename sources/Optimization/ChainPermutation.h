@@ -12,6 +12,7 @@ class ChainPermutation {
     inline void push_back(const SinglePairPermutation &perm) {
         permutation_chain_.push_back(perm);
     }
+    inline void pop_back() { permutation_chain_.pop_back(); }
     inline void reserve(size_t n) { permutation_chain_.reserve(n); }
     bool IsValid() const { return true; }
     SinglePairPermutation operator[](size_t i) const {

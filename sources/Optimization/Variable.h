@@ -22,6 +22,7 @@ class VariableOD {
         valid_ = true;
     }
     inline OD_Vir operator[](uint index) const { return variables_[index]; }
+
     bool SetDeadline(uint index, int value) {
         if (value <= variables_[index].deadline) {
             variables_[index].deadline = value;

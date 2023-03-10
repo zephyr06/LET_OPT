@@ -54,7 +54,8 @@ JobCEC GetFirstReactJob(const JobCEC &job_curr,
 
 double ObjReactionTime::Obj(const DAG_Model &dag_tasks,
                             const TaskSetInfoDerived &tasks_info,
-                            const ChainPermutation &chain_perm) {
+                            const ChainPermutation &chain_perm,
+                            const VariableOD &variable_od) {
     int max_reaction_time = -1;
     for (uint j = 0; j < tasks_info.sizeOfVariables[chain_perm.GetTaskId(0)];
          j++)  // iterate each source job within a hyper-period
@@ -66,9 +67,13 @@ double ObjReactionTime::Obj(const DAG_Model &dag_tasks,
         {
             job_curr = GetFirstReactJob(job_curr, chain_perm, i, tasks_info);
         }
+        int deadline_curr =
+            variable_od[job_curr.taskId].deadline +
+            tasks_info.tasks[job_curr.taskId].period * job_curr.jobId;
+        // int offset_curr = variable_od[job_source.taskId].offset;
         max_reaction_time = std::max(
-            max_reaction_time, int(GetDeadline(job_curr, tasks_info) -
-                                   GetActivationTime(job_source, tasks_info)));
+            max_reaction_time,
+            int(deadline_curr - GetActivationTime(job_source, tasks_info)));
     }
     return max_reaction_time;
 }

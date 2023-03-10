@@ -37,7 +37,7 @@ struct SinglePairPermutation {
 
 class TwoTaskPermutations {
    public:
-   TwoTaskPermutations(){}
+    TwoTaskPermutations() {}
     TwoTaskPermutations(int task_prev_id, int task_next_id,
                         const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
         : task_prev_id_(task_prev_id),
@@ -50,6 +50,7 @@ class TwoTaskPermutations {
     }
 
     inline size_t size() const { return single_permutations_.size(); }
+
     inline SinglePairPermutation operator[](size_t i) {
         if (i >= size()) CoutError("Out-of-range error in TwoTaskPermutations");
         return single_permutations_[i];

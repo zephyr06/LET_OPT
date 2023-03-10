@@ -32,6 +32,8 @@ class PermutationTest1 : public ::testing::Test {
         perm01[2].print();
         perm12[0].print();
         perm12[1].print();
+
+        variable_od = VariableOD(tasks);
     };
 
     DAG_Model dag_tasks;
@@ -47,6 +49,7 @@ class PermutationTest1 : public ::testing::Test {
 
     TwoTaskPermutations perm01;
     TwoTaskPermutations perm12;
+    VariableOD variable_od;
 };
 
 TEST_F(PermutationTest1, GetTaskId) {
@@ -92,17 +95,20 @@ TEST_F(PermutationTest1, ChainPermutation_v1) {
     ChainPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
     chain_perm.push_back(perm12[0]);
-    EXPECT_EQ(20, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm));
+    EXPECT_EQ(20, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
+                                       variable_od));
 
     chain_perm.permutation_chain_.clear();
     chain_perm.push_back(perm01[0]);
     chain_perm.push_back(perm12[1]);
-    EXPECT_EQ(40, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm));
+    EXPECT_EQ(40, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
+                                       variable_od));
 
     chain_perm.permutation_chain_.clear();
     chain_perm.push_back(perm01[1]);
     chain_perm.push_back(perm12[1]);
-    EXPECT_EQ(50, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm));
+    EXPECT_EQ(50, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
+                                       variable_od));
 }
 
 class PermutationTest_Non_Har : public ::testing::Test {
@@ -116,6 +122,8 @@ class PermutationTest_Non_Har : public ::testing::Test {
         task0 = tasks[0];
         task1 = tasks[1];
         task2 = tasks[2];
+
+        variable_od = VariableOD(tasks);
     };
 
     DAG_Model dag_tasks;
@@ -124,6 +132,7 @@ class PermutationTest_Non_Har : public ::testing::Test {
     Task task0;
     Task task1;
     Task task2;
+    VariableOD variable_od;
 };
 
 TEST_F(PermutationTest_Non_Har, ChainPermutation_v1) {
@@ -136,21 +145,39 @@ TEST_F(PermutationTest_Non_Har, ChainPermutation_v1) {
     chain_perm.push_back(perm12[0]);
     perm01[0].print();
     perm12[0].print();
-    EXPECT_EQ(15, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm));
+    EXPECT_EQ(15, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
+                                       variable_od));
 
     chain_perm.permutation_chain_.clear();
     chain_perm.push_back(perm01[0]);
     chain_perm.push_back(perm12[1]);
     perm01[0].print();
     perm12[1].print();
-    EXPECT_EQ(30, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm));
+    EXPECT_EQ(30, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
+                                       variable_od));
 
     chain_perm.permutation_chain_.clear();
     chain_perm.push_back(perm01[1]);
     chain_perm.push_back(perm12[1]);
     perm01[1].print();
     perm12[1].print();
-    EXPECT_EQ(35, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm));
+    EXPECT_EQ(35, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
+                                       variable_od));
+}
+
+TEST_F(PermutationTest_Non_Har, diff_deadline_from_variable) {
+    // chain is 0 -> 1 -> 2
+    TwoTaskPermutations perm01(0, 1, tasks_info);
+    TwoTaskPermutations perm12(1, 2, tasks_info);
+
+    ChainPermutation chain_perm;
+    chain_perm.push_back(perm01[0]);
+    chain_perm.push_back(perm12[0]);
+    perm01[0].print();
+    perm12[0].print();
+    variable_od.variables_[2].deadline = 10;
+    EXPECT_EQ(10, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
+                                       variable_od));
 }
 
 int main(int argc, char **argv) {
