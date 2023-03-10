@@ -24,14 +24,14 @@ static const std::vector<int> PeriodCDFWaters = {3,  5,  7,  32, 57,
 std::vector<double> Uunifast(int N, double utilAll, bool boundU = true);
 
 TaskSet GenerateTaskSet(int N, double totalUtilization, int numberOfProcessor,
-                        int periodMin, int periodMax, int coreRequireMax,
-                        int taskSetType = 1, int deadlineType = 0);
+                        int coreRequireMax, int taskSetType = 1,
+                        int deadlineType = 0);
 
 void WriteTaskSets(std::ofstream &file, TaskSet &tasks);
 
 using namespace DAG_SPACE;
 DAG_Model GenerateDAG(int N, double totalUtilization, int numberOfProcessor,
-                      int periodMin, int periodMax, int coreRequireMax,
-                      int taskSetType = 1, int deadlineType = 0);
+                      int coreRequireMax, double parallelismFactor,
+                      int period_generation_type = 1, int deadlineType = 0);
 
 void WriteDAG(std::ofstream &file, DAG_Model &tasksDAG);

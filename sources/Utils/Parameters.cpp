@@ -16,7 +16,6 @@ const std::string testDataSetName =
 const std::string priorityMode = (std::string)ConfigParameters["priorityMode"];
 const int whether_shuffle_CE_chain =
     (int)ConfigParameters["whether_shuffle_CE_chain"];
-const double parallelFactor = (double)ConfigParameters["parallelFactor"];
 const int timeScaleFactor = (int)ConfigParameters["timeScaleFactor"];
 // *************************************************************
 

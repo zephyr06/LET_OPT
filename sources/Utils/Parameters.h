@@ -20,7 +20,6 @@ extern int debugMode;
 extern const std::string testDataSetName;
 extern const std::string priorityMode;
 extern const int whether_shuffle_CE_chain;
-extern const double parallelFactor;
 extern const int timeScaleFactor;
 
 // used in SA
