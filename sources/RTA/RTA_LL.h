@@ -124,4 +124,13 @@ int GetResponseTime(const TaskSet &tasks, int index, int warm_start = 0) {
     return r.RTA_Common_Warm(warm_start, index);
 }
 
+std::vector<int> GetResponseTimeOfChain(const TaskSet &tasks,
+                                        const std::vector<int> &chain) {
+    std::vector<int> rta_vec;
+    rta_vec.reserve(chain.size());
+    for (uint i = 0; i < chain.size(); i++)
+        rta_vec.push_back(GetResponseTime(tasks, chain[i]));
+    return rta_vec;
+}
+
 }  // namespace DAG_SPACE
