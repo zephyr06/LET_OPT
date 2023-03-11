@@ -22,7 +22,7 @@ std::vector<JobCEC> GetPossibleReactingJobs(
 PermutationInequality GenerateBoxPermutationConstraints(
     int task_prev_id, int task_next_id, const VariableRange& variable_range) {
     return PermutationInequality(
-        task_next_id, task_next_id,
+        task_prev_id, task_next_id,
         variable_range.lower_bound[task_prev_id].deadline -
             variable_range.upper_bound[task_next_id].offset,
         true,
@@ -64,6 +64,11 @@ bool TwoTaskPermutations::AppendJobs(
     PermutationInequality perm_new(job_curr, job_match, tasks_info_);
     PermutationInequality perm_merged =
         MergeTwoSinglePermutations(perm_new, permutation_current.inequality_);
+    // Add bound constraints
+    PermutationInequality perm_bound = GenerateBoxPermutationConstraints(
+        job_curr.taskId, job_match.taskId, variable_od_range_);
+    perm_merged = MergeTwoSinglePermutations(perm_merged, perm_bound);
+
     if (perm_merged.IsValid()) {
         permutation_current.inequality_ = perm_merged;
         if (!(permutation_current.AddMatchJobPair(job_curr, job_match)))
