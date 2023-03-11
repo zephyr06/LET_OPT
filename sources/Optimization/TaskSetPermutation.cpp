@@ -8,8 +8,6 @@ VariableOD FindODFromPermutation(const TaskSetInfoDerived& tasks_info,
                                  std::vector<int> task_chain) {
     const TaskSet& tasks = tasks_info.tasks;
     VariableOD variable(tasks_info.tasks);
-    std::vector<int> rta_vec =
-        GetResponseTimeOfChain(tasks_info.tasks, task_chain);
 
     // in each iteration, we consider task i's virtual deadline and task i+1's
     // virtual offset assignment

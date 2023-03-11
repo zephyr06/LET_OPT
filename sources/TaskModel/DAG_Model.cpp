@@ -154,6 +154,21 @@ std::vector<std::vector<int>> DAG_Model::GetRandomChains(int numOfChains) {
     return chains;
 }
 
+void DAG_Model::CategorizeTaskSet() {
+    for (uint i = 0; i < tasks.size(); i++) {
+        int task_id = tasks[i].id;
+        int p_id = tasks[i].processorId;
+        auto itr = processor2taskset_.find(p_id);
+        if (itr == processor2taskset_.end()) {
+            processor2taskset_[p_id] = {tasks[i]};
+        } else {
+            processor2taskset_[p_id].push_back(tasks[i]);
+        }
+        task_id2task_index_within_processor[task_id] =
+            processor2taskset_[p_id].size() - 1;
+    }
+}
+
 DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType,
                         int chainNum) {
     using namespace std;
@@ -206,4 +221,5 @@ DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType,
         throw;
     }
 }
+
 }  // namespace DAG_SPACE

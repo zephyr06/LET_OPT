@@ -28,8 +28,8 @@ class PermutationTest1 : public ::testing::Test {
         job10 = JobCEC(1, 0);
         job20 = JobCEC(2, 0);
 
-        perm01 = TwoTaskPermutations(0, 1, tasks_info);
-        perm12 = TwoTaskPermutations(1, 2, tasks_info);
+        perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
+        perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
         task_sest_perms = TaskSetPermutation(dag_tasks, task_chain);
     };
 
@@ -60,7 +60,7 @@ TEST_F(PermutationTest1, Iteration) {
 
 TEST_F(PermutationTest1, GenerateBoxPermutationConstraints) {
     // RTA 1 3 6
-    VariableRange variable_range = FindVariableRange(tasks);
+    VariableRange variable_range = FindVariableRange(dag_tasks);
     PermutationInequality perm_ineq =
         GenerateBoxPermutationConstraints(0, 1, variable_range);
     EXPECT_EQ(1 - 17, perm_ineq.lower_bound_);

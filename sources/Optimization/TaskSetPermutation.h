@@ -9,7 +9,6 @@ VariableOD FindODFromPermutation(const TaskSetInfoDerived& tasks_info,
                                  const ChainPermutation& chain_perm,
                                  std::vector<int> task_chain);
 
-
 // currently, as asusme there is only one chain
 class TaskSetPermutation {
    public:
@@ -29,7 +28,7 @@ class TaskSetPermutation {
     void FindPairPermutations() {
         for (uint i = 0; i < task_chain_.size() - 1; i++) {
             adjacent_two_task_permutations_.push_back(TwoTaskPermutations(
-                task_chain_[i], task_chain_[i + 1], tasks_info_));
+                task_chain_[i], task_chain_[i + 1], dag_tasks_, tasks_info_));
         }
     }
 

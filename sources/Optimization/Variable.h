@@ -52,5 +52,5 @@ struct VariableRange {
     VariableOD upper_bound;
 };
 
-VariableRange FindVariableRange(const TaskSet& tasks);
+VariableRange FindVariableRange(const DAG_Model& dag_tasks);
 }  // namespace DAG_SPACE

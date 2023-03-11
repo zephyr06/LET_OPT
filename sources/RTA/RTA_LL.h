@@ -1,6 +1,7 @@
 #pragma once
 
 #include "sources/RTA/RTA_BASE.h"
+#include "sources/TaskModel/DAG_Model.h"
 
 namespace DAG_SPACE {
 class RTA_LL : public RTA_BASE {
@@ -109,11 +110,11 @@ class RTA_LL : public RTA_BASE {
     }
 };
 
-VectorDynamic RTAVector(const TaskSet &tasks);
-
 int GetResponseTime(const TaskSet &tasks, int index, int warm_start = 0);
 
-std::vector<int> GetResponseTimeOfChain(const TaskSet &tasks,
-                                        const std::vector<int> &chain);
+int GetResponseTime(const DAG_Model &dag_tasks, int task_id);
+
+// std::vector<int> GetResponseTimeOfChain(const TaskSet &tasks,
+//                                         const std::vector<int> &chain);
 
 }  // namespace DAG_SPACE

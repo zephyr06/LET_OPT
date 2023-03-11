@@ -24,8 +24,8 @@ class PermutationTest1 : public ::testing::Test {
         job10 = JobCEC(1, 0);
         job20 = JobCEC(2, 0);
 
-        perm01 = TwoTaskPermutations(0, 1, tasks_info);
-        perm12 = TwoTaskPermutations(1, 2, tasks_info);
+        perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
+        perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
 
         perm01[0].print();
         perm01[1].print();
@@ -63,8 +63,8 @@ TEST_F(PermutationTest1, GetTaskId) {
 
 TEST_F(PermutationTest1, GetFirstReactJob) {
     // chain is 0 -> 1 -> 2
-    TwoTaskPermutations perm01(0, 1, tasks_info);
-    TwoTaskPermutations perm12(1, 2, tasks_info);
+    TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+    TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
 
     ChainPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
@@ -89,8 +89,8 @@ TEST_F(PermutationTest1, GetFirstReactJob) {
 
 TEST_F(PermutationTest1, ChainPermutation_v1) {
     // chain is 0 -> 1 -> 2
-    TwoTaskPermutations perm01(0, 1, tasks_info);
-    TwoTaskPermutations perm12(1, 2, tasks_info);
+    TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+    TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
 
     ChainPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
@@ -137,8 +137,8 @@ class PermutationTest_Non_Har : public ::testing::Test {
 
 TEST_F(PermutationTest_Non_Har, ChainPermutation_v1) {
     // chain is 0 -> 1 -> 2
-    TwoTaskPermutations perm01(0, 1, tasks_info);
-    TwoTaskPermutations perm12(1, 2, tasks_info);
+    TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+    TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
 
     ChainPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
@@ -167,8 +167,8 @@ TEST_F(PermutationTest_Non_Har, ChainPermutation_v1) {
 
 TEST_F(PermutationTest_Non_Har, diff_deadline_from_variable) {
     // chain is 0 -> 1 -> 2
-    TwoTaskPermutations perm01(0, 1, tasks_info);
-    TwoTaskPermutations perm12(1, 2, tasks_info);
+    TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+    TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
 
     ChainPermutation chain_perm;
     chain_perm.push_back(perm01[0]);

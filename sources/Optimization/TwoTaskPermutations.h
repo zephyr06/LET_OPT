@@ -43,13 +43,14 @@ class TwoTaskPermutations {
    public:
     TwoTaskPermutations() {}
     TwoTaskPermutations(int task_prev_id, int task_next_id,
+                        const DAG_Model& dag_tasks,
                         const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
         : task_prev_id_(task_prev_id),
           task_next_id_(task_next_id),
           tasks_info_(tasks_info) {
         superperiod_ = GetSuperPeriod(tasks_info.tasks[task_prev_id],
                                       tasks_info.tasks[task_next_id]);
-        variable_od_range_ = FindVariableRange(tasks_info.tasks);
+        variable_od_range_ = FindVariableRange(dag_tasks);
         single_permutations_.reserve(1e4);
         FindAllPermutations();
     }

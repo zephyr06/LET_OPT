@@ -106,13 +106,13 @@ TEST_F(PermutationTest2, isValid) {
 class PermutationTest1 : public ::testing::Test {
    protected:
     void SetUp() override {
-        dagTasks = ReadDAG_Tasks(
+        dag_tasks = ReadDAG_Tasks(
             GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n3_v18.csv",
             "orig", 1);
-        tasks = dagTasks.tasks;
+        tasks = dag_tasks.tasks;
         tasks_info = TaskSetInfoDerived(tasks);
         chain1 = {0, 2};
-        dagTasks.chains_[0] = chain1;
+        dag_tasks.chains_[0] = chain1;
         task0 = tasks[0];
         task1 = tasks[1];
         task2 = tasks[2];
@@ -122,7 +122,7 @@ class PermutationTest1 : public ::testing::Test {
         job20 = JobCEC(2, 0);
     };
 
-    DAG_Model dagTasks;
+    DAG_Model dag_tasks;
     TaskSet tasks;
     TaskSetInfoDerived tasks_info;
     std::vector<int> chain1;
@@ -181,17 +181,17 @@ TEST_F(PermutationTest1, PermutationInequality_constructor) {
 class PermutationTest3 : public ::testing::Test {
    protected:
     void SetUp() override {
-        dagTasks = ReadDAG_Tasks(
+        dag_tasks = ReadDAG_Tasks(
             GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n3_v2.csv",
             "orig", 1);
-        tasks = dagTasks.tasks;
+        tasks = dag_tasks.tasks;
         tasks_info = TaskSetInfoDerived(tasks);
         task0 = tasks[0];
         task1 = tasks[1];
         task2 = tasks[2];
     };
 
-    DAG_Model dagTasks;
+    DAG_Model dag_tasks;
     TaskSet tasks;
     TaskSetInfoDerived tasks_info;
     Task task0;
@@ -221,14 +221,14 @@ TEST_F(PermutationTest3, GetPossibleReactingJobs_non_harmonic_period) {
 }
 
 TEST_F(PermutationTest1, simple_contructor_harmonic) {
-    TwoTaskPermutations two_task_permutation(1, 2, tasks_info);
+    TwoTaskPermutations two_task_permutation(1, 2, dag_tasks, tasks_info);
     EXPECT_EQ(2, two_task_permutation.size());
     // PermutationInequality perm_expected0(1, 2, 0, false, 0, true);
     EXPECT_EQ(0, two_task_permutation[0].inequality_.upper_bound_);
     // PermutationInequality perm_expected1(1, 2, 0, false, 20, true);
     EXPECT_EQ(20, two_task_permutation[1].inequality_.upper_bound_);
 
-    two_task_permutation = TwoTaskPermutations(0, 2, tasks_info);
+    two_task_permutation = TwoTaskPermutations(0, 2, dag_tasks, tasks_info);
 
     EXPECT_TRUE(JobCEC(2, 0) ==
                 two_task_permutation[0].job_matches_[JobCEC(0, 0)][0]);
@@ -254,7 +254,7 @@ TEST_F(PermutationTest1, simple_contructor_harmonic) {
 
 TEST_F(PermutationTest1, simple_contructor_harmonic_v2) {
     TwoTaskPermutations two_task_permutation =
-        TwoTaskPermutations(2, 0, tasks_info);
+        TwoTaskPermutations(2, 0, dag_tasks, tasks_info);
     EXPECT_EQ(3, two_task_permutation.size());
 
     int permutation_index = 0;
@@ -287,7 +287,7 @@ TEST_F(PermutationTest1, simple_contructor_harmonic_v2) {
 }
 
 TEST_F(PermutationTest3, simple_contructor_non_harmonic) {
-    TwoTaskPermutations two_task_permutation(0, 1, tasks_info);
+    TwoTaskPermutations two_task_permutation(0, 1, dag_tasks, tasks_info);
     EXPECT_EQ(5, two_task_permutation.size());
 
     int permutation_index = 0;
@@ -367,17 +367,17 @@ TEST_F(PermutationTest3, simple_contructor_non_harmonic) {
 class PermutationTest4 : public ::testing::Test {
    protected:
     void SetUp() override {
-        dagTasks = ReadDAG_Tasks(
+        dag_tasks = ReadDAG_Tasks(
             GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n30_v3.csv",
             "orig", 1);
-        tasks = dagTasks.tasks;
+        tasks = dag_tasks.tasks;
         tasks_info = TaskSetInfoDerived(tasks);
         task0 = tasks[23];  // period 2000, execution time 36
         task1 = tasks[22];  // period 1000, execution time 11
         task2 = tasks[18];
     };
 
-    DAG_Model dagTasks;
+    DAG_Model dag_tasks;
     TaskSet tasks;
     TaskSetInfoDerived tasks_info;
     Task task0;
@@ -388,7 +388,10 @@ class PermutationTest4 : public ::testing::Test {
 TEST_F(PermutationTest4, simple_contructor_v1) {
     task0.print();
     task1.print();
-    TwoTaskPermutations two_task_permutation(23, 22, tasks_info);
+    std::cout << "RTA-22-old: " << GetResponseTime(tasks, 22) << "\n";
+    std::cout << "RTA-22: " << GetResponseTime(dag_tasks, 22) << "\n";
+    std::cout << "RTA-23: " << GetResponseTime(dag_tasks, 23) << "\n";
+    TwoTaskPermutations two_task_permutation(23, 22, dag_tasks, tasks_info);
     EXPECT_EQ(3, two_task_permutation.size());
 }
 

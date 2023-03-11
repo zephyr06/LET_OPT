@@ -23,8 +23,8 @@ class PermutationTest1 : public ::testing::Test {
         job10 = JobCEC(1, 0);
         job20 = JobCEC(2, 0);
 
-        perm01 = TwoTaskPermutations(0, 1, tasks_info);
-        perm12 = TwoTaskPermutations(1, 2, tasks_info);
+        perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
+        perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
 
         // perm01[0].print();
         // perm01[1].print();
@@ -104,8 +104,8 @@ class PermutationTest2 : public ::testing::Test {
         job10 = JobCEC(1, 0);
         job20 = JobCEC(2, 0);
 
-        perm01 = TwoTaskPermutations(0, 1, tasks_info);
-        perm12 = TwoTaskPermutations(1, 2, tasks_info);
+        perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
+        perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
 
         // perm01[0].print();
         // perm01[1].print();
@@ -151,7 +151,7 @@ TEST_F(PermutationTest2, FindODFromPermutation) {
 
 TEST_F(PermutationTest2, FindVariableRange) {
     // RTA: 1, 3, 6
-    VariableRange range = FindVariableRange(tasks);
+    VariableRange range = FindVariableRange(dag_tasks);
 
     EXPECT_EQ(0, range.lower_bound[0].offset);
     EXPECT_EQ(9, range.upper_bound[0].offset);
@@ -180,8 +180,8 @@ class PermutationTest_Non_Har : public ::testing::Test {
         task0 = tasks[0];
         task1 = tasks[1];
         task2 = tasks[2];
-        perm01 = TwoTaskPermutations(0, 1, tasks_info);
-        perm12 = TwoTaskPermutations(1, 2, tasks_info);
+        perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
+        perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
     };
 
     DAG_Model dag_tasks;
