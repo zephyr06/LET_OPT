@@ -4,6 +4,11 @@
 #include "sources/Optimization/ObjectiveFunction.h"
 namespace DAG_SPACE {
 
+// assume the simple response time analysis
+VariableOD FindODFromPermutation(const TaskSetInfoDerived& tasks_info,
+                                 const ChainPermutation& chain_perm,
+                                 std::vector<int> task_chain);
+
 // currently, as asusme there is only one chain
 class TaskSetPermutation {
    public:

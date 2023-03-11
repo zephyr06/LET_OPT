@@ -1,5 +1,6 @@
 #include "gmock/gmock.h"  // Brings in gMock.
 #include "sources/Optimization/ChainPermutation.h"
+#include "sources/Optimization/TaskSetPermutation.h"
 #include "sources/Optimization/TwoTaskPermutations.h"
 #include "sources/Optimization/Variable.h"
 #include "sources/RTA/RTA_LL.h"
@@ -127,7 +128,6 @@ class PermutationTest2 : public ::testing::Test {
     TwoTaskPermutations perm01;
     TwoTaskPermutations perm12;
 };
-
 
 TEST_F(PermutationTest2, FindODFromPermutation) {
     std::vector<int> task_chain = {0, 1, 2};

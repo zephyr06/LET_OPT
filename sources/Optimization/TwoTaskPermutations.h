@@ -64,6 +64,7 @@ class TwoTaskPermutations {
                                SinglePairPermutation& permutation_current);
 
     void FindAllPermutations();
+
     // data members
     int task_prev_id_;
     int task_next_id_;

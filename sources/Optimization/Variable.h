@@ -1,6 +1,5 @@
 #pragma once
 
-#include "sources/Optimization/ChainPermutation.h"
 #include "sources/RTA/RTA_LL.h"
 #include "sources/TaskModel/DAG_Model.h"
 
@@ -47,11 +46,6 @@ class VariableOD {
     std::vector<OD_Vir> variables_;
     bool valid_;
 };
-
-// assume the simple response time analysis
-VariableOD FindODFromPermutation(const TaskSetInfoDerived& tasks_info,
-                                 const ChainPermutation& chain_perm,
-                                 std::vector<int> task_chain);
 
 struct VariableRange {
     VariableOD lower_bound;
