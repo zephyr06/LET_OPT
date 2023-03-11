@@ -385,6 +385,14 @@ class PermutationTest4 : public ::testing::Test {
     Task task2;
 };
 
+TEST_F(PermutationTest4, GenerateBoxPermutationConstraints) {
+    TwoTaskPermutations two_task_permutation(23, 22, dag_tasks, tasks_info);
+    PermutationInequality perm_bound = GenerateBoxPermutationConstraints(
+        23, 22, two_task_permutation.variable_od_range_);
+    perm_bound.print();
+    EXPECT_FALSE(perm_bound.IsValid());
+}
+
 TEST_F(PermutationTest4, simple_contructor_v1) {
     task0.print();
     task1.print();
@@ -392,7 +400,7 @@ TEST_F(PermutationTest4, simple_contructor_v1) {
     std::cout << "RTA-22: " << GetResponseTime(dag_tasks, 22) << "\n";
     std::cout << "RTA-23: " << GetResponseTime(dag_tasks, 23) << "\n";
     TwoTaskPermutations two_task_permutation(23, 22, dag_tasks, tasks_info);
-    EXPECT_EQ(3, two_task_permutation.size());
+    EXPECT_EQ(0, two_task_permutation.size());
 }
 
 int main(int argc, char** argv) {

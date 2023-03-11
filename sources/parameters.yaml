@@ -11,7 +11,7 @@ priorityMode: orig
 # test_n30_v1 requies many permutations
 # test_n5_v41 test_n30_v3
 testDataSetName: test_n30_v3 
-timeScaleFactor: 10
+TIME_SCALE_FACTOR: 10
 
 
 #*************************************************************

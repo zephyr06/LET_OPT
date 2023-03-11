@@ -36,7 +36,7 @@ TaskSet GenerateTaskSet(int N, double totalUtilization, int numberOfProcessor,
             period_idx++;
         }
         periodCurr = int(PeriodSetWaters[period_idx] *
-                         GlobalVariablesDAGOpt::timeScaleFactor);
+                         GlobalVariablesDAGOpt::TIME_SCALE_FACTOR);
         double deadline = periodCurr;
         if (deadlineType == 1)
             deadline = round(RandRange(

@@ -21,7 +21,7 @@ extern int SKIP_PERM;
 extern const std::string testDataSetName;
 extern const std::string priorityMode;
 extern const int whether_shuffle_CE_chain;
-extern const int timeScaleFactor;
+extern const int TIME_SCALE_FACTOR;
 
 // used in SA
 extern const double coolingRateSA;

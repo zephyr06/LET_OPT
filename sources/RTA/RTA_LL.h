@@ -40,22 +40,11 @@ class RTA_LL : public RTA_BASE {
                       << Color::def << std::endl;
             throw "Nan";
         }
-        if (taskCurr.executionTime < 0) {
-            return INT32_MAX;
-        }
-        for (int i = 0; i < int(executionTimeHigh.size()); i++) {
-            if (executionTimeHigh[i] < 0) {
-                CoutError("During optimization, some variables drop below 0\n");
-                return INT32_MAX;
-            }
-        }
+
         double utilAll = Utilization(tasksHighPriority);
         if (utilAll >= 1.0 - 1e-3) {
             // cout << "The given task set is unschedulable\n";
-            return INT32_MAX;
-        }
-        for (uint i = 0; i < tasksHighPriority.size(); i++) {
-            if (tasksHighPriority[i].period < 0) return INT32_MAX;
+            return UnschedulableRTA(taskCurr);
         }
 
         bool stop_flag = false;
@@ -71,7 +60,7 @@ class RTA_LL : public RTA_BASE {
             if (responseTime == responseTimeBefore) {
                 stop_flag = true;
                 if (responseTime > taskCurr.period) {
-                    return INT32_MAX;
+                    return UnschedulableRTA(taskCurr);
                 }
                 return responseTime;
             } else {
@@ -79,8 +68,8 @@ class RTA_LL : public RTA_BASE {
             }
             loopCount++;
             if (loopCount > 1500) {
-                CoutWarning("LoopCount error in RTA_LL");
-                return INT32_MAX;
+                CoutError("LoopCount error in RTA_LL");
+                return UnschedulableRTA(taskCurr);
             }
         }
         std::cout << "RTA analysis stops unexpectedly!\n";
@@ -92,7 +81,7 @@ class RTA_LL : public RTA_BASE {
                                     const TaskSet &tasksHighPriority) {
         if (Utilization(tasksHighPriority) + taskCurr.utilization() >
             1.0 + 1e-6) {
-            return INT32_MAX;
+            return UnschedulableRTA(taskCurr);
         }
         return ResponseTimeAnalysisWarm_util_nece(beginTime, taskCurr,
                                                   tasksHighPriority);

@@ -32,35 +32,6 @@ class RTA_BASE {
         return 0;
     }
 
-    VectorDynamic ResponseTimeOfTaskSet(const VectorDynamic &warmStart) {
-        int N = tasks_.size();
-        VectorDynamic res = GenerateVectorDynamic(N);
-        if (GlobalVariablesDAGOpt::debugMode == 1) {
-            std::cout << "Response time analysis of the task set is:"
-                      << std::endl;
-        }
-        for (int i = 0; i < N; i++) {
-            res(i, 0) = RTA_Common_Warm(warmStart(i, 0), i);
-            if (GlobalVariablesDAGOpt::debugMode == 1) {
-                std::cout << "Task " << i << ": " << res(i, 0) << std::endl;
-            }
-            if (res(i, 0) >= INT32_MAX - 10000) {
-                int a = 1;
-                a *= a;
-            }
-        }
-        return res;
-    }
-
-    VectorDynamic ResponseTimeOfTaskSet() {
-        BeginTimer("ResponseTimeOfTaskSet");
-        VectorDynamic warmStart =
-            GetParameterVD<double>(tasks_, "executionTime");
-        auto res = ResponseTimeOfTaskSet(warmStart);
-        EndTimer("ResponseTimeOfTaskSet");
-        return res;
-    }
-
     /**
      * @brief
      *
@@ -111,6 +82,10 @@ class RTA_BASE {
             }
         }
         return true;
+    }
+
+    inline int UnschedulableRTA(const Task &task) {
+        return task.deadline + 1e4 * GlobalVariablesDAGOpt::TIME_SCALE_FACTOR;
     }
 };
 
