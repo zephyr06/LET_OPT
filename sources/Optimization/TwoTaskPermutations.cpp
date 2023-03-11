@@ -19,6 +19,18 @@ std::vector<JobCEC> GetPossibleReactingJobs(
     return reactingJobs;
 }
 
+PermutationInequality GenerateBoxPermutationConstraints(
+    int task_prev_id, int task_next_id, const VariableRange& variable_range) {
+    return PermutationInequality(
+        task_next_id, task_next_id,
+        variable_range.lower_bound[task_prev_id].deadline -
+            variable_range.upper_bound[task_next_id].offset,
+        true,
+        variable_range.upper_bound[task_prev_id].deadline -
+            variable_range.lower_bound[task_next_id].offset,
+        true);
+}
+
 void SinglePairPermutation::print() const {
     inequality_.print();
     for (const auto& [key, value] : job_matches_) {

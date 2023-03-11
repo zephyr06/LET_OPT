@@ -2,6 +2,7 @@
 #include "sources/Optimization/TaskSetPermutation.h"
 
 namespace DAG_SPACE {
+
 VariableOD FindODFromPermutation(const TaskSetInfoDerived& tasks_info,
                                  const ChainPermutation& chain_perm,
                                  std::vector<int> task_chain) {

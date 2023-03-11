@@ -9,6 +9,7 @@ VariableOD FindODFromPermutation(const TaskSetInfoDerived& tasks_info,
                                  const ChainPermutation& chain_perm,
                                  std::vector<int> task_chain);
 
+
 // currently, as asusme there is only one chain
 class TaskSetPermutation {
    public:

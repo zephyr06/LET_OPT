@@ -1,6 +1,7 @@
 #pragma once
 
 #include "sources/Optimization/PermutationInequality.h"
+#include "sources/Optimization/Variable.h"
 
 namespace DAG_SPACE {
 
@@ -11,6 +12,9 @@ inline int GetSuperPeriod(const Task& task1, const Task& task2) {
 std::vector<JobCEC> GetPossibleReactingJobs(
     const JobCEC& job_curr, const Task& task_next, int superperiod,
     const RegularTaskSystem::TaskSetInfoDerived& tasksInfo);
+
+PermutationInequality GenerateBoxPermutationConstraints(
+    int task_prev_id, int task_next_id, const VariableRange& variable_range);
 
 struct SinglePairPermutation {
     SinglePairPermutation() {}
@@ -45,6 +49,7 @@ class TwoTaskPermutations {
           tasks_info_(tasks_info) {
         superperiod_ = GetSuperPeriod(tasks_info.tasks[task_prev_id],
                                       tasks_info.tasks[task_next_id]);
+        variable_od_range_ = FindVariableRange(tasks_info.tasks);
         single_permutations_.reserve(1e4);
         FindAllPermutations();
     }
@@ -70,6 +75,7 @@ class TwoTaskPermutations {
     int task_next_id_;
     RegularTaskSystem::TaskSetInfoDerived tasks_info_;
     int superperiod_;
+    VariableRange variable_od_range_;
     std::vector<SinglePairPermutation> single_permutations_;
 };
 }  // namespace DAG_SPACE

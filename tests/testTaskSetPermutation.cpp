@@ -57,6 +57,20 @@ TEST_F(PermutationTest1, Iteration) {
     EXPECT_EQ(6, task_sest_perms.iteration_count_);
     EXPECT_EQ(20, obj_find);
 }
+
+TEST_F(PermutationTest1, GenerateBoxPermutationConstraints) {
+    // RTA 1 3 6
+    VariableRange variable_range = FindVariableRange(tasks);
+    PermutationInequality perm_ineq =
+        GenerateBoxPermutationConstraints(0, 1, variable_range);
+    EXPECT_EQ(1 - 17, perm_ineq.lower_bound_);
+    EXPECT_EQ(10 - 0, perm_ineq.upper_bound_);
+
+    perm_ineq = GenerateBoxPermutationConstraints(1, 2, variable_range);
+    EXPECT_EQ(3 - 14, perm_ineq.lower_bound_);
+    EXPECT_EQ(20 - 0, perm_ineq.upper_bound_);
+}
+
 int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);
     ::testing::InitGoogleMock(&argc, argv);
