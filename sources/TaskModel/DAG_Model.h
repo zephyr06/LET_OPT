@@ -62,6 +62,7 @@ class DAG_Model {
         sfBound_ = -1;
         rtdaBound_ = -1;
         CategorizeTaskSet();
+        RecordTaskPosition();
     }
 
     DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, double sfBound,
@@ -74,6 +75,7 @@ class DAG_Model {
         sfBound_ = sfBound;
         rtdaBound_ = rtdaBound;
         CategorizeTaskSet();
+        RecordTaskPosition();
     }
 
     std::pair<Graph, indexVertexMap> GenerateGraphForTaskSet() const;
@@ -102,6 +104,11 @@ class DAG_Model {
     std::vector<int> FindSinkTaskIds() const;
 
     void CategorizeTaskSet();
+    void RecordTaskPosition();
+
+    int GetTaskIndex(int task_id) const {
+        return task_id2position_.at(task_id);
+    }
 
     // data member
     TaskSet tasks;
@@ -110,7 +117,8 @@ class DAG_Model {
     indexVertexMap indexesBGL_;
     std::vector<std::vector<int>> chains_;
     std::unordered_map<int, TaskSet> processor2taskset_;
-    std::unordered_map<int, uint> task_id2task_index_within_processor;
+    std::unordered_map<int, uint> task_id2task_index_within_processor_;
+    std::unordered_map<int, int> task_id2position_;
 };
 
 DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType = "orig",

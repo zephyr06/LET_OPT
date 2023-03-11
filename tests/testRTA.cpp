@@ -84,9 +84,9 @@ class PermutationTest4 : public ::testing::Test {
 };
 
 TEST_F(PermutationTest4, constructor_dag) {
-    EXPECT_EQ(0, dag_tasks.task_id2task_index_within_processor[0]);
-    EXPECT_EQ(1, dag_tasks.task_id2task_index_within_processor[1]);
-    EXPECT_EQ(0, dag_tasks.task_id2task_index_within_processor[2]);
+    EXPECT_EQ(0, dag_tasks.task_id2task_index_within_processor_[0]);
+    EXPECT_EQ(1, dag_tasks.task_id2task_index_within_processor_[1]);
+    EXPECT_EQ(0, dag_tasks.task_id2task_index_within_processor_[2]);
 
     EXPECT_EQ(1, dag_tasks.processor2taskset_[0].size());
     EXPECT_EQ(2, dag_tasks.processor2taskset_[1].size());
@@ -138,6 +138,14 @@ class PermutationTest6 : public ::testing::Test {
     TaskSet tasks;
     TaskSetInfoDerived tasks_info;
 };
+
+TEST_F(PermutationTest6, GetTask) {
+    EXPECT_EQ(0, dag_tasks.GetTaskIndex(0));
+    EXPECT_EQ(3, dag_tasks.GetTaskIndex(1));
+    EXPECT_EQ(2, dag_tasks.GetTaskIndex(2));
+    EXPECT_EQ(1, dag_tasks.GetTaskIndex(3));
+    EXPECT_EQ(4, dag_tasks.GetTaskIndex(4));
+}
 
 TEST_F(PermutationTest6, v1) {
     EXPECT_EQ(10, GetResponseTime(dag_tasks, 0));
