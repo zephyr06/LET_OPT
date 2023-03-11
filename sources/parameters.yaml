@@ -7,7 +7,7 @@ SKIP_PERM: 1
 
 #*************************************************************
 # Task set settings
-priorityMode: orig
+priorityMode: RM
 # test_n30_v1 requies many permutations
 # test_n5_v41 test_n30_v3
 testDataSetName: test_n30_v3 

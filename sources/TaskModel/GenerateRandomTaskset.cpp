@@ -50,13 +50,19 @@ TaskSet GenerateTaskSet(int N, double totalUtilization, int numberOfProcessor,
 }
 void WriteTaskSets(std::ofstream &file, TaskSet &tasks) {
     int N = tasks.size();
-    file << "JobID,Offset,Period,Overhead,ExecutionTime,DeadLine,processorId,"
-            "coreRequire\n";
+    file << "JobID,Period,ExecutionTime,DeadLine,processorId"
+            "\n";
     for (int i = 0; i < N; i++) {
-        file << tasks[i].id << "," << tasks[i].offset << "," << tasks[i].period
-             << "," << tasks[i].overhead << "," << tasks[i].executionTime << ","
-             << tasks[i].deadline << "," << tasks[i].processorId << ","
-             << tasks[i].coreRequire << "\n";
+        file << tasks[i].id
+             // << "," << tasks[i].offset
+             << ","
+             << tasks[i].period
+             //  << "," << tasks[i].overhead
+             << "," << tasks[i].executionTime << "," << tasks[i].deadline << ","
+             << tasks[i].processorId
+
+             // << "," << tasks[i].coreRequire
+             << "\n";
     }
 }
 

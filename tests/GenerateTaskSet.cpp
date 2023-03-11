@@ -1,8 +1,6 @@
+#include "sources/RTA/RTA_LL.h"
 #include "sources/TaskModel/GenerateRandomTaskset.h"
 #include "sources/Utils/argparse.hpp"
-// #include "sources/Optimization/OptimizeOrder.h"
-// #include "sources/Baseline/RTSS21IC.h"
-// #include "sources/RTA/RTA_DAG_Model.h"
 
 using namespace GlobalVariablesDAGOpt;
 void deleteDirectoryContents(const std::string &dir_path) {
@@ -134,75 +132,43 @@ int main(int argc, char *argv[]) {
     deleteDirectoryContents(outDirectory);
 
     for (int i = 0; i < DAG_taskSetNumber; i++) {
-        // if (taskType == 0)  // normal task set
-        // {
-        //     TaskSet tasks = GenerateTaskSet(
-        //         N, totalUtilization, numberOfProcessor, periodMin, periodMax,
-        //         coreRequireMax, taskSetType, deadlineType);
-        //     std::string fileName =
-        //         "periodic-set-" +
-        //         std::string(3 - std::to_string(i).size(), '0') + to_string(i)
-        //         +
-        //         "-syntheticJobs" + ".csv";
-        //     std::ofstream myfile;
-        //     myfile.open(outDirectory + fileName);
-        //     WriteTaskSets(myfile, tasks);
-        // }
         if (taskType == 1)  // DAG task set
         {
-            while (true) {
-                DAG_Model tasks =
-                    GenerateDAG(task_number_in_tasksets, totalUtilization,
-                                numberOfProcessor, 1, parallelismFactor,
-                                period_generation_type, deadlineType);
+            DAG_Model tasks = GenerateDAG(
+                task_number_in_tasksets, totalUtilization, numberOfProcessor, 1,
+                parallelismFactor, period_generation_type, deadlineType);
 
-                if (excludeEmptyEdgeDag == 1) {
-                    bool whether_empty_edges = true;
-                    for (auto pair : tasks.mapPrev) {
-                        if (pair.second.size() > 0) {
-                            whether_empty_edges = false;
-                            break;
-                        }
-                    }
-                    if (whether_empty_edges) {
-                        i--;
-                        continue;
+            if (excludeEmptyEdgeDag == 1) {
+                bool whether_empty_edges = true;
+                for (auto pair : tasks.mapPrev) {
+                    if (pair.second.size() > 0) {
+                        whether_empty_edges = false;
+                        break;
                     }
                 }
-
-                // if (excludeUnschedulable == 1) {
-                //     // rt_num_opt::RTA_DAG_Model rta(tasks);
-                //     // std::cout << rta.CheckSchedulability() << std::endl;
-                //     TaskSet &taskSet = tasks.tasks;
-                //     TaskSetInfoDerived tasksInfo(taskSet);
-                //     std::vector<uint> processorJobVec;
-                //     // std::optional<JobOrderMultiCore> emptyOrder;
-                //     // VectorDynamic initialSTV = ListSchedulingLFTPA(
-                //     //     tasks, tasksInfo, numberOfProcessor,
-                //     //     processorJobVec);
-                //     // if (((!ExamBasic_Feasibility(tasks, tasksInfo,
-                //     // initialSTV,
-                //     //                              processorJobVec,
-                //     //                              numberOfProcessor))) ||
-                //     //     (considerSensorFusion != 0 &&
-                //     //      (!ExamDDL_Feasibility(tasks, tasksInfo,
-                //     //                            initialSTV)))) {
-                //     //     if (GlobalVariablesDAGOpt::debugMode) {
-                //     //         std::cout << "Un feasible case, skipped.\n";
-                //     //     }
-                //     //     continue;
-                //     // }
-                // }
-                string fileName = "dag-set-N" +
-                                  to_string(task_number_in_tasksets) + "-" +
-                                  string(3 - to_string(i).size(), '0') +
-                                  to_string(i) + "-syntheticJobs" + ".csv";
-                std::ofstream myfile;
-                myfile.open(outDirectory + fileName);
-                WriteDAG(myfile, tasks);
-                myfile.close();
-                break;
+                if (whether_empty_edges) {
+                    i--;
+                    continue;
+                }
             }
+
+            if (excludeUnschedulable == 1) {
+                TaskSet &taskSet = tasks.tasks;
+                Reorder(taskSet, GlobalVariablesDAGOpt::priorityMode);
+                RTA_LL r(taskSet);
+                if (!r.CheckSchedulability()) {
+                    i--;
+                    continue;  // re-generate a new task set
+                }
+            }
+            string fileName = "dag-set-N" + to_string(task_number_in_tasksets) +
+                              "-" + string(3 - to_string(i).size(), '0') +
+                              to_string(i) + "-syntheticJobs" + ".csv";
+            std::ofstream myfile;
+            myfile.open(outDirectory + fileName);
+            WriteDAG(myfile, tasks);
+            myfile.close();
+
         } else
             CoutError("taskType is not recognized!");
     }

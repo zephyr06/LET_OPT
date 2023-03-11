@@ -74,16 +74,6 @@ class RTA_BASE {
         return CheckSchedulability(warmStart, whetherPrint);
     }
 
-    bool CheckSchedulabilityDirect(const VectorDynamic &rta) {
-        int N = tasks_.size();
-        for (int i = 0; i < N; i++) {
-            if (rta(i, 0) > min(tasks_[i].deadline, tasks_[i].period)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     inline int UnschedulableRTA(const Task &task) {
         return task.deadline + 1e4 * GlobalVariablesDAGOpt::TIME_SCALE_FACTOR;
     }

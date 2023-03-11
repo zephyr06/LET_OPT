@@ -42,7 +42,6 @@ long long int HyperPeriod(const TaskSet &tasks) {
     }
 }
 
-// should not be used anymore
 TaskSet Reorder(TaskSet tasks, std::string priorityType) {
     if (CompareStringNoCase(priorityType, "RM")) {
         sort(tasks.begin(), tasks.end(), comparePeriod);

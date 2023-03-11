@@ -244,7 +244,6 @@ long long int lcm(long long int a, long long int b);
 
 long long int HyperPeriod(const TaskSet &tasks);
 
-// should not be used anymore
 TaskSet Reorder(TaskSet tasks, std::string priorityType);
 TaskSet ReadTaskSet(std::string path, std::string priorityType = "RM",
                     int taskSetType = 1);
