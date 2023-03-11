@@ -5,7 +5,7 @@
 namespace DAG_SPACE {
 
 // assume the simple response time analysis
-VariableOD FindODFromPermutation(const TaskSetInfoDerived& tasks_info,
+VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
                                  const ChainPermutation& chain_perm,
                                  std::vector<int> task_chain);
 
@@ -58,7 +58,7 @@ class TaskSetPermutation {
     void EvaluateChainPermutation(const ChainPermutation& chain_perm) {
         // evaluate schedulability
         VariableOD variable_od =
-            FindODFromPermutation(tasks_info_, chain_perm, task_chain_);
+            FindODFromPermutation(dag_tasks_, chain_perm, task_chain_);
         if (!variable_od.valid_)
             return;
         else {

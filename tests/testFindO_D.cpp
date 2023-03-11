@@ -58,7 +58,7 @@ TEST_F(PermutationTest1, FindODFromPermutation) {
     perm12[0].print();
 
     VariableOD variable =
-        FindODFromPermutation(tasks_info, chain_perm, task_chain);
+        FindODFromPermutation(dag_tasks, chain_perm, task_chain);
     EXPECT_TRUE(variable.valid_);
     EXPECT_EQ(0, variable[0].offset);
     EXPECT_EQ(1, variable[0].deadline);
@@ -78,7 +78,7 @@ TEST_F(PermutationTest1, FindODFromPermutation_v2) {
     perm12[0].print();
 
     VariableOD variable =
-        FindODFromPermutation(tasks_info, chain_perm, task_chain);
+        FindODFromPermutation(dag_tasks, chain_perm, task_chain);
     EXPECT_TRUE(variable.valid_);
     EXPECT_EQ(0, variable[0].offset);
     EXPECT_EQ(1, variable[0].deadline);
@@ -139,7 +139,7 @@ TEST_F(PermutationTest2, FindODFromPermutation) {
     perm12[0].print();
 
     VariableOD variable =
-        FindODFromPermutation(tasks_info, chain_perm, task_chain);
+        FindODFromPermutation(dag_tasks, chain_perm, task_chain);
     EXPECT_FALSE(variable.valid_);
     EXPECT_EQ(0, variable[0].offset);
     EXPECT_EQ(1, variable[0].deadline);
@@ -204,7 +204,7 @@ TEST_F(PermutationTest_Non_Har, FindODFromPermutation_invalid) {
     perm12[0].print();
 
     VariableOD variable =
-        FindODFromPermutation(tasks_info, chain_perm, task_chain);
+        FindODFromPermutation(dag_tasks, chain_perm, task_chain);
     EXPECT_FALSE(variable.valid_);
     EXPECT_EQ(0, variable[0].offset);
     EXPECT_EQ(1, variable[0].deadline);
@@ -224,7 +224,7 @@ TEST_F(PermutationTest_Non_Har, FindODFromPermutation_valid) {
     perm12[0].print();
 
     VariableOD variable =
-        FindODFromPermutation(tasks_info, chain_perm, task_chain);
+        FindODFromPermutation(dag_tasks, chain_perm, task_chain);
     EXPECT_TRUE(variable.valid_);
     EXPECT_EQ(0, variable[0].offset);
     EXPECT_EQ(1, variable[0].deadline);

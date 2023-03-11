@@ -33,8 +33,8 @@ class VariableOD {
     }
 
     // assume offset is already set
-    bool SetMinDeadline(uint index, const TaskSet& tasks) {
-        int rta = GetResponseTime(tasks, index);
+    bool SetMinDeadline(uint index, const DAG_Model& dag_tasks) {
+        int rta = GetResponseTime(dag_tasks, index);
         return SetDeadline(index, variables_[index].offset + rta);
     }
 
