@@ -12,12 +12,13 @@ TEST(RunSingle, v1) {
     TaskSet& tasks = dag_tasks.tasks;
     TaskSetInfoDerived tasks_info(tasks);
 
+    std::cout << "Cause effect chains:" << std::endl;
+
     TaskSetPermutation task_sest_perms =
         TaskSetPermutation(dag_tasks, dag_tasks.chains_[0]);
     int obj_find = task_sest_perms.PerformOptimization();
 
     // print some info
-    std::cout << "Cause effect chains:" << std::endl;
     PrintChains(dag_tasks.chains_);
 
     std::cout << "The minimum objective function found is " << obj_find << "\n";

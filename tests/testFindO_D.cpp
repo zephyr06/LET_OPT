@@ -128,6 +128,7 @@ class PermutationTest2 : public ::testing::Test {
     TwoTaskPermutations perm12;
 };
 
+
 TEST_F(PermutationTest2, FindODFromPermutation) {
     std::vector<int> task_chain = {0, 1, 2};
     // RTA: 1, 3, 6
@@ -146,6 +147,26 @@ TEST_F(PermutationTest2, FindODFromPermutation) {
     EXPECT_EQ(14, variable[1].deadline);
     EXPECT_EQ(14, variable[2].offset);
     EXPECT_EQ(20, variable[2].deadline);
+}
+
+TEST_F(PermutationTest2, FindVariableRange) {
+    // RTA: 1, 3, 6
+    VariableRange range = FindVariableRange(tasks);
+
+    EXPECT_EQ(0, range.lower_bound[0].offset);
+    EXPECT_EQ(9, range.upper_bound[0].offset);
+    EXPECT_EQ(1, range.lower_bound[0].deadline);
+    EXPECT_EQ(10, range.upper_bound[0].deadline);
+
+    EXPECT_EQ(0, range.lower_bound[1].offset);
+    EXPECT_EQ(17, range.upper_bound[1].offset);
+    EXPECT_EQ(3, range.lower_bound[1].deadline);
+    EXPECT_EQ(20, range.upper_bound[1].deadline);
+
+    EXPECT_EQ(0, range.lower_bound[2].offset);
+    EXPECT_EQ(13, range.upper_bound[2].offset);
+    EXPECT_EQ(7, range.lower_bound[2].deadline);
+    EXPECT_EQ(20, range.upper_bound[2].deadline);
 }
 
 class PermutationTest_Non_Har : public ::testing::Test {

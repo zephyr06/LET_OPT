@@ -52,4 +52,11 @@ class VariableOD {
 VariableOD FindODFromPermutation(const TaskSetInfoDerived& tasks_info,
                                  const ChainPermutation& chain_perm,
                                  std::vector<int> task_chain);
+
+struct VariableRange {
+    VariableOD lower_bound;
+    VariableOD upper_bound;
+};
+
+VariableRange FindVariableRange(const TaskSet& tasks);
 }  // namespace DAG_SPACE
