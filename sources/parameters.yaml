@@ -2,14 +2,17 @@
 debugMode: 0
 printSchedule: 0
 TIME_LIMIT: 600 # seconds, -1 means unlimited time
-
+SKIP_PERM: 1
 
 
 #*************************************************************
 # Task set settings
 priorityMode: orig
-testDataSetName: test_n30_v1
+# test_n30_v1 requies many permutations
+# test_n5_v41 test_n30_v3
+testDataSetName: test_n30_v3 
 timeScaleFactor: 10
+
 
 #*************************************************************
 # used in SA

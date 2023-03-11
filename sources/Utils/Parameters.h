@@ -15,6 +15,7 @@ extern const std::string PROJECT_PATH;
 extern cv::FileStorage ConfigParameters;
 
 extern int debugMode;
+extern int SKIP_PERM;
 
 // Task set settings
 extern const std::string testDataSetName;
