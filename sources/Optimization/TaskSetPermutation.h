@@ -13,10 +13,14 @@ VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
 // currently, as asusme there is only one chain
 class TaskSetPermutation {
    public:
+    typedef std::chrono::time_point<std::chrono::high_resolution_clock>
+        TimerType;
+
     TaskSetPermutation() {}
     TaskSetPermutation(const DAG_Model& dag_tasks,
                        const std::vector<int>& chain)
-        : dag_tasks_(dag_tasks),
+        : start_time_((std::chrono::high_resolution_clock::now())),
+          dag_tasks_(dag_tasks),
           tasks_info_(
               RegularTaskSystem::TaskSetInfoDerived(dag_tasks.GetTaskSet())),
           task_chain_(chain),
@@ -42,6 +46,9 @@ class TaskSetPermutation {
 
     void IterateAllChainPermutations(uint position,
                                      ChainPermutation& chain_perm) {
+        if (ifTimeout()) {
+            return;
+        }
         if (position == task_chain_.size() - 1) {
             iteration_count_++;
             EvaluateChainPermutation(chain_perm);
@@ -50,6 +57,7 @@ class TaskSetPermutation {
 
         for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
              i++) {
+            if (ifTimeout()) break;
             // TODO: consider improving efficiency
             chain_perm.push_back(adjacent_two_task_permutations_[position][i]);
             IterateAllChainPermutations(position + 1, chain_perm);
@@ -79,7 +87,21 @@ class TaskSetPermutation {
         return true;
     }  // TODO: finish this function
 
+    bool ifTimeout() const {
+        auto curr_time = std::chrono::system_clock::now();
+        if (std::chrono::duration_cast<std::chrono::seconds>(curr_time -
+                                                             start_time_)
+                .count() >= GlobalVariablesDAGOpt::TIME_LIMIT) {
+            std::cout
+                << "\nTime out when running OptimizeOrder. Maximum time is "
+                << GlobalVariablesDAGOpt::TIME_LIMIT << " seconds.\n\n";
+            return true;
+        }
+        return false;
+    }
+
     // data members
+    TimerType start_time_;
     DAG_Model dag_tasks_;
     RegularTaskSystem::TaskSetInfoDerived tasks_info_;
     std::vector<int> task_chain_;
@@ -93,7 +115,6 @@ class TaskSetPermutation {
 template <typename ObjectiveFunctionBase>
 ScheduleResult PerformTOM_OPT(const DAG_Model& dag_tasks) {
     auto start = std::chrono::high_resolution_clock::now();
-
     ScheduleResult res;
     TaskSetPermutation task_sets_perms =
         TaskSetPermutation(dag_tasks, dag_tasks.chains_[0]);

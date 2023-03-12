@@ -7,9 +7,10 @@ cv::FileStorage ConfigParameters(GlobalVariablesDAGOpt::PROJECT_PATH +
                                      "sources/parameters.yaml",
                                  cv::FileStorage::READ);
 
-const int64_t TIME_LIMIT = (int)ConfigParameters["TIME_LIMIT"];
+// optimization settings
 int debugMode = (int)ConfigParameters["debugMode"];
 int SKIP_PERM = (int)ConfigParameters["SKIP_PERM"];
+int TIME_LIMIT = (int)ConfigParameters["TIME_LIMIT"];
 
 // Task set settings
 const std::string testDataSetName =

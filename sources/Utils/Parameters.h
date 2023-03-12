@@ -14,8 +14,10 @@ namespace GlobalVariablesDAGOpt {
 extern const std::string PROJECT_PATH;
 extern cv::FileStorage ConfigParameters;
 
+// optimization settings
 extern int debugMode;
 extern int SKIP_PERM;
+extern int TIME_LIMIT;
 
 // Task set settings
 extern const std::string testDataSetName;
