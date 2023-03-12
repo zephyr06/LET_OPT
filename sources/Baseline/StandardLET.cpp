@@ -18,7 +18,7 @@ std::vector<JobCEC> GetPossibleReactingJobsLET(
     const JobCEC& job_curr, const Task& task_next, int superperiod,
     const RegularTaskSystem::TaskSetInfoDerived& tasks_info) {
     int job_finish_curr = GetDeadline(job_curr, tasks_info);
-    int period_next = tasks_info.tasks[task_next.id].period;
+    int period_next = tasks_info.GetTask(task_next.id).period;
     return {
         JobCEC(task_next.id, std::ceil(float(job_finish_curr) / period_next))};
 }
@@ -26,7 +26,7 @@ std::vector<JobCEC> GetPossibleReactingJobsLET(
 std::unordered_map<JobCEC, std::vector<JobCEC>> GetJobMatch(
     const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,
     int prev_task_id, int next_task_id) {
-    const TaskSet& tasks = dag_tasks.tasks;
+    const TaskSet& tasks = dag_tasks.GetTaskSet();
 
     Task task_prev = tasks[dag_tasks.GetTaskIndex(prev_task_id)];
     Task task_next = tasks[dag_tasks.GetTaskIndex(next_task_id)];

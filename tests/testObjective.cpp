@@ -1,7 +1,6 @@
 #include "gmock/gmock.h"  // Brings in gMock.
 #include "sources/Baseline/StandardLET.h"
 #include "sources/Optimization/ObjectiveFunction.h"
-#include "sources/Optimization/OptimizationMethods.h"
 #include "sources/Optimization/PermutationInequality.h"
 #include "sources/Optimization/TaskSetPermutation.h"
 #include "sources/Optimization/TwoTaskPermutations.h"
@@ -16,7 +15,7 @@ class PermutationTest1 : public ::testing::Test {
         dag_tasks = ReadDAG_Tasks(
             GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n3_v18.csv",
             "orig", 1);
-        tasks = dag_tasks.tasks;
+        tasks = dag_tasks.GetTaskSet();
         tasks_info = TaskSetInfoDerived(tasks);
         task0 = tasks[0];
         task1 = tasks[1];
@@ -158,7 +157,7 @@ class PermutationTest_Non_Har : public ::testing::Test {
         dag_tasks = ReadDAG_Tasks(
             GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n3_v2.csv",
             "orig", 1);
-        tasks = dag_tasks.tasks;
+        tasks = dag_tasks.GetTaskSet();
         tasks_info = TaskSetInfoDerived(tasks);
         task0 = tasks[0];
         task1 = tasks[1];
@@ -259,7 +258,7 @@ class PermutationTest_Non_Har2 : public ::testing::Test {
         dag_tasks = ReadDAG_Tasks(
             GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n3_v8.csv",
             "orig", 1);
-        tasks = dag_tasks.tasks;
+        tasks = dag_tasks.GetTaskSet();
         tasks_info = TaskSetInfoDerived(tasks);
         task0 = tasks[0];
         task1 = tasks[1];

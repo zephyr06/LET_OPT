@@ -8,7 +8,7 @@ double GetStartTime(JobCEC jobCEC, const VectorDynamic &x,
         CoutError("GetStartTime receives invalid jobCEC!");
     }
     int jobNumInHyperPeriod =
-        tasksInfo.hyper_period / tasksInfo.tasks[jobCEC.taskId].period;
+        tasksInfo.hyper_period / tasksInfo.GetTask(jobCEC.taskId).period;
 
     double res = x(IndexTran_Instance2Overall(
                      jobCEC.taskId, jobCEC.jobId % jobNumInHyperPeriod,
@@ -25,7 +25,7 @@ std::vector<std::pair<std::pair<double, double>, JobCEC>> ObtainAllJobSchedule(
     int temp_count = 0;
     for (LLint task_id = 0; task_id < LLint(tasksInfo.sizeOfVariables.size());
          task_id++) {
-        auto execution_time = tasksInfo.tasks[task_id].executionTime;
+        auto execution_time = tasksInfo.GetTask(task_id).executionTime;
         for (LLint job_id = 0; job_id < tasksInfo.sizeOfVariables[task_id];
              job_id++) {
             double start_time = x(temp_count, 0);

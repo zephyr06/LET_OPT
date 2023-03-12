@@ -9,9 +9,10 @@ std::vector<JobCEC> GetPossibleReactingJobs(
     int job_min_finish = GetActivationTime(job_curr, tasksInfo) +
                          GetExecutionTime(job_curr, tasksInfo);
     int job_max_finish = GetDeadline(job_curr, tasksInfo);
-    int period_next = tasksInfo.tasks[task_next.id].period;
+    int period_next = tasksInfo.GetTask(task_next.id).period;
     std::vector<JobCEC> reactingJobs;
-    reactingJobs.reserve(superperiod / tasksInfo.tasks[job_curr.taskId].period);
+    reactingJobs.reserve(superperiod /
+                         tasksInfo.GetTask(job_curr.taskId).period);
     for (int i = std::floor(float(job_min_finish) / period_next);
          i <= std::ceil(float(job_max_finish) / period_next); i++)
         reactingJobs.push_back(JobCEC(task_next.id, i));
@@ -82,8 +83,9 @@ bool TwoTaskPermutations::AppendJobs(
 
 void TwoTaskPermutations::AppendAllPermutations(
     const JobCEC& job_curr, SinglePairPermutation& permutation_current) {
-    std::vector<JobCEC> jobs_possible_match = GetPossibleReactingJobs(
-        job_curr, tasks_info_.tasks[task_next_id_], superperiod_, tasks_info_);
+    std::vector<JobCEC> jobs_possible_match =
+        GetPossibleReactingJobs(job_curr, tasks_info_.GetTask(task_next_id_),
+                                superperiod_, tasks_info_);
 
     for (auto job_match : jobs_possible_match) {
         SinglePairPermutation permutation_current_copy = permutation_current;

@@ -9,7 +9,7 @@ class PermutationTest1 : public ::testing::Test {
         dag_tasks = ReadDAG_Tasks(
             GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n3_v3.csv",
             "orig", 1);
-        tasks = dag_tasks.tasks;
+        tasks = dag_tasks.GetTaskSet();
         tasks_info = TaskSetInfoDerived(tasks);
     };
 
@@ -30,7 +30,7 @@ class PermutationTest2 : public ::testing::Test {
         dag_tasks = ReadDAG_Tasks(
             GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v10.csv",
             "orig", 1);
-        tasks = dag_tasks.tasks;
+        tasks = dag_tasks.GetTaskSet();
         tasks_info = TaskSetInfoDerived(tasks);
     };
 
@@ -53,7 +53,7 @@ class PermutationTest3 : public ::testing::Test {
         dag_tasks = ReadDAG_Tasks(
             GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n3_v4.csv",
             "RM", 1);
-        tasks = dag_tasks.tasks;
+        tasks = dag_tasks.GetTaskSet();
         tasks_info = TaskSetInfoDerived(tasks);
     };
 
@@ -74,7 +74,7 @@ class PermutationTest4 : public ::testing::Test {
         dag_tasks = ReadDAG_Tasks(
             GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n3_v7.csv",
             "orig", 1);
-        tasks = dag_tasks.tasks;
+        tasks = dag_tasks.GetTaskSet();
         tasks_info = TaskSetInfoDerived(tasks);
     };
 
@@ -107,7 +107,7 @@ class PermutationTest5 : public ::testing::Test {
         dag_tasks = ReadDAG_Tasks(
             GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v1.csv",
             "orig", 1);
-        tasks = dag_tasks.tasks;
+        tasks = dag_tasks.GetTaskSet();
         tasks_info = TaskSetInfoDerived(tasks);
     };
 
@@ -130,7 +130,7 @@ class PermutationTest6 : public ::testing::Test {
         dag_tasks = ReadDAG_Tasks(
             GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v1.csv",
             "RM", 1);
-        tasks = dag_tasks.tasks;
+        tasks = dag_tasks.GetTaskSet();
         tasks_info = TaskSetInfoDerived(tasks);
     };
 

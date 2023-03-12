@@ -153,7 +153,7 @@ int main(int argc, char *argv[]) {
             }
 
             if (excludeUnschedulable == 1) {
-                TaskSet &taskSet = tasks.tasks;
+                TaskSet &taskSet = tasks.GetTaskSet();
                 Reorder(taskSet, GlobalVariablesDAGOpt::priorityMode);
                 RTA_LL r(taskSet);
                 if (!r.CheckSchedulability()) {

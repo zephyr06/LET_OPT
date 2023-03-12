@@ -110,8 +110,6 @@ std::vector<BatchResult> BatchOptimizeOrder(
         }
     }
 
-    int n = runTimeAll[0].size();
-
     VariadicTable<std::string, double, double, double, double> vt(
         {"Method", "Schedulable ratio", "Obj (Only used in RTDA experiment)",
          "Obj(Norm)", "TimeTaken"},

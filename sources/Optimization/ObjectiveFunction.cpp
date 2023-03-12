@@ -39,10 +39,12 @@ JobCEC GetFirstReactJob(const JobCEC &job_curr,
         CoutError("Wrong task_index_in_chain index in GetFirstReactJob!");
     int task_id_next = pair_perm_curr.inequality_.task_next_id_;
 
-    int super_period = GetSuperPeriod(tasks_info.tasks[task_id_prev],
-                                      tasks_info.tasks[task_id_next]);
-    int prev_jobs_in_sp = super_period / tasks_info.tasks[task_id_prev].period;
-    int next_jobs_in_sp = super_period / tasks_info.tasks[task_id_next].period;
+    int super_period = GetSuperPeriod(tasks_info.GetTask(task_id_prev),
+                                      tasks_info.GetTask(task_id_next));
+    int prev_jobs_in_sp =
+        super_period / tasks_info.GetTask(task_id_prev).period;
+    int next_jobs_in_sp =
+        super_period / tasks_info.GetTask(task_id_next).period;
 
     int sp_index = job_curr.jobId / prev_jobs_in_sp;
     JobCEC react_job = GetFirstReactJobWithSuperPeriod(
@@ -69,7 +71,7 @@ double ObjReactionTime::Obj(const DAG_Model &dag_tasks,
         }
         int deadline_curr =
             variable_od[job_curr.taskId].deadline +
-            tasks_info.tasks[job_curr.taskId].period * job_curr.jobId;
+            tasks_info.GetTask(job_curr.taskId).period * job_curr.jobId;
         // int offset_curr = variable_od[job_source.taskId].offset;
         max_reaction_time = std::max(
             max_reaction_time,

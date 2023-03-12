@@ -17,7 +17,8 @@ class TaskSetPermutation {
     TaskSetPermutation(const DAG_Model& dag_tasks,
                        const std::vector<int>& chain)
         : dag_tasks_(dag_tasks),
-          tasks_info_(RegularTaskSystem::TaskSetInfoDerived(dag_tasks.tasks)),
+          tasks_info_(
+              RegularTaskSystem::TaskSetInfoDerived(dag_tasks.GetTaskSet())),
           task_chain_(chain),
           best_yet_obj_(1e9),
           iteration_count_(0) {

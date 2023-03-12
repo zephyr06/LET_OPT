@@ -8,8 +8,8 @@ TEST(RunSingle, v1) {
     auto dag_tasks =
         ReadDAG_Tasks(GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/" +
                           GlobalVariablesDAGOpt::testDataSetName + ".csv",
-                      "orig", 1);
-    TaskSet& tasks = dag_tasks.tasks;
+                      GlobalVariablesDAGOpt::priorityMode, 1);
+    TaskSet& tasks = dag_tasksGetTaskSet();
     TaskSetInfoDerived tasks_info(tasks);
 
     std::cout << "Cause effect chains:" << std::endl;

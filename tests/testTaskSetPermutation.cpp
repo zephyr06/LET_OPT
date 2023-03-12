@@ -18,7 +18,7 @@ class PermutationTest1 : public ::testing::Test {
         dag_tasks = ReadDAG_Tasks(
             GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n3_v18.csv",
             "orig", 1);
-        tasks = dag_tasks.tasks;
+        tasks = dag_tasks.GetTaskSet();
         tasks_info = TaskSetInfoDerived(tasks);
         task0 = tasks[0];
         task1 = tasks[1];

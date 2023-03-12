@@ -37,18 +37,18 @@ struct JobCEC {
 
 inline double GetDeadline(
     JobCEC job, const RegularTaskSystem::TaskSetInfoDerived &tasksInfo) {
-    return tasksInfo.tasks[job.taskId].period * job.jobId +
-           tasksInfo.tasks[job.taskId].deadline;
+    return tasksInfo.GetTask(job.taskId).period * job.jobId +
+           tasksInfo.GetTask(job.taskId).deadline;
 }
 
 inline double GetPeriod(
     JobCEC job, const RegularTaskSystem::TaskSetInfoDerived &tasksInfo) {
-    return tasksInfo.tasks[job.taskId].period;
+    return tasksInfo.GetTask(job.taskId).period;
 }
 
 inline double GetActivationTime(
     JobCEC job, const RegularTaskSystem::TaskSetInfoDerived &tasksInfo) {
-    return tasksInfo.tasks[job.taskId].period * job.jobId;
+    return tasksInfo.GetTask(job.taskId).period * job.jobId;
 }
 
 double GetStartTime(JobCEC jobCEC, const VectorDynamic &x,
@@ -58,7 +58,7 @@ inline double GetFinishTime(
     JobCEC jobCEC, const VectorDynamic &x,
     const RegularTaskSystem::TaskSetInfoDerived &tasksInfo) {
     return GetStartTime(jobCEC, x, tasksInfo) +
-           tasksInfo.tasks[jobCEC.taskId].executionTime;
+           tasksInfo.GetTask(jobCEC.taskId).executionTime;
 }
 
 std::vector<std::pair<std::pair<double, double>, JobCEC>> ObtainAllJobSchedule(
@@ -86,15 +86,13 @@ JobCEC GetJobCECFromUniqueId(
 
 inline double GetExecutionTime(
     LLint id, const RegularTaskSystem::TaskSetInfoDerived &tasksInfo) {
-    return tasksInfo.tasks[GetJobCECFromUniqueId(id, tasksInfo).taskId]
+    return tasksInfo.GetTask(GetJobCECFromUniqueId(id, tasksInfo).taskId)
         .executionTime;
 }
 inline double GetExecutionTime(
     const JobCEC &jobCEC,
     const RegularTaskSystem::TaskSetInfoDerived &tasksInfo) {
-    // return tasksInfo.tasks[GetJobCECFromUniqueId(GetJobUniqueId(jobCEC,
-    // tasksInfo), tasksInfo).taskId].executionTime;
-    return tasksInfo.tasks[jobCEC.taskId].executionTime;
+    return tasksInfo.GetTask(jobCEC.taskId).executionTime;
 }
 
 double GetHyperPeriodDiff(

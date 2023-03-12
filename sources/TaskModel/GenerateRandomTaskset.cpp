@@ -48,7 +48,7 @@ TaskSet GenerateTaskSet(int N, double totalUtilization, int numberOfProcessor,
     }
     return tasks;
 }
-void WriteTaskSets(std::ofstream &file, TaskSet &tasks) {
+void WriteTaskSets(std::ofstream &file, const TaskSet &tasks) {
     int N = tasks.size();
     file << "JobID,Period,ExecutionTime,DeadLine,processorId"
             "\n";
@@ -103,7 +103,7 @@ DAG_Model GenerateDAG(int N, double totalUtilization, int numberOfProcessor,
 }
 
 void WriteDAG(std::ofstream &file, DAG_Model &tasksDAG) {
-    WriteTaskSets(file, tasksDAG.tasks);
+    WriteTaskSets(file, tasksDAG.GetTaskSet());
     for (auto itr = tasksDAG.mapPrev.begin(); itr != tasksDAG.mapPrev.end();
          itr++) {
         for (uint i = 0; i < itr->second.size(); i++)

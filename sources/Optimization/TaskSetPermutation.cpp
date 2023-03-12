@@ -6,8 +6,8 @@ namespace DAG_SPACE {
 VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
                                  const ChainPermutation& chain_perm,
                                  std::vector<int> task_id_chain) {
-    const TaskSet& tasks = dag_tasks.tasks;
-    VariableOD variable(dag_tasks.tasks);
+    const TaskSet& tasks = dag_tasks.GetTaskSet();
+    VariableOD variable(dag_tasks.GetTaskSet());
 
     // in each iteration, we consider task i's virtual deadline and task i+1's
     // virtual offset assignment

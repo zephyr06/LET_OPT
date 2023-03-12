@@ -51,7 +51,7 @@ void WriteToResultFile(const std::string &pathDataset, const std::string &file,
 // void WriteScheduleToFile(const std::string &pathDataset, const std::string
 // &file, DAG_Model &dag_tasks,
 //                          ScheduleResult &res, int batchTestMethod_) {
-//   TaskSetInfoDerived tasksInfo(dag_tasks.tasks);
+//   TaskSetInfoDerived tasksInfo(dag_tasks.GetTaskSet());
 //   auto timeJobVector = ObtainAllJobSchedule(tasksInfo, res.startTimeVector_);
 //   timeJobVector = SortJobSchedule(timeJobVector);
 

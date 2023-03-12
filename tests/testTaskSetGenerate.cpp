@@ -28,8 +28,8 @@ TEST(ReadDAG_Tasks, v3) {
         GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v41.csv";
     DAG_Model dm = ReadDAG_Tasks(path);
     dm.print();
-    AssertEqualScalar(14.38, dm.tasks[0].executionTime);
-    AssertEqualScalar(0.223, dm.tasks[2].executionTime);
+    AssertEqualScalar(14.38, dm.GetTask(0).executionTime);
+    AssertEqualScalar(0.223, dm.GetTask(2).executionTime);
 }
 
 TEST(ReadDAG_Tasks, v2) {
@@ -46,45 +46,45 @@ TEST(ReadDAG_Tasks, v4) {
         GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n3_v1.csv";
     DAG_Model dm = ReadDAG_Tasks(path, "orig");
     dm.print();
-    AssertEqualScalar(1, dm.tasks[0].period);
-    for (int i = 0; i < 3; i++) AssertEqualScalar(i, dm.tasks[i].id);
-    AssertEqualScalar(53.7653, dm.tasks[2].executionTime);
-    AssertEqualScalar(200, dm.tasks[2].deadline);
+    AssertEqualScalar(1, dm.GetTask(0).period);
+    for (int i = 0; i < 3; i++) AssertEqualScalar(i, dm.GetTask(i).id);
+    AssertEqualScalar(53.7653, dm.GetTask(2).executionTime);
+    AssertEqualScalar(200, dm.GetTask(2).deadline);
 }
 TEST(ReadDAG_Tasks, v5) {
     string path =
         GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v45.csv";
     DAG_Model dm = ReadDAG_Tasks(path, "orig");
     dm.print();
-    for (int i = 0; i < 3; i++) AssertEqualScalar(i, dm.tasks[i].id);
-    AssertEqualScalar(4, dm.tasks[2].coreRequire);
-    AssertEqualScalar(100, dm.tasks[2].deadline);
+    for (int i = 0; i < 3; i++) AssertEqualScalar(i, dm.GetTask(i).id);
+    AssertEqualScalar(4, dm.GetTask(2).coreRequire);
+    AssertEqualScalar(100, dm.GetTask(2).deadline);
 }
 TEST(ReadDAG_Tasks, v6) {
     string path =
         GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v49.csv";
     DAG_Model dm = ReadDAG_Tasks(path, "orig");
     dm.print();
-    for (int i = 0; i < 3; i++) AssertEqualScalar(i, dm.tasks[i].id);
-    AssertEqualScalar(1, dm.tasks[0].taskType);
-    AssertEqualScalar(1, dm.tasks[1].taskType);
-    AssertEqualScalar(0, dm.tasks[2].taskType);
+    for (int i = 0; i < 3; i++) AssertEqualScalar(i, dm.GetTask(i).id);
+    AssertEqualScalar(1, dm.GetTask(0).taskType);
+    AssertEqualScalar(1, dm.GetTask(1).taskType);
+    AssertEqualScalar(0, dm.GetTask(2).taskType);
 }
 TEST(ReadDAG_Tasks, v7) {
     string path =
         GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v45.csv";
     DAG_Model dm = ReadDAG_Tasks(path, "orig");
     dm.print();
-    for (int i = 0; i < 3; i++) AssertEqualScalar(0, dm.tasks[i].taskType);
+    for (int i = 0; i < 3; i++) AssertEqualScalar(0, dm.GetTask(i).taskType);
 }
 
 TEST(TaskSetInfoDerived, v1) {
     string path =
         GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v45.csv";
     DAG_Model dm = ReadDAG_Tasks(path, "orig");
-    TaskSet tasks = dm.tasks;
+    TaskSet tasks = dm.GetTaskSet();
     TaskSetInfoDerived tasksInfo(tasks);
-    AssertEqualScalar(10, tasksInfo.tasks[0].executionTime);
+    AssertEqualScalar(10, tasksInfo.GetTask(0).executionTime);
 }
 
 TEST(GetRandomChains, DAG_Model) {

@@ -3,7 +3,7 @@
 namespace DAG_SPACE {
 
 VariableRange FindVariableRange(const DAG_Model& dag_tasks) {
-    const TaskSet& tasks = dag_tasks.tasks;
+    const TaskSet& tasks = dag_tasks.GetTaskSet();
     VariableOD upper_bound(tasks);
     VariableOD lower_bound(tasks);
     for (uint i = 0; i < tasks.size(); i++) {

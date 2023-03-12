@@ -49,10 +49,6 @@ void PrintChains(const std::vector<std::vector<int>> &chains);
 typedef std::map<int, RegularTaskSystem::TaskSet> MAP_Prev;
 using namespace RegularTaskSystem;
 class DAG_Model {
-   private:
-    double sfBound_;
-    double rtdaBound_;
-
    public:
     DAG_Model() : sfBound_(-1), rtdaBound_(-1) {}
     DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, int numCauseEffectChain = 1)
@@ -106,12 +102,22 @@ class DAG_Model {
     void CategorizeTaskSet();
     void RecordTaskPosition();
 
-    int GetTaskIndex(int task_id) const {
+    inline TaskSet GetTaskSet() const { return tasks; }
+
+    inline int GetTaskIndex(int task_id) const {
         return task_id2position_.at(task_id);
+    }
+    inline Task GetTask(int task_id) const {
+        return tasks[GetTaskIndex(task_id)];
     }
 
     // data member
+   private:
+    double sfBound_;
+    double rtdaBound_;
     TaskSet tasks;
+
+   public:
     MAP_Prev mapPrev;
     Graph graph_;
     indexVertexMap indexesBGL_;

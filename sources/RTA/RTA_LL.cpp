@@ -11,7 +11,7 @@ int GetResponseTime(const TaskSet &tasks, int index, int warm_start) {
 }
 
 int GetResponseTime(const DAG_Model &dag_tasks, int task_id) {
-    const TaskSet &tasks = dag_tasks.tasks;
+    const TaskSet &tasks = dag_tasks.GetTaskSet();
     int processor_id = tasks[task_id].processorId;
     auto itr = dag_tasks.processor2taskset_.find(processor_id);
     if (itr == dag_tasks.processor2taskset_.end())

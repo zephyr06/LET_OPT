@@ -24,10 +24,10 @@ struct SinglePairPermutation {
         const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
         : inequality_(inequality) {
         int superperiod =
-            GetSuperPeriod(tasks_info.tasks[inequality.task_prev_id_],
-                           tasks_info.tasks[inequality.task_next_id_]);
+            GetSuperPeriod(tasks_info.GetTask(inequality.task_prev_id_),
+                           tasks_info.GetTask(inequality.task_next_id_));
         job_first_react_matches_.reserve(
-            superperiod / tasks_info.tasks[inequality.task_prev_id_].period);
+            superperiod / tasks_info.GetTask(inequality.task_prev_id_).period);
     }
     SinglePairPermutation(
         PermutationInequality inequality,
@@ -55,8 +55,8 @@ class TwoTaskPermutations {
         : task_prev_id_(task_prev_id),
           task_next_id_(task_next_id),
           tasks_info_(tasks_info) {
-        superperiod_ = GetSuperPeriod(tasks_info.tasks[task_prev_id],
-                                      tasks_info.tasks[task_next_id]);
+        superperiod_ = GetSuperPeriod(tasks_info.GetTask(task_prev_id),
+                                      tasks_info.GetTask(task_next_id));
         variable_od_range_ = FindVariableRange(dag_tasks);
         single_permutations_.reserve(1e4);
         FindAllPermutations();

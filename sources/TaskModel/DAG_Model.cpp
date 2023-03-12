@@ -169,7 +169,7 @@ void DAG_Model::CategorizeTaskSet() {
     }
 }
 void DAG_Model::RecordTaskPosition() {
-    for (int i = 0; i < tasks.size(); i++) {
+    for (int i = 0; i < static_cast<int>(tasks.size()); i++) {
         task_id2position_[tasks[i].id] = i;
     }
 }

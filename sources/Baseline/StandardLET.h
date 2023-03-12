@@ -30,7 +30,7 @@ ScheduleResult PerformLETAnalysis(const DAG_Model& dag_tasks) {
     auto start = std::chrono::high_resolution_clock::now();
 
     ScheduleResult res;
-    const TaskSet& tasks = dag_tasks.tasks;
+    const TaskSet& tasks = dag_tasks.GetTaskSet();
     TaskSetInfoDerived tasks_info(tasks);
     ChainPermutation chain_perm =
         GetStandardLETChain(dag_tasks, tasks_info, dag_tasks.chains_[0]);
