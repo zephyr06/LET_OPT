@@ -5,6 +5,9 @@
 
 using namespace DAG_SPACE;
 TEST(RunSingle, v1) {
+#ifdef PROFILE_CODE
+    BeginTimer("main");
+#endif
     auto dag_tasks =
         ReadDAG_Tasks(GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/" +
                           GlobalVariablesDAGOpt::testDataSetName + ".csv",
@@ -26,6 +29,10 @@ TEST(RunSingle, v1) {
     std::cout << "The minimum objective function found is " << obj_find << "\n";
     std::cout << "The total number of permutation iterations is: "
               << task_sets_perms.iteration_count_ << "\n";
+#ifdef PROFILE_CODE
+    EndTimer("main");
+    PrintTimer();
+#endif
 }
 
 int main(int argc, char** argv) {

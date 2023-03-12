@@ -8,7 +8,7 @@ SKIP_PERM: 1
 #*************************************************************
 # Task set settings
 priorityMode: RM
-# test_n5_v9 requies many permutations
+# test_n5_v9 test_n5_v16 requies many permutations
 # test_n5_v41 test_n30_v3 
 testDataSetName: test_n5_v16
 TIME_SCALE_FACTOR: 10

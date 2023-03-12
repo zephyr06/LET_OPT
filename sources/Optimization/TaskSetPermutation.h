@@ -3,6 +3,7 @@
 #include "sources/Optimization/ChainPermutation.h"
 #include "sources/Optimization/ObjectiveFunction.h"
 #include "sources/Utils/BatchUtils.h"
+#include "sources/Utils/profilier.h"
 namespace DAG_SPACE {
 
 // assume the simple response time analysis
@@ -32,10 +33,17 @@ class TaskSetPermutation {
     }
 
     void FindPairPermutations() {
+#ifdef PROFILE_CODE
+        BeginTimer(__FUNCTION__);
+#endif
         for (uint i = 0; i < task_chain_.size() - 1; i++) {
+            if (ifTimeout()) break;
             adjacent_two_task_permutations_.push_back(TwoTaskPermutations(
                 task_chain_[i], task_chain_[i + 1], dag_tasks_, tasks_info_));
         }
+#ifdef PROFILE_CODE
+        EndTimer(__FUNCTION__);
+#endif
     }
 
     int PerformOptimization() {
@@ -66,12 +74,16 @@ class TaskSetPermutation {
     }
 
     void EvaluateChainPermutation(const ChainPermutation& chain_perm) {
+#ifdef PROFILE_CODE
+        BeginTimer(__FUNCTION__);
+#endif
         // evaluate schedulability
         VariableOD variable_od =
             FindODFromPermutation(dag_tasks_, chain_perm, task_chain_);
-        if (!variable_od.valid_)
-            return;
-        else {
+
+        if (variable_od.valid_)  // if valid, we'll exam obj; otherwise, we'll
+                                 // just move forward
+        {
             double obj_curr = ObjReactionTime::Obj(dag_tasks_, tasks_info_,
                                                    chain_perm, variable_od);
             if (obj_curr < best_yet_obj_) {
@@ -79,8 +91,9 @@ class TaskSetPermutation {
                 best_yet_chain_ = chain_perm;
             }
         }
-
-        // chain_permutations_.push_back(chain_perm);
+#ifdef PROFILE_CODE
+        EndTimer(__FUNCTION__);
+#endif
     }
 
     bool ExamSchedulabilityOptSol() const {

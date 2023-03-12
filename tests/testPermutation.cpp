@@ -397,6 +397,31 @@ TEST_F(PermutationTest4, simple_contructor_v1) {
     EXPECT_EQ(0, two_task_permutation.size());
 }
 
+class PermutationTest5 : public ::testing::Test {
+   protected:
+    void SetUp() override {
+        dag_tasks = ReadDAG_Tasks(
+            GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v16.csv",
+            "orig", 1);
+        tasks = dag_tasks.GetTaskSet();
+        tasks_info = TaskSetInfoDerived(tasks);
+        task0 = tasks[3];  // period 10, execution time 1
+        task1 = tasks[2];  // period 10000, execution time 547
+    };
+
+    DAG_Model dag_tasks;
+    TaskSet tasks;
+    TaskSetInfoDerived tasks_info;
+    Task task0;
+    Task task1;
+    Task task2;
+};
+
+TEST_F(PermutationTest5, simple_contructor_v1) {
+    TwoTaskPermutations two_task_permutation(3, 2, dag_tasks, tasks_info);
+    EXPECT_EQ(0, two_task_permutation.size());
+}
+
 int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);
     ::testing::InitGoogleMock(&argc, argv);
