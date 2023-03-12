@@ -1,4 +1,0 @@
-JobID,Period,ExecutionTime,DeadLine,processorId,coreRequireMax,taskType
-0,200,10,200,0,1,1
-1,200,10,200,0,1,1
-2,200,10,200,0,2,0

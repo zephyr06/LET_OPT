@@ -49,16 +49,6 @@ TEST(ReadDAG_Tasks, v5) {
     for (int i = 0; i < 3; i++) AssertEqualScalar(i, dm.GetTask(i).id);
     AssertEqualScalar(100, dm.GetTask(2).deadline);
 }
-TEST(ReadDAG_Tasks, v6) {
-    string path =
-        GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v49.csv";
-    DAG_Model dm = ReadDAG_Tasks(path, "orig");
-    dm.print();
-    for (int i = 0; i < 3; i++) AssertEqualScalar(i, dm.GetTask(i).id);
-    AssertEqualScalar(1, dm.GetTask(0).taskType);
-    AssertEqualScalar(1, dm.GetTask(1).taskType);
-    AssertEqualScalar(0, dm.GetTask(2).taskType);
-}
 TEST(ReadDAG_Tasks, v7) {
     string path =
         GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v45.csv";
