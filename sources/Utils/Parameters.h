@@ -22,6 +22,7 @@ extern const std::string testDataSetName;
 extern const std::string priorityMode;
 extern const int whether_shuffle_CE_chain;
 extern const int TIME_SCALE_FACTOR;
+extern const int CHAIN_NUMBER;
 
 // used in SA
 extern const double coolingRateSA;

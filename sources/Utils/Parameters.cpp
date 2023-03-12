@@ -18,6 +18,8 @@ const std::string priorityMode = (std::string)ConfigParameters["priorityMode"];
 const int whether_shuffle_CE_chain =
     (int)ConfigParameters["whether_shuffle_CE_chain"];
 const int TIME_SCALE_FACTOR = (int)ConfigParameters["TIME_SCALE_FACTOR"];
+const int CHAIN_NUMBER = (int)ConfigParameters["CHAIN_NUMBER"];
+
 // *************************************************************
 
 // SA

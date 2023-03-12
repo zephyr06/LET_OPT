@@ -134,29 +134,24 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < DAG_taskSetNumber; i++) {
         if (taskType == 1)  // DAG task set
         {
-            DAG_Model tasks = GenerateDAG(
+            DAG_Model dag_tasks = GenerateDAG(
                 task_number_in_tasksets, totalUtilization, numberOfProcessor, 1,
                 parallelismFactor, period_generation_type, deadlineType);
 
             if (excludeEmptyEdgeDag == 1) {
-                bool whether_empty_edges = true;
-                for (auto pair : tasks.mapPrev) {
-                    if (pair.second.size() > 0) {
-                        whether_empty_edges = false;
-                        break;
-                    }
-                }
-                if (whether_empty_edges) {
+                TaskSet t = dag_tasks.GetTasks();
+                DAG_Model ttt(t, dag_tasks.mapPrev, 1e9, 1e9,
+                              GlobalVariablesDAGOpt::CHAIN_NUMBER);
+                if (ttt.chains_.size() != GlobalVariablesDAGOpt::CHAIN_NUMBER) {
                     i--;
                     continue;
                 }
             }
 
             if (excludeUnschedulable == 1) {
-                TaskSet &taskSet = tasks.GetTaskSet();
-                Reorder(taskSet, GlobalVariablesDAGOpt::priorityMode);
-                RTA_LL r(taskSet);
-                if (!r.CheckSchedulability()) {
+                const TaskSet &task_set = dag_tasks.GetTaskSet();
+                Reorder(task_set, GlobalVariablesDAGOpt::priorityMode);
+                if (!CheckSchedulability(dag_tasks)) {
                     i--;
                     continue;  // re-generate a new task set
                 }
@@ -166,7 +161,7 @@ int main(int argc, char *argv[]) {
                               to_string(i) + "-syntheticJobs" + ".csv";
             std::ofstream myfile;
             myfile.open(outDirectory + fileName);
-            WriteDAG(myfile, tasks);
+            WriteDAG(myfile, dag_tasks);
             myfile.close();
 
         } else

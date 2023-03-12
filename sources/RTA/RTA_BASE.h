@@ -32,48 +32,6 @@ class RTA_BASE {
         return 0;
     }
 
-    /**
-     * @brief
-     *
-     * @tparam Schedul_Analysis
-     * @param tasks
-     * @param warmStart
-     * @param whetherPrint
-     * @param tol: positive value, makes schedulability check more strict
-     * @return true: system is schedulable
-     * @return false: system is not schedulable
-     */
-    bool CheckSchedulability(VectorDynamic warmStart, bool whetherPrint = false,
-                             double tol = 0) {
-        int N = tasks_.size();
-        for (int i = 0; i < N; i++) {
-            double rta = RTA_Common_Warm(warmStart(i, 0), i);
-            if (whetherPrint)
-                std::cout << "response time for task " << i << " is " << rta
-                          << " and deadline is "
-                          << min(tasks_[i].deadline, tasks_[i].period)
-                          << std::endl;
-            if (rta + tol > min(tasks_[i].deadline, tasks_[i].period)) {
-                if (whetherPrint) {
-                    std::cout << "The current task set is not schedulable "
-                                 "because of task "
-                              << i << " "
-                              << "!\n";
-                }
-
-                return false;
-            }
-        }
-        if (whetherPrint) std::cout << std::endl;
-        return true;
-    }
-
-    bool CheckSchedulability(bool whetherPrint = false) {
-        VectorDynamic warmStart =
-            GetParameterVD<double>(tasks_, "executionTime");
-        return CheckSchedulability(warmStart, whetherPrint);
-    }
-
     inline int UnschedulableRTA(const Task &task) {
         return task.deadline + 1e4 * GlobalVariablesDAGOpt::TIME_SCALE_FACTOR;
     }

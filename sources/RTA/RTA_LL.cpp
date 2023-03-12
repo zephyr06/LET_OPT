@@ -28,6 +28,27 @@ int GetResponseTime(const DAG_Model &dag_tasks, int task_id) {
     return r.RTA_Common_Warm(task_curr.executionTime, task_index_p);
 }
 
+/**
+ * @brief
+ *
+ * @tparam Schedul_Analysis
+ * @param tasks
+ * @param warmStart
+ * @param whetherPrint
+ * @param tol: positive value, makes schedulability check more strict
+ * @return true: system is schedulable
+ * @return false: system is not schedulable
+ */
+bool CheckSchedulability(const DAG_Model &dag_tasks, bool whetherPrint,
+                         double tol) {
+    const TaskSet &tasks = dag_tasks.GetTaskSet();
+    for (int i = 0; i < static_cast<int>(tasks.size()); i++) {
+        double rta = GetResponseTime(dag_tasks, i);
+        if (rta > dag_tasks.GetTask(i).deadline) return false;
+    }
+    return true;
+}
+
 // std::vector<int> GetResponseTimeOfChain(const TaskSet &tasks,
 //                                         const std::vector<int> &chain) {
 //     std::vector<int> rta_vec;

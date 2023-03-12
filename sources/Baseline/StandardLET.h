@@ -37,8 +37,7 @@ ScheduleResult PerformLETAnalysis(const DAG_Model& dag_tasks) {
     VariableOD variable_od = VariableOD(tasks);
     res.obj_ = ObjectiveFunctionBase::Obj(dag_tasks, tasks_info, chain_perm,
                                           variable_od);
-    RTA_LL r(tasks);
-    res.schedulable_ = r.CheckSchedulability();
+    res.schedulable_ = CheckSchedulability(dag_tasks);
 
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration =

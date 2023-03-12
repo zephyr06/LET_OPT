@@ -103,6 +103,9 @@ int GetResponseTime(const TaskSet &tasks, int index, int warm_start = 0);
 
 int GetResponseTime(const DAG_Model &dag_tasks, int task_id);
 
+bool CheckSchedulability(const DAG_Model &dag_tasks, bool whetherPrint = false,
+                         double tol = 0);
+
 // std::vector<int> GetResponseTimeOfChain(const TaskSet &tasks,
 //                                         const std::vector<int> &chain);
 
