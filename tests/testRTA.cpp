@@ -155,6 +155,29 @@ TEST_F(PermutationTest6, v1) {
     EXPECT_EQ(26, GetResponseTime(dag_tasks, 4));
 }
 
+class PermutationTest7 : public ::testing::Test {
+   protected:
+    void SetUp() override {
+        dag_tasks = ReadDAG_Tasks(
+            GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v3.csv",
+            "RM", 1);
+        tasks = dag_tasks.GetTaskSet();
+        tasks_info = TaskSetInfoDerived(tasks);
+    };
+
+    DAG_Model dag_tasks;
+    TaskSet tasks;
+    TaskSetInfoDerived tasks_info;
+};
+
+TEST_F(PermutationTest7, v1) {
+    EXPECT_EQ(1, GetResponseTime(dag_tasks, 0));
+    EXPECT_EQ(20, GetResponseTime(dag_tasks, 1));
+    EXPECT_EQ(30, GetResponseTime(dag_tasks, 2));
+    EXPECT_EQ(4, GetResponseTime(dag_tasks, 3));
+    EXPECT_EQ(99, GetResponseTime(dag_tasks, 4));
+}
+
 int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);
     ::testing::InitGoogleMock(&argc, argv);

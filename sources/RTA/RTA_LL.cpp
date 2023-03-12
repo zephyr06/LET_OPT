@@ -12,7 +12,8 @@ int GetResponseTime(const TaskSet &tasks, int index, int warm_start) {
 
 int GetResponseTime(const DAG_Model &dag_tasks, int task_id) {
     const TaskSet &tasks = dag_tasks.GetTaskSet();
-    int processor_id = tasks[task_id].processorId;
+    const Task &task_curr = dag_tasks.GetTask(task_id);
+    int processor_id = task_curr.processorId;
     auto itr = dag_tasks.processor2taskset_.find(processor_id);
     if (itr == dag_tasks.processor2taskset_.end())
         CoutError("Unknown processor id!");
@@ -24,7 +25,7 @@ int GetResponseTime(const DAG_Model &dag_tasks, int task_id) {
             "Unknown processor id (task_id2task_index_within_processor_)!");
     int task_index_p =
         dag_tasks.task_id2task_index_within_processor_.at(task_id);
-    return r.RTA_Common_Warm(tasks[task_id].executionTime, task_index_p);
+    return r.RTA_Common_Warm(task_curr.executionTime, task_index_p);
 }
 
 // std::vector<int> GetResponseTimeOfChain(const TaskSet &tasks,
