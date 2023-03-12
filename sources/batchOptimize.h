@@ -99,6 +99,9 @@ std::vector<BatchResult> BatchOptimizeOrder(
                           << Color::def << std::endl;
                 std::cout << "res.timeTaken_: " << res.timeTaken_ << "\n\n";
 
+                if (!res.schedulable_ || res.obj_ >= 1e8)
+                    errorFiles.push_back(file);
+
                 WriteToResultFile(pathDataset, file, res, batchTestMethod);
                 runTimeAll[batchTestMethod].push_back(res.timeTaken_);
                 schedulableAll[batchTestMethod].push_back(
@@ -141,6 +144,8 @@ std::vector<BatchResult> BatchOptimizeOrder(
                                        runTimeAll[1].end())) -
                      runTimeAll[1].begin())
               << "\n";
+
+    for (auto file : errorFiles) std::cout << file << "\n";
 
     return batchResVec;
 }
