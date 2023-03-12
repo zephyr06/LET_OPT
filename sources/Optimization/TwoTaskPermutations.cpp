@@ -24,11 +24,11 @@ PermutationInequality GenerateBoxPermutationConstraints(
     int task_prev_id, int task_next_id, const VariableRange& variable_range) {
     return PermutationInequality(
         task_prev_id, task_next_id,
-        variable_range.lower_bound[task_prev_id].deadline -
-            variable_range.upper_bound[task_next_id].offset,
+        variable_range.lower_bound.at(task_prev_id).deadline -
+            variable_range.upper_bound.at(task_next_id).offset,
         true,
-        variable_range.upper_bound[task_prev_id].deadline -
-            variable_range.lower_bound[task_next_id].offset,
+        variable_range.upper_bound.at(task_prev_id).deadline -
+            variable_range.lower_bound.at(task_next_id).offset,
         true);
 }
 

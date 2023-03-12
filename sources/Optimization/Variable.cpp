@@ -10,8 +10,8 @@ VariableRange FindVariableRange(const DAG_Model& dag_tasks) {
         int rta =
             GetResponseTime(dag_tasks,
                             tasks[i].id);  // TODO: exam schedulability there
-        lower_bound.variables_[i].deadline = rta;
-        upper_bound.variables_[i].offset = tasks[i].deadline - rta;
+        lower_bound[tasks[i].id].deadline = rta;
+        upper_bound[tasks[i].id].offset = tasks[i].deadline - rta;
     }
     return VariableRange{lower_bound, upper_bound};
 }

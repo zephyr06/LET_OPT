@@ -70,7 +70,7 @@ double ObjReactionTime::Obj(const DAG_Model &dag_tasks,
             job_curr = GetFirstReactJob(job_curr, chain_perm, i, tasks_info);
         }
         int deadline_curr =
-            variable_od[job_curr.taskId].deadline +
+            variable_od.at(job_curr.taskId).deadline +
             tasks_info.GetTask(job_curr.taskId).period * job_curr.jobId;
         // int offset_curr = variable_od[job_source.taskId].offset;
         max_reaction_time = std::max(
