@@ -143,6 +143,9 @@ std::vector<BatchResult> BatchOptimizeOrder(
               << int((std::max_element(runTimeAll[1].begin(),
                                        runTimeAll[1].end())) -
                      runTimeAll[1].begin())
+              << ", which takes "
+              << *(std::max_element(runTimeAll[1].begin(), runTimeAll[1].end()))
+              << " seconds"
               << "\n";
 
     for (auto file : errorFiles) std::cout << file << "\n";

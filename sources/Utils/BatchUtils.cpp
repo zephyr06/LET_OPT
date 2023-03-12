@@ -8,18 +8,20 @@ std::string GetResFileName(const std::string &pathDataset,
     if (batchTestMethod_ == 0) {
         property = "_Initial_Res.txt";
     } else if (batchTestMethod_ == 1) {
-        property = "_Verucchi20_Res.txt";
-    } else if (batchTestMethod_ == 2) {
-        property = "_Wang21_Res.txt";
-    } else if (batchTestMethod_ == 3) {
         property = "_TOM_Res.txt";
-    } else if (batchTestMethod_ == 4) {
-        property = "_TOM_Fast_Res.txt";
-    } else if (batchTestMethod_ == 5) {
-        property = "_TOM_FastLP_Res.txt";
-    } else if (batchTestMethod_ == 6) {
-        property = "_TOM_Global_Res.txt";
-    } else {
+    } else if (batchTestMethod_ == 2) {
+        property = "_TOM_FAST_Res.txt";
+    }
+    // else if (batchTestMethod_ == 3) {
+    //     property = "_TOM_Res.txt";
+    // } else if (batchTestMethod_ == 4) {
+    //     property = "_TOM_Fast_Res.txt";
+    // } else if (batchTestMethod_ == 5) {
+    //     property = "_TOM_FastLP_Res.txt";
+    // } else if (batchTestMethod_ == 6) {
+    //     property = "_TOM_Global_Res.txt";
+    // }
+    else {
         property = "";
     }
     return pathDataset + file + property;
