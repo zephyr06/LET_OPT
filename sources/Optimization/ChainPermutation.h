@@ -8,6 +8,8 @@ class ChainPermutation {
    public:
     ChainPermutation() {}
 
+    ChainPermutation(uint n) { permutation_chain_.reserve(n); }
+
     inline size_t size() const { return permutation_chain_.size(); }
     inline void push_back(const SinglePairPermutation &perm) {
         permutation_chain_.push_back(perm);

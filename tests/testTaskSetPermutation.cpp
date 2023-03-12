@@ -30,7 +30,7 @@ class PermutationTest1 : public ::testing::Test {
 
         perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
         perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
-        task_sest_perms = TaskSetPermutation(dag_tasks, task_chain);
+        task_sets_perms = TaskSetPermutation(dag_tasks, task_chain);
     };
 
     DAG_Model dag_tasks;
@@ -46,15 +46,15 @@ class PermutationTest1 : public ::testing::Test {
 
     TwoTaskPermutations perm01;
     TwoTaskPermutations perm12;
-    TaskSetPermutation task_sest_perms;
+    TaskSetPermutation task_sets_perms;
     std::vector<int> task_chain = {0, 1, 2};
 };
 
 TEST_F(PermutationTest1, Iteration) {
-    int obj_find = task_sest_perms.PerformOptimization();
-    task_sest_perms.best_yet_chain_[0].print();
-    task_sest_perms.best_yet_chain_[1].print();
-    EXPECT_EQ(6, task_sest_perms.iteration_count_);
+    int obj_find = task_sets_perms.PerformOptimization();
+    task_sets_perms.best_yet_chain_[0].print();
+    task_sets_perms.best_yet_chain_[1].print();
+    EXPECT_EQ(6, task_sets_perms.iteration_count_);
     EXPECT_EQ(20, obj_find);
 }
 

@@ -26,9 +26,14 @@ struct SinglePairPermutation {
         int superperiod =
             GetSuperPeriod(tasks_info.tasks[inequality.task_prev_id_],
                            tasks_info.tasks[inequality.task_next_id_]);
-        job_matches_.reserve(superperiod /
-                             tasks_info.tasks[inequality.task_prev_id_].period);
+        job_first_react_matches_.reserve(
+            superperiod / tasks_info.tasks[inequality.task_prev_id_].period);
     }
+    SinglePairPermutation(
+        PermutationInequality inequality,
+        std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches)
+        : inequality_(inequality),
+          job_first_react_matches_(job_first_react_matches) {}
 
     bool AddMatchJobPair(const JobCEC& job_curr, const JobCEC& job_match);
 
@@ -36,7 +41,9 @@ struct SinglePairPermutation {
 
     // data members
     PermutationInequality inequality_;
-    std::unordered_map<JobCEC, std::vector<JobCEC>> job_matches_;
+    std::unordered_map<JobCEC, std::vector<JobCEC>>
+        job_first_react_matches_;  // TODO: there should be only one job in the
+                                   // vector, make it happen
 };
 
 class TwoTaskPermutations {

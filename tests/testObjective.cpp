@@ -1,5 +1,7 @@
 #include "gmock/gmock.h"  // Brings in gMock.
+#include "sources/Baseline/StandardLET.h"
 #include "sources/Optimization/ObjectiveFunction.h"
+#include "sources/Optimization/OptimizationMethods.h"
 #include "sources/Optimization/PermutationInequality.h"
 #include "sources/Optimization/TaskSetPermutation.h"
 #include "sources/Optimization/TwoTaskPermutations.h"
@@ -111,6 +113,48 @@ TEST_F(PermutationTest1, ChainPermutation_v1) {
                                        variable_od));
 }
 
+// TEST_F(PermutationTest1, FindFirstReactJob) {
+//     using namespace StandardLET;
+//     // chain is 0 -> 1 -> 2
+//     EXPECT_EQ(1, FindFirstReactJob(tasks[0], tasks[1], 0));
+//     EXPECT_EQ(1, FindFirstReactJob(tasks[0], tasks[1], 1));
+//     EXPECT_EQ(1, FindFirstReactJob(tasks[1], tasks[2], 0));
+// }
+
+TEST_F(PermutationTest1, GetPossibleReactingJobsLET) {
+    using namespace StandardLET;
+    // chain is 0 -> 1 -> 2
+    EXPECT_EQ(
+        1, GetPossibleReactingJobsLET(JobCEC(0, 0), tasks[1], 20, tasks_info)[0]
+               .jobId);
+
+    EXPECT_EQ(
+        1, GetPossibleReactingJobsLET(JobCEC(0, 1), tasks[1], 20, tasks_info)[0]
+               .jobId);
+
+    EXPECT_EQ(
+        1, GetPossibleReactingJobsLET(JobCEC(1, 0), tasks[2], 20, tasks_info)[0]
+               .jobId);
+}
+
+TEST_F(PermutationTest1, GetJobMatch) {
+    using namespace StandardLET;
+    // chain is 0 -> 1 -> 2
+    auto job_match_map01 = GetJobMatch(dag_tasks, tasks_info, 0, 1);
+    EXPECT_EQ(1, job_match_map01[JobCEC(0, 0)][0].jobId);
+    EXPECT_EQ(1, job_match_map01[JobCEC(0, 1)][0].jobId);
+    auto job_match_map10 = GetJobMatch(dag_tasks, tasks_info, 1, 2);
+    EXPECT_EQ(1, job_match_map10[JobCEC(1, 0)][0].jobId);
+}
+
+TEST_F(PermutationTest1, PerformOpt) {
+    using namespace StandardLET;
+    // chain is 0 -> 1 -> 2
+    dag_tasks.chains_[0] = {0, 1, 2};
+    ScheduleResult res = PerformOpt<ObjReactionTime>(dag_tasks);
+    EXPECT_EQ(60, res.obj_);
+}
+
 class PermutationTest_Non_Har : public ::testing::Test {
    protected:
     void SetUp() override {
@@ -180,7 +224,83 @@ TEST_F(PermutationTest_Non_Har, diff_deadline_from_variable) {
                                        variable_od));
 }
 
-int main(int argc, char **argv) {
+// TEST_F(PermutationTest_Non_Har, FindFirstReactJob) {
+//     using namespace StandardLET;
+//     // chain is 0 -> 1 -> 2
+//     EXPECT_EQ(1, FindFirstReactJob(tasks[0], tasks[1], 0));
+//     EXPECT_EQ(2, FindFirstReactJob(tasks[0], tasks[1], 1));
+//     EXPECT_EQ(2, FindFirstReactJob(tasks[0], tasks[1], 2));
+//     EXPECT_EQ(1, FindFirstReactJob(tasks[1], tasks[2], 0));
+// }
+
+TEST_F(PermutationTest_Non_Har, GetPossibleReactingJobsLET) {
+    using namespace StandardLET;
+    // chain is 0 -> 1 -> 2
+    EXPECT_EQ(
+        1, GetPossibleReactingJobsLET(JobCEC(0, 0), tasks[1], 30, tasks_info)[0]
+               .jobId);
+    EXPECT_EQ(
+        2, GetPossibleReactingJobsLET(JobCEC(0, 1), tasks[1], 30, tasks_info)[0]
+               .jobId);
+    EXPECT_EQ(
+        2, GetPossibleReactingJobsLET(JobCEC(0, 2), tasks[1], 30, tasks_info)[0]
+               .jobId);
+    EXPECT_EQ(
+        1, GetPossibleReactingJobsLET(JobCEC(1, 0), tasks[2], 15, tasks_info)[0]
+               .jobId);
+}
+
+TEST_F(PermutationTest_Non_Har, PerformOpt) {
+    using namespace StandardLET;
+    // chain is 0 -> 1 -> 2
+    dag_tasks.chains_[0] = {0, 1, 2};
+    ScheduleResult res = PerformOpt<ObjReactionTime>(dag_tasks);
+    EXPECT_EQ(50, res.obj_);
+}
+
+class PermutationTest_Non_Har2 : public ::testing::Test {
+   protected:
+    void SetUp() override {
+        dag_tasks = ReadDAG_Tasks(
+            GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n3_v8.csv",
+            "orig", 1);
+        tasks = dag_tasks.tasks;
+        tasks_info = TaskSetInfoDerived(tasks);
+        task0 = tasks[0];
+        task1 = tasks[1];
+        task2 = tasks[2];
+
+        variable_od = VariableOD(tasks);
+    };
+
+    DAG_Model dag_tasks;
+    TaskSet tasks;
+    TaskSetInfoDerived tasks_info;
+    Task task0;
+    Task task1;
+    Task task2;
+    VariableOD variable_od;
+};
+
+TEST_F(PermutationTest_Non_Har2, GetPossibleReactingJobsLET) {
+    using namespace StandardLET;
+    // chain is 0 -> 1 -> 2
+    EXPECT_EQ(
+        2, GetPossibleReactingJobsLET(JobCEC(0, 0), tasks[1], 30, tasks_info)[0]
+               .jobId);
+
+    EXPECT_EQ(
+        3, GetPossibleReactingJobsLET(JobCEC(0, 1), tasks[1], 30, tasks_info)[0]
+               .jobId);
+}
+TEST_F(PermutationTest_Non_Har2, PerformOpt) {
+    using namespace StandardLET;
+    // chain is 0 -> 1 -> 2
+    dag_tasks.chains_[0] = {0, 1, 2};
+    ScheduleResult res = PerformOpt<ObjReactionTime>(dag_tasks);
+    EXPECT_EQ(40, res.obj_);
+}
+int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);
     ::testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();

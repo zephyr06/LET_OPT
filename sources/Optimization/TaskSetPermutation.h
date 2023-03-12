@@ -73,6 +73,10 @@ class TaskSetPermutation {
         // chain_permutations_.push_back(chain_perm);
     }
 
+    bool ExamSchedulabilityOptSol() const {
+        return true;
+    }  // TODO: finish this function
+
     // data members
     DAG_Model dag_tasks_;
     RegularTaskSystem::TaskSetInfoDerived tasks_info_;

@@ -13,8 +13,8 @@ JobCEC GetFirstReactJobWithSuperPeriod(const JobCEC &job_curr,
         const SinglePairPermutation &pair_perm_curr =
             chain_perm[task_index_in_chain];
         // pair_perm_curr.print();
-        auto itr = pair_perm_curr.job_matches_.find(job_curr);
-        if (itr == pair_perm_curr.job_matches_.end())
+        auto itr = pair_perm_curr.job_first_react_matches_.find(job_curr);
+        if (itr == pair_perm_curr.job_first_react_matches_.end())
             CoutError(
                 "Didn't find job_curr records in "
                 "GetFirstReactJobWithSuperPeriod!");

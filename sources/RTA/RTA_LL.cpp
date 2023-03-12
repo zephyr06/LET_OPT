@@ -18,12 +18,12 @@ int GetResponseTime(const DAG_Model &dag_tasks, int task_id) {
         CoutError("Unknown processor id!");
 
     RTA_LL r(itr->second);
-    auto itr2 = dag_tasks.task_id2task_index_within_processor.find(task_id);
-    if (itr2 == dag_tasks.task_id2task_index_within_processor.end())
+    auto itr2 = dag_tasks.task_id2task_index_within_processor_.find(task_id);
+    if (itr2 == dag_tasks.task_id2task_index_within_processor_.end())
         CoutError(
-            "Unknown processor id (task_id2task_index_within_processor)!");
+            "Unknown processor id (task_id2task_index_within_processor_)!");
     int task_index_p =
-        dag_tasks.task_id2task_index_within_processor.at(task_id);
+        dag_tasks.task_id2task_index_within_processor_.at(task_id);
     return r.RTA_Common_Warm(tasks[task_id].executionTime, task_index_p);
 }
 

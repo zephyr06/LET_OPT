@@ -1,0 +1,158 @@
+#pragma once
+#include <dirent.h>
+#include <sys/types.h>
+
+#include <chrono>
+#include <fstream>
+#include <iostream>
+
+#include "assert.h"
+#include "sources/Optimization/TaskSetPermutation.h"
+#include "sources/Utils/BatchUtils.h"
+#include "sources/Utils/VariadicTable.h"
+
+using namespace std::chrono;
+namespace DAG_SPACE {
+enum BaselineMethods {
+    InitialMethod,  // 0
+    TOM,            // 1
+    TOM_FAST,       // 2
+    SA              // 3
+};
+// if adding more methods, need to update WriteScheduleToFile() and
+// GlobalVariablesDAGOpt::TotalMethodUnderComparison
+
+struct BatchResult {
+    double schedulableRatio;
+    double performance;
+    double runTime;
+};
+void ClearResultFiles(std::string dataSetFolder);
+
+template <typename ObjectiveFunctionBase>
+DAG_SPACE::ScheduleResult PerformSingleScheduling(
+    DAG_Model &dagTasks, BaselineMethods batchTestMethod) {
+    ScheduleResult res;
+    switch (batchTestMethod) {
+        case InitialMethod:
+            // res =
+            // DAG_SPACE::ScheduleDAGLS_LFT<ObjectiveFunctionBase>(
+            //     dagTasks, scheduleOptions,
+            //     GlobalVariablesDAGOpt::sensorFusionTolerance,
+            //     GlobalVariablesDAGOpt::freshTol);
+            break;
+        case TOM:
+            res =
+                DAG_SPACE::OptimizeSF::ScheduleDAGModel<ObjectiveFunctionBase>(
+                    dagTasks);
+            break;
+
+        case TOM_Fast:
+            // TO ADD
+            // SKIP_PERM=0;
+            break;
+
+        case SA:
+            // TO ADD
+            break;
+
+        default:
+            CoutError("Please provide batchTestMethod implementation!");
+    }
+    return res;
+}
+
+template <typename ObjectiveFunctionBase>
+std::vector<BatchResult> BatchOptimizeOrder(
+    std::vector<DAG_SPACE::BaselineMethods> &baselineMethods,
+    std::string dataSetFolder = GlobalVariablesDAGOpt::PROJECT_PATH +
+                                "TaskData/dagTasks/",
+    int chainNum = GlobalVariablesDAGOpt::NumCauseEffectChain) {
+    // Prepare intermediate data records
+    std::string dirStr = dataSetFolder;
+    const char *pathDataset = (dirStr).c_str();
+    std::cout << "Dataset Directory: " << pathDataset << std::endl;
+    std::vector<std::vector<double>> runTimeAll(
+        GlobalVariablesDAGOpt::TotalMethodUnderComparison);
+    std::vector<std::vector<double>> objsAllNorm = objsAll;
+    std::vector<std::vector<int>> schedulableAll(
+        GlobalVariablesDAGOpt::TotalMethodUnderComparison);  // values could
+                                                             // only be 0 / 1
+    std::vector<std::string> errorFiles;
+
+    std::vector<std::string> files = ReadFilesInDirectory(pathDataset);
+    int fileIndex = 0;
+    for (const auto &file : files) {
+        std::string delimiter = "-";
+        if (file.substr(0, file.find(delimiter)) == "dag" &&
+            file.find("Res") == std::string::npos &&
+            file.find("LoopCount") == std::string::npos) {
+            std::cout << file << std::endl;
+
+            std::string path = dataSetFolder + file;
+            DAG_SPACE::DAG_Model dagTasks = DAG_SPACE::ReadDAG_Tasks(
+                path, GlobalVariablesDAGOpt::priorityMode, chainNum);
+            AssertBool(true, dagTasks.chains_.size() > 0, __LINE__);
+
+            for (auto batchTestMethod : baselineMethods) {
+                DAG_SPACE::ScheduleResult res;
+                if (VerifyResFileExist(pathDataset, file, batchTestMethod)) {
+                    res =
+                        ReadFromResultFile(pathDataset, file, batchTestMethod);
+                } else {
+                    res = PerformSingleScheduling<ObjectiveFunctionBase>(
+                        dagTasks, scheduleOptions, batchTestMethod);
+                }
+                std::cout << "Schedulable? " << res.schedulable_ << std::endl;
+                std::cout << Color::green << "Objective: " << res.obj_
+                          << Color::def << std::endl;
+                std::cout << "res.timeTaken_: " << res.timeTaken_ << "\n\n";
+
+                WriteToResultFile(pathDataset, file, res, batchTestMethod);
+                runTimeAll[batchTestMethod].push_back(res.timeTaken_);
+                schedulableAll[batchTestMethod].push_back(
+                    (res.schedulable_ ? 1 : 0));
+                objsAllNorm[batchTestMethod].push_back(res.obj_ /
+                                                       objsAll[0][fileIndex]);
+            }
+            fileIndex++;
+        }
+    }
+
+    int n = objsAll[0].size();
+
+    VariadicTable<std::string, double, double, double, double> vt(
+        {"Method", "Schedulable ratio", "Obj (Only used in RTDA experiment)",
+         "Obj(Norm)", "TimeTaken"},
+        10);
+
+    vt.addRow("Initial", Average(schedulableAll[0]), Average(objsAll[0]),
+              Average(objsAllNorm[0]), Average(runTimeAll[0]));
+    vt.addRow("TOM", Average(schedulableAll[1]), Average(objsAll[1]),
+              Average(objsAllNorm[1]), Average(runTimeAll[1]));
+    vt.addRow("TOM_Fast", Average(schedulableAll[2]), Average(objsAll[2]),
+              Average(objsAllNorm[2]), Average(runTimeAll[2]));
+    vt.print(std::cout);
+
+    std::vector<DAG_SPACE::BaselineMethods> baselineMethodsAll = {
+        InitialMethod,  // 0
+        TOM,            // 1
+        TOM_FAST,       // 2
+        SA              // 3
+    };
+    std::vector<BatchResult> batchResVec;
+    for (auto method : baselineMethodsAll) {
+        int i = method;
+        BatchResult batchRes{Average(schedulableAll[i]), Average(objsAll[i]),
+                             Average(runTimeAll[i])};
+        batchResVec.push_back(batchRes);
+    }
+    std::cout << "Case that takes the longest time in TOM: "
+              << int((std::max_element(runTimeAll[1].begin(),
+                                       runTimeAll[1].end())) -
+                     runTimeAll[1].begin())
+              << "\n";
+
+    return batchResVec;
+}
+}  // namespace DAG_SPACE

@@ -2,7 +2,7 @@
 #include "sources/Optimization/TwoTaskPermutations.h"
 
 namespace DAG_SPACE {
-
+// TODO: add a unit-test with test_n3_v8
 std::vector<JobCEC> GetPossibleReactingJobs(
     const JobCEC& job_curr, const Task& task_next, int superperiod,
     const RegularTaskSystem::TaskSetInfoDerived& tasksInfo) {
@@ -33,7 +33,7 @@ PermutationInequality GenerateBoxPermutationConstraints(
 
 void SinglePairPermutation::print() const {
     inequality_.print();
-    for (const auto& [key, value] : job_matches_) {
+    for (const auto& [key, value] : job_first_react_matches_) {
         std::cout << key.ToString() << "'s following jobs are ";
         for (auto job_next : value) std::cout << job_next.ToString() << ", ";
         std::cout << "\n";
@@ -43,16 +43,16 @@ void SinglePairPermutation::print() const {
 
 bool SinglePairPermutation::AddMatchJobPair(const JobCEC& job_curr,
                                             const JobCEC& job_match) {
-    auto itr = job_matches_.find(job_curr);
-    if (itr == job_matches_.end())
-        job_matches_[job_curr] = {job_match};
+    auto itr = job_first_react_matches_.find(job_curr);
+    if (itr == job_first_react_matches_.end())
+        job_first_react_matches_[job_curr] = {job_match};
     else {
         JobCEC last_matched_job = itr->second.back();
         if (job_match.jobId < last_matched_job.jobId) return false;
-        if (job_matches_[job_curr].size() > 0 &&
-            job_matches_[job_curr].back().jobId > job_match.jobId)
+        if (job_first_react_matches_[job_curr].size() > 0 &&
+            job_first_react_matches_[job_curr].back().jobId > job_match.jobId)
             CoutError("Wrong order in AddMatchJobPair!");
-        job_matches_[job_curr].push_back(job_match);
+        job_first_react_matches_[job_curr].push_back(job_match);
     }
 
     return true;

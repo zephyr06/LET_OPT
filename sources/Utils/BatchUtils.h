@@ -18,10 +18,6 @@ std::string GetResFileName(const std::string &pathDataset,
 void WriteToResultFile(const std::string &pathDataset, const std::string &file,
                        DAG_SPACE::ScheduleResult &res, int batchTestMethod_);
 
-void WriteScheduleToFile(const std::string &pathDataset,
-                         const std::string &file, DAG_Model &dagTasks,
-                         ScheduleResult &res, int batchTestMethod_);
-
 DAG_SPACE::ScheduleResult ReadFromResultFile(const std::string &pathDataset,
                                              const std::string &file,
                                              int batchTestMethod_);
