@@ -1,6 +1,6 @@
 #include "sources/Baseline/StandardLET.h"
 
-namespace StandardLET {
+namespace DAG_SPACE {
 PermutationInequality GetPermIneq(const DAG_Model& dag_tasks,
                                   const TaskSetInfoDerived& tasks_info,
                                   int prev_task_id, int next_task_id) {
@@ -61,4 +61,4 @@ ChainPermutation GetStandardLETChain(const DAG_Model& dag_tasks,
     return chain_perm;
 }
 
-}  // namespace StandardLET
+}  // namespace DAG_SPACE

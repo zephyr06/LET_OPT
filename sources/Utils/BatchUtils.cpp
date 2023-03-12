@@ -49,9 +49,9 @@ void WriteToResultFile(const std::string &pathDataset, const std::string &file,
 }
 
 // void WriteScheduleToFile(const std::string &pathDataset, const std::string
-// &file, DAG_Model &dagTasks,
+// &file, DAG_Model &dag_tasks,
 //                          ScheduleResult &res, int batchTestMethod_) {
-//   TaskSetInfoDerived tasksInfo(dagTasks.tasks);
+//   TaskSetInfoDerived tasksInfo(dag_tasks.tasks);
 //   auto timeJobVector = ObtainAllJobSchedule(tasksInfo, res.startTimeVector_);
 //   timeJobVector = SortJobSchedule(timeJobVector);
 
@@ -67,7 +67,7 @@ void WriteToResultFile(const std::string &pathDataset, const std::string &file,
 //   outfileWrite << tasksInfo.variableDimension << std::endl;
 //   outfileWrite << 10 << std::endl; // total hyperperiods to run
 //   outfileWrite << GlobalVariablesDAGOpt::NumCauseEffectChain << std::endl;
-//   for (auto chain : dagTasks.chains_) {
+//   for (auto chain : dag_tasks.chains_) {
 //     for (auto task_id : chain) {
 //       outfileWrite << task_id << ", ";
 //     }

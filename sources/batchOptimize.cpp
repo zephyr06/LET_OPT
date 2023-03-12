@@ -1,6 +1,6 @@
 #include "sources/batchOptimize.h"
 
-namespace OrderOptDAG_SPACE {
+namespace DAG_SPACE {
 
 void ClearResultFiles(std::string dataSetFolder) {
     std::string dirStr = dataSetFolder;
@@ -17,4 +17,4 @@ void ClearResultFiles(std::string dataSetFolder) {
     }
 }
 
-}  // namespace OrderOptDAG_SPACE
+}  // namespace DAG_SPACE

@@ -4,20 +4,20 @@
 
 using namespace DAG_SPACE;
 TEST(RunSingle, v1) {
-    auto dagTasks =
+    auto dag_tasks =
         ReadDAG_Tasks(GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/" +
                           GlobalVariablesDAGOpt::testDataSetName + ".csv",
                       "orig", 1);
-    TaskSet& tasks = dagTasks.tasks;
+    TaskSet& tasks = dag_tasks.tasks;
     TaskSetInfoDerived tasks_info(tasks);
     std::cout << "Cause effect chains:" << std::endl;
-    PrintChains(dagTasks.chains_);
+    PrintChains(dag_tasks.chains_);
     LLint total_permutation = 1;
-    for (uint i = 0; i < dagTasks.chains_[0].size() - 1; i++) {
-        int task_id_curr = dagTasks.chains_[0][i];
-        int task_id_next = dagTasks.chains_[0][i + 1];
+    for (uint i = 0; i < dag_tasks.chains_[0].size() - 1; i++) {
+        int task_id_curr = dag_tasks.chains_[0][i];
+        int task_id_next = dag_tasks.chains_[0][i + 1];
         TwoTaskPermutations two_task_permutation(task_id_curr, task_id_next,
-                                                 dagTasks, tasks_info);
+                                                 dag_tasks, tasks_info);
         std::cout << "The number of permutations of two adjacent tasks "
                   << task_id_curr << " and " << task_id_next << " is "
                   << two_task_permutation.size() << "\n";

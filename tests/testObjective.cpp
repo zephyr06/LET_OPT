@@ -114,7 +114,7 @@ TEST_F(PermutationTest1, ChainPermutation_v1) {
 }
 
 // TEST_F(PermutationTest1, FindFirstReactJob) {
-//     using namespace StandardLET;
+//
 //     // chain is 0 -> 1 -> 2
 //     EXPECT_EQ(1, FindFirstReactJob(tasks[0], tasks[1], 0));
 //     EXPECT_EQ(1, FindFirstReactJob(tasks[0], tasks[1], 1));
@@ -122,7 +122,6 @@ TEST_F(PermutationTest1, ChainPermutation_v1) {
 // }
 
 TEST_F(PermutationTest1, GetPossibleReactingJobsLET) {
-    using namespace StandardLET;
     // chain is 0 -> 1 -> 2
     EXPECT_EQ(
         1, GetPossibleReactingJobsLET(JobCEC(0, 0), tasks[1], 20, tasks_info)[0]
@@ -138,7 +137,6 @@ TEST_F(PermutationTest1, GetPossibleReactingJobsLET) {
 }
 
 TEST_F(PermutationTest1, GetJobMatch) {
-    using namespace StandardLET;
     // chain is 0 -> 1 -> 2
     auto job_match_map01 = GetJobMatch(dag_tasks, tasks_info, 0, 1);
     EXPECT_EQ(1, job_match_map01[JobCEC(0, 0)][0].jobId);
@@ -147,11 +145,10 @@ TEST_F(PermutationTest1, GetJobMatch) {
     EXPECT_EQ(1, job_match_map10[JobCEC(1, 0)][0].jobId);
 }
 
-TEST_F(PermutationTest1, PerformOpt) {
-    using namespace StandardLET;
+TEST_F(PermutationTest1, PerformLETAnalysis) {
     // chain is 0 -> 1 -> 2
     dag_tasks.chains_[0] = {0, 1, 2};
-    ScheduleResult res = PerformOpt<ObjReactionTime>(dag_tasks);
+    ScheduleResult res = PerformLETAnalysis<ObjReactionTime>(dag_tasks);
     EXPECT_EQ(60, res.obj_);
 }
 
@@ -225,7 +222,7 @@ TEST_F(PermutationTest_Non_Har, diff_deadline_from_variable) {
 }
 
 // TEST_F(PermutationTest_Non_Har, FindFirstReactJob) {
-//     using namespace StandardLET;
+//
 //     // chain is 0 -> 1 -> 2
 //     EXPECT_EQ(1, FindFirstReactJob(tasks[0], tasks[1], 0));
 //     EXPECT_EQ(2, FindFirstReactJob(tasks[0], tasks[1], 1));
@@ -234,7 +231,6 @@ TEST_F(PermutationTest_Non_Har, diff_deadline_from_variable) {
 // }
 
 TEST_F(PermutationTest_Non_Har, GetPossibleReactingJobsLET) {
-    using namespace StandardLET;
     // chain is 0 -> 1 -> 2
     EXPECT_EQ(
         1, GetPossibleReactingJobsLET(JobCEC(0, 0), tasks[1], 30, tasks_info)[0]
@@ -250,11 +246,10 @@ TEST_F(PermutationTest_Non_Har, GetPossibleReactingJobsLET) {
                .jobId);
 }
 
-TEST_F(PermutationTest_Non_Har, PerformOpt) {
-    using namespace StandardLET;
+TEST_F(PermutationTest_Non_Har, PerformLETAnalysis) {
     // chain is 0 -> 1 -> 2
     dag_tasks.chains_[0] = {0, 1, 2};
-    ScheduleResult res = PerformOpt<ObjReactionTime>(dag_tasks);
+    ScheduleResult res = PerformLETAnalysis<ObjReactionTime>(dag_tasks);
     EXPECT_EQ(50, res.obj_);
 }
 
@@ -283,7 +278,6 @@ class PermutationTest_Non_Har2 : public ::testing::Test {
 };
 
 TEST_F(PermutationTest_Non_Har2, GetPossibleReactingJobsLET) {
-    using namespace StandardLET;
     // chain is 0 -> 1 -> 2
     EXPECT_EQ(
         2, GetPossibleReactingJobsLET(JobCEC(0, 0), tasks[1], 30, tasks_info)[0]
@@ -293,11 +287,10 @@ TEST_F(PermutationTest_Non_Har2, GetPossibleReactingJobsLET) {
         3, GetPossibleReactingJobsLET(JobCEC(0, 1), tasks[1], 30, tasks_info)[0]
                .jobId);
 }
-TEST_F(PermutationTest_Non_Har2, PerformOpt) {
-    using namespace StandardLET;
+TEST_F(PermutationTest_Non_Har2, PerformLETAnalysis) {
     // chain is 0 -> 1 -> 2
     dag_tasks.chains_[0] = {0, 1, 2};
-    ScheduleResult res = PerformOpt<ObjReactionTime>(dag_tasks);
+    ScheduleResult res = PerformLETAnalysis<ObjReactionTime>(dag_tasks);
     EXPECT_EQ(40, res.obj_);
 }
 int main(int argc, char** argv) {

@@ -1,7 +1,9 @@
 #pragma once
 
+#include "sources/Optimization/ChainPermutation.h"
 #include "sources/Optimization/TwoTaskPermutations.h"
-namespace StandardLET {
+#include "sources/Utils/BatchUtils.h"
+namespace DAG_SPACE {
 
 PermutationInequality GetPermIneq(const DAG_Model& dag_tasks,
                                   const TaskSetInfoDerived& tasks_info,
@@ -24,7 +26,7 @@ ChainPermutation GetStandardLETChain(const DAG_Model& dag_tasks,
                                      std::vector<int> task_chain);
 
 template <typename ObjectiveFunctionBase>
-ScheduleResult PerformOpt(const DAG_Model& dag_tasks) {
+ScheduleResult PerformLETAnalysis(const DAG_Model& dag_tasks) {
     auto start = std::chrono::high_resolution_clock::now();
 
     ScheduleResult res;
@@ -44,4 +46,4 @@ ScheduleResult PerformOpt(const DAG_Model& dag_tasks) {
     res.timeTaken_ = double(duration.count()) / 1e6;
     return res;
 }
-}  // namespace StandardLET
+}  // namespace DAG_SPACE
