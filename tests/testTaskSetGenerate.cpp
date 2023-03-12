@@ -101,6 +101,27 @@ TEST(dag_model, GetSfBound) {
     EXPECT_LONGS_EQUAL(6409, dag_tasks.GetSfBound());
     EXPECT_LONGS_EQUAL(253533, dag_tasks.GetRtdaBound());
 }
+
+TEST(DAG_Model, mapPrev) {
+    string path =
+        GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v4.csv";
+    DAG_Model dag_tasks = ReadDAG_Tasks(path, "RM", 1);
+    EXPECT_LONGS_EQUAL(1, dag_tasks.mapPrev[0].size());
+    EXPECT_LONGS_EQUAL(2, dag_tasks.mapPrev[1].size());
+    EXPECT_LONGS_EQUAL(1, dag_tasks.mapPrev[2].size());
+}
+
+TEST(DAG_MODEL, generate_chains) {
+    string path =
+        GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v4.csv";
+    DAG_Model dag_tasks =
+        ReadDAG_Tasks(path, "RM", GlobalVariablesDAGOpt::CHAIN_NUMBER);
+    dag_tasks.chains_ = dag_tasks.GetRandomChains(1);
+    EXPECT(dag_tasks.chains_.size() > 0)
+    EXPECT(GlobalVariablesDAGOpt::CHAIN_NUMBER > 0);
+    EXPECT_LONGS_EQUAL(GlobalVariablesDAGOpt::CHAIN_NUMBER,
+                       dag_tasks.chains_.size());
+}
 int main() {
     TestResult tr;
     return TestRegistry::runAllTests(tr);

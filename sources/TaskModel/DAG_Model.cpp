@@ -62,10 +62,12 @@ std::pair<Graph, indexVertexMap> DAG_Model::GenerateGraphForTaskSet() const {
     // add edges
 
     for (auto itr = mapPrev.begin(); itr != mapPrev.end(); itr++) {
-        const TaskSet &tasksPrev = itr->second;
+        const TaskSet &tasksPrev =
+            itr->second;  // task ids that must finish before the task whose id
+                          // is indexNext
         size_t indexNext = itr->first;
         for (size_t i = 0; i < tasksPrev.size(); i++) {
-            boost::add_edge(tasksPrev[i].id, tasks[indexNext].id, g);
+            boost::add_edge(tasksPrev[i].id, GetTask(indexNext).id, g);
         }
     }
     return std::make_pair(g, indexesBGL);
@@ -178,6 +180,11 @@ DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType,
                         int chainNum) {
     using namespace std;
     TaskSet tasks = ReadTaskSet(path, priorityType);
+
+    std::unordered_map<int, int> task_id2position;
+    for (int i = 0; i < static_cast<int>(tasks.size()); i++) {
+        task_id2position[tasks[i].id] = i;
+    }
     // some default parameters in this function
     std::string delimiter = ",";
     std::string token;
@@ -204,7 +211,8 @@ DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType,
                     line.erase(0, pos + delimiter.length());
                 }
                 dataInLine.push_back(atoi(line.c_str()));
-                mapPrev[dataInLine[1]].push_back(tasks[dataInLine[0]]);
+                mapPrev[dataInLine[1]].push_back(
+                    tasks[task_id2position[dataInLine[0]]]);
             } else if (line[0] == '@') {
                 if ((pos = line.find(":")) != std::string::npos) {
                     token = line.substr(pos + 1);

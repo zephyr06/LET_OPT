@@ -35,12 +35,12 @@ struct first_name_t {
     typedef boost::vertex_property_tag kind;
 };
 
+namespace DAG_SPACE {
+
+static constexpr Vertex NIL = -1;
 // Code from
 // https://stackoverflow.com/questions/52878925/boostgraph-getting-the-path-up-to-the-root
-static constexpr Vertex NIL = -1;
 std::vector<int> shortest_paths(Vertex root, Vertex target, Graph const &g);
-
-namespace DAG_SPACE {
 
 void PrintChains(const std::vector<std::vector<int>> &chains);
 // *2, 1 means task 2 depend on task 1, or task 1 must execute before task 2;
@@ -54,11 +54,11 @@ class DAG_Model {
     DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, int numCauseEffectChain = 1)
         : tasks(tasks), mapPrev(mapPrev) {
         std::tie(graph_, indexesBGL_) = GenerateGraphForTaskSet();
+        RecordTaskPosition();
         chains_ = GetRandomChains(numCauseEffectChain);
         sfBound_ = -1;
         rtdaBound_ = -1;
         CategorizeTaskSet();
-        RecordTaskPosition();
     }
 
     DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, double sfBound,
@@ -66,18 +66,18 @@ class DAG_Model {
         : tasks(tasks), mapPrev(mapPrev) {
         tasks = tasks;
         mapPrev = mapPrev;
+        RecordTaskPosition();
         std::tie(graph_, indexesBGL_) = GenerateGraphForTaskSet();
         chains_ = GetRandomChains(numCauseEffectChain);
         sfBound_ = sfBound;
         rtdaBound_ = rtdaBound;
         CategorizeTaskSet();
-        RecordTaskPosition();
     }
 
     std::pair<Graph, indexVertexMap> GenerateGraphForTaskSet() const;
 
     void addEdge(int prevIndex, int nextIndex) {
-        mapPrev[nextIndex].push_back(tasks[prevIndex]);
+        mapPrev[nextIndex].push_back(GetTask(prevIndex));
     }
 
     void print();
