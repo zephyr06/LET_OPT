@@ -13,13 +13,15 @@ TEST(RunSingle, v1) {
     TaskSetInfoDerived tasks_info(tasks);
 
     std::cout << "Cause effect chains:" << std::endl;
+    PrintChains(dag_tasks.chains_);
+
+    std::cout << "Schedulable? " << CheckSchedulability(dag_tasks) << "\n";
 
     TaskSetPermutation task_sets_perms =
         TaskSetPermutation(dag_tasks, dag_tasks.chains_[0]);
     int obj_find = task_sets_perms.PerformOptimization();
 
     // print some info
-    PrintChains(dag_tasks.chains_);
 
     std::cout << "The minimum objective function found is " << obj_find << "\n";
     std::cout << "The total number of permutation iterations is: "

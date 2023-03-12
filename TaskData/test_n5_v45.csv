@@ -1,9 +1,9 @@
-JobID,Offset,Period,Overhead,ExecutionTime,DeadLine,processorId,coreRequireMax
-0,0,100,0,10,100,0,1
-1,0,200,0,11,200,0,1
-2,0,100,0,12,100,0,4
-3,0,200,0,13,200,0,2
-4,0,100,0,14,100,0,3
+JobID,Period,ExecutionTime,DeadLine,processorId
+0,100,10,100,0
+1,200,11,200,0
+2,100,12,100,0
+3,200,13,200,0
+4,100,14,100,0
 *2,1
 *4,0
 *4,1

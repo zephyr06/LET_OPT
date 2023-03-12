@@ -41,23 +41,12 @@ TEST(ReadDAG_Tasks, v2) {
     AssertBool(true, dm.mapPrev[2][0].id == 4);
     AssertBool(true, dm.mapPrev[0][0].id == 4);
 }
-TEST(ReadDAG_Tasks, v4) {
-    string path =
-        GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n3_v1.csv";
-    DAG_Model dm = ReadDAG_Tasks(path, "orig");
-    dm.print();
-    AssertEqualScalar(1, dm.GetTask(0).period);
-    for (int i = 0; i < 3; i++) AssertEqualScalar(i, dm.GetTask(i).id);
-    AssertEqualScalar(53.7653, dm.GetTask(2).executionTime);
-    AssertEqualScalar(200, dm.GetTask(2).deadline);
-}
 TEST(ReadDAG_Tasks, v5) {
     string path =
         GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v45.csv";
     DAG_Model dm = ReadDAG_Tasks(path, "orig");
     dm.print();
     for (int i = 0; i < 3; i++) AssertEqualScalar(i, dm.GetTask(i).id);
-    AssertEqualScalar(4, dm.GetTask(2).coreRequire);
     AssertEqualScalar(100, dm.GetTask(2).deadline);
 }
 TEST(ReadDAG_Tasks, v6) {

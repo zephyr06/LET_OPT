@@ -135,23 +135,19 @@ class Task {
             //  throw;
         }
         id = dataInLine[0];
-        offset = dataInLine[1];
-        period = dataInLine[2];
-        overhead = dataInLine[3];
-        executionTime = dataInLine[4];
-        deadline = dataInLine[5];
-        processorId = dataInLine[6];
-        coreRequire = dataInLine[7];
+        period = dataInLine[1];
+        executionTime = dataInLine[2];
+        deadline = dataInLine[3];
+        processorId = dataInLine[4];
         taskType = 0;
-        if (dataInLine.size() > 8) taskType = dataInLine[8];
+        // if (dataInLine.size() > 8) taskType = dataInLine[8];
         if (coreRequire < 1) coreRequire = 1;
     }
 
     void print() {
         std::cout << "The period is: " << period << " The executionTime is "
                   << executionTime << " The deadline is " << deadline
-                  << " The overhead is " << overhead << " The offset is "
-                  << offset << " The coreRequire is " << coreRequire
+                  << " The coreRequire is " << coreRequire
                   << " The taskType is " << taskType << std::endl;
     }
 
