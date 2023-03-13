@@ -147,14 +147,17 @@ std::vector<BatchResult> BatchOptimizeOrder(
                              Average(runTimeAll[i])};
         batchResVec.push_back(batchRes);
     }
-    std::cout << "Case that takes the longest time in TOM: "
-              << int((std::max_element(runTimeAll[1].begin(),
-                                       runTimeAll[1].end())) -
-                     runTimeAll[1].begin())
-              << ", which takes "
-              << *(std::max_element(runTimeAll[1].begin(), runTimeAll[1].end()))
-              << " seconds"
-              << "\n";
+    if (runTimeAll[1].size() > 0) {
+        std::cout << "Case that takes the longest time in TOM: "
+                  << int((std::max_element(runTimeAll[1].begin(),
+                                           runTimeAll[1].end())) -
+                         runTimeAll[1].begin())
+                  << ", which takes "
+                  << *(std::max_element(runTimeAll[1].begin(),
+                                        runTimeAll[1].end()))
+                  << " seconds"
+                  << "\n";
+    }
 
     std::cout << "Error files:\n";
     for (auto file : errorFiles) std::cout << file << "\n";
@@ -167,6 +170,9 @@ std::vector<BatchResult> BatchOptimizeOrder(
     }
     std::cout << "Average length of cause-effect chains: "
               << Average(chain_lenth) << std::endl;
+    std::cout << "Maximum length of cause-effect chains: "
+              << *std::max_element(chain_lenth.begin(), chain_lenth.end())
+              << std::endl;
 
     return batchResVec;
 }

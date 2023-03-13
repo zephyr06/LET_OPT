@@ -1,7 +1,7 @@
 %YAML:1.0
 debugMode: 0
 printSchedule: 0
-TIME_LIMIT: 120 # seconds, -1 means unlimited time
+TIME_LIMIT: 600 # seconds, -1 means unlimited time
 SKIP_PERM: 1
 
 
@@ -9,8 +9,8 @@ SKIP_PERM: 1
 # Task set settings
 priorityMode: RM
 # test_n5_v9 test_n5_v16 requies many permutations
-# test_n5_v41 test_n30_v3 
-testDataSetName: test_n5_v16
+# test_n5_v41 test_n30_v2 
+testDataSetName: test_n30_v2
 TIME_SCALE_FACTOR: 10
 CHAIN_NUMBER: 1
 

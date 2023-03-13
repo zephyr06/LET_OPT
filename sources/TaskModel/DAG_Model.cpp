@@ -135,8 +135,12 @@ std::vector<std::vector<int>> DAG_Model::GetRandomChains(int numOfChains) {
     std::vector<std::vector<int>> chains;
     chains.reserve(numOfChains);
     int chainCount = 0;
+    auto rng = std::default_random_engine{};
     std::vector<int> sourceIds = FindSourceTaskIds();
     std::vector<int> sinkIds = FindSinkTaskIds();
+
+    std::shuffle(std::begin(sourceIds), std::end(sourceIds), rng);
+    std::shuffle(std::begin(sinkIds), std::end(sinkIds), rng);
 
     for (int sourceId : sourceIds) {
         for (int sinkId : sinkIds) {
