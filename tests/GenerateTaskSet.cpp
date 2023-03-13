@@ -1,7 +1,10 @@
+#include <sys/stat.h>
+
+#include <iostream>
+
 #include "sources/RTA/RTA_LL.h"
 #include "sources/TaskModel/GenerateRandomTaskset.h"
 #include "sources/Utils/argparse.hpp"
-
 using namespace GlobalVariablesDAGOpt;
 void deleteDirectoryContents(const std::string &dir_path) {
     for (const auto &entry : std::filesystem::directory_iterator(dir_path))
@@ -90,6 +93,7 @@ int main(int argc, char *argv[]) {
     int randomSeed = program.get<int>("--randomSeed");
     double parallelismFactor = program.get<double>("--parallelismFactor");
     std::string outDir = program.get<std::string>("--outDir");
+    // mkdir(outDir.c_str(), 0777);
     if (randomSeed < 0) {
         srand(time(0));
     } else {
