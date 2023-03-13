@@ -5,7 +5,7 @@
 namespace DAG_SPACE {
 
 bool ChainPermutation::IsValid(const VariableRange& variable_od_range) const {
-    return true;
+    // return true;
     int perm_single_chain_size = permutation_chain_.size();
     if (perm_single_chain_size > 1) {
         const SinglePairPermutation& perm_prev =
@@ -18,11 +18,22 @@ bool ChainPermutation::IsValid(const VariableRange& variable_od_range) const {
 
         const SinglePairPermutation& perm_curr =
             permutation_chain_[perm_single_chain_size - 1];
-        int deadline_curr_min = 0 + perm_curr.inequality_.lower_bound_;
+
+        int offset_next_max =
+            variable_od_range.upper_bound.at(perm_curr.GetNextTaskId()).offset;
+        int deadline_curr_max_from_ineq =
+            offset_next_max + perm_curr.inequality_.upper_bound_;
+
+        int deadline_curr_max =
+            variable_od_range.upper_bound.at(perm_curr.GetPrevTaskId())
+                .deadline;
+        deadline_curr_max =
+            std::min(deadline_curr_max, deadline_curr_max_from_ineq);
+
         int rta_curr =
             variable_od_range.lower_bound.at(perm_curr.GetPrevTaskId())
                 .deadline;
-        int offset_curr_max = deadline_curr_min - rta_curr;
+        int offset_curr_max = deadline_curr_max - rta_curr;
         if (offset_curr_max < offset_curr_min) return false;
     }
     return true;
