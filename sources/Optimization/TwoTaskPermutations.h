@@ -23,6 +23,27 @@ struct SinglePairPermutation {
     SinglePairPermutation() {}
 
     SinglePairPermutation(
+        int task_prev_id, int task_next_id,
+        std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches,
+        const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
+        : inequality_(PermutationInequality(task_prev_id, task_next_id)),
+          job_first_react_matches_(job_first_react_matches) {
+        for (const auto& [job_source, job_matches] : job_first_react_matches_) {
+            PermutationInequality perm_new(job_source, job_matches[0],
+                                           tasks_info);
+            PermutationInequality perm_merged =
+                MergeTwoSinglePermutations(perm_new, inequality_);
+            if (perm_merged.IsValid())
+                inequality_ = perm_merged;
+            else
+                CoutError(
+                    "Conflicted matched jobs in SinglePairPermutation "
+                    "constructor!");
+        }
+    }
+
+    // constructors for the convenience of iteration in TwoTaskPermutations
+    SinglePairPermutation(
         PermutationInequality inequality,
         const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
         : inequality_(inequality) {
@@ -32,6 +53,7 @@ struct SinglePairPermutation {
         job_first_react_matches_.reserve(
             superperiod / tasks_info.GetTask(inequality.task_prev_id_).period);
     }
+    // constructors for the convenience of iteration in TwoTaskPermutations
     SinglePairPermutation(
         PermutationInequality inequality,
         std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches)
@@ -46,7 +68,8 @@ struct SinglePairPermutation {
     inline int GetNextTaskId() const { return inequality_.task_next_id_; }
 
     // data members
-    PermutationInequality inequality_;
+    PermutationInequality
+        inequality_;  //  for convenience of skipping permutations
     std::unordered_map<JobCEC, std::vector<JobCEC>>
         job_first_react_matches_;  // TODO: there should be only one job in the
                                    // vector, make it happen
@@ -76,7 +99,8 @@ class TwoTaskPermutations {
         return single_permutations_[i];
     }
 
-    // helper function for AppendAllPermutations during iterations
+    // try to append a pair of job matches to permutation_current, return true
+    // if success, false if conflicted
     bool AppendJobs(const JobCEC& job_curr, const JobCEC& job_match,
                     SinglePairPermutation& permutation_current);
 

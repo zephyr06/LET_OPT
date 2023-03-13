@@ -160,6 +160,65 @@ class PermutationTest3 : public ::testing::Test {
     JobCEC job20;
 };
 
+TEST_F(PermutationTest1, SinglePairPermutation_constructor) {
+    int prev_id = 0, next_id = 1;
+    std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches01;
+    for (uint i = 0; i < 2; i++) {
+        JobCEC job_curr(prev_id, i);
+        job_first_react_matches01[job_curr] = {JobCEC(1, 0)};
+    }
+    SinglePairPermutation single_perm01(0, 1, job_first_react_matches01,
+                                        tasks_info);
+    EXPECT_EQ(prev_id, single_perm01.inequality_.task_prev_id_);
+    EXPECT_EQ(next_id, single_perm01.inequality_.task_next_id_);
+    EXPECT_EQ(-20, single_perm01.inequality_.lower_bound_);
+    EXPECT_EQ(-10, single_perm01.inequality_.upper_bound_);
+
+    prev_id = 1;
+    next_id = 2;
+
+    std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches12;
+    job_first_react_matches12[JobCEC(1, 0)] = {JobCEC(2, 0)};
+    SinglePairPermutation single_perm12(1, 2, job_first_react_matches12,
+                                        tasks_info);
+    EXPECT_EQ(prev_id, single_perm12.inequality_.task_prev_id_);
+    EXPECT_EQ(next_id, single_perm12.inequality_.task_next_id_);
+    EXPECT_EQ(-20, single_perm12.inequality_.lower_bound_);
+    EXPECT_EQ(0, single_perm12.inequality_.upper_bound_);
+}
+
+TEST_F(PermutationTest3, SinglePairPermutation_constructor) {
+    int prev_id = 0, next_id = 1;
+    std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches01;
+    job_first_react_matches01;
+    for (uint i = 0; i < 5; i++) {
+        JobCEC job_curr(prev_id, i);
+        job_first_react_matches01[job_curr] = {JobCEC(1, 0)};
+    }
+    for (uint i = 5; i < 9; i++) {
+        JobCEC job_curr(prev_id, i);
+        job_first_react_matches01[job_curr] = {JobCEC(1, 1)};
+    }
+
+    SinglePairPermutation single_perm01(0, 1, job_first_react_matches01,
+                                        tasks_info);
+    EXPECT_EQ(prev_id, single_perm01.inequality_.task_prev_id_);
+    EXPECT_EQ(next_id, single_perm01.inequality_.task_next_id_);
+    EXPECT_EQ(-50, single_perm01.inequality_.lower_bound_);
+    EXPECT_EQ(-40, single_perm01.inequality_.upper_bound_);
+
+    prev_id = 1;
+    next_id = 2;
+    std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches12;
+    job_first_react_matches12[JobCEC(1, 0)] = {JobCEC(2, 0)};
+    SinglePairPermutation single_perm12(1, 2, job_first_react_matches12,
+                                        tasks_info);
+    EXPECT_EQ(prev_id, single_perm12.inequality_.task_prev_id_);
+    EXPECT_EQ(next_id, single_perm12.inequality_.task_next_id_);
+    EXPECT_EQ(-10, single_perm12.inequality_.lower_bound_);
+    EXPECT_EQ(0, single_perm12.inequality_.upper_bound_);
+}
+
 // TEST_F(PermutationTest1, ChainPermutation_valid_v1) {
 //     int prev_id = 0, next_id = 1;
 //     std::unordered_map<JobCEC, std::vector<JobCEC>>
