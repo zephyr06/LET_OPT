@@ -2,6 +2,7 @@
 
 #include "sources/Optimization/PermutationInequality.h"
 #include "sources/Optimization/Variable.h"
+#include "sources/Utils/profilier.h"
 
 namespace DAG_SPACE {
 
@@ -15,6 +16,8 @@ std::vector<JobCEC> GetPossibleReactingJobs(
 
 PermutationInequality GenerateBoxPermutationConstraints(
     int task_prev_id, int task_next_id, const VariableRange& variable_range);
+
+bool ifTimeout(TimerType start_time);
 
 struct SinglePairPermutation {
     SinglePairPermutation() {}
@@ -52,7 +55,8 @@ class TwoTaskPermutations {
     TwoTaskPermutations(int task_prev_id, int task_next_id,
                         const DAG_Model& dag_tasks,
                         const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
-        : task_prev_id_(task_prev_id),
+        : start_time_((std::chrono::high_resolution_clock::now())),
+          task_prev_id_(task_prev_id),
           task_next_id_(task_next_id),
           tasks_info_(tasks_info) {
         superperiod_ = GetSuperPeriod(tasks_info.GetTask(task_prev_id),
@@ -79,6 +83,7 @@ class TwoTaskPermutations {
     void FindAllPermutations();
 
     // data members
+    TimerType start_time_;
     int task_prev_id_;
     int task_next_id_;
     RegularTaskSystem::TaskSetInfoDerived tasks_info_;

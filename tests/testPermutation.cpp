@@ -417,9 +417,13 @@ class PermutationTest5 : public ::testing::Test {
     Task task2;
 };
 
-TEST_F(PermutationTest5, simple_contructor_v1) {
-    TwoTaskPermutations two_task_permutation(3, 2, dag_tasks, tasks_info);
-    EXPECT_EQ(0, two_task_permutation.size());
+TEST_F(PermutationTest5, GetPossibleReactingJobs) {
+    std::vector<JobCEC> react_jobs =
+        GetPossibleReactingJobs(JobCEC(3, 946), task1, 1e4, tasks_info);
+    EXPECT_EQ(1, react_jobs.size());
+    react_jobs =
+        GetPossibleReactingJobs(JobCEC(3, 947), task1, 1e4, tasks_info);
+    EXPECT_EQ(1, react_jobs.size());
 }
 
 int main(int argc, char** argv) {

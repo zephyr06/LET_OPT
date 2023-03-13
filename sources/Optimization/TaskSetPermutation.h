@@ -14,9 +14,6 @@ VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
 // currently, as asusme there is only one chain
 class TaskSetPermutation {
    public:
-    typedef std::chrono::time_point<std::chrono::high_resolution_clock>
-        TimerType;
-
     TaskSetPermutation() {}
     TaskSetPermutation(const DAG_Model& dag_tasks,
                        const std::vector<int>& chain)
@@ -37,7 +34,7 @@ class TaskSetPermutation {
         BeginTimer(__FUNCTION__);
 #endif
         for (uint i = 0; i < task_chain_.size() - 1; i++) {
-            if (ifTimeout()) break;
+            if (ifTimeout(start_time_)) break;
             adjacent_two_task_permutations_.push_back(TwoTaskPermutations(
                 task_chain_[i], task_chain_[i + 1], dag_tasks_, tasks_info_));
         }
@@ -54,9 +51,6 @@ class TaskSetPermutation {
 
     void IterateAllChainPermutations(uint position,
                                      ChainPermutation& chain_perm) {
-        if (ifTimeout()) {
-            return;
-        }
         if (position == task_chain_.size() - 1) {
             iteration_count_++;
             EvaluateChainPermutation(chain_perm);
@@ -65,7 +59,7 @@ class TaskSetPermutation {
 
         for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
              i++) {
-            if (ifTimeout()) break;
+            if (ifTimeout(start_time_)) break;
             // TODO: consider improving efficiency
             chain_perm.push_back(adjacent_two_task_permutations_[position][i]);
             IterateAllChainPermutations(position + 1, chain_perm);
@@ -99,19 +93,6 @@ class TaskSetPermutation {
     bool ExamSchedulabilityOptSol() const {
         return true;
     }  // TODO: finish this function
-
-    bool ifTimeout() const {
-        auto curr_time = std::chrono::system_clock::now();
-        if (std::chrono::duration_cast<std::chrono::seconds>(curr_time -
-                                                             start_time_)
-                .count() >= GlobalVariablesDAGOpt::TIME_LIMIT) {
-            std::cout
-                << "\nTime out when running OptimizeOrder. Maximum time is "
-                << GlobalVariablesDAGOpt::TIME_LIMIT << " seconds.\n\n";
-            return true;
-        }
-        return false;
-    }
 
     // data members
     TimerType start_time_;

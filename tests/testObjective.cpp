@@ -215,7 +215,7 @@ TEST_F(PermutationTest_Non_Har, diff_deadline_from_variable) {
     chain_perm.push_back(perm12[0]);
     perm01[0].print();
     perm12[0].print();
-    variable_od.variables_[2].deadline = 10;
+    variable_od[2].deadline = 10;
     EXPECT_EQ(10, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
                                        variable_od));
 }

@@ -3,6 +3,7 @@
 
 namespace DAG_SPACE {
 // TODO: add a unit-test with test_n3_v8
+// TODO: this can be improved by considering execution time range
 std::vector<JobCEC> GetPossibleReactingJobs(
     const JobCEC& job_curr, const Task& task_next, int superperiod,
     const RegularTaskSystem::TaskSetInfoDerived& tasksInfo) {
@@ -14,8 +15,13 @@ std::vector<JobCEC> GetPossibleReactingJobs(
     reactingJobs.reserve(superperiod /
                          tasksInfo.GetTask(job_curr.taskId).period);
     for (int i = std::floor(float(job_min_finish) / period_next);
-         i <= std::ceil(float(job_max_finish) / period_next); i++)
-        reactingJobs.push_back(JobCEC(task_next.id, i));
+         i <= std::ceil(float(job_max_finish) / period_next); i++) {
+        JobCEC job_next_i(task_next.id, i);
+        int max_start_next = GetDeadline(job_next_i, tasksInfo) -
+                             GetExecutionTime(job_next_i, tasksInfo);
+        if (max_start_next < job_min_finish) continue;
+        reactingJobs.push_back(job_next_i);
+    }
 
     return reactingJobs;
 }
@@ -30,6 +36,17 @@ PermutationInequality GenerateBoxPermutationConstraints(
         variable_range.upper_bound.at(task_prev_id).deadline -
             variable_range.lower_bound.at(task_next_id).offset,
         true);
+}
+
+bool ifTimeout(TimerType start_time) {
+    auto curr_time = std::chrono::system_clock::now();
+    if (std::chrono::duration_cast<std::chrono::seconds>(curr_time - start_time)
+            .count() >= GlobalVariablesDAGOpt::TIME_LIMIT) {
+        std::cout << "\nTime out when running OptimizeOrder. Maximum time is "
+                  << GlobalVariablesDAGOpt::TIME_LIMIT << " seconds.\n\n";
+        return true;
+    }
+    return false;
 }
 
 void SinglePairPermutation::print() const {
@@ -83,6 +100,7 @@ bool TwoTaskPermutations::AppendJobs(
 
 void TwoTaskPermutations::AppendAllPermutations(
     const JobCEC& job_curr, SinglePairPermutation& permutation_current) {
+    if (ifTimeout(start_time_)) return;
     std::vector<JobCEC> jobs_possible_match =
         GetPossibleReactingJobs(job_curr, tasks_info_.GetTask(task_next_id_),
                                 superperiod_, tasks_info_);
