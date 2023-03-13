@@ -57,14 +57,20 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
 
 template <typename ObjectiveFunctionBase>
 std::vector<BatchResult> BatchOptimizeOrder(
-    std::vector<DAG_SPACE::BaselineMethods> &baselineMethods,
-    std::string dataSetFolder = GlobalVariablesDAGOpt::PROJECT_PATH +
-                                "TaskData/dagTasks/",
+    std::vector<DAG_SPACE::BaselineMethods> &baselineMethods, int N = -1,
     int chainNum = 1) {
-    // Prepare intermediate data records
-    std::string dirStr = dataSetFolder;
-    const char *pathDataset = (dirStr).c_str();
+    std::string dataSetFolder;
+    if (N == -1)
+        dataSetFolder =
+            GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/dagTasks/";
+    else
+        dataSetFolder = GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/N" +
+                        std::to_string(N) + "/";
+
+    const char *pathDataset = dataSetFolder.c_str();
     std::cout << "Dataset Directory: " << pathDataset << std::endl;
+
+    // Prepare intermediate data records
     std::vector<int> chain_lenth;
     std::vector<std::vector<double>> runTimeAll(10);
     std::vector<std::vector<double>> objsAllNorm(10);

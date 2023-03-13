@@ -1,7 +1,7 @@
 %YAML:1.0
 debugMode: 0
 printSchedule: 0
-TIME_LIMIT: 120 # seconds, -1 means unlimited time
+TIME_LIMIT: 1 # seconds, -1 means unlimited time
 SKIP_PERM: 1
 
 
