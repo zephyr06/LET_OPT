@@ -1,5 +1,6 @@
 #pragma once
 
+#include "sources/Baseline/StandardLET.h"
 #include "sources/Optimization/ChainPermutation.h"
 #include "sources/Optimization/ObjectiveFunction.h"
 #include "sources/Utils/BatchUtils.h"
@@ -113,6 +114,9 @@ ScheduleResult PerformTOM_OPT(const DAG_Model& dag_tasks) {
     TaskSetPermutation task_sets_perms =
         TaskSetPermutation(dag_tasks, dag_tasks.chains_[0]);
     res.obj_ = task_sets_perms.PerformOptimization();
+    if (res.obj_ >= 1e8) {
+        res.obj_ = PerformLETAnalysis<ObjectiveFunctionBase>(dag_tasks).obj_;
+    }
     res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
 
     auto stop = std::chrono::high_resolution_clock::now();

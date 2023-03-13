@@ -65,6 +65,7 @@ std::vector<BatchResult> BatchOptimizeOrder(
     std::string dirStr = dataSetFolder;
     const char *pathDataset = (dirStr).c_str();
     std::cout << "Dataset Directory: " << pathDataset << std::endl;
+    std::vector<int> chain_lenth;
     std::vector<std::vector<double>> runTimeAll(10);
     std::vector<std::vector<double>> objsAllNorm(10);
     std::vector<std::vector<int>> schedulableAll(10);  // values could
@@ -84,6 +85,7 @@ std::vector<BatchResult> BatchOptimizeOrder(
             DAG_SPACE::DAG_Model dag_tasks = DAG_SPACE::ReadDAG_Tasks(
                 path, GlobalVariablesDAGOpt::priorityMode, chainNum);
             AssertBool(true, dag_tasks.chains_.size() > 0, __LINE__);
+            chain_lenth.push_back(dag_tasks.chains_[0].size());
 
             for (auto batchTestMethod : baselineMethods) {
                 DAG_SPACE::ScheduleResult res;
@@ -148,7 +150,17 @@ std::vector<BatchResult> BatchOptimizeOrder(
               << " seconds"
               << "\n";
 
+    std::cout << "Error files:\n";
     for (auto file : errorFiles) std::cout << file << "\n";
+
+    std::cout << "Time-out files:\n";
+    for (uint i = 0; i < runTimeAll[1].size(); i++) {
+        if (runTimeAll[1][i] >= GlobalVariablesDAGOpt::TIME_LIMIT - 5) {
+            std::cout << i << "\n";
+        }
+    }
+    std::cout << "Average length of cause-effect chains: "
+              << Average(chain_lenth) << std::endl;
 
     return batchResVec;
 }
