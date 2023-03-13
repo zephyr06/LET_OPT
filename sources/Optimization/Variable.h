@@ -10,7 +10,7 @@ struct OD_Vir {
     int deadline;
 };
 
-// variableOD organizes variables following the order given by TaskSet
+// variableOD organizes variables following the order by task id;
 class VariableOD {
    public:
     VariableOD() {}
@@ -21,8 +21,8 @@ class VariableOD {
         }
         valid_ = true;
     }
-    inline OD_Vir& operator[](uint index) { return variables_[index]; }
-    inline OD_Vir at(uint index) const { return variables_.at(index); }
+    inline OD_Vir& operator[](uint task_id) { return variables_[task_id]; }
+    inline OD_Vir at(uint task_id) const { return variables_.at(task_id); }
 
     bool SetDeadline(uint task_id, int value) {
         if (value <= variables_[task_id].deadline) {

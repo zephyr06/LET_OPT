@@ -42,6 +42,9 @@ struct SinglePairPermutation {
 
     void print() const;
 
+    inline int GetPrevTaskId() const { return inequality_.task_prev_id_; }
+    inline int GetNextTaskId() const { return inequality_.task_next_id_; }
+
     // data members
     PermutationInequality inequality_;
     std::unordered_map<JobCEC, std::vector<JobCEC>>

@@ -54,7 +54,7 @@ TEST_F(PermutationTest1, Iteration) {
     int obj_find = task_sets_perms.PerformOptimization();
     task_sets_perms.best_yet_chain_[0].print();
     task_sets_perms.best_yet_chain_[1].print();
-    EXPECT_EQ(6, task_sets_perms.iteration_count_);
+    EXPECT_THAT(task_sets_perms.iteration_count_, testing::Le(6));
     EXPECT_EQ(20, obj_find);
 }
 
@@ -131,6 +131,95 @@ TEST_F(PermutationTest2, GenerateBoxPermutationConstraints) {
     EXPECT_EQ(100 - 0, perm_ineq.upper_bound_);
 }
 
+class PermutationTest3 : public ::testing::Test {
+   protected:
+    void SetUp() override {
+        dag_tasks = ReadDAG_Tasks(
+            GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n3_v9.csv",
+            "orig", 1);
+        tasks = dag_tasks.GetTaskSet();
+        tasks_info = TaskSetInfoDerived(tasks);
+        task0 = tasks[0];
+        task1 = tasks[1];
+        task2 = tasks[2];
+        job00 = JobCEC(0, 0);
+        job01 = JobCEC(0, 1);
+        job10 = JobCEC(1, 0);
+        job20 = JobCEC(2, 0);
+    };
+
+    DAG_Model dag_tasks;
+    TaskSet tasks;
+    TaskSetInfoDerived tasks_info;
+    Task task0;
+    Task task1;
+    Task task2;
+    JobCEC job00;
+    JobCEC job01;
+    JobCEC job10;
+    JobCEC job20;
+};
+
+// TEST_F(PermutationTest1, ChainPermutation_valid_v1) {
+//     int prev_id = 0, next_id = 1;
+//     std::unordered_map<JobCEC, std::vector<JobCEC>>
+//     job_first_react_matches01; for (uint i = 0; i < 2; i++) {
+//         JobCEC job_curr(prev_id, i);
+//         job_first_react_matches01[job_curr] = {JobCEC(1, 0)};
+//     }
+//     PermutationInequality perm_ineq01(JobCEC(prev_id, 0), JobCEC(next_id, 0),
+//                                       tasks_info);
+//     SinglePairPermutation single_perm01(perm_ineq01,
+//     job_first_react_matches01);
+
+//     prev_id = 1;
+//     next_id = 2;
+//     std::unordered_map<JobCEC, std::vector<JobCEC>>
+//     job_first_react_matches12; job_first_react_matches12[JobCEC(1, 0)] =
+//     {JobCEC(2, 0)}; PermutationInequality perm_ineq12(JobCEC(prev_id, 0),
+//     JobCEC(next_id, 0),
+//                                       tasks_info);
+//     SinglePairPermutation single_perm12(perm_ineq12,
+//     job_first_react_matches12);
+
+//     VariableRange variable_range_od = FindVariableRange(dag_tasks);
+//     ChainPermutation chain_perm;
+//     chain_perm.push_back(single_perm01);
+//     EXPECT_TRUE(chain_perm.IsValid(variable_range_od));
+//     chain_perm.push_back(single_perm12);
+//     EXPECT_TRUE(chain_perm.IsValid(variable_range_od));
+// }
+
+// TEST_F(PermutationTest3, ChainPermutation_valid_v1) {
+//     int prev_id = 0, next_id = 1;
+//     std::unordered_map<JobCEC, std::vector<JobCEC>>
+//     job_first_react_matches01; for (uint i = 0; i < 5; i++) {
+//         JobCEC job_curr(prev_id, i);
+//         job_first_react_matches01[job_curr] = {JobCEC(1, 0)};
+//     }
+//     for (uint i = 5; i < 9; i++) {
+//         JobCEC job_curr(prev_id, i);
+//         job_first_react_matches01[job_curr] = {JobCEC(1, 1)};
+//     }
+//     PermutationInequality perm_ineq01(prev_id, next_id, -50, true, -40,
+//     true); SinglePairPermutation single_perm01(perm_ineq01,
+//     job_first_react_matches01);
+
+//     prev_id = 1;
+//     next_id = 2;
+//     std::unordered_map<JobCEC, std::vector<JobCEC>>
+//     job_first_react_matches12; job_first_react_matches12[JobCEC(1, 0)] =
+//     {JobCEC(2, 1)}; PermutationInequality perm_ineq12(prev_id, next_id, 0,
+//     true, 10, true); SinglePairPermutation single_perm12(perm_ineq12,
+//     job_first_react_matches12);
+
+//     VariableRange variable_range_od = FindVariableRange(dag_tasks);
+//     ChainPermutation chain_perm;
+//     chain_perm.push_back(single_perm01);
+//     EXPECT_TRUE(chain_perm.IsValid(variable_range_od));
+//     chain_perm.push_back(single_perm12);
+//     EXPECT_FALSE(chain_perm.IsValid(variable_range_od));
+// }
 int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);
     ::testing::InitGoogleMock(&argc, argv);

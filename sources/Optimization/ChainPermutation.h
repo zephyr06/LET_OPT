@@ -16,21 +16,16 @@ class ChainPermutation {
     }
     inline void pop_back() { permutation_chain_.pop_back(); }
     inline void reserve(size_t n) { permutation_chain_.reserve(n); }
-    bool IsValid() const { return true; }
+    // exam the last two single-pair-permutation to see if there are
+    // conflictions
+    bool IsValid(const  VariableRange &variable_od_range) const;
+
     SinglePairPermutation operator[](size_t i) const {
         if (i >= size()) CoutError("Out-of-range error!");
         return permutation_chain_[i];
     }
 
-    int GetTaskId(size_t i) const {
-        if (i < size())
-            return permutation_chain_[i].inequality_.task_prev_id_;
-        else if (i == size()) {
-            return permutation_chain_[size() - 1].inequality_.task_next_id_;
-        } else
-            CoutError("Out-or-range error in ChainPermutation!");
-        return -1;
-    }
+    int GetTaskId(size_t i) const;
 
     // data members
     std::vector<SinglePairPermutation> permutation_chain_;
