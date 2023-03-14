@@ -214,7 +214,6 @@ TEST_F(PermutationTest1, SinglePairPermutation_valid) {
 TEST_F(PermutationTest3, SinglePairPermutation_constructor) {
     int prev_id = 0, next_id = 1;
     std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches01;
-    job_first_react_matches01;
     for (uint i = 0; i < 5; i++) {
         JobCEC job_curr(prev_id, i);
         job_first_react_matches01[job_curr] = {JobCEC(1, 0)};

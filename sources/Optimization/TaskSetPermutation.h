@@ -86,6 +86,7 @@ class TaskSetPermutation {
             if (obj_curr < best_yet_obj_) {
                 best_yet_obj_ = obj_curr;
                 best_yet_chain_ = chain_perm;
+                best_yet_variable_od_ = variable_od;
             }
         }
 #ifdef PROFILE_CODE
@@ -94,8 +95,15 @@ class TaskSetPermutation {
     }
 
     bool ExamSchedulabilityOptSol() const {
+        if (best_yet_variable_od_.size() == 0) return false;
+        for (int i = 0; i < tasks_info_.N; i++) {
+            int offset = best_yet_variable_od_.at(i).offset;
+            int deadline = best_yet_variable_od_.at(i).deadline;
+            int rta = GetResponseTime(dag_tasks_, i);
+            if (rta + offset > deadline) return false;
+        }
         return true;
-    }  // TODO: finish this function
+    }
 
     // data members
     TimerType start_time_;
@@ -107,6 +115,7 @@ class TaskSetPermutation {
     ChainPermutation best_yet_chain_;
     int best_yet_obj_;
     int iteration_count_;
+    VariableOD best_yet_variable_od_;
     VariableRange variable_range_od_;
 };
 
@@ -121,6 +130,7 @@ ScheduleResult PerformTOM_OPT(const DAG_Model& dag_tasks) {
         res.obj_ = PerformLETAnalysis<ObjectiveFunctionBase>(dag_tasks).obj_;
     }
     res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
+    if (!res.schedulable_) CoutError("Find an unschedulable case!");
 
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration =
