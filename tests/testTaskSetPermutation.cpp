@@ -349,7 +349,7 @@ class PermutationTest5 : public ::testing::Test {
     TwoTaskPermutations perm12;
     TaskSetPermutation task_sets_perms;
     std::vector<std::vector<int>> task_chains = {
-        {0, 1, 6, 7}, {0, 2}, {20, 1}, {25, 6, 7}};  // from 0 to 1, from 0 to 2
+        {0, 1, 6, 7}, {0, 2}, {20, 1}, {25, 6, 7}};
 };
 TEST_F(PermutationTest5, ChainPermutation_valid_v1) {
     GraphOfChains graph_chains(task_chains);

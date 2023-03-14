@@ -24,6 +24,7 @@ class TaskSetPermutation {
           dag_tasks_(dag_tasks),
           tasks_info_(
               RegularTaskSystem::TaskSetInfoDerived(dag_tasks.GetTaskSet())),
+          graph_of_all_ca_chains_(chains),
           task_chains_(chains),
           best_yet_obj_(1e9),
           iteration_count_(0),
@@ -116,6 +117,7 @@ class TaskSetPermutation {
     TimerType start_time_;
     DAG_Model dag_tasks_;
     RegularTaskSystem::TaskSetInfoDerived tasks_info_;
+    GraphOfChains graph_of_all_ca_chains_;
     std::vector<std::vector<int>> task_chains_;
     std::vector<TwoTaskPermutations> adjacent_two_task_permutations_;
     std::vector<ChainPermutation> chain_permutations_;
