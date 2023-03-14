@@ -32,9 +32,6 @@ class TaskSetPermutation {
     }
 
     void FindPairPermutations() {
-#ifdef PROFILE_CODE
-        BeginTimer(__FUNCTION__);
-#endif
         for (uint i = 0; i < task_chain_.size() - 1; i++) {
             if (ifTimeout(start_time_)) break;
             adjacent_two_task_permutations_.push_back(TwoTaskPermutations(
@@ -42,9 +39,6 @@ class TaskSetPermutation {
             std::cout << "Pair permutation #: "
                       << adjacent_two_task_permutations_.back().size() << "\n";
         }
-#ifdef PROFILE_CODE
-        EndTimer(__FUNCTION__);
-#endif
     }
 
     int PerformOptimization() {
@@ -64,7 +58,6 @@ class TaskSetPermutation {
         for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
              i++) {
             if (ifTimeout(start_time_)) break;
-            // TODO: consider improving efficiency
             chain_perm.push_back(adjacent_two_task_permutations_[position][i]);
             if (GlobalVariablesDAGOpt::SKIP_PERM) {
                 if (!chain_perm.IsValid(variable_range_od_)) {
