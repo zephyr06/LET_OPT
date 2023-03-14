@@ -2,30 +2,10 @@
 
 #include "sources/Baseline/StandardLET.h"
 #include "sources/Optimization/ChainPermutation.h"
+#include "sources/Optimization/GraphOfChains.h"
 #include "sources/Optimization/ObjectiveFunction.h"
 #include "sources/Utils/BatchUtils.h"
 #include "sources/Utils/profilier.h"
-
-namespace DAG_SPACE {
-struct Edge {
-    Edge() {}
-    Edge(int f, int t) : from_id(f), to_id(t) {}
-    int from_id;
-    int to_id;
-
-    bool operator==(const Edge& other) const {
-        return from_id == other.from_id && to_id == other.to_id;
-    }
-    bool operator!=(const Edge& other) const { return !(*this == other); }
-};
-}  // namespace DAG_SPACE
-
-template <>
-struct std::hash<DAG_SPACE::Edge> {
-    std::size_t operator()(const DAG_SPACE::Edge& edge) const {
-        return edge.from_id * 1e4 + edge.to_id;
-    }
-};
 
 namespace DAG_SPACE {
 
@@ -73,6 +53,7 @@ class TaskSetPermutation {
         return best_yet_obj_;
     }
 
+    // depth equals the number of edge pais
     void IterateAllChainPermutations(uint position,
                                      ChainPermutation& chain_perm) {
         if (position == task_chains_[0].size() - 1) {

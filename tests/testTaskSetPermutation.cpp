@@ -269,7 +269,96 @@ TEST_F(PermutationTest3, ChainPermutation_valid_v1) {
     EXPECT_FALSE(chain_perm.IsValid(variable_range_od));
 }
 
-// const std::vector<std::vector<int>>& chains
+class PermutationTest4 : public ::testing::Test {
+   protected:
+    void SetUp() override {
+        dag_tasks = ReadDAG_Tasks(
+            GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n3_v18.csv",
+            "orig", 1);
+        tasks = dag_tasks.GetTaskSet();
+        tasks_info = TaskSetInfoDerived(tasks);
+        task0 = tasks[0];
+        task1 = tasks[1];
+        task2 = tasks[2];
+        job00 = JobCEC(0, 0);
+        job01 = JobCEC(0, 1);
+        job10 = JobCEC(1, 0);
+        job20 = JobCEC(2, 0);
+
+        perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
+        perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
+        // task_sets_perms = TaskSetPermutation(dag_tasks, {task_chain});
+    };
+
+    DAG_Model dag_tasks;
+    TaskSet tasks;
+    TaskSetInfoDerived tasks_info;
+    Task task0;
+    Task task1;
+    Task task2;
+    JobCEC job00;
+    JobCEC job01;
+    JobCEC job10;
+    JobCEC job20;
+
+    TwoTaskPermutations perm01;
+    TwoTaskPermutations perm12;
+    TaskSetPermutation task_sets_perms;
+    std::vector<std::vector<int>> task_chains = {
+        {0, 1}, {0, 2}};  // from 0 to 1, from 0 to 2
+};
+
+TEST_F(PermutationTest4, ChainPermutation_valid_v1) {
+    GraphOfChains graph_chains(task_chains);
+    EXPECT_EQ(2, graph_chains.edge_records_.size());
+    EXPECT_EQ(2, graph_chains.edge_vec_ordered_.size());
+    EXPECT_EQ(0, graph_chains.prev_tasks_[1][0]);
+    EXPECT_EQ(0, graph_chains.prev_tasks_[2][0]);
+}
+
+class PermutationTest5 : public ::testing::Test {
+   protected:
+    void SetUp() override {
+        dag_tasks = ReadDAG_Tasks(
+            GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n30_v1.csv",
+            "orig", 1);
+        tasks = dag_tasks.GetTaskSet();
+        tasks_info = TaskSetInfoDerived(tasks);
+        task0 = tasks[0];
+        task1 = tasks[1];
+        task2 = tasks[2];
+        job00 = JobCEC(0, 0);
+        job01 = JobCEC(0, 1);
+        job10 = JobCEC(1, 0);
+        job20 = JobCEC(2, 0);
+        // task_sets_perms = TaskSetPermutation(dag_tasks, {task_chain});
+    };
+
+    DAG_Model dag_tasks;
+    TaskSet tasks;
+    TaskSetInfoDerived tasks_info;
+    Task task0;
+    Task task1;
+    Task task2;
+    JobCEC job00;
+    JobCEC job01;
+    JobCEC job10;
+    JobCEC job20;
+
+    TwoTaskPermutations perm01;
+    TwoTaskPermutations perm12;
+    TaskSetPermutation task_sets_perms;
+    std::vector<std::vector<int>> task_chains = {
+        {0, 1, 6, 7}, {0, 2}, {20, 1}, {25, 6, 7}};  // from 0 to 1, from 0 to 2
+};
+TEST_F(PermutationTest5, ChainPermutation_valid_v1) {
+    GraphOfChains graph_chains(task_chains);
+    EXPECT_EQ(6, graph_chains.edge_records_.size());
+    EXPECT_EQ(6, graph_chains.edge_vec_ordered_.size());
+    EXPECT_EQ(0, graph_chains.prev_tasks_[1][0]);
+    EXPECT_EQ(20, graph_chains.prev_tasks_[1][1]);
+    EXPECT_EQ(0, graph_chains.prev_tasks_[2][0]);
+}
 
 int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);
