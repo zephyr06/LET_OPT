@@ -2,7 +2,9 @@
 debugMode: 0
 printSchedule: 0
 TIME_LIMIT: 600 # seconds, -1 means unlimited time
-SKIP_PERM: 0
+SKIP_PERM: 1
+# the proportion of permutations to keep! 1 means no sampling
+SAMPLE_SMALL_TASKS: 0.5
 
 
 #*************************************************************

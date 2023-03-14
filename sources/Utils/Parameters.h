@@ -18,6 +18,7 @@ extern cv::FileStorage ConfigParameters;
 extern int debugMode;
 extern int SKIP_PERM;
 extern int TIME_LIMIT;
+extern double SAMPLE_SMALL_TASKS;
 
 // Task set settings
 extern const std::string testDataSetName;

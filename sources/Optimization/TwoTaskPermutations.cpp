@@ -10,6 +10,7 @@ std::vector<JobCEC> GetPossibleReactingJobs(
     int job_min_finish = GetActivationTime(job_curr, tasksInfo) +
                          GetExecutionTime(job_curr, tasksInfo);
     int job_max_finish = GetDeadline(job_curr, tasksInfo);
+
     int period_next = tasksInfo.GetTask(task_next.id).period;
     std::vector<JobCEC> reactingJobs;
     reactingJobs.reserve(superperiod /
@@ -109,7 +110,16 @@ void TwoTaskPermutations::AppendAllPermutations(
             if (job_curr.jobId ==
                 superperiod_ / GetPeriod(job_curr, tasks_info_) -
                     1) {  // reach end, record the current permutations
-                single_permutations_.push_back(permutation_current_copy);
+
+                if (
+                    // tasks_info_.GetTask(job_curr.taskId).period ==
+                    //     GlobalVariablesDAGOpt::TIME_SCALE_FACTOR * 1 &&
+                    single_permutations_.size() > 20 &&
+                    RandRange(0, 1) >
+                        GlobalVariablesDAGOpt::SAMPLE_SMALL_TASKS) {
+                    continue;
+                } else
+                    single_permutations_.push_back(permutation_current_copy);
 
                 if (single_permutations_.size() > 1e5)
                     CoutError("Possibly too many permutations!");
