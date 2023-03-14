@@ -2,6 +2,7 @@
 
 #include "sources/RTA/RTA_BASE.h"
 #include "sources/TaskModel/DAG_Model.h"
+#include "sources/Utils/profilier.h"
 
 namespace DAG_SPACE {
 class RTA_LL : public RTA_BASE {

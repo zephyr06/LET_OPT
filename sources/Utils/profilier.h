@@ -25,14 +25,17 @@ struct ProfilerData {
     TimerType begin;
     TimerType end;
     double accum;
+    int call_time;
     ProfilerData()
         : begin(std::chrono::high_resolution_clock::now()),
           end(std::chrono::high_resolution_clock::now()),
-          accum(0) {}
+          accum(0),
+          call_time(0) {}
     void UpdateAccum() {
         auto duration =
             std::chrono::duration_cast<std::chrono::microseconds>(end - begin);
         accum += double(duration.count()) / 1e6;
+        call_time++;
     }
 };
 extern std::unordered_map<std::string, ProfilerData> profilerMap;
@@ -43,6 +46,7 @@ void EndTimer(std::string funcName, bool print = false);
 struct TimerDataProfiler {
     std::string name;
     double accum;
+    int call_time;
 };
 bool compareProfiler(TimerDataProfiler a, TimerDataProfiler b);
 void PrintTimer();

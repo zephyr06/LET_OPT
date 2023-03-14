@@ -11,6 +11,9 @@ int GetResponseTime(const TaskSet &tasks, int index, int warm_start) {
 }
 
 int GetResponseTime(const DAG_Model &dag_tasks, int task_id) {
+#ifdef PROFILE_CODE
+    BeginTimer("GetResponseTime");
+#endif
     const TaskSet &tasks = dag_tasks.GetTaskSet();
     const Task &task_curr = dag_tasks.GetTask(task_id);
     int processor_id = task_curr.processorId;
@@ -25,7 +28,11 @@ int GetResponseTime(const DAG_Model &dag_tasks, int task_id) {
             "Unknown processor id (task_id2task_index_within_processor_)!");
     int task_index_p =
         dag_tasks.task_id2task_index_within_processor_.at(task_id);
-    return r.RTA_Common_Warm(task_curr.executionTime, task_index_p);
+    int res = r.RTA_Common_Warm(task_curr.executionTime, task_index_p);
+#ifdef PROFILE_CODE
+    EndTimer("GetResponseTime");
+#endif
+    return res;
 }
 
 /**

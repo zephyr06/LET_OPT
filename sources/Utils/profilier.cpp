@@ -39,13 +39,15 @@ void PrintTimer() {
               << " seconds" << Color::def << std::endl;
     for (auto itr = profilerMap.begin(); itr != profilerMap.end(); itr++) {
         double perc = itr->second.accum / (profilerMap["main"].accum);
-        vec.push_back(TimerDataProfiler{itr->first, perc});
+        vec.push_back(
+            TimerDataProfiler{itr->first, perc, itr->second.call_time});
     }
     sort(vec.begin(), vec.end(), compareProfiler);
     for (size_t i = 0; i < vec.size(); i++) {
         std::cout << Color::green << "Percentage: " << std::setfill('0')
                   << std::setw(4) << vec[i].accum * 100.0
-                  << "% Function name: " << vec[i].name << Color::def
+                  << "% Function name: " << vec[i].name
+                  << ", calling times: " << vec[i].call_time << Color::def
                   << std::endl;
         totalProfile += vec[i].accum;
     }

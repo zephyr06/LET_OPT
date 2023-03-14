@@ -58,6 +58,9 @@ double ObjReactionTime::Obj(const DAG_Model &dag_tasks,
                             const TaskSetInfoDerived &tasks_info,
                             const ChainPermutation &chain_perm,
                             const VariableOD &variable_od) {
+#ifdef PROFILE_CODE
+    BeginTimer(__FUNCTION__);
+#endif
     int max_reaction_time = -1;
     for (uint j = 0; j < tasks_info.sizeOfVariables[chain_perm.GetTaskId(0)];
          j++)  // iterate each source job within a hyper-period
@@ -77,6 +80,9 @@ double ObjReactionTime::Obj(const DAG_Model &dag_tasks,
             max_reaction_time,
             int(deadline_curr - GetActivationTime(job_source, tasks_info)));
     }
+#ifdef PROFILE_CODE
+    EndTimer(__FUNCTION__);
+#endif
     return max_reaction_time;
 }
 }  // namespace DAG_SPACE
