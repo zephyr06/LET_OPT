@@ -5,6 +5,28 @@
 #include "sources/Optimization/ObjectiveFunction.h"
 #include "sources/Utils/BatchUtils.h"
 #include "sources/Utils/profilier.h"
+
+namespace DAG_SPACE {
+struct Edge {
+    Edge() {}
+    Edge(int f, int t) : from_id(f), to_id(t) {}
+    int from_id;
+    int to_id;
+
+    bool operator==(const Edge& other) const {
+        return from_id == other.from_id && to_id == other.to_id;
+    }
+    bool operator!=(const Edge& other) const { return !(*this == other); }
+};
+}  // namespace DAG_SPACE
+
+template <>
+struct std::hash<DAG_SPACE::Edge> {
+    std::size_t operator()(const DAG_SPACE::Edge& edge) const {
+        return edge.from_id * 1e4 + edge.to_id;
+    }
+};
+
 namespace DAG_SPACE {
 
 // assume the simple response time analysis
@@ -17,27 +39,31 @@ class TaskSetPermutation {
    public:
     TaskSetPermutation() {}
     TaskSetPermutation(const DAG_Model& dag_tasks,
-                       const std::vector<int>& chain)
+                       const std::vector<std::vector<int>>& chains)
         : start_time_((std::chrono::high_resolution_clock::now())),
           dag_tasks_(dag_tasks),
           tasks_info_(
               RegularTaskSystem::TaskSetInfoDerived(dag_tasks.GetTaskSet())),
-          task_chain_(chain),
+          task_chains_(chains),
           best_yet_obj_(1e9),
           iteration_count_(0),
           variable_range_od_(FindVariableRange(dag_tasks_)) {
-        adjacent_two_task_permutations_.reserve(chain.size() - 1);
+        adjacent_two_task_permutations_.reserve(
+            1e2);  // there are never more than 1e2 edges
         FindPairPermutations();
         chain_permutations_.reserve(1e5);
     }
 
     void FindPairPermutations() {
-        for (uint i = 0; i < task_chain_.size() - 1; i++) {
-            if (ifTimeout(start_time_)) break;
-            adjacent_two_task_permutations_.push_back(TwoTaskPermutations(
-                task_chain_[i], task_chain_[i + 1], dag_tasks_, tasks_info_));
-            std::cout << "Pair permutation #: "
-                      << adjacent_two_task_permutations_.back().size() << "\n";
+        for (const auto& task_chain : task_chains_) {
+            for (uint i = 0; i < task_chain.size() - 1; i++) {
+                if (ifTimeout(start_time_)) break;
+                adjacent_two_task_permutations_.push_back(TwoTaskPermutations(
+                    task_chain[i], task_chain[i + 1], dag_tasks_, tasks_info_));
+                std::cout << "Pair permutation #: "
+                          << adjacent_two_task_permutations_.back().size()
+                          << "\n";
+            }
         }
     }
 
@@ -49,7 +75,7 @@ class TaskSetPermutation {
 
     void IterateAllChainPermutations(uint position,
                                      ChainPermutation& chain_perm) {
-        if (position == task_chain_.size() - 1) {
+        if (position == task_chains_[0].size() - 1) {
             iteration_count_++;
             EvaluateChainPermutation(chain_perm);
             return;
@@ -76,7 +102,7 @@ class TaskSetPermutation {
 #endif
         // evaluate schedulability
         VariableOD variable_od =
-            FindODFromPermutation(dag_tasks_, chain_perm, task_chain_);
+            FindODFromPermutation(dag_tasks_, chain_perm, task_chains_[0]);
 
         if (variable_od.valid_)  // if valid, we'll exam obj; otherwise, we'll
                                  // just move forward
@@ -109,7 +135,7 @@ class TaskSetPermutation {
     TimerType start_time_;
     DAG_Model dag_tasks_;
     RegularTaskSystem::TaskSetInfoDerived tasks_info_;
-    std::vector<int> task_chain_;
+    std::vector<std::vector<int>> task_chains_;
     std::vector<TwoTaskPermutations> adjacent_two_task_permutations_;
     std::vector<ChainPermutation> chain_permutations_;
     ChainPermutation best_yet_chain_;
