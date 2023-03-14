@@ -83,11 +83,10 @@ bool TwoTaskPermutations::AppendJobs(
     PermutationInequality perm_merged =
         MergeTwoSinglePermutations(perm_new, permutation_current.inequality_);
     // Add bound constraints
-    if (GlobalVariablesDAGOpt::SKIP_PERM) {
-        PermutationInequality perm_bound = GenerateBoxPermutationConstraints(
-            job_curr.taskId, job_match.taskId, variable_od_range_);
-        perm_merged = MergeTwoSinglePermutations(perm_merged, perm_bound);
-    }
+
+    PermutationInequality perm_bound = GenerateBoxPermutationConstraints(
+        job_curr.taskId, job_match.taskId, variable_od_range_);
+    perm_merged = MergeTwoSinglePermutations(perm_merged, perm_bound);
 
     if (perm_merged.IsValid()) {
         permutation_current.inequality_ = perm_merged;
