@@ -5,6 +5,12 @@
 #include "sources/Utils/profilier.h"
 namespace DAG_SPACE {
 
+Interval GetDeadlineRange(const VariableRange &variable_od_range,
+                          const SinglePairPermutation &perm_prev);
+
+Interval GetOffsetRange(const VariableRange &variable_od_range,
+                        const SinglePairPermutation &perm_prev);
+
 class ChainPermutation {
    public:
     ChainPermutation() {}
@@ -45,13 +51,11 @@ class ChainPermutation {
                  const GraphOfChains &graph_of_all_ca_chains) const;
 
     bool IsValidSameSourceCheck(
-        int source_task_id, int sink_task_id,
         const VariableRange &variable_od_range,
         const SinglePairPermutation &perm_curr,
         const GraphOfChains &graph_of_all_ca_chains) const;
 
     bool IsValidSameSinkCheck(
-        int source_task_id, int sink_task_id,
         const VariableRange &variable_od_range,
         const SinglePairPermutation &perm_curr,
         const GraphOfChains &graph_of_all_ca_chains) const;
