@@ -69,15 +69,21 @@ class TaskSetPermutation {
         for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
              i++) {
             if (ifTimeout(start_time_)) break;
-            chain_perm.push_back(adjacent_two_task_permutations_[position][i]);
-            if (GlobalVariablesDAGOpt::SKIP_PERM) {
-                if (!chain_perm.IsValid(variable_range_od_)) {
-                    chain_perm.pop_back();
-                    continue;
-                }
+            // chain_perm.push_back(adjacent_two_task_permutations_[position][i]);
+            // if (GlobalVariablesDAGOpt::SKIP_PERM) {
+            //     if (!chain_perm.IsValid(variable_range_od_)) {
+            //         chain_perm.pop_back();
+            //         continue;
+            //     }
+            // }
+            if (chain_perm.IsValid(
+                    variable_range_od_,
+                    adjacent_two_task_permutations_[position][i])) {
+                chain_perm.push_back(
+                    adjacent_two_task_permutations_[position][i]);
+                IterateAllChainPermutations(position + 1, chain_perm);
+                chain_perm.pop_back();
             }
-            IterateAllChainPermutations(position + 1, chain_perm);
-            chain_perm.pop_back();
         }
     }
 

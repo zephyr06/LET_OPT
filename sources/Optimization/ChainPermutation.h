@@ -27,6 +27,8 @@ class ChainPermutation {
     // exam the last two single-pair-permutation to see if there are
     // conflictions
     bool IsValid(const VariableRange &variable_od_range) const;
+    bool IsValid(const VariableRange &variable_od_range,
+                 const SinglePairPermutation &perm_curr) const;
 
     SinglePairPermutation operator[](size_t i) const {
         if (i >= size()) CoutError("Out-of-range error!");
