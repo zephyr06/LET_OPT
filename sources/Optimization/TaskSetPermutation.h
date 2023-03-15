@@ -76,9 +76,9 @@ class TaskSetPermutation {
             //         continue;
             //     }
             // }
-            if (chain_perm.IsValid(
-                    variable_range_od_,
-                    adjacent_two_task_permutations_[position][i])) {
+            if (chain_perm.IsValid(variable_range_od_,
+                                   adjacent_two_task_permutations_[position][i],
+                                   graph_of_all_ca_chains_)) {
                 chain_perm.push_back(
                     adjacent_two_task_permutations_[position][i]);
                 IterateAllChainPermutations(position + 1, chain_perm);

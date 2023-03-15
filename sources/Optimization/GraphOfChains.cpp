@@ -20,6 +20,11 @@ GraphOfChains::GraphOfChains(const std::vector<std::vector<int>>& chains)
                     prev_tasks_[to_id] = {from_id};
                 else
                     prev_tasks_[to_id].push_back(from_id);
+                itr = next_tasks_.find(from_id);
+                if (itr == next_tasks_.end())
+                    next_tasks_[from_id] = {to_id};
+                else
+                    next_tasks_[from_id].push_back(to_id);
             }
         }
     }

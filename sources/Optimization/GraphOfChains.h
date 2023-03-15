@@ -17,6 +17,8 @@ class GraphOfChains {
     std::vector<Edge> edge_vec_ordered_;
     std::unordered_map<int, std::vector<int>>
         prev_tasks_;  // saves one task's immediate dependent tasks
+    std::unordered_map<int, std::vector<int>>
+        next_tasks_;  // saves one task's immediate following tasks
 };
 
 }  // namespace DAG_SPACE

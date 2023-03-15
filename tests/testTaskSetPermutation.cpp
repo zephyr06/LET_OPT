@@ -207,7 +207,10 @@ TEST_F(PermutationTest1, SinglePairPermutation_valid) {
     ChainPermutation chain_perm;
     chain_perm.push_back(single_perm01);
     // chain_perm.push_back(single_perm12);
-    EXPECT_TRUE(chain_perm.IsValid(variable_range_od, single_perm12));
+
+    GraphOfChains graph_chains({task_chain});
+    EXPECT_TRUE(
+        chain_perm.IsValid(variable_range_od, single_perm12, graph_chains));
 }
 
 TEST_F(PermutationTest3, SinglePairPermutation_constructor) {
@@ -267,7 +270,9 @@ TEST_F(PermutationTest3, ChainPermutation_valid_v1) {
     chain_perm.push_back(single_perm01);
     // EXPECT_TRUE(chain_perm.IsValid(variable_range_od));
     // chain_perm.push_back(single_perm12);
-    EXPECT_FALSE(chain_perm.IsValid(variable_range_od, single_perm12));
+    GraphOfChains graph_chains({{0, 1, 2}});
+    EXPECT_FALSE(
+        chain_perm.IsValid(variable_range_od, single_perm12, graph_chains));
 }
 
 class PermutationTest4 : public ::testing::Test {
@@ -315,6 +320,8 @@ TEST_F(PermutationTest4, ChainPermutation_valid_v1) {
     EXPECT_EQ(2, graph_chains.edge_vec_ordered_.size());
     EXPECT_EQ(0, graph_chains.prev_tasks_[1][0]);
     EXPECT_EQ(0, graph_chains.prev_tasks_[2][0]);
+    EXPECT_EQ(1, graph_chains.next_tasks_[0][0]);
+    EXPECT_EQ(2, graph_chains.next_tasks_[0][1]);
 }
 
 class PermutationTest5 : public ::testing::Test {
@@ -359,6 +366,12 @@ TEST_F(PermutationTest5, ChainPermutation_valid_v1) {
     EXPECT_EQ(0, graph_chains.prev_tasks_[1][0]);
     EXPECT_EQ(20, graph_chains.prev_tasks_[1][1]);
     EXPECT_EQ(0, graph_chains.prev_tasks_[2][0]);
+
+    EXPECT_EQ(1, graph_chains.next_tasks_[0][0]);
+    EXPECT_EQ(2, graph_chains.next_tasks_[0][1]);
+    EXPECT_EQ(7, graph_chains.next_tasks_[6][0]);
+    EXPECT_EQ(1, graph_chains.next_tasks_[6].size());
+    EXPECT_EQ(6, graph_chains.next_tasks_[25][0]);
 }
 
 class PermutationTest_2chain_v1 : public ::testing::Test {

@@ -1,6 +1,6 @@
 #pragma once
-
 #include "sources/Optimization/Edge.h"
+#include "sources/Optimization/GraphOfChains.h"
 #include "sources/Optimization/TwoTaskPermutations.h"
 #include "sources/Utils/profilier.h"
 namespace DAG_SPACE {
@@ -25,7 +25,8 @@ class ChainPermutation {
     inline void pop_back() { permutation_chain_.pop_back(); }
     inline void reserve(size_t n) { permutation_chain_.reserve(n); }
     bool IsValid(const VariableRange &variable_od_range,
-                 const SinglePairPermutation &perm_curr) const;
+                 const SinglePairPermutation &perm_curr,
+                 const GraphOfChains &graph_of_all_ca_chains) const;
 
     SinglePairPermutation operator[](size_t i) const {
         if (i >= size()) CoutError("Out-of-range error!");
@@ -44,7 +45,9 @@ class ChainPermutation {
     // data members
 
    private:
-    std::unordered_map<Edge, int> permutation_map_;
+    std::unordered_map<Edge, int>
+        permutation_map_;  // edge to the index of its SinglePairPermutation
+    // TODO: merge these two members
     std::vector<SinglePairPermutation> permutation_chain_;
 };
 
