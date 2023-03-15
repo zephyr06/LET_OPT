@@ -6,9 +6,9 @@
 
 namespace DAG_SPACE {
 
-bool IsValidTwoSerialSinglePerm(const VariableRange& variable_od_range,
-                                const SinglePairPermutation& perm_prev,
-                                const SinglePairPermutation& perm_curr) {
+bool IsTwoPermConflicted_SerailConnect(const VariableRange& variable_od_range,
+                                       const SinglePairPermutation& perm_prev,
+                                       const SinglePairPermutation& perm_curr) {
     if (perm_prev.GetNextTaskId() == perm_curr.GetPrevTaskId()) {
         int deadline_prev_min =
             variable_od_range.lower_bound.at(perm_prev.GetPrevTaskId())
@@ -63,9 +63,9 @@ Interval GetOffsetRange(const VariableRange& variable_od_range,
 }
 
 // we analyze the lower bound and upper bound of d_0
-bool IsValidShareSourceSinglePerm(const VariableRange& variable_od_range,
-                                  const SinglePairPermutation& perm_prev,
-                                  const SinglePairPermutation& perm_curr) {
+bool IsTwoPermConflicted_SameSource(const VariableRange& variable_od_range,
+                                    const SinglePairPermutation& perm_prev,
+                                    const SinglePairPermutation& perm_curr) {
     Interval deadline_range_from_prev =
         GetDeadlineRange(variable_od_range, perm_prev);
     Interval deadline_range_from_curr =
@@ -73,9 +73,9 @@ bool IsValidShareSourceSinglePerm(const VariableRange& variable_od_range,
     return Overlap(deadline_range_from_prev, deadline_range_from_curr) > 0;
 }
 
-bool IsValidShareSinkSinglePerm(const VariableRange& variable_od_range,
-                                const SinglePairPermutation& perm_prev,
-                                const SinglePairPermutation& perm_curr) {
+bool IsTwoPermConflicted_SameSink(const VariableRange& variable_od_range,
+                                  const SinglePairPermutation& perm_prev,
+                                  const SinglePairPermutation& perm_curr) {
     Interval offset_range_from_prev =
         GetOffsetRange(variable_od_range, perm_prev);
     Interval offset_range_from_curr =
@@ -83,7 +83,7 @@ bool IsValidShareSinkSinglePerm(const VariableRange& variable_od_range,
     return Overlap(offset_range_from_prev, offset_range_from_curr) > 0;
 }
 
-bool ChainPermutation::IsValidSameSourceCheck(
+bool ChainPermutation::IsPermConflicted_CheckAllWithSameSource(
     const VariableRange& variable_od_range,
     const SinglePairPermutation& perm_curr,
     const GraphOfChains& graph_of_all_ca_chains) const {
@@ -99,14 +99,14 @@ bool ChainPermutation::IsValidSameSourceCheck(
             CoutError("Not found edge!");
         const SinglePairPermutation& perm_ite =
             permutation_chain_[permutation_map_.at(edge_ite)];
-        if (!IsValidShareSourceSinglePerm(variable_od_range, perm_ite,
-                                          perm_curr))
+        if (!IsTwoPermConflicted_SameSource(variable_od_range, perm_ite,
+                                            perm_curr))
             return false;
     }
     return true;
 }
 
-bool ChainPermutation::IsValidSameSinkCheck(
+bool ChainPermutation::IsPermConflicted_CheckAllWithSameSink(
     const VariableRange& variable_od_range,
     const SinglePairPermutation& perm_curr,
     const GraphOfChains& graph_of_all_ca_chains) const {
@@ -121,33 +121,33 @@ bool ChainPermutation::IsValidSameSinkCheck(
             CoutError("Not found edge!");
         const SinglePairPermutation& perm_ite =
             permutation_chain_[permutation_map_.at(edge_ite)];
-        if (!IsValidShareSinkSinglePerm(variable_od_range, perm_ite, perm_curr))
+        if (!IsTwoPermConflicted_SameSink(variable_od_range, perm_ite,
+                                          perm_curr))
             return false;
     }
     return true;
 }
 
-// TODO: add other check types
 bool ChainPermutation::IsValid(
     const VariableRange& variable_od_range,
     const SinglePairPermutation& perm_curr,
     const GraphOfChains& graph_of_all_ca_chains) const {
     int perm_single_chain_size = permutation_chain_.size();
     if (perm_single_chain_size > 0) {
-        if (!IsValidSameSourceCheck(variable_od_range, perm_curr,
-                                    graph_of_all_ca_chains))
+        if (!IsPermConflicted_CheckAllWithSameSource(
+                variable_od_range, perm_curr, graph_of_all_ca_chains))
             return false;
 
         // check same sink conflictions
-        if (!IsValidSameSinkCheck(variable_od_range, perm_curr,
-                                  graph_of_all_ca_chains))
+        if (!IsPermConflicted_CheckAllWithSameSink(variable_od_range, perm_curr,
+                                                   graph_of_all_ca_chains))
             return false;
 
         // check serial conflictions
         const SinglePairPermutation& perm_prev =
             permutation_chain_[perm_single_chain_size - 1];
-        if (!IsValidTwoSerialSinglePerm(variable_od_range, perm_prev,
-                                        perm_curr))
+        if (!IsTwoPermConflicted_SerailConnect(variable_od_range, perm_prev,
+                                               perm_curr))
             return false;
     }
     return true;

@@ -468,7 +468,7 @@ class PermutationTest6 : public ::testing::Test {
     VariableOD variable_od;
 };
 
-TEST_F(PermutationTest6, IsValidSameSourceCheck) {
+TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSource) {
     perm01[0].print();
     perm04[1].print();
     ChainPermutation chain_perm;
@@ -484,11 +484,11 @@ TEST_F(PermutationTest6, IsValidSameSourceCheck) {
     Interval intv2 = GetDeadlineRange(variable_od_range, perm04[1]);
     EXPECT_EQ(-400, intv2.start);
     EXPECT_EQ(-300 + 500 - 60, intv2.start + intv2.length);
-    EXPECT_TRUE(chain_perm.IsValidSameSourceCheck(variable_od_range, perm04[1],
-                                                  graph_of_all_ca_chains));
+    EXPECT_TRUE(chain_perm.IsPermConflicted_CheckAllWithSameSource(
+        variable_od_range, perm04[1], graph_of_all_ca_chains));
 }
 
-TEST_F(PermutationTest6, IsValidSameSourceCheck_ret_false) {
+TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSource_ret_false) {
     // task 0,1,3's periods are 100,400,100
     TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info);
     TwoTaskPermutations perm13(1, 3, dag_tasks, tasks_info);
@@ -508,11 +508,11 @@ TEST_F(PermutationTest6, IsValidSameSourceCheck_ret_false) {
     Interval intv2 = GetDeadlineRange(variable_od_range, perm13[4]);
     EXPECT_EQ(300, intv2.start);
     EXPECT_EQ(400 + 54, intv2.start + intv2.length);
-    EXPECT_FALSE(chain_perm.IsValidSameSourceCheck(variable_od_range, perm13[4],
-                                                   graph_of_all_ca_chains));
+    EXPECT_FALSE(chain_perm.IsPermConflicted_CheckAllWithSameSource(
+        variable_od_range, perm13[4], graph_of_all_ca_chains));
 }
 
-TEST_F(PermutationTest6, IsValidSameSinkCheck) {
+TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSink) {
     TwoTaskPermutations perm41(4, 1, dag_tasks, tasks_info);
     perm01[0].print();
     perm41[1].print();
@@ -528,11 +528,11 @@ TEST_F(PermutationTest6, IsValidSameSinkCheck) {
     Interval intv2 = GetOffsetRange(variable_od_range, perm41[1]);
     EXPECT_EQ(200 + 60, intv2.start);
     EXPECT_EQ(300 + 500, intv2.start + intv2.length);
-    EXPECT_TRUE(chain_perm.IsValidSameSinkCheck(variable_od_range, perm41[1],
-                                                graph_of_all_ca_chains));
+    EXPECT_TRUE(chain_perm.IsPermConflicted_CheckAllWithSameSink(
+        variable_od_range, perm41[1], graph_of_all_ca_chains));
 }
 
-TEST_F(PermutationTest6, IsValidSameSinkCheck_ret_false) {
+TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSink_ret_false) {
     // task 0,1,3's periods are 100,400,100
     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
     TwoTaskPermutations perm31(3, 1, dag_tasks, tasks_info);
@@ -551,8 +551,8 @@ TEST_F(PermutationTest6, IsValidSameSinkCheck_ret_false) {
     Interval intv2 = GetOffsetRange(variable_od_range, perm31[4]);
     EXPECT_EQ(10 + 11 + 12 + 13 - 100, intv2.start);
     EXPECT_EQ(100, intv2.start + intv2.length);
-    EXPECT_FALSE(chain_perm.IsValidSameSinkCheck(variable_od_range, perm31[4],
-                                                 graph_of_all_ca_chains));
+    EXPECT_FALSE(chain_perm.IsPermConflicted_CheckAllWithSameSink(
+        variable_od_range, perm31[4], graph_of_all_ca_chains));
 }
 
 int main(int argc, char** argv) {

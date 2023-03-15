@@ -50,12 +50,12 @@ class ChainPermutation {
                  const SinglePairPermutation &perm_curr,
                  const GraphOfChains &graph_of_all_ca_chains) const;
 
-    bool IsValidSameSourceCheck(
+    bool IsPermConflicted_CheckAllWithSameSource(
         const VariableRange &variable_od_range,
         const SinglePairPermutation &perm_curr,
         const GraphOfChains &graph_of_all_ca_chains) const;
 
-    bool IsValidSameSinkCheck(
+    bool IsPermConflicted_CheckAllWithSameSink(
         const VariableRange &variable_od_range,
         const SinglePairPermutation &perm_curr,
         const GraphOfChains &graph_of_all_ca_chains) const;
