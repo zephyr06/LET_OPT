@@ -4,6 +4,7 @@
 
 namespace DAG_SPACE {
 
+// TODO: not only check the last two adjacent chains
 bool ChainPermutation::IsValid(const VariableRange& variable_od_range) const {
 #ifdef PROFILE_CODE
     BeginTimer(__FUNCTION__);

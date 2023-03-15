@@ -29,7 +29,6 @@ class TaskSetPermutation {
           tasks_info_(
               RegularTaskSystem::TaskSetInfoDerived(dag_tasks.GetTaskSet())),
           graph_of_all_ca_chains_(chains),
-          task_chains_(chains),
           best_yet_obj_(1e9),
           iteration_count_(0),
           variable_range_od_(FindVariableRange(dag_tasks_)) {
@@ -40,15 +39,13 @@ class TaskSetPermutation {
     }
 
     void FindPairPermutations() {
-        for (const auto& task_chain : task_chains_) {
-            for (uint i = 0; i < task_chain.size() - 1; i++) {
-                if (ifTimeout(start_time_)) break;
-                adjacent_two_task_permutations_.push_back(TwoTaskPermutations(
-                    task_chain[i], task_chain[i + 1], dag_tasks_, tasks_info_));
-                std::cout << "Pair permutation #: "
-                          << adjacent_two_task_permutations_.back().size()
-                          << "\n";
-            }
+        for (const auto& edge_curr :
+             graph_of_all_ca_chains_.edge_vec_ordered_) {
+            if (ifTimeout(start_time_)) break;
+            adjacent_two_task_permutations_.push_back(TwoTaskPermutations(
+                edge_curr.from_id, edge_curr.to_id, dag_tasks_, tasks_info_));
+            std::cout << "Pair permutation #: "
+                      << adjacent_two_task_permutations_.back().size() << "\n";
         }
     }
 
@@ -61,7 +58,9 @@ class TaskSetPermutation {
     // depth equals the number of edge pais
     void IterateAllChainPermutations(uint position,
                                      ChainPermutation& chain_perm) {
-        if (position == task_chains_[0].size() - 1) {
+        if (position ==
+            graph_of_all_ca_chains_.edge_records_
+                .size()) {  // finish iterate all the pair permutations
             iteration_count_++;
             EvaluateChainPermutation(chain_perm);
             return;
@@ -87,8 +86,8 @@ class TaskSetPermutation {
         BeginTimer(__FUNCTION__);
 #endif
         // evaluate schedulability
-        VariableOD variable_od =
-            FindODFromPermutation(dag_tasks_, chain_perm, task_chains_[0]);
+        VariableOD variable_od = FindODFromPermutation(dag_tasks_, chain_perm,
+                                                       graph_of_all_ca_chains_);
 
         if (variable_od.valid_)  // if valid, we'll exam obj; otherwise, we'll
                                  // just move forward
@@ -122,7 +121,6 @@ class TaskSetPermutation {
     DAG_Model dag_tasks_;
     RegularTaskSystem::TaskSetInfoDerived tasks_info_;
     GraphOfChains graph_of_all_ca_chains_;
-    std::vector<std::vector<int>> task_chains_;
     std::vector<TwoTaskPermutations> adjacent_two_task_permutations_;
     std::vector<ChainPermutation> chain_permutations_;
     ChainPermutation best_yet_chain_;
