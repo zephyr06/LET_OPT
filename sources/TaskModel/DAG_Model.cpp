@@ -144,18 +144,13 @@ std::vector<std::vector<int>> DAG_Model::GetRandomChains(int numOfChains) {
 
     for (int sourceId : sourceIds) {
         for (int sinkId : sinkIds) {
+            if (chainCount >= numOfChains) break;
             auto path = shortest_paths(sourceId, sinkId, graph_);
             if (path.size() > 1) {
                 chains.push_back(path);
                 chainCount++;
             }
         }
-    }
-    if (chainCount > numOfChains) {
-        if (GlobalVariablesDAGOpt::whether_shuffle_CE_chain)
-            std::shuffle(chains.begin(), chains.end(),
-                         std::default_random_engine{});
-        chains.resize(numOfChains);
     }
     return chains;
 }

@@ -295,6 +295,70 @@ TEST_F(PermutationTest_Non_Har2, PerformLETAnalysis) {
     ScheduleResult res = PerformLETAnalysis<ObjReactionTime>(dag_tasks);
     EXPECT_EQ(40, res.obj_);
 }
+
+class PermutationTest_2chain_v1 : public ::testing::Test {
+   protected:
+    void SetUp() override {
+        dag_tasks = ReadDAG_Tasks(
+            GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v18.csv",
+            "orig", 2);
+        tasks = dag_tasks.GetTaskSet();
+        tasks_info = TaskSetInfoDerived(tasks);
+        task0 = tasks[0];
+        task1 = tasks[1];
+        task2 = tasks[2];
+        job00 = JobCEC(0, 0);
+        job01 = JobCEC(0, 1);
+        job10 = JobCEC(1, 0);
+        job20 = JobCEC(2, 0);
+
+        perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
+        perm03 = TwoTaskPermutations(0, 3, dag_tasks, tasks_info);
+        perm34 = TwoTaskPermutations(3, 4, dag_tasks, tasks_info);
+        perm13 = TwoTaskPermutations(1, 3, dag_tasks, tasks_info);
+
+        perm01[0].print();
+        perm03[0].print();
+        perm34[0].print();
+        perm13[0].print();
+        // perm12[1].print();
+
+        variable_od = VariableOD(tasks);
+        dag_tasks.chains_[0] = {0, 3, 4};
+        dag_tasks.chains_.push_back({1, 3, 4});
+    };
+
+    DAG_Model dag_tasks;
+    TaskSet tasks;
+    TaskSetInfoDerived tasks_info;
+    Task task0;
+    Task task1;
+    Task task2;
+    JobCEC job00;
+    JobCEC job01;
+    JobCEC job10;
+    JobCEC job20;
+
+    TwoTaskPermutations perm01;
+    TwoTaskPermutations perm03;
+    TwoTaskPermutations perm34;
+    TwoTaskPermutations perm13;
+    VariableOD variable_od;
+};
+TEST_F(PermutationTest_2chain_v1, PerformLETAnalysis) {
+    // chain is 0 -> 3 -> 4
+    // chain is 1 -> 3 -> 4
+    ChainPermutation chain_perm;
+    chain_perm.push_back(perm03[0]);
+    chain_perm.push_back(perm34[0]);
+    chain_perm.push_back(perm13[0]);
+    EXPECT_EQ(200 + 200, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
+                                              variable_od));
+    dag_tasks.chains_.push_back({0, 1, 3});
+    chain_perm.push_back(perm01[0]);
+    EXPECT_EQ(200 + 200 + 200, ObjReactionTime::Obj(dag_tasks, tasks_info,
+                                                    chain_perm, variable_od));
+}
 int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);
     ::testing::InitGoogleMock(&argc, argv);
