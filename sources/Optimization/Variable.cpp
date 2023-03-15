@@ -7,9 +7,7 @@ VariableRange FindVariableRange(const DAG_Model& dag_tasks) {
     VariableOD upper_bound(tasks);
     VariableOD lower_bound(tasks);
     for (uint i = 0; i < tasks.size(); i++) {
-        int rta =
-            GetResponseTime(dag_tasks,
-                            tasks[i].id);  // TODO: exam schedulability there
+        int rta = GetResponseTime(dag_tasks, tasks[i].id);
         lower_bound[tasks[i].id].deadline = rta;
         upper_bound[tasks[i].id].offset = tasks[i].deadline - rta;
     }

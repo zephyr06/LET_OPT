@@ -2,8 +2,6 @@
 #include "sources/Optimization/TwoTaskPermutations.h"
 
 namespace DAG_SPACE {
-// TODO: add a unit-test with test_n3_v8
-// TODO: this can be improved by considering execution time range
 std::vector<JobCEC> GetPossibleReactingJobs(
     const JobCEC& job_curr, const Task& task_next, int superperiod,
     const RegularTaskSystem::TaskSetInfoDerived& tasksInfo) {
