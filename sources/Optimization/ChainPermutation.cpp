@@ -6,9 +6,6 @@ namespace DAG_SPACE {
 
 // TODO: not only check the last two adjacent chains
 bool ChainPermutation::IsValid(const VariableRange& variable_od_range) const {
-#ifdef PROFILE_CODE
-    BeginTimer(__FUNCTION__);
-#endif
     // return true;
     int perm_single_chain_size = permutation_chain_.size();
     if (perm_single_chain_size > 1) {
@@ -39,16 +36,10 @@ bool ChainPermutation::IsValid(const VariableRange& variable_od_range) const {
                 .deadline;
         int offset_curr_max = deadline_curr_max - rta_curr;
         if (offset_curr_max < offset_curr_min) {
-#ifdef PROFILE_CODE
-            EndTimer(__FUNCTION__);
-#endif
             return false;
         }
     }
 
-#ifdef PROFILE_CODE
-    EndTimer(__FUNCTION__);
-#endif
     return true;
 }
 
