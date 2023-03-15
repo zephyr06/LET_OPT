@@ -95,7 +95,8 @@ TEST(DAG_MODEL, generate_chains) {
         GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v4.csv";
     DAG_Model dag_tasks =
         ReadDAG_Tasks(path, "RM", GlobalVariablesDAGOpt::CHAIN_NUMBER);
-    dag_tasks.chains_ = dag_tasks.GetRandomChains(1);
+    dag_tasks.chains_ =
+        dag_tasks.GetRandomChains(GlobalVariablesDAGOpt::CHAIN_NUMBER);
     EXPECT(dag_tasks.chains_.size() > 0)
     EXPECT(GlobalVariablesDAGOpt::CHAIN_NUMBER > 0);
     EXPECT_LONGS_EQUAL(GlobalVariablesDAGOpt::CHAIN_NUMBER,

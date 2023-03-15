@@ -58,7 +58,7 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
 template <typename ObjectiveFunctionBase>
 std::vector<BatchResult> BatchOptimizeOrder(
     std::vector<DAG_SPACE::BaselineMethods> &baselineMethods, int N = -1,
-    int chainNum = 1) {
+    int chainNum = GlobalVariablesDAGOpt::CHAIN_NUMBER) {
     std::string dataSetFolder;
     if (N == -1)
         dataSetFolder =
