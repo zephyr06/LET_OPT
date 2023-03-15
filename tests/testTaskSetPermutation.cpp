@@ -206,8 +206,8 @@ TEST_F(PermutationTest1, SinglePairPermutation_valid) {
     VariableRange variable_range_od = FindVariableRange(dag_tasks);
     ChainPermutation chain_perm;
     chain_perm.push_back(single_perm01);
-    chain_perm.push_back(single_perm12);
-    EXPECT_TRUE(chain_perm.IsValid(variable_range_od));
+    // chain_perm.push_back(single_perm12);
+    EXPECT_TRUE(chain_perm.IsValid(variable_range_od, single_perm12));
 }
 
 TEST_F(PermutationTest3, SinglePairPermutation_constructor) {
@@ -265,9 +265,9 @@ TEST_F(PermutationTest3, ChainPermutation_valid_v1) {
     VariableRange variable_range_od = FindVariableRange(dag_tasks);
     ChainPermutation chain_perm;
     chain_perm.push_back(single_perm01);
-    EXPECT_TRUE(chain_perm.IsValid(variable_range_od));
-    chain_perm.push_back(single_perm12);
-    EXPECT_FALSE(chain_perm.IsValid(variable_range_od));
+    // EXPECT_TRUE(chain_perm.IsValid(variable_range_od));
+    // chain_perm.push_back(single_perm12);
+    EXPECT_FALSE(chain_perm.IsValid(variable_range_od, single_perm12));
 }
 
 class PermutationTest4 : public ::testing::Test {

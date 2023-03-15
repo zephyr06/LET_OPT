@@ -24,9 +24,6 @@ class ChainPermutation {
 
     inline void pop_back() { permutation_chain_.pop_back(); }
     inline void reserve(size_t n) { permutation_chain_.reserve(n); }
-    // exam the last two single-pair-permutation to see if there are
-    // conflictions
-    bool IsValid(const VariableRange &variable_od_range) const;
     bool IsValid(const VariableRange &variable_od_range,
                  const SinglePairPermutation &perm_curr) const;
 
