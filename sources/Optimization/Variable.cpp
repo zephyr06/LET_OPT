@@ -16,4 +16,11 @@ VariableRange FindVariableRange(const DAG_Model& dag_tasks) {
     return VariableRange{lower_bound, upper_bound};
 }
 
+void VariableOD::print() const {
+    for (int i = 0; i < variables_.size(); i++) {
+        std::cout << std::setfill(' ') << std::setw(5);
+        std::cout << "Task " << i << " offset: " << variables_.at(i).offset
+                  << " deadline: " << variables_.at(i).deadline << "\n";
+    }
+}
 }  // namespace DAG_SPACE

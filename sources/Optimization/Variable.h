@@ -46,6 +46,7 @@ class VariableOD {
             variables_[task_id].offset = value;
     }
 
+    void print() const;
     // data members
     bool valid_;
 

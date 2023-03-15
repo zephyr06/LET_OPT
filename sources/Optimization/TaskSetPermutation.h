@@ -113,6 +113,9 @@ class TaskSetPermutation {
             int rta = GetResponseTime(dag_tasks_, i);
             if (rta + offset > deadline) return false;
         }
+        if (GlobalVariablesDAGOpt::debugMode == 1) {
+            best_yet_variable_od_.print();
+        }
         return true;
     }
 
