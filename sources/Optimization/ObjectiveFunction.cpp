@@ -2,8 +2,10 @@
 
 namespace DAG_SPACE {
 
-const std::string ObjectiveFunctionBase::type_trait("ObjectiveFunctionBase");
-
+const std::string ObjectiveFunctionBaseIntermediate::type_trait(
+    "ObjectiveFunctionBase");
+const std::string ObjReactionTimeIntermediate::type_trait(
+    "ObjReactionTimeIntermediate");
 const std::string ObjReactionTime::type_trait("ReactionTime");
 
 JobCEC GetFirstReactJobWithSuperPeriod(const JobCEC &job_curr,
@@ -54,13 +56,9 @@ JobCEC GetFirstReactJob(const JobCEC &job_curr,
     return react_job;
 }
 
-double ObjReactionTime::Obj(const DAG_Model &dag_tasks,
-                            const TaskSetInfoDerived &tasks_info,
-                            const ChainPermutation &chain_perm,
-                            const VariableOD &variable_od) {
-#ifdef PROFILE_CODE
-    BeginTimer(__FUNCTION__);
-#endif
+double ObjReactionTimeIntermediate::ObjSingleChain(
+    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+    const ChainPermutation &chain_perm, const VariableOD &variable_od) {
     int max_reaction_time = -1;
     for (uint j = 0; j < tasks_info.sizeOfVariables[chain_perm.GetTaskId(0)];
          j++)  // iterate each source job within a hyper-period
@@ -80,9 +78,30 @@ double ObjReactionTime::Obj(const DAG_Model &dag_tasks,
             max_reaction_time,
             int(deadline_curr - GetActivationTime(job_source, tasks_info)));
     }
+    return max_reaction_time;
+}
+
+double ObjectiveFunctionBaseIntermediate::Obj(
+    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+    const ChainPermutation &chain_perm, const VariableOD &variable_od) {
+#ifdef PROFILE_CODE
+    BeginTimer(__FUNCTION__);
+#endif
+    int max_obj = 0;
+
+    for (const auto &chain : dag_tasks.chains_) {
+        ChainPermutation chain_perm_curr;
+        for (uint i = 0; i < chain.size() - 1; i++) {
+            Edge edge_curr(chain[i], chain[i + 1]);
+            chain_perm_curr.push_back(chain_perm[edge_curr]);
+        }
+        max_obj +=
+            ObjSingleChain(dag_tasks, tasks_info, chain_perm_curr, variable_od);
+    }
+
 #ifdef PROFILE_CODE
     EndTimer(__FUNCTION__);
 #endif
-    return max_reaction_time;
+    return max_obj;
 }
 }  // namespace DAG_SPACE

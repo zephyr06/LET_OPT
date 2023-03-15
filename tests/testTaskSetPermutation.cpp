@@ -30,6 +30,7 @@ class PermutationTest1 : public ::testing::Test {
 
         perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
         perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
+        dag_tasks.chains_[0] = {0, 1, 2};
         task_sets_perms = TaskSetPermutation(dag_tasks, {task_chain});
     };
 

@@ -35,6 +35,7 @@ class PermutationTest1 : public ::testing::Test {
         perm12[1].print();
 
         variable_od = VariableOD(tasks);
+        dag_tasks.chains_[0] = {0, 1, 2};
     };
 
     DAG_Model dag_tasks;
@@ -164,6 +165,7 @@ class PermutationTest_Non_Har : public ::testing::Test {
         task2 = tasks[2];
 
         variable_od = VariableOD(tasks);
+        dag_tasks.chains_[0] = {0, 1, 2};
     };
 
     DAG_Model dag_tasks;
@@ -265,6 +267,7 @@ class PermutationTest_Non_Har2 : public ::testing::Test {
         task2 = tasks[2];
 
         variable_od = VariableOD(tasks);
+        dag_tasks.chains_[0] = {0, 1, 2};
     };
 
     DAG_Model dag_tasks;
