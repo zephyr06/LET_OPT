@@ -99,13 +99,13 @@ TEST_F(PermutationTest1, ChainPermutation_v1) {
     EXPECT_EQ(20, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
                                        variable_od));
 
-    chain_perm.permutation_chain_.clear();
+    chain_perm.clear();
     chain_perm.push_back(perm01[0]);
     chain_perm.push_back(perm12[1]);
     EXPECT_EQ(40, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
                                        variable_od));
 
-    chain_perm.permutation_chain_.clear();
+    chain_perm.clear();
     chain_perm.push_back(perm01[1]);
     chain_perm.push_back(perm12[1]);
     EXPECT_EQ(50, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
@@ -188,7 +188,7 @@ TEST_F(PermutationTest_Non_Har, ChainPermutation_v1) {
     EXPECT_EQ(15, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
                                        variable_od));
 
-    chain_perm.permutation_chain_.clear();
+    chain_perm.clear();
     chain_perm.push_back(perm01[0]);
     chain_perm.push_back(perm12[1]);
     perm01[0].print();
@@ -196,7 +196,7 @@ TEST_F(PermutationTest_Non_Har, ChainPermutation_v1) {
     EXPECT_EQ(30, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
                                        variable_od));
 
-    chain_perm.permutation_chain_.clear();
+    chain_perm.clear();
     chain_perm.push_back(perm01[1]);
     chain_perm.push_back(perm12[1]);
     perm01[1].print();

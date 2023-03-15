@@ -14,6 +14,10 @@ VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
                                  const ChainPermutation& chain_perm,
                                  std::vector<int> task_chain);
 
+VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
+                                 const ChainPermutation& chain_perm,
+                                 const GraphOfChains& graph_of_all_ca_chains);
+
 // currently, as asusme there is only one chain
 class TaskSetPermutation {
    public:

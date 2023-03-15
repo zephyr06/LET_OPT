@@ -25,6 +25,7 @@ class PermutationTest1 : public ::testing::Test {
 
         perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
         perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
+        perm02 = TwoTaskPermutations(0, 2, dag_tasks, tasks_info);
 
         // perm01[0].print();
         // perm01[1].print();
@@ -46,6 +47,7 @@ class PermutationTest1 : public ::testing::Test {
 
     TwoTaskPermutations perm01;
     TwoTaskPermutations perm12;
+    TwoTaskPermutations perm02;
 };
 
 TEST_F(PermutationTest1, FindODFromPermutation) {
@@ -86,6 +88,47 @@ TEST_F(PermutationTest1, FindODFromPermutation_v2) {
     EXPECT_EQ(14, variable[1].deadline);
     EXPECT_EQ(14, variable[2].offset);
     EXPECT_EQ(20, variable[2].deadline);
+}
+TEST_F(PermutationTest1, FindODFromPermutation_graph_v1) {
+    // RTA: 1, 3, 6
+    std::vector<std::vector<int>> task_chains = {{0, 1}, {0, 2}};
+    GraphOfChains graph_chains(task_chains);
+    ChainPermutation chain_perm;
+    chain_perm.push_back(perm01[0]);
+    perm01[0].print();
+    chain_perm.push_back(perm02[0]);
+    perm02[0].print();
+
+    VariableOD variable =
+        FindODFromPermutation(dag_tasks, chain_perm, graph_chains);
+    EXPECT_TRUE(variable.valid_);
+    EXPECT_EQ(0, variable[0].offset);
+    EXPECT_EQ(1, variable[0].deadline);
+    EXPECT_EQ(11, variable[1].offset);
+    EXPECT_EQ(14, variable[1].deadline);
+    EXPECT_EQ(11, variable[2].offset);
+    EXPECT_EQ(17, variable[2].deadline);
+}
+
+TEST_F(PermutationTest1, FindODFromPermutation_graph_v2) {
+    // RTA: 1, 3, 6
+    std::vector<std::vector<int>> task_chains = {{0, 2}, {1, 2}};
+    GraphOfChains graph_chains(task_chains);
+    ChainPermutation chain_perm;
+    chain_perm.push_back(perm12[0]);
+    perm12[0].print();
+    chain_perm.push_back(perm02[0]);
+    perm02[0].print();
+
+    VariableOD variable =
+        FindODFromPermutation(dag_tasks, chain_perm, graph_chains);
+    EXPECT_TRUE(variable.valid_);
+    EXPECT_EQ(0, variable[0].offset);
+    EXPECT_EQ(1, variable[0].deadline);
+    EXPECT_EQ(0, variable[1].offset);
+    EXPECT_EQ(3, variable[1].deadline);
+    EXPECT_EQ(11, variable[2].offset);
+    EXPECT_EQ(17, variable[2].deadline);
 }
 
 class PermutationTest2 : public ::testing::Test {

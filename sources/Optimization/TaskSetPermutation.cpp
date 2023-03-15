@@ -25,4 +25,54 @@ VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
     variable.SetMinDeadline(task_id_chain.back(), dag_tasks);
     return variable;
 }
+
+// set each variable's offset and deadline
+// assumes acyclic graph
+void SetVariableHelper(int task_id,
+                       std::unordered_map<int, bool>& variable_set_record,
+                       VariableOD& variable, const ChainPermutation& chain_perm,
+                       const GraphOfChains& graph_of_all_ca_chains,
+                       const DAG_Model& dag_tasks) {
+    if (variable_set_record.find(task_id) == variable_set_record.end() ||
+        variable_set_record[task_id] == false) {
+        int offset_min = 0;
+        if (graph_of_all_ca_chains.prev_tasks_.find(task_id) !=
+            graph_of_all_ca_chains.prev_tasks_.end()) {
+            const std::vector<int>& dependent_tasks =
+                graph_of_all_ca_chains.prev_tasks_.at(task_id);
+            for (int dependent_task : dependent_tasks) {
+                SetVariableHelper(dependent_task, variable_set_record, variable,
+                                  chain_perm, graph_of_all_ca_chains,
+                                  dag_tasks);
+                Edge edge_curr(dependent_task, task_id);
+                offset_min = std::max(
+                    offset_min,
+                    variable[dependent_task].deadline -
+                        chain_perm[edge_curr].inequality_.upper_bound_);
+            }
+        }
+        variable[task_id].offset = offset_min;
+        variable[task_id].deadline =
+            offset_min + GetResponseTime(dag_tasks, task_id);
+        variable_set_record[task_id] = true;
+    } else
+        return;
+}
+
+VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
+                                 const ChainPermutation& chain_perm,
+                                 const GraphOfChains& graph_of_all_ca_chains) {
+    const TaskSet& tasks = dag_tasks.GetTaskSet();
+    VariableOD variable(dag_tasks.GetTaskSet());
+    std::unordered_map<int, bool> variable_set_record(1e2);
+
+    for (uint i = 0; i < chain_perm.size(); i++) {
+        const SinglePairPermutation& single_perm = chain_perm[i];
+        SetVariableHelper(single_perm.GetNextTaskId(), variable_set_record,
+                          variable, chain_perm, graph_of_all_ca_chains,
+                          dag_tasks);
+    }
+
+    return variable;
+}
 }  // namespace DAG_SPACE
