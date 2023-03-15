@@ -137,7 +137,7 @@ ScheduleResult PerformTOM_OPT(const DAG_Model& dag_tasks) {
     auto start = std::chrono::high_resolution_clock::now();
     ScheduleResult res;
     TaskSetPermutation task_sets_perms =
-        TaskSetPermutation(dag_tasks, dag_tasks.chains_[0]);
+        TaskSetPermutation(dag_tasks, dag_tasks.chains_);
     res.obj_ = task_sets_perms.PerformOptimization();
     if (res.obj_ >= 1e8) {
         res.obj_ = PerformLETAnalysis<ObjectiveFunctionBase>(dag_tasks).obj_;
