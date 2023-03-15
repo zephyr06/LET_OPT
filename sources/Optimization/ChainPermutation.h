@@ -24,9 +24,6 @@ class ChainPermutation {
 
     inline void pop_back() { permutation_chain_.pop_back(); }
     inline void reserve(size_t n) { permutation_chain_.reserve(n); }
-    bool IsValid(const VariableRange &variable_od_range,
-                 const SinglePairPermutation &perm_curr,
-                 const GraphOfChains &graph_of_all_ca_chains) const;
 
     SinglePairPermutation operator[](size_t i) const {
         if (i >= size()) CoutError("Out-of-range error!");
@@ -41,6 +38,23 @@ class ChainPermutation {
     }
 
     int GetTaskId(size_t i) const;
+
+    // several IsValid()-related functions
+    bool IsValid(const VariableRange &variable_od_range,
+                 const SinglePairPermutation &perm_curr,
+                 const GraphOfChains &graph_of_all_ca_chains) const;
+
+    bool IsValidSameSourceCheck(
+        int source_task_id, int sink_task_id,
+        const VariableRange &variable_od_range,
+        const SinglePairPermutation &perm_curr,
+        const GraphOfChains &graph_of_all_ca_chains) const;
+
+    bool IsValidSameSinkCheck(
+        int source_task_id, int sink_task_id,
+        const VariableRange &variable_od_range,
+        const SinglePairPermutation &perm_curr,
+        const GraphOfChains &graph_of_all_ca_chains) const;
 
     // data members
 

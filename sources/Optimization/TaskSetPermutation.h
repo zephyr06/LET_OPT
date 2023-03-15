@@ -69,13 +69,6 @@ class TaskSetPermutation {
         for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
              i++) {
             if (ifTimeout(start_time_)) break;
-            // chain_perm.push_back(adjacent_two_task_permutations_[position][i]);
-            // if (GlobalVariablesDAGOpt::SKIP_PERM) {
-            //     if (!chain_perm.IsValid(variable_range_od_)) {
-            //         chain_perm.pop_back();
-            //         continue;
-            //     }
-            // }
             if (chain_perm.IsValid(variable_range_od_,
                                    adjacent_two_task_permutations_[position][i],
                                    graph_of_all_ca_chains_)) {
