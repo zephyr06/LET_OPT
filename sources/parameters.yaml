@@ -2,9 +2,9 @@
 debugMode: 1
 printSchedule: 0
 TIME_LIMIT: 600 # seconds, -1 means unlimited time
-SKIP_PERM: 1
+SKIP_PERM: 0
 # the proportion of permutations to keep! 1 means no sampling
-SAMPLE_SMALL_TASKS: 1
+SAMPLE_SMALL_TASKS: 0.1
 
 
 #*************************************************************
@@ -12,7 +12,7 @@ SAMPLE_SMALL_TASKS: 1
 priorityMode: RM
 # test_n5_v9 test_n5_v16 requies many permutations
 # test_n5_v41 test_n30_v2 
-testDataSetName: test_n5_v19
+testDataSetName: test_n30_v5
 TIME_SCALE_FACTOR: 10
 CHAIN_NUMBER: 2
 

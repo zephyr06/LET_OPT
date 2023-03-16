@@ -69,7 +69,8 @@ class TaskSetPermutation {
         for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
              i++) {
             if (ifTimeout(start_time_)) break;
-            if (chain_perm.IsValid(variable_range_od_,
+            if ((!GlobalVariablesDAGOpt::SKIP_PERM) ||
+                chain_perm.IsValid(variable_range_od_,
                                    adjacent_two_task_permutations_[position][i],
                                    graph_of_all_ca_chains_)) {
                 chain_perm.push_back(

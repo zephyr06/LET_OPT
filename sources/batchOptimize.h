@@ -91,7 +91,8 @@ std::vector<BatchResult> BatchOptimizeOrder(
             DAG_SPACE::DAG_Model dag_tasks = DAG_SPACE::ReadDAG_Tasks(
                 path, GlobalVariablesDAGOpt::priorityMode, chainNum);
             AssertBool(true, dag_tasks.chains_.size() > 0, __LINE__);
-            chain_lenth.push_back(dag_tasks.chains_[0].size());
+            for (const auto &chain : dag_tasks.chains_)
+                chain_lenth.push_back(chain.size());
 
             for (auto batchTestMethod : baselineMethods) {
                 DAG_SPACE::ScheduleResult res;
