@@ -17,13 +17,13 @@ std::unordered_map<JobCEC, std::vector<JobCEC>> GetJobMatch(
     const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,
     int prev_task_id, int next_task_id);
 
-SinglePairPermutation GetSinglePermutation(const DAG_Model& dag_tasks,
-                                           const TaskSetInfoDerived& tasks_info,
-                                           int prev_task_id, int next_task_id);
+SinglePairPermutation GetSinglePermutationStanLET(
+    const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,
+    int prev_task_id, int next_task_id);
 
-ChainPermutation GetStandardLETChain(const DAG_Model& dag_tasks,
-                                     const TaskSetInfoDerived& tasks_info,
-                                     std::vector<int> task_chain);
+ChainPermutation GetStandardLETChain(
+    const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,
+    const std::vector<std::vector<int>>& task_chains);
 
 template <typename ObjectiveFunctionBase>
 ScheduleResult PerformLETAnalysis(const DAG_Model& dag_tasks) {
@@ -33,7 +33,7 @@ ScheduleResult PerformLETAnalysis(const DAG_Model& dag_tasks) {
     const TaskSet& tasks = dag_tasks.GetTaskSet();
     TaskSetInfoDerived tasks_info(tasks);
     ChainPermutation chain_perm =
-        GetStandardLETChain(dag_tasks, tasks_info, dag_tasks.chains_[0]);
+        GetStandardLETChain(dag_tasks, tasks_info, dag_tasks.chains_);
     VariableOD variable_od = VariableOD(tasks);
     res.obj_ = ObjectiveFunctionBase::Obj(dag_tasks, tasks_info, chain_perm,
                                           variable_od);

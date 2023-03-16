@@ -42,22 +42,25 @@ std::unordered_map<JobCEC, std::vector<JobCEC>> GetJobMatch(
     return job_matches;
 }
 
-SinglePairPermutation GetSinglePermutation(const DAG_Model& dag_tasks,
-                                           const TaskSetInfoDerived& tasks_info,
-                                           int prev_task_id, int next_task_id) {
+SinglePairPermutation GetSinglePermutationStanLET(
+    const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,
+    int prev_task_id, int next_task_id) {
     return SinglePairPermutation(
         GetPermIneq(dag_tasks, tasks_info, prev_task_id, next_task_id),
         GetJobMatch(dag_tasks, tasks_info, prev_task_id, next_task_id));
 }
 
-ChainPermutation GetStandardLETChain(const DAG_Model& dag_tasks,
-                                     const TaskSetInfoDerived& tasks_info,
-                                     std::vector<int> task_chain) {
-    ChainPermutation chain_perm(task_chain.size() - 1);
-    for (uint i = 0; i < task_chain.size() - 1; i++) {
-        chain_perm.push_back(GetSinglePermutation(
-            dag_tasks, tasks_info, task_chain[i], task_chain[i + 1]));
+ChainPermutation GetStandardLETChain(
+    const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,
+    const std::vector<std::vector<int>>& task_chains) {
+    ChainPermutation chain_perm(1e2);
+    for (const auto& chain : task_chains) {
+        for (uint i = 0; i < chain.size() - 1; i++) {
+            chain_perm.push_back(GetSinglePermutationStanLET(
+                dag_tasks, tasks_info, chain[i], chain[i + 1]));
+        }
     }
+
     return chain_perm;
 }
 

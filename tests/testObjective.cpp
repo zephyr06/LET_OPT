@@ -222,15 +222,6 @@ TEST_F(PermutationTest_Non_Har, diff_deadline_from_variable) {
                                        variable_od));
 }
 
-// TEST_F(PermutationTest_Non_Har, FindFirstReactJob) {
-//
-//     // chain is 0 -> 1 -> 2
-//     EXPECT_EQ(1, FindFirstReactJob(tasks[0], tasks[1], 0));
-//     EXPECT_EQ(2, FindFirstReactJob(tasks[0], tasks[1], 1));
-//     EXPECT_EQ(2, FindFirstReactJob(tasks[0], tasks[1], 2));
-//     EXPECT_EQ(1, FindFirstReactJob(tasks[1], tasks[2], 0));
-// }
-
 TEST_F(PermutationTest_Non_Har, GetPossibleReactingJobsLET) {
     // chain is 0 -> 1 -> 2
     EXPECT_EQ(
@@ -345,7 +336,7 @@ class PermutationTest_2chain_v1 : public ::testing::Test {
     TwoTaskPermutations perm13;
     VariableOD variable_od;
 };
-TEST_F(PermutationTest_2chain_v1, PerformLETAnalysis) {
+TEST_F(PermutationTest_2chain_v1, Obj_RT) {
     // chain is 0 -> 3 -> 4
     // chain is 1 -> 3 -> 4
     ChainPermutation chain_perm;
@@ -358,6 +349,13 @@ TEST_F(PermutationTest_2chain_v1, PerformLETAnalysis) {
     chain_perm.push_back(perm01[0]);
     EXPECT_EQ(200 + 200 + 200, ObjReactionTime::Obj(dag_tasks, tasks_info,
                                                     chain_perm, variable_od));
+}
+
+TEST_F(PermutationTest_2chain_v1, PerformLETAnalysis) {
+    // chain is 0 -> 3 -> 4
+    // chain is 1 -> 3 -> 4
+    ScheduleResult res = PerformLETAnalysis<ObjReactionTime>(dag_tasks);
+    EXPECT_EQ(600 + 600, res.obj_);
 }
 int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);
