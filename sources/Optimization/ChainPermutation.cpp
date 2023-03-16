@@ -95,8 +95,10 @@ bool ChainPermutation::IsPermConflicted_CheckAllWithSameSource(
     for (int next_id : source_next_task_ids) {
         if (next_id == sink_task_id) continue;
         Edge edge_ite(source_task_id, next_id);
-        if (permutation_map_.find(edge_ite) == permutation_map_.end())
-            CoutError("Not found edge!");
+        if (permutation_map_.find(edge_ite) ==
+            permutation_map_.end())  // this edge has not been added to the
+                                     // chain yet, therefore no conflictions
+            continue;
         const SinglePairPermutation& perm_ite =
             permutation_chain_[permutation_map_.at(edge_ite)];
         if (!IsTwoPermConflicted_SameSource(variable_od_range, perm_ite,
@@ -118,7 +120,8 @@ bool ChainPermutation::IsPermConflicted_CheckAllWithSameSink(
         if (prev_id == source_task_id) continue;
         Edge edge_ite(prev_id, sink_task_id);
         if (permutation_map_.find(edge_ite) == permutation_map_.end())
-            CoutError("Not found edge!");
+            continue;  // this edge has not been added to the
+                       // chain yet, therefore no conflictions
         const SinglePairPermutation& perm_ite =
             permutation_chain_[permutation_map_.at(edge_ite)];
         if (!IsTwoPermConflicted_SameSink(variable_od_range, perm_ite,

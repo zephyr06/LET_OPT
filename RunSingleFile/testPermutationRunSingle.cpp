@@ -11,7 +11,8 @@ TEST(RunSingle, v1) {
     auto dag_tasks =
         ReadDAG_Tasks(GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/" +
                           GlobalVariablesDAGOpt::testDataSetName + ".csv",
-                      GlobalVariablesDAGOpt::priorityMode, 1);
+                      GlobalVariablesDAGOpt::priorityMode,
+                      GlobalVariablesDAGOpt::CHAIN_NUMBER);
     const TaskSet& tasks = dag_tasks.GetTaskSet();
     TaskSetInfoDerived tasks_info(tasks);
 
