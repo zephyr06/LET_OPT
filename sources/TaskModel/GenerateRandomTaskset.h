@@ -30,8 +30,10 @@ TaskSet GenerateTaskSet(int N, double totalUtilization, int numberOfProcessor,
 void WriteTaskSets(std::ofstream &file, TaskSet &tasks);
 
 using namespace DAG_SPACE;
-DAG_Model GenerateDAG(int N, double totalUtilization, int numberOfProcessor,
-                      int coreRequireMax, double parallelismFactor,
-                      int period_generation_type = 1, int deadlineType = 0);
+DAG_Model GenerateDAG(
+    int N, double totalUtilization, int numberOfProcessor, int coreRequireMax,
+    double parallelismFactor, int period_generation_type = 1,
+    int deadlineType = 0,
+    int numCauseEffectChain = GlobalVariablesDAGOpt::CHAIN_NUMBER);
 
 void WriteDAG(std::ofstream &file, DAG_Model &tasksDAG);

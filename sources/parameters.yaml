@@ -14,7 +14,7 @@ priorityMode: RM
 # test_n5_v41 test_n30_v2 
 testDataSetName: test_n30_v5
 TIME_SCALE_FACTOR: 10
-CHAIN_NUMBER: 2
+CHAIN_NUMBER: 1
 
 
 #*************************************************************

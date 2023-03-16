@@ -73,13 +73,6 @@ TEST(GetRandomChains, DAG_Model) {
     EXPECT(dag_tasks.chains_.size() > 0);
     std::cout << dag_tasks.chains_.size() << std::endl;
 }
-TEST(dag_model, GetSfBound) {
-    string path =
-        GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n30_v3.csv";
-    DAG_Model dag_tasks = ReadDAG_Tasks(path, "orig");
-    EXPECT_LONGS_EQUAL(6409, dag_tasks.GetSfBound());
-    EXPECT_LONGS_EQUAL(253533, dag_tasks.GetRtdaBound());
-}
 
 TEST(DAG_Model, mapPrev) {
     string path =
@@ -116,6 +109,18 @@ TEST(DAG_MODEL, WhetherDAGChainsShareNodes) {
 
     dag_tasks.chains_ = {{0, 1}, {4, 5, 1}};
     EXPECT(WhetherDAGChainsShareNodes(dag_tasks));
+}
+
+TEST(DAG_Model, read_chains) {
+    string path =
+        GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v20.csv";
+    DAG_Model dag_tasks =
+        ReadDAG_Tasks(path, "RM", GlobalVariablesDAGOpt::CHAIN_NUMBER);
+    std::vector<int> chain0 = {0, 1, 4};
+    std::vector<int> chain1 = {0, 1, 3, 2};
+    AssertEqualVectorExact<int>(chain0, dag_tasks.chains_[0], 0, __LINE__);
+
+    AssertEqualVectorExact<int>(chain1, dag_tasks.chains_[1], 0, __LINE__);
 }
 int main() {
     TestResult tr;

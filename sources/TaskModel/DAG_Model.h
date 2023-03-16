@@ -53,8 +53,8 @@ class DAG_Model {
     DAG_Model() : sfBound_(-1), rtdaBound_(-1) {}
     DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, int numCauseEffectChain = 1)
         : tasks(tasks), mapPrev(mapPrev) {
-        std::tie(graph_, indexesBGL_) = GenerateGraphForTaskSet();
         RecordTaskPosition();
+        std::tie(graph_, indexesBGL_) = GenerateGraphForTaskSet();
         chains_ = GetRandomChains(numCauseEffectChain);
         sfBound_ = -1;
         rtdaBound_ = -1;

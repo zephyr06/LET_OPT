@@ -148,18 +148,23 @@ int main(int argc, char *argv[]) {
         {
             DAG_Model dag_tasks = GenerateDAG(
                 task_number_in_tasksets, totalUtilization, numberOfProcessor, 1,
-                parallelismFactor, period_generation_type, deadlineType);
+                parallelismFactor, period_generation_type, deadlineType,
+                GlobalVariablesDAGOpt::CHAIN_NUMBER);
 
             if (excludeDAGWithWongChainNumber == 1) {
-                TaskSet t = dag_tasks.GetTasks();
-                DAG_Model ttt(t, dag_tasks.mapPrev, 1e9, 1e9,
-                              GlobalVariablesDAGOpt::CHAIN_NUMBER);
-                if (ttt.chains_.size() != GlobalVariablesDAGOpt::CHAIN_NUMBER) {
+                // TaskSet t = dag_tasks.GetTasks();
+                // DAG_Model ttt(t, dag_tasks.mapPrev, 1e9, 1e9,
+                //               GlobalVariablesDAGOpt::CHAIN_NUMBER);
+                if (dag_tasks.chains_.size() !=
+                    GlobalVariablesDAGOpt::CHAIN_NUMBER) {
                     i--;
                     continue;
                 }
                 if (examChainsWithSharedNodes) {
-                    ;  // TODO
+                    if (!WhetherDAGChainsShareNodes(dag_tasks)) {
+                        i--;
+                        continue;
+                    }
                 }
             }
 

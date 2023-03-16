@@ -2,7 +2,7 @@
 
 namespace DAG_SPACE {
 
-std::vector<int> shortest_paths(Vertex root, Vertex target, Graph const &g) {
+std::vector<int> shortest_paths(Vertex root, Vertex target, Graph const& g) {
     std::vector<int> path;
     // find shortest paths from the root
     std::vector<Vertex> predecessors(boost::num_vertices(g), NIL);
@@ -22,7 +22,7 @@ std::vector<int> shortest_paths(Vertex root, Vertex target, Graph const &g) {
     return path;
 }
 
-void PrintChains(const std::vector<std::vector<int>> &chains) {
+void PrintChains(const std::vector<std::vector<int>>& chains) {
     std::cout << "Chains:" << std::endl;
     for (size_t i = 0; i < size(chains); i++) {
         for (size_t j = 0; j < size(chains[i]); j++) {
@@ -62,7 +62,7 @@ std::pair<Graph, indexVertexMap> DAG_Model::GenerateGraphForTaskSet() const {
     // add edges
 
     for (auto itr = mapPrev.begin(); itr != mapPrev.end(); itr++) {
-        const TaskSet &tasksPrev =
+        const TaskSet& tasksPrev =
             itr->second;  // task ids that must finish before the task whose id
                           // is indexNext
         size_t indexNext = itr->first;
@@ -74,7 +74,7 @@ std::pair<Graph, indexVertexMap> DAG_Model::GenerateGraphForTaskSet() const {
 }
 
 void DAG_Model::print() {
-    for (auto &task : tasks) task.print();
+    for (auto& task : tasks) task.print();
     for (auto itr = mapPrev.begin(); itr != mapPrev.end(); itr++) {
         for (uint i = 0; i < (itr->second).size(); i++)
             std::cout << "Edge: " << ((itr->second)[i].id) << "-->"
@@ -174,6 +174,16 @@ void DAG_Model::RecordTaskPosition() {
         task_id2position_[tasks[i].id] = i;
     }
 }
+// transform a string to a vectof of int
+std::vector<int> Str2VecInt(const std::string& str) {
+    std::vector<int> vect;
+    std::stringstream ss(str);
+    for (int i; ss >> i;) {
+        vect.push_back(i);
+        if (ss.peek() == ',') ss.ignore();
+    }
+    return vect;
+}
 
 DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType,
                         int chainNum) {
@@ -191,6 +201,8 @@ DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType,
     size_t pos = 0;
 
     MAP_Prev mapPrev;
+
+    std::vector<std::vector<int>> chains;
 
     fstream file;
     file.open(path, ios::in);
@@ -213,18 +225,15 @@ DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType,
                 mapPrev[dataInLine[1]].push_back(
                     tasks[task_id2position[dataInLine[0]]]);
             } else if (line[0] == '@') {
-                if ((pos = line.find(":")) != std::string::npos) {
-                    token = line.substr(pos + 1);
-                    if (line.find("SF_Bound") != std::string::npos) {
-                        sf_bound = atoi(token.c_str());
-                    } else if (line.find("RTDA_Bound") != std::string::npos) {
-                        rtda_bound = atoi(token.c_str());
-                    }
+                if (line.find("Chain") != std::string::npos) {
+                    chains.push_back(
+                        Str2VecInt(line.substr(7, line.size() - 8)));
                 }
             }
         }
 
         DAG_Model ttt(tasks, mapPrev, sf_bound, rtda_bound, chainNum);
+        if (chains.size() > 0) ttt.chains_ = chains;
         return ttt;
     } else {
         std::cout << Color::red << "The path does not exist in ReadTaskSet!"
