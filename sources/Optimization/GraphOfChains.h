@@ -1,6 +1,7 @@
 #pragma once
 #include "hashtable.h"
 #include "sources/Optimization/Edge.h"
+#include "sources/Utils/testMy.h"
 #include "unordered_map"
 #include "unordered_set"
 #include "vector"
@@ -10,6 +11,10 @@ class GraphOfChains {
    public:
     GraphOfChains() {}
     GraphOfChains(const std::vector<std::vector<int>>& chains);
+
+    std::vector<int> GetPrevTasks(int task_id) const;
+
+    std::vector<int> GetNextTasks(int task_id) const;
 
     // data members
     std::vector<std::vector<int>> chains_;

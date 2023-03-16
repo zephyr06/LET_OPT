@@ -11,39 +11,49 @@ Interval GetDeadlineRange(const VariableRange &variable_od_range,
 Interval GetOffsetRange(const VariableRange &variable_od_range,
                         const SinglePairPermutation &perm_prev);
 
+// this class actually stores graphs rather than a single chain
 class ChainPermutation {
    public:
     ChainPermutation() {}
 
-    ChainPermutation(uint n) { permutation_chain_.reserve(n); }
+    ChainPermutation(uint n) { permutation_chain_map_.reserve(n); }
 
-    inline size_t size() const { return permutation_chain_.size(); }
+    inline size_t size() const { return permutation_chain_map_.size(); }
+
     inline void push_back(const SinglePairPermutation &perm) {
-        permutation_chain_.push_back(perm);
+        // permutation_chain_.push_back(perm);
         Edge edge_curr(perm.GetPrevTaskId(), perm.GetNextTaskId());
-        permutation_map_[edge_curr] = permutation_chain_.size() - 1;
-    }
-    void clear() {
-        permutation_map_.clear();
-        permutation_chain_.clear();
+        if (permutation_chain_map_.find(edge_curr) !=
+                permutation_chain_map_.end() &&
+            permutation_chain_map_[edge_curr] != perm)
+            CoutError(
+                "Insert conflicted SinglePairPermutation into "
+                "ChainPermutation!");
+        permutation_chain_map_[edge_curr] = perm;
     }
 
-    inline void pop_back() { permutation_chain_.pop_back(); }
-    inline void reserve(size_t n) { permutation_chain_.reserve(n); }
+    void clear() { permutation_chain_map_.clear(); }
 
-    SinglePairPermutation operator[](size_t i) const {
-        if (i >= size()) CoutError("Out-of-range error!");
-        return permutation_chain_[i];
+    inline void pop(const SinglePairPermutation &perm) {
+        Edge edge_curr(perm.GetPrevTaskId(), perm.GetNextTaskId());
+        permutation_chain_map_.erase(edge_curr);
     }
+
+    inline void reserve(size_t n) { permutation_chain_map_.reserve(n); }
+
+    // SinglePairPermutation operator[](size_t i) const {
+    //     if (i >= size()) CoutError("Out-of-range error!");
+    //     return permutation_chain_[i];
+    // }
 
     SinglePairPermutation operator[](const Edge &edge) const {
-        auto itr = permutation_map_.find(edge);
-        if (itr == permutation_map_.end())
+        auto itr = permutation_chain_map_.find(edge);
+        if (itr == permutation_chain_map_.end())
             CoutError("Didn't find the given edge in SinglePairPermutation!");
-        return permutation_chain_[permutation_map_.at(edge)];
+        return permutation_chain_map_.at(edge);
     }
 
-    int GetTaskId(size_t i) const;
+    // int GetTaskId(size_t i) const;
 
     // several IsValid()-related functions
     bool IsValid(const VariableRange &variable_od_range,
@@ -60,13 +70,14 @@ class ChainPermutation {
         const SinglePairPermutation &perm_curr,
         const GraphOfChains &graph_of_all_ca_chains) const;
 
-    // data members
+    bool IsPermConflicted_CheckAllSerialConnect(
+        const VariableRange &variable_od_range,
+        const SinglePairPermutation &perm_curr,
+        const GraphOfChains &graph_of_all_ca_chains) const;
 
+    // data members
    private:
-    std::unordered_map<Edge, int>
-        permutation_map_;  // edge to the index of its SinglePairPermutation
-    // TODO: merge these two members
-    std::vector<SinglePairPermutation> permutation_chain_;
+    std::unordered_map<Edge, SinglePairPermutation> permutation_chain_map_;
 };
 
 }  // namespace DAG_SPACE

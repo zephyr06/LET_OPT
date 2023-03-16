@@ -67,6 +67,14 @@ struct SinglePairPermutation {
     inline int GetPrevTaskId() const { return inequality_.task_prev_id_; }
     inline int GetNextTaskId() const { return inequality_.task_next_id_; }
 
+    bool operator==(const SinglePairPermutation& other) const {
+        return inequality_ == other.inequality_ &&
+               job_first_react_matches_ == other.job_first_react_matches_;
+    }
+    bool operator!=(const SinglePairPermutation& other) const {
+        return !(*this == other);
+    }
+
     // data members
     PermutationInequality
         inequality_;  //  for convenience of skipping permutations

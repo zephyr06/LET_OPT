@@ -10,9 +10,9 @@
 namespace DAG_SPACE {
 
 // assume the simple response time analysis
-VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
-                                 const ChainPermutation& chain_perm,
-                                 std::vector<int> task_chain);
+// VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
+//                                  const ChainPermutation& chain_perm,
+//                                  std::vector<int> task_chain);
 
 VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
                                  const ChainPermutation& chain_perm,
@@ -75,7 +75,7 @@ class TaskSetPermutation {
                 chain_perm.push_back(
                     adjacent_two_task_permutations_[position][i]);
                 IterateAllChainPermutations(position + 1, chain_perm);
-                chain_perm.pop_back();
+                chain_perm.pop(adjacent_two_task_permutations_[position][i]);
             }
         }
     }
@@ -110,7 +110,9 @@ class TaskSetPermutation {
             int offset = best_yet_variable_od_.at(i).offset;
             int deadline = best_yet_variable_od_.at(i).deadline;
             int rta = GetResponseTime(dag_tasks_, i);
-            if (rta + offset > deadline) return false;
+            if (rta + offset > deadline ||
+                deadline > dag_tasks_.GetTask(i).deadline)
+                return false;
         }
         if (GlobalVariablesDAGOpt::debugMode == 1) {
             best_yet_variable_od_.print();
@@ -140,7 +142,8 @@ ScheduleResult PerformTOM_OPT(const DAG_Model& dag_tasks) {
         TaskSetPermutation(dag_tasks, dag_tasks.chains_);
     res.obj_ = task_sets_perms.PerformOptimization();
     if (res.obj_ >= 1e8) {
-        res.obj_ = PerformLETAnalysis<ObjectiveFunctionBase>(dag_tasks).obj_;
+        res.obj_ =
+            PerformStandardLETAnalysis<ObjectiveFunctionBase>(dag_tasks).obj_;
     }
     res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
     if (!res.schedulable_) CoutError("Find an unschedulable case!");

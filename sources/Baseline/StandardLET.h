@@ -26,7 +26,7 @@ ChainPermutation GetStandardLETChain(
     const std::vector<std::vector<int>>& task_chains);
 
 template <typename ObjectiveFunctionBase>
-ScheduleResult PerformLETAnalysis(const DAG_Model& dag_tasks) {
+ScheduleResult PerformStandardLETAnalysis(const DAG_Model& dag_tasks) {
     auto start = std::chrono::high_resolution_clock::now();
 
     ScheduleResult res;

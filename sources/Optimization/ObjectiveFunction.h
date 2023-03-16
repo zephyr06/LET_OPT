@@ -8,11 +8,11 @@ namespace DAG_SPACE {
 // 1, task2's index is 2;
 JobCEC GetFirstReactJobWithSuperPeriod(const JobCEC &job_curr,
                                        const ChainPermutation &chain_perm,
-                                       uint task_index_in_chain);
+                                       const Edge &edge_curr);
 
 JobCEC GetFirstReactJob(const JobCEC &job_curr,
                         const ChainPermutation &chain_perm,
-                        uint task_index_in_chain,
+                        const Edge &edge_curr,
                         const TaskSetInfoDerived &tasks_info);
 
 class ObjectiveFunctionBaseIntermediate {
@@ -22,6 +22,7 @@ class ObjectiveFunctionBaseIntermediate {
     virtual double ObjSingleChain(const DAG_Model &dag_tasks,
                                   const TaskSetInfoDerived &tasks_info,
                                   const ChainPermutation &chain_perm,
+                                  const std::vector<int> &chain,
                                   const VariableOD &variable_od) {
         CoutError("Base function should not be called!");
         return 0;
@@ -38,6 +39,7 @@ class ObjReactionTimeIntermediate : public ObjectiveFunctionBaseIntermediate {
     double ObjSingleChain(const DAG_Model &dag_tasks,
                           const TaskSetInfoDerived &tasks_info,
                           const ChainPermutation &chain_perm,
+                          const std::vector<int> &chain,
                           const VariableOD &variable_od) override;
 };
 

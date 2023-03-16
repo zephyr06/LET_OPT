@@ -10,32 +10,25 @@ const std::string ObjReactionTime::type_trait("ReactionTime");
 
 JobCEC GetFirstReactJobWithSuperPeriod(const JobCEC &job_curr,
                                        const ChainPermutation &chain_perm,
-                                       uint task_index_in_chain) {
-    if (task_index_in_chain < chain_perm.size()) {
-        const SinglePairPermutation &pair_perm_curr =
-            chain_perm[task_index_in_chain];
-        // pair_perm_curr.print();
-        auto itr = pair_perm_curr.job_first_react_matches_.find(job_curr);
-        if (itr == pair_perm_curr.job_first_react_matches_.end())
-            CoutError(
-                "Didn't find job_curr records in "
-                "GetFirstReactJobWithSuperPeriod!");
-        else
-            return itr->second
-                .front();  // assume it is sorted, TODO: guarantee it
-    } else {
-        CoutError("No match because of an out-of-range error!");
-    }
+                                       const Edge &edge_curr) {
+    const SinglePairPermutation &pair_perm_curr = chain_perm[edge_curr];
+    // pair_perm_curr.print();
+    auto itr = pair_perm_curr.job_first_react_matches_.find(job_curr);
+    if (itr == pair_perm_curr.job_first_react_matches_.end())
+        CoutError(
+            "Didn't find job_curr records in "
+            "GetFirstReactJobWithSuperPeriod!");
+    else
+        return itr->second.front();  // assume it is sorted, TODO: guarantee it
 
     return JobCEC(-1, -1);
 }
 
 JobCEC GetFirstReactJob(const JobCEC &job_curr,
                         const ChainPermutation &chain_perm,
-                        uint task_index_in_chain,
+                        const Edge &edge_curr,
                         const TaskSetInfoDerived &tasks_info) {
-    const SinglePairPermutation &pair_perm_curr =
-        chain_perm[task_index_in_chain];
+    const SinglePairPermutation &pair_perm_curr = chain_perm[edge_curr];
     int task_id_prev = job_curr.taskId;
     if (task_id_prev != pair_perm_curr.inequality_.task_prev_id_)
         CoutError("Wrong task_index_in_chain index in GetFirstReactJob!");
@@ -51,24 +44,27 @@ JobCEC GetFirstReactJob(const JobCEC &job_curr,
     int sp_index = job_curr.jobId / prev_jobs_in_sp;
     JobCEC react_job = GetFirstReactJobWithSuperPeriod(
         JobCEC(job_curr.taskId, job_curr.jobId % prev_jobs_in_sp), chain_perm,
-        task_index_in_chain);
+        edge_curr);
     react_job.jobId += sp_index * next_jobs_in_sp;
     return react_job;
 }
 
 double ObjReactionTimeIntermediate::ObjSingleChain(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-    const ChainPermutation &chain_perm, const VariableOD &variable_od) {
+    const ChainPermutation &chain_perm, const std::vector<int> &chain,
+    const VariableOD &variable_od) {
     int max_reaction_time = -1;
-    for (uint j = 0; j < tasks_info.sizeOfVariables[chain_perm.GetTaskId(0)];
+    for (uint j = 0; j < tasks_info.sizeOfVariables[chain[0]];
          j++)  // iterate each source job within a hyper-period
     {
-        JobCEC job_source(chain_perm.GetTaskId(0), j);
+        JobCEC job_source(chain[0], j);
         JobCEC job_curr = job_source;
-        for (uint i = 0; i < chain_perm.size();
+        for (uint i = 0; i < chain.size() - 1;
              i++)  // iterate through task-level cause-effect chain
         {
-            job_curr = GetFirstReactJob(job_curr, chain_perm, i, tasks_info);
+            Edge edge_i(chain[i], chain[i + 1]);
+            job_curr =
+                GetFirstReactJob(job_curr, chain_perm, edge_i, tasks_info);
         }
         int deadline_curr =
             variable_od.at(job_curr.taskId).deadline +
@@ -95,8 +91,8 @@ double ObjectiveFunctionBaseIntermediate::Obj(
             Edge edge_curr(chain[i], chain[i + 1]);
             chain_perm_curr.push_back(chain_perm[edge_curr]);
         }
-        max_obj +=
-            ObjSingleChain(dag_tasks, tasks_info, chain_perm_curr, variable_od);
+        max_obj += ObjSingleChain(dag_tasks, tasks_info, chain_perm_curr, chain,
+                                  variable_od);
     }
 
 #ifdef PROFILE_CODE

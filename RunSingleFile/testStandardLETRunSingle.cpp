@@ -16,7 +16,7 @@ TEST(RunSingle, v1) {
     std::cout << "Cause effect chains:" << std::endl;
     PrintChains(dag_tasks.chains_);
     std::cout << "Schedulable? " << CheckSchedulability(dag_tasks) << "\n";
-    int obj_find = PerformLETAnalysis<ObjReactionTime>(dag_tasks).obj_;
+    int obj_find = PerformStandardLETAnalysis<ObjReactionTime>(dag_tasks).obj_;
     std::cout << "The minimum objective function found is " << obj_find << "\n";
 }
 

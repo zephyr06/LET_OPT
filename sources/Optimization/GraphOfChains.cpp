@@ -29,4 +29,19 @@ GraphOfChains::GraphOfChains(const std::vector<std::vector<int>>& chains)
         }
     }
 }
+
+std::vector<int> GraphOfChains::GetPrevTasks(int task_id) const {
+    auto itr = prev_tasks_.find(task_id);
+    if (itr == prev_tasks_.end())
+        // CoutError("Not found task_id in GraphOfChains!");
+        return {};
+    return prev_tasks_.at(task_id);
+}
+std::vector<int> GraphOfChains::GetNextTasks(int task_id) const {
+    auto itr = next_tasks_.find(task_id);
+    if (itr == next_tasks_.end())
+        // CoutError("Not found task_id in GraphOfChains!");
+        return {};
+    return next_tasks_.at(task_id);
+}
 }  // namespace DAG_SPACE

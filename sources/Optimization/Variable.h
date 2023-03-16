@@ -21,8 +21,18 @@ class VariableOD {
         }
         valid_ = true;
     }
-    inline OD_Vir& operator[](uint task_id) { return variables_[task_id]; }
-    inline OD_Vir at(uint task_id) const { return variables_.at(task_id); }
+    OD_Vir& operator[](uint task_id) {
+        auto itr = variables_.find(task_id);
+        if (itr == variables_.end())
+            CoutError("Not found task id in VariableOD!");
+        return variables_[task_id];
+    }
+    OD_Vir at(uint task_id) const {
+        auto itr = variables_.find(task_id);
+        if (itr == variables_.end())
+            CoutError("Not found task id in VariableOD!");
+        return variables_.at(task_id);
+    }
     inline size_t size() const { return variables_.size(); }
 
     bool SetDeadline(uint task_id, int value) {

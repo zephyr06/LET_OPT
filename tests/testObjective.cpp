@@ -54,14 +54,14 @@ class PermutationTest1 : public ::testing::Test {
     VariableOD variable_od;
 };
 
-TEST_F(PermutationTest1, GetTaskId) {
-    ChainPermutation chain_perm;
-    chain_perm.push_back(perm01[0]);
-    chain_perm.push_back(perm12[0]);
-    EXPECT_EQ(0, chain_perm.GetTaskId(0));
-    EXPECT_EQ(1, chain_perm.GetTaskId(1));
-    EXPECT_EQ(2, chain_perm.GetTaskId(2));
-}
+// TEST_F(PermutationTest1, GetTaskId) {
+//     ChainPermutation chain_perm;
+//     chain_perm.push_back(perm01[0]);
+//     chain_perm.push_back(perm12[0]);
+//     EXPECT_EQ(0, chain_perm.GetTaskId(0));
+//     EXPECT_EQ(1, chain_perm.GetTaskId(1));
+//     EXPECT_EQ(2, chain_perm.GetTaskId(2));
+// }
 
 TEST_F(PermutationTest1, GetFirstReactJob) {
     // chain is 0 -> 1 -> 2
@@ -73,20 +73,20 @@ TEST_F(PermutationTest1, GetFirstReactJob) {
     chain_perm.push_back(perm12[0]);
 
     // with the same super-period
-    EXPECT_EQ(JobCEC(1, 0),
-              GetFirstReactJobWithSuperPeriod(JobCEC(0, 0), chain_perm, 0));
-    EXPECT_EQ(JobCEC(1, 0),
-              GetFirstReactJobWithSuperPeriod(JobCEC(0, 1), chain_perm, 0));
-    EXPECT_EQ(JobCEC(2, 0),
-              GetFirstReactJobWithSuperPeriod(JobCEC(1, 0), chain_perm, 1));
+    EXPECT_EQ(JobCEC(1, 0), GetFirstReactJobWithSuperPeriod(
+                                JobCEC(0, 0), chain_perm, Edge(0, 1)));
+    EXPECT_EQ(JobCEC(1, 0), GetFirstReactJobWithSuperPeriod(
+                                JobCEC(0, 1), chain_perm, Edge(0, 1)));
+    EXPECT_EQ(JobCEC(2, 0), GetFirstReactJobWithSuperPeriod(
+                                JobCEC(1, 0), chain_perm, Edge(1, 2)));
 
     // span super-periods
-    EXPECT_EQ(JobCEC(1, 1),
-              GetFirstReactJob(JobCEC(0, 2), chain_perm, 0, tasks_info));
-    EXPECT_EQ(JobCEC(1, 1),
-              GetFirstReactJob(JobCEC(0, 3), chain_perm, 0, tasks_info));
-    EXPECT_EQ(JobCEC(2, 1),
-              GetFirstReactJob(JobCEC(1, 1), chain_perm, 1, tasks_info));
+    EXPECT_EQ(JobCEC(1, 1), GetFirstReactJob(JobCEC(0, 2), chain_perm,
+                                             Edge(0, 1), tasks_info));
+    EXPECT_EQ(JobCEC(1, 1), GetFirstReactJob(JobCEC(0, 3), chain_perm,
+                                             Edge(0, 1), tasks_info));
+    EXPECT_EQ(JobCEC(2, 1), GetFirstReactJob(JobCEC(1, 1), chain_perm,
+                                             Edge(1, 2), tasks_info));
 }
 
 TEST_F(PermutationTest1, ChainPermutation_v1) {
@@ -145,10 +145,10 @@ TEST_F(PermutationTest1, GetJobMatch) {
     EXPECT_EQ(1, job_match_map10[JobCEC(1, 0)][0].jobId);
 }
 
-TEST_F(PermutationTest1, PerformLETAnalysis) {
+TEST_F(PermutationTest1, PerformStandardLETAnalysis) {
     // chain is 0 -> 1 -> 2
     dag_tasks.chains_[0] = {0, 1, 2};
-    ScheduleResult res = PerformLETAnalysis<ObjReactionTime>(dag_tasks);
+    ScheduleResult res = PerformStandardLETAnalysis<ObjReactionTime>(dag_tasks);
     EXPECT_EQ(60, res.obj_);
 }
 
@@ -238,10 +238,10 @@ TEST_F(PermutationTest_Non_Har, GetPossibleReactingJobsLET) {
                .jobId);
 }
 
-TEST_F(PermutationTest_Non_Har, PerformLETAnalysis) {
+TEST_F(PermutationTest_Non_Har, PerformStandardLETAnalysis) {
     // chain is 0 -> 1 -> 2
     dag_tasks.chains_[0] = {0, 1, 2};
-    ScheduleResult res = PerformLETAnalysis<ObjReactionTime>(dag_tasks);
+    ScheduleResult res = PerformStandardLETAnalysis<ObjReactionTime>(dag_tasks);
     EXPECT_EQ(50, res.obj_);
 }
 
@@ -280,10 +280,10 @@ TEST_F(PermutationTest_Non_Har2, GetPossibleReactingJobsLET) {
         3, GetPossibleReactingJobsLET(JobCEC(0, 1), tasks[1], 30, tasks_info)[0]
                .jobId);
 }
-TEST_F(PermutationTest_Non_Har2, PerformLETAnalysis) {
+TEST_F(PermutationTest_Non_Har2, PerformStandardLETAnalysis) {
     // chain is 0 -> 1 -> 2
     dag_tasks.chains_[0] = {0, 1, 2};
-    ScheduleResult res = PerformLETAnalysis<ObjReactionTime>(dag_tasks);
+    ScheduleResult res = PerformStandardLETAnalysis<ObjReactionTime>(dag_tasks);
     EXPECT_EQ(40, res.obj_);
 }
 
@@ -351,10 +351,10 @@ TEST_F(PermutationTest_2chain_v1, Obj_RT) {
                                                     chain_perm, variable_od));
 }
 
-TEST_F(PermutationTest_2chain_v1, PerformLETAnalysis) {
+TEST_F(PermutationTest_2chain_v1, PerformStandardLETAnalysis) {
     // chain is 0 -> 3 -> 4
     // chain is 1 -> 3 -> 4
-    ScheduleResult res = PerformLETAnalysis<ObjReactionTime>(dag_tasks);
+    ScheduleResult res = PerformStandardLETAnalysis<ObjReactionTime>(dag_tasks);
     EXPECT_EQ(600 + 600, res.obj_);
 }
 int main(int argc, char** argv) {

@@ -36,7 +36,7 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
     ScheduleResult res;
     switch (batchTestMethod) {
         case InitialMethod:
-            res = PerformLETAnalysis<ObjectiveFunctionBase>(dag_tasks);
+            res = PerformStandardLETAnalysis<ObjectiveFunctionBase>(dag_tasks);
             break;
         case TOM:
             res = PerformTOM_OPT<ObjectiveFunctionBase>(dag_tasks);
