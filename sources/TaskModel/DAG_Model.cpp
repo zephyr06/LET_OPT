@@ -234,4 +234,20 @@ DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType,
     }
 }
 
+bool WhetherDAGChainsShareNodes(const DAG_Model& dag_tasks) {
+    const std::vector<std::vector<int>>& chains = dag_tasks.chains_;
+    for (const auto& chain_curr : chains) {
+        std::unordered_set<int> record_curr;
+        record_curr.reserve(chain_curr.size());
+        for (int x : chain_curr) record_curr.insert(x);
+        for (const auto& chain_compare : chains) {
+            if (chain_curr != chain_compare) {
+                for (int y : chain_compare)
+                    if (record_curr.find(y) != record_curr.end()) return true;
+            }
+        }
+    }
+    return false;
+}
+
 }  // namespace DAG_SPACE

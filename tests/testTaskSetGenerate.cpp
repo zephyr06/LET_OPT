@@ -102,6 +102,21 @@ TEST(DAG_MODEL, generate_chains) {
     EXPECT_LONGS_EQUAL(GlobalVariablesDAGOpt::CHAIN_NUMBER,
                        dag_tasks.chains_.size());
 }
+
+TEST(DAG_MODEL, WhetherDAGChainsShareNodes) {
+    string path =
+        GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v4.csv";
+    DAG_Model dag_tasks =
+        ReadDAG_Tasks(path, "RM", GlobalVariablesDAGOpt::CHAIN_NUMBER);
+    dag_tasks.chains_ = {{0, 1}, {2, 3}};
+    EXPECT(!WhetherDAGChainsShareNodes(dag_tasks));
+
+    dag_tasks.chains_ = {{0, 1}, {1, 3}};
+    EXPECT(WhetherDAGChainsShareNodes(dag_tasks));
+
+    dag_tasks.chains_ = {{0, 1}, {4, 5, 1}};
+    EXPECT(WhetherDAGChainsShareNodes(dag_tasks));
+}
 int main() {
     TestResult tr;
     return TestRegistry::runAllTests(tr);

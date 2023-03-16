@@ -130,4 +130,6 @@ class DAG_Model {
 DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType = "orig",
                         int chainNum = 1);
 
+bool WhetherDAGChainsShareNodes(const DAG_Model &dag_tasks);
+
 }  // namespace DAG_SPACE

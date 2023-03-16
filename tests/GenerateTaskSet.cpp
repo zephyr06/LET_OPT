@@ -54,9 +54,13 @@ int main(int argc, char *argv[]) {
             "whether exclude unschedulable task set on List Scheduler, default "
             "1")
         .scan<'i', int>();
-    program.add_argument("--excludeEmptyEdgeDag")
+    program.add_argument("--excludeDAGWithWongChainNumber")
         .default_value(1)
         .help("whether exclude dags that don't have edges, default 1")
+        .scan<'i', int>();
+    program.add_argument("--examChainsWithSharedNodes")
+        .default_value(1)
+        .help("whether exclude dags whose chains are independent, default 1")
         .scan<'i', int>();
     program.add_argument("--randomSeed")
         .default_value(-1)
@@ -89,7 +93,10 @@ int main(int argc, char *argv[]) {
     int deadlineType = program.get<int>("--deadlineType");
     int period_generation_type = program.get<int>("--period_generation_type");
     int excludeUnschedulable = program.get<int>("--excludeUnschedulable");
-    int excludeEmptyEdgeDag = program.get<int>("--excludeEmptyEdgeDag");
+    int excludeDAGWithWongChainNumber =
+        program.get<int>("--excludeDAGWithWongChainNumber");
+    int examChainsWithSharedNodes =
+        program.get<int>("--examChainsWithSharedNodes");
     int randomSeed = program.get<int>("--randomSeed");
     double parallelismFactor = program.get<double>("--parallelismFactor");
     std::string outDir = program.get<std::string>("--outDir");
@@ -124,8 +131,10 @@ int main(int argc, char *argv[]) {
         << period_generation_type << std::endl
         << "excludeUnschedulable(--excludeUnschedulable): "
         << excludeUnschedulable << std::endl
-        << "excludeEmptyEdgeDag(--excludeEmptyEdgeDag): " << excludeEmptyEdgeDag
-        << std::endl
+        << "excludeDAGWithWongChainNumber(--excludeDAGWithWongChainNumber): "
+        << excludeDAGWithWongChainNumber << std::endl
+        << "examChainsWithSharedNodes(--examChainsWithSharedNodes): "
+        << examChainsWithSharedNodes << std::endl
         << "randomSeed, negative will use current time, otherwise use the "
            "given seed(--randomSeed): "
         << randomSeed << std::endl
@@ -141,13 +150,16 @@ int main(int argc, char *argv[]) {
                 task_number_in_tasksets, totalUtilization, numberOfProcessor, 1,
                 parallelismFactor, period_generation_type, deadlineType);
 
-            if (excludeEmptyEdgeDag == 1) {
+            if (excludeDAGWithWongChainNumber == 1) {
                 TaskSet t = dag_tasks.GetTasks();
                 DAG_Model ttt(t, dag_tasks.mapPrev, 1e9, 1e9,
                               GlobalVariablesDAGOpt::CHAIN_NUMBER);
                 if (ttt.chains_.size() != GlobalVariablesDAGOpt::CHAIN_NUMBER) {
                     i--;
                     continue;
+                }
+                if (examChainsWithSharedNodes) {
+                    ;  // TODO
                 }
             }
 
