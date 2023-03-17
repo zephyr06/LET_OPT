@@ -54,15 +54,6 @@ class PermutationTest1 : public ::testing::Test {
     VariableOD variable_od;
 };
 
-// TEST_F(PermutationTest1, GetTaskId) {
-//     ChainsPermutation chain_perm;
-//     chain_perm.push_back(perm01[0]);
-//     chain_perm.push_back(perm12[0]);
-//     EXPECT_EQ(0, chain_perm.GetTaskId(0));
-//     EXPECT_EQ(1, chain_perm.GetTaskId(1));
-//     EXPECT_EQ(2, chain_perm.GetTaskId(2));
-// }
-
 TEST_F(PermutationTest1, GetFirstReactJob) {
     // chain is 0 -> 1 -> 2
     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
@@ -113,14 +104,66 @@ TEST_F(PermutationTest1, ChainsPermutation_v1) {
                                        variable_od));
 }
 
-// TEST_F(PermutationTest1, FindFirstReactJob) {
-//
-//     // chain is 0 -> 1 -> 2
-//     EXPECT_EQ(1, FindFirstReactJob(tasks[0], tasks[1], 0));
-//     EXPECT_EQ(1, FindFirstReactJob(tasks[0], tasks[1], 1));
-//     EXPECT_EQ(1, FindFirstReactJob(tasks[1], tasks[2], 0));
+// double ObjSingleChainDA(const DAG_Model &dag_tasks,
+//                         const TaskSetInfoDerived &tasks_info,
+//                         const ChainsPermutation &chain_perm,
+//                         const std::vector<int> &chain,
+//                         const VariableOD &variable_od) {
+//     int max_data_age = -1;
+//     int hyper_period = GetHyperPeriod(tasks_info, chain);
+//     int job_num_in_hyper_period =
+//         hyper_period / tasks_info.GetTask(chain[0]).period;
+//     std::unordered_map<JobCEC, JobCEC> first_react_map =
+//         GetFirstReactMap(dag_tasks, tasks_info, chain_perm, chain,
+//         variable_od);
+//     for (int j = 1; j <= job_num_in_hyper_period + 1;
+//          j++)  // iterate each source job within a hyper-period
+//     {
+//         JobCEC job_source(chain[0], j);
+//         JobCEC job_first_reacted = first_react_map[job_source];
+//         JobCEC job_source_prev_job(job_source.taskId, job_source.jobId - 1);
+//         if (first_react_map[job_source_prev_job] != job_first_reacted &&
+//             job_first_reacted.jobId > 0) {
+//             JobCEC first_reacted_job_prev_job(job_first_reacted.taskId,
+//                                               job_first_reacted.jobId - 1);
+//             int deadline_curr = GetDeadline(first_reacted_job_prev_job,
+//                                             variable_od, tasks_info);
+//             max_data_age = std::max(
+//                 max_data_age,
+//                 int(deadline_curr -
+//                     GetActivationTime(
+//                         JobCEC(job_source.taskId, job_source.jobId - 1),
+//                         tasks_info)));
+//         }
+//     }
+//     return max_data_age;
 // }
 
+TEST_F(PermutationTest1, data_age) {
+    // chain is 0 -> 1 -> 2
+    std::vector<int> chain = {0, 1, 2};
+    dag_tasks.chains_ = {chain};
+    TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+    TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+
+    ChainsPermutation chain_perm;
+    chain_perm.push_back(perm01[0]);
+    chain_perm.push_back(perm12[0]);
+    EXPECT_EQ(10,
+              ObjDataAge::Obj(dag_tasks, tasks_info, chain_perm, variable_od));
+
+    chain_perm.clear();
+    chain_perm.push_back(perm01[0]);
+    chain_perm.push_back(perm12[1]);
+    EXPECT_EQ(10 + 20,
+              ObjDataAge::Obj(dag_tasks, tasks_info, chain_perm, variable_od));
+
+    chain_perm.clear();
+    chain_perm.push_back(perm01[1]);
+    chain_perm.push_back(perm12[1]);
+    EXPECT_EQ(40,
+              ObjDataAge::Obj(dag_tasks, tasks_info, chain_perm, variable_od));
+}
 TEST_F(PermutationTest1, GetPossibleReactingJobsLET) {
     // chain is 0 -> 1 -> 2
     EXPECT_EQ(
@@ -205,6 +248,35 @@ TEST_F(PermutationTest_Non_Har, ChainsPermutation_v1) {
     perm12[1].print();
     EXPECT_EQ(35, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
                                        variable_od));
+}
+TEST_F(PermutationTest_Non_Har, data_age) {
+    // chain is 0 -> 1 -> 2
+    std::vector<int> chain = {0, 1, 2};
+    TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+    TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+    dag_tasks.chains_ = {chain};
+    ChainsPermutation chain_perm;
+    chain_perm.push_back(perm01[0]);
+    chain_perm.push_back(perm12[0]);
+    EXPECT_EQ(10,
+              ObjDataAge::Obj(dag_tasks, tasks_info, chain_perm, variable_od));
+
+    chain_perm.clear();
+    chain_perm.push_back(perm01[0]);
+    chain_perm.push_back(perm12[1]);
+    EXPECT_EQ(10 + 15,
+              ObjDataAge::Obj(dag_tasks, tasks_info, chain_perm, variable_od));
+
+    chain_perm.clear();
+    chain_perm.push_back(perm01[1]);
+    chain_perm.push_back(perm12[1]);
+    EXPECT_EQ(30,
+              ObjDataAge::Obj(dag_tasks, tasks_info, chain_perm, variable_od));
+
+    perm01[0].print();
+    perm01[1].print();
+    perm12[0].print();
+    perm12[1].print();
 }
 
 TEST_F(PermutationTest_Non_Har, diff_deadline_from_variable) {
@@ -356,6 +428,20 @@ TEST_F(PermutationTest_2chain_v1, Obj_RT) {
     EXPECT_EQ(200 + 200 + 200, ObjReactionTime::Obj(dag_tasks, tasks_info,
                                                     chain_perm, variable_od));
 }
+TEST_F(PermutationTest_2chain_v1, data_age) {
+    // chain is 0 -> 3 -> 4
+    // chain is 1 -> 3 -> 4
+    ChainsPermutation chain_perm;
+    chain_perm.push_back(perm03[0]);
+    chain_perm.push_back(perm34[0]);
+    chain_perm.push_back(perm13[0]);
+    EXPECT_EQ(200 + 200, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
+                                              variable_od));
+    dag_tasks.chains_.push_back({0, 1, 3});
+    chain_perm.push_back(perm01[0]);
+    EXPECT_EQ(200 + 200 + 200, ObjReactionTime::Obj(dag_tasks, tasks_info,
+                                                    chain_perm, variable_od));
+}
 
 TEST_F(PermutationTest_2chain_v1, PerformStandardLETAnalysis) {
     // chain is 0 -> 3 -> 4
@@ -364,59 +450,7 @@ TEST_F(PermutationTest_2chain_v1, PerformStandardLETAnalysis) {
     EXPECT_EQ(600 + 600, res.obj_);
 }
 
-// class PermutationTest_long_time : public ::testing::Test {
-//    protected:
-//     void SetUp() override {
-//         dag_tasks = ReadDAG_Tasks(
-//             GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v24.csv",
-//             "RM", 1);
-//         tasks = dag_tasks.GetTaskSet();
-//         tasks_info = TaskSetInfoDerived(tasks);
-//         task0 = tasks[0];
-//         task1 = tasks[1];
-//         task2 = tasks[2];
-//         job00 = JobCEC(0, 0);
-//         job01 = JobCEC(0, 1);
-//         job10 = JobCEC(1, 0);
-//         job20 = JobCEC(2, 0);
-
-//         variable_od = VariableOD(tasks);
-//     };
-
-//     DAG_Model dag_tasks;
-//     TaskSet tasks;
-//     TaskSetInfoDerived tasks_info;
-//     Task task0;
-//     Task task1;
-//     Task task2;
-//     JobCEC job00;
-//     JobCEC job01;
-//     JobCEC job10;
-//     JobCEC job20;
-
-//     VariableOD variable_od;
-// };
-// TEST_F(PermutationTest_long_time, ObjReactionTime) {
-//     // chain is 0 -> 1 -> 4
-//     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-//     TwoTaskPermutations perm14(1, 4, dag_tasks, tasks_info);
-
-//     ChainsPermutation chain_perm;
-//     chain_perm.push_back(perm01[0]);
-//     chain_perm.push_back(perm14[0]);
-//     perm01[0].print();
-//     perm14[0].print();
-
-//     auto start = std::chrono::high_resolution_clock::now();
-//     EXPECT_EQ(20000 - 5470, ObjReactionTime::Obj(dag_tasks, tasks_info,
-//                                                  chain_perm, variable_od));
-//     auto stop = std::chrono::high_resolution_clock::now();
-//     auto duration =
-//         std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-//     std::cout << "Time taken: " << double(duration.count()) / 1e6 << "\n";
-//     PrintTimer();
-// }
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
     // ::testing::InitGoogleTest(&argc, argv);
     ::testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();

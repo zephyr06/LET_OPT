@@ -2,6 +2,7 @@
 
 #include "sources/RTA/RTA_LL.h"
 #include "sources/TaskModel/DAG_Model.h"
+#include "sources/Utils/JobCEC.h"
 
 namespace DAG_SPACE {
 // offset and deadline
@@ -72,4 +73,10 @@ struct VariableRange {
 };
 
 VariableRange FindVariableRange(const DAG_Model& dag_tasks);
+
+inline int GetDeadline(const JobCEC& job_curr, const VariableOD& variable_od,
+                       const TaskSetInfoDerived& tasks_info) {
+    return variable_od.at(job_curr.taskId).deadline +
+           tasks_info.GetTask(job_curr.taskId).period * job_curr.jobId;
+}
 }  // namespace DAG_SPACE

@@ -15,6 +15,11 @@ JobCEC GetFirstReactJob(const JobCEC &job_curr,
                         const Edge &edge_curr,
                         const TaskSetInfoDerived &tasks_info);
 
+std::unordered_map<JobCEC, JobCEC> GetFirstReactMap(
+    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+    const ChainsPermutation &chain_perm, const std::vector<int> &chain,
+    const VariableOD &variable_od);
+
 class ObjectiveFunctionBaseIntermediate {
    public:
     static const std::string type_trait;
@@ -43,6 +48,16 @@ class ObjReactionTimeIntermediate : public ObjectiveFunctionBaseIntermediate {
                           const VariableOD &variable_od) override;
 };
 
+class ObjDataAgeIntermediate : public ObjectiveFunctionBaseIntermediate {
+   public:
+    static const std::string type_trait;
+    double ObjSingleChain(const DAG_Model &dag_tasks,
+                          const TaskSetInfoDerived &tasks_info,
+                          const ChainsPermutation &chain_perm,
+                          const std::vector<int> &chain,
+                          const VariableOD &variable_od) override;
+};
+
 class ObjReactionTime {
    public:
     static const std::string type_trait;
@@ -51,6 +66,18 @@ class ObjReactionTime {
                       const ChainsPermutation &chain_perm,
                       const VariableOD &variable_od) {
         ObjReactionTimeIntermediate obj;
+        return obj.Obj(dag_tasks, tasks_info, chain_perm, variable_od);
+    }
+};
+
+class ObjDataAge {
+   public:
+    static const std::string type_trait;
+    static double Obj(const DAG_Model &dag_tasks,
+                      const TaskSetInfoDerived &tasks_info,
+                      const ChainsPermutation &chain_perm,
+                      const VariableOD &variable_od) {
+        ObjDataAgeIntermediate obj;
         return obj.Obj(dag_tasks, tasks_info, chain_perm, variable_od);
     }
 };
