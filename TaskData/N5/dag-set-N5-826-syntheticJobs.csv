@@ -1,12 +1,15 @@
 JobID,Period,ExecutionTime,DeadLine,processorId
-0,100,10,100,0
-1,50,3,50,1
-2,100,33,100,0
-3,10,1,10,1
-4,100,24,100,1
-*2,0
-*3,1
-*4,2
-*4,3
-@SF_Bound:163
-@RTDA_Bound:133
+0,20,9,20,1
+1,1000,44,1000,1
+2,200,30,200,0
+3,50,11,50,0
+4,10000,1725,10000,0
+Note: *a,b means a->b, i.e., a writes data and b reads data from it
+@Chain:0, 1, 4, 
+@Chain:0, 1, 2, 3, 
+*0,1
+*0,2
+*1,2
+*0,3
+*2,3
+*1,4
