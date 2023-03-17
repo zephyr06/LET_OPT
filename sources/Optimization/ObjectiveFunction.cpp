@@ -7,6 +7,8 @@ const std::string ObjectiveFunctionBaseIntermediate::type_trait(
 const std::string ObjReactionTimeIntermediate::type_trait(
     "ObjReactionTimeIntermediate");
 const std::string ObjReactionTime::type_trait("ReactionTime");
+const std::string ObjDataAgeIntermediate::type_trait("ObjDataAgeIntermediate");
+const std::string ObjDataAge::type_trait("DataAge");
 
 JobCEC GetFirstReactJobWithSuperPeriod(
     const JobCEC &job_curr, const SinglePairPermutation &pair_perm_curr) {
@@ -65,10 +67,8 @@ double ObjReactionTimeIntermediate::ObjSingleChain(
             job_curr =
                 GetFirstReactJob(job_curr, chain_perm, edge_i, tasks_info);
         }
-        int deadline_curr =
-            variable_od.at(job_curr.taskId).deadline +
-            tasks_info.GetTask(job_curr.taskId).period * job_curr.jobId;
-        // int offset_curr = variable_od[job_source.taskId].offset;
+
+        int deadline_curr = GetDeadline(job_curr, variable_od, tasks_info);
         max_reaction_time = std::max(
             max_reaction_time,
             int(deadline_curr - GetActivationTime(job_source, tasks_info)));
