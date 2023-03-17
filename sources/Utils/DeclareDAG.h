@@ -85,13 +85,10 @@ double ExtractVariable(const VectorDynamic &startTimeVector,
                        const std::vector<LLint> &sizeOfVariables, int taskIndex,
                        int instanceIndex);
 
-
-
 inline double QuotientDouble(double a, int b) {
     double left = a - int(a);
     return left + int(a) % b;
 }
-
 
 /**
  * @brief helper function for RecoverStartTimeVector
@@ -137,6 +134,20 @@ double Average(std::vector<T> &data) {
     if (data.size()) {
         T sum = 0;
         for (int i = 0; i < int(data.size()); i++) sum += data[i];
+        return double(sum) / data.size();
+    } else {
+        return -1;
+    }
+}
+
+template <typename T>
+double Average(std::vector<T> &data, std::vector<T> &data_baseline) {
+    if (data.size() != data_baseline.size())
+        CoutError("Inconsistent data size in Average!");
+    if (data.size()) {
+        T sum = 0;
+        for (int i = 0; i < int(data.size()); i++)
+            sum += double(data[i]) / data_baseline[i];
         return double(sum) / data.size();
     } else {
         return -1;

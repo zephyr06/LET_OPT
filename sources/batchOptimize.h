@@ -73,7 +73,7 @@ std::vector<BatchResult> BatchOptimizeOrder(
     // Prepare intermediate data records
     std::vector<int> chain_lenth;
     std::vector<std::vector<double>> runTimeAll(10);
-    std::vector<std::vector<double>> objsAllNorm(10);
+    std::vector<std::vector<double>> objsAll(10);
     std::vector<std::vector<int>> schedulableAll(10);  // values could
                                                        // only be 0 / 1
     std::vector<std::string> errorFiles;
@@ -115,7 +115,7 @@ std::vector<BatchResult> BatchOptimizeOrder(
                 runTimeAll[batchTestMethod].push_back(res.timeTaken_);
                 schedulableAll[batchTestMethod].push_back(
                     (res.schedulable_ ? 1 : 0));
-                objsAllNorm[batchTestMethod].push_back(
+                objsAll[batchTestMethod].push_back(
                     res.obj_);  // /objsAll[0][fileIndex]
             }
             fileIndex++;
@@ -126,13 +126,12 @@ std::vector<BatchResult> BatchOptimizeOrder(
         {"Method", "Schedulable ratio", "Obj (Only used in RTDA experiment)",
          "Obj(Norm)", "TimeTaken"},
         10);
-    std::vector<std::vector<double>> objsAll = objsAllNorm;
     vt.addRow("Initial", Average(schedulableAll[0]), Average(objsAll[0]),
-              Average(objsAllNorm[0]), Average(runTimeAll[0]));
+              Average(objsAll[0], objsAll[0]), Average(runTimeAll[0]));
     vt.addRow("TOM", Average(schedulableAll[1]), Average(objsAll[1]),
-              Average(objsAllNorm[1]), Average(runTimeAll[1]));
-    vt.addRow("TOM_FAST", Average(schedulableAll[2]), Average(objsAll[2]),
-              Average(objsAllNorm[2]), Average(runTimeAll[2]));
+              Average(objsAll[1], objsAll[0]), Average(runTimeAll[1]));
+    // vt.addRow("TOM_FAST", Average(schedulableAll[2]), Average(objsAll[2]),
+    //           Average(objsAll[2], objsAll[0]), Average(runTimeAll[2]));
     vt.print(std::cout);
 
     std::vector<DAG_SPACE::BaselineMethods> baselineMethodsAll = {
