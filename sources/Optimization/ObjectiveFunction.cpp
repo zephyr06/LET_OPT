@@ -51,8 +51,9 @@ double ObjReactionTimeIntermediate::ObjSingleChain(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
     const ChainPermutation &chain_perm, const std::vector<int> &chain,
     const VariableOD &variable_od) {
+    BeginTimer("ObjSingleChain");
     int max_reaction_time = -1;
-    for (uint j = 0; j < tasks_info.sizeOfVariables[chain[0]];
+    for (uint j = 0; j < tasks_info.GetVariableSize(chain[0]);
          j++)  // iterate each source job within a hyper-period
     {
         JobCEC job_source(chain[0], j);
@@ -72,6 +73,7 @@ double ObjReactionTimeIntermediate::ObjSingleChain(
             max_reaction_time,
             int(deadline_curr - GetActivationTime(job_source, tasks_info)));
     }
+    EndTimer("ObjSingleChain");
     return max_reaction_time;
 }
 

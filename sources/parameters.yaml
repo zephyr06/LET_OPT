@@ -12,9 +12,9 @@ SAMPLE_SMALL_TASKS: 1
 priorityMode: RM
 # test_n5_v9 test_n5_v16 requies many permutations
 # test_n5_v41 test_n30_v2  test_n5_v22
-testDataSetName: test_n5_v24
+testDataSetName: test_n5_v23
 TIME_SCALE_FACTOR: 10
-CHAIN_NUMBER: 1
+CHAIN_NUMBER: 2
 
 
 #*************************************************************

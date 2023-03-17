@@ -14,7 +14,7 @@ struct JobCEC {
     JobCEC(std::pair<int, LLint> p) : taskId(p.first), jobId(p.second) {}
     JobCEC GetJobWithinHyperPeriod(
         const RegularTaskSystem::TaskSetInfoDerived &tasksInfo) const {
-        return JobCEC(taskId, jobId % tasksInfo.sizeOfVariables[taskId]);
+        return JobCEC(taskId, jobId % tasksInfo.GetVariableSize(taskId));
     }
 
     bool operator==(const JobCEC &other) const {
@@ -26,8 +26,8 @@ struct JobCEC {
         const JobCEC &other,
         const RegularTaskSystem::TaskSetInfoDerived &tasksInfo) const {
         return (other.taskId == taskId) &&
-               (other.jobId % tasksInfo.sizeOfVariables[taskId] ==
-                jobId % tasksInfo.sizeOfVariables[taskId]);
+               (other.jobId % tasksInfo.GetVariableSize(taskId) ==
+                jobId % tasksInfo.GetVariableSize(taskId));
     }
 
     std::string ToString() const {
@@ -51,20 +51,6 @@ inline double GetActivationTime(
     return tasksInfo.GetTask(job.taskId).period * job.jobId;
 }
 
-double GetStartTime(JobCEC jobCEC, const VectorDynamic &x,
-                    const RegularTaskSystem::TaskSetInfoDerived &tasksInfo);
-
-inline double GetFinishTime(
-    JobCEC jobCEC, const VectorDynamic &x,
-    const RegularTaskSystem::TaskSetInfoDerived &tasksInfo) {
-    return GetStartTime(jobCEC, x, tasksInfo) +
-           tasksInfo.GetTask(jobCEC.taskId).executionTime;
-}
-
-std::vector<std::pair<std::pair<double, double>, JobCEC>> ObtainAllJobSchedule(
-    const RegularTaskSystem::TaskSetInfoDerived &tasksInfo,
-    const VectorDynamic &x);
-
 std::vector<std::pair<std::pair<double, double>, JobCEC>> SortJobSchedule(
     std::vector<std::pair<std::pair<double, double>, JobCEC>> &timeJobVector);
 
@@ -81,13 +67,9 @@ LLint GetJobUniqueIdWithinHyperPeriod(
     const JobCEC &jobCEC,
     const RegularTaskSystem::TaskSetInfoDerived &tasksInfo);
 
-JobCEC GetJobCECFromUniqueId(
-    LLint id, const RegularTaskSystem::TaskSetInfoDerived &tasksInfo);
-
 inline double GetExecutionTime(
     LLint id, const RegularTaskSystem::TaskSetInfoDerived &tasksInfo) {
-    return tasksInfo.GetTask(GetJobCECFromUniqueId(id, tasksInfo).taskId)
-        .executionTime;
+    return tasksInfo.GetTask(id).executionTime;
 }
 inline double GetExecutionTime(
     const JobCEC &jobCEC,
@@ -95,9 +77,6 @@ inline double GetExecutionTime(
     return tasksInfo.GetTask(jobCEC.taskId).executionTime;
 }
 
-double GetHyperPeriodDiff(
-    const JobCEC &jobStart, const JobCEC &jobFinish,
-    const RegularTaskSystem::TaskSetInfoDerived &tasksInfo);
 }  // namespace DAG_SPACE
 
 template <>

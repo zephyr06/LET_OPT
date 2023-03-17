@@ -256,9 +256,6 @@ void UpdateTaskSetExecutionTime(TaskSet &taskSet,
 ProcessorTaskSet ExtractProcessorTaskSet(const TaskSet &tasks);
 
 class TaskSetInfoDerived {
-   private:
-    TaskSet tasks;
-
    public:
     TaskSetInfoDerived() {}
 
@@ -286,15 +283,21 @@ class TaskSetInfoDerived {
             task_id2position_[tasks[i].id] = i;
         }
     }
+    inline int GetVariableSize(uint task_id) const {
+        return sizeOfVariables[task_id2position_.at(task_id)];
+    }
 
     // data members
     int N;
-    LLint hyper_period;
     LLint variableDimension;
-    std::vector<LLint> sizeOfVariables;
+    LLint hyper_period;
     LLint length;
     ProcessorTaskSet processorTaskSet;
     std::unordered_map<int, int> task_id2position_;
+
+   private:
+    TaskSet tasks;
+    std::vector<LLint> sizeOfVariables;
 };
 
 }  // namespace RegularTaskSystem

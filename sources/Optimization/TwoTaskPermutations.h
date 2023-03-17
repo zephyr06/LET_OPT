@@ -62,8 +62,10 @@ struct SinglePairPermutation {
 
     // copy constructor
     SinglePairPermutation(const SinglePairPermutation& other) {
+        BeginTimer("SinglePairPermutation_copy");
         inequality_ = other.inequality_;
         job_first_react_matches_ = other.job_first_react_matches_;
+        EndTimer("SinglePairPermutation_copy");
     }
 
     bool AddMatchJobPair(const JobCEC& job_curr, const JobCEC& job_match);
