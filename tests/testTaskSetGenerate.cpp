@@ -128,7 +128,7 @@ TEST(DAG_Model, GetHyperPeriod) {
         GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v20.csv";
     DAG_Model dag_tasks =
         ReadDAG_Tasks(path, "RM", GlobalVariablesDAGOpt::CHAIN_NUMBER);
-    const TaskSetInfoDerived tasks_info(dag_tasks.GetTasks());
+    const TaskSetInfoDerived tasks_info(dag_tasks.GetTaskSet());
     EXPECT_LONGS_EQUAL(100, GetHyperPeriod(tasks_info, {0}));
     EXPECT_LONGS_EQUAL(500, GetHyperPeriod(tasks_info, {0, 1}));
     EXPECT_LONGS_EQUAL(1000, GetHyperPeriod(tasks_info, {0, 1, 4}));

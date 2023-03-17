@@ -189,34 +189,6 @@ std::vector<T> GetParameter(const TaskSet &taskset, std::string parameterType) {
     }
     return parameterList;
 }
-template <typename T>
-VectorDynamic GetParameterVD(const TaskSet &taskset,
-                             std::string parameterType) {
-    uint N = taskset.size();
-    VectorDynamic parameterList;
-    parameterList.resize(N, 1);
-    parameterList.setZero();
-
-    for (uint i = 0; i < N; i++) {
-        if (parameterType == "period")
-            parameterList(i, 0) = ((T)(taskset[i].period));
-        else if (parameterType == "executionTime")
-            parameterList(i, 0) = ((T)(taskset[i].executionTime));
-        else if (parameterType == "overhead")
-            parameterList(i, 0) = ((T)(taskset[i].overhead));
-        else if (parameterType == "deadline")
-            parameterList(i, 0) = ((T)(taskset[i].deadline));
-        else if (parameterType == "offset")
-            parameterList(i, 0) = ((T)(taskset[i].offset));
-        else {
-            std::cout << Color::red
-                      << "parameterType in GetParameter is not recognized!\n"
-                      << Color::def << std::endl;
-            throw;
-        }
-    }
-    return parameterList;
-}
 
 // some helper function for Reorder
 inline static bool comparePeriod(Task task1, Task task2) {
@@ -275,7 +247,7 @@ class TaskSetInfoDerived {
         RecordTaskPosition();
     }
 
-    Task GetTask(uint task_id) const {
+    inline const Task &GetTask(uint task_id) const {
         return tasks[task_id2position_.at(task_id)];
     }
     void RecordTaskPosition() {

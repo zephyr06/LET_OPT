@@ -152,7 +152,7 @@ int main(int argc, char *argv[]) {
                 GlobalVariablesDAGOpt::CHAIN_NUMBER);
 
             if (excludeDAGWithWongChainNumber == 1) {
-                // TaskSet t = dag_tasks.GetTasks();
+                // TaskSet t = dag_tasks.GetTaskSet();
                 // DAG_Model ttt(t, dag_tasks.mapPrev, 1e9, 1e9,
                 //               GlobalVariablesDAGOpt::CHAIN_NUMBER);
                 if (dag_tasks.chains_.size() !=

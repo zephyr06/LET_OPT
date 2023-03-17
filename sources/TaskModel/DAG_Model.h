@@ -84,8 +84,6 @@ class DAG_Model {
 
     void printChains();
 
-    TaskSet GetTasks() const { return tasks; }
-
     inline double GetSfBound() { return sfBound_; }
     inline void setSfBound(double sfBound) { sfBound_ = sfBound; }
     inline double GetRtdaBound() { return rtdaBound_; }
@@ -96,18 +94,17 @@ class DAG_Model {
     std::vector<std::vector<int>> GetRandomChains(int numOfChains);
     void SetChains(std::vector<std::vector<int>> &chains) { chains_ = chains; }
     std::vector<int> FindSourceTaskIds() const;
-
     std::vector<int> FindSinkTaskIds() const;
 
     void CategorizeTaskSet();
     void RecordTaskPosition();
 
-    inline TaskSet GetTaskSet() const { return tasks; }
+    inline const TaskSet &GetTaskSet() const { return tasks; }
 
     inline int GetTaskIndex(int task_id) const {
         return task_id2position_.at(task_id);
     }
-    inline Task GetTask(int task_id) const {
+    inline const Task& GetTask(int task_id) const {
         return tasks[GetTaskIndex(task_id)];
     }
 
