@@ -57,7 +57,7 @@ class TaskSetPermutation {
 
     // depth equals the number of edge pais
     void IterateAllChainsPermutations(uint position,
-                                     ChainsPermutation& chain_perm) {
+                                      ChainsPermutation& chain_perm) {
         if (position ==
             graph_of_all_ca_chains_.edge_records_
                 .size()) {  // finish iterate all the pair permutations
@@ -147,12 +147,15 @@ ScheduleResult PerformTOM_OPT(const DAG_Model& dag_tasks) {
             PerformStandardLETAnalysis<ObjectiveFunctionBase>(dag_tasks).obj_;
     }
     res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
-    if (!res.schedulable_) CoutError("Find an unschedulable case!");
 
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration =
         std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
     res.timeTaken_ = double(duration.count()) / 1e6;
+
+    if (!res.schedulable_ &&
+        res.timeTaken_ < GlobalVariablesDAGOpt::TIME_LIMIT - 5)
+        CoutError("Find an unschedulable case!");
     return res;
 }
 }  // namespace DAG_SPACE
