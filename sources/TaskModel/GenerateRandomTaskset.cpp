@@ -106,6 +106,9 @@ DAG_Model GenerateDAG(int N, double totalUtilization, int numberOfProcessor,
 
 void WriteDAG(std::ofstream &file, DAG_Model &dag_tasks) {
     WriteTaskSets(file, dag_tasks.GetTaskSet());
+    file << "Note: "
+         << "*a,b"
+         << " means a->b, i.e., a writes data and b reads data from it\n";
     for (const auto &chain : dag_tasks.chains_) {
         file << "@Chain:";
         for (int x : chain) file << x << ", ";
@@ -114,7 +117,7 @@ void WriteDAG(std::ofstream &file, DAG_Model &dag_tasks) {
     for (auto itr = dag_tasks.mapPrev.begin(); itr != dag_tasks.mapPrev.end();
          itr++) {
         for (uint i = 0; i < itr->second.size(); i++)
-            file << "*" << (itr->first) << "," << ((itr->second)[i].id) << "\n";
+            file << "*" << ((itr->second)[i].id) << "," << (itr->first) << "\n";
     }
     // file << "@SF_Bound:" << dag_tasks.GetSfBound() << "\n";
     // file << "@RTDA_Bound:" << dag_tasks.GetRtdaBound() << "\n";
