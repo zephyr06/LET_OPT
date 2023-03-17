@@ -41,19 +41,12 @@ class ChainPermutation {
 
     inline void reserve(size_t n) { permutation_chain_map_.reserve(n); }
 
-    // SinglePairPermutation operator[](size_t i) const {
-    //     if (i >= size()) CoutError("Out-of-range error!");
-    //     return permutation_chain_[i];
-    // }
-
-    SinglePairPermutation operator[](const Edge &edge) const {
+    const SinglePairPermutation &operator[](const Edge &edge) const {
         auto itr = permutation_chain_map_.find(edge);
         if (itr == permutation_chain_map_.end())
             CoutError("Didn't find the given edge in SinglePairPermutation!");
         return permutation_chain_map_.at(edge);
     }
-
-    // int GetTaskId(size_t i) const;
 
     // several IsValid()-related functions
     bool IsValid(const VariableRange &variable_od_range,

@@ -197,14 +197,4 @@ bool ChainPermutation::IsValid(
     return true;
 }
 
-// int ChainPermutation::GetTaskId(size_t i) const {
-//     if (i < size())
-//         return permutation_chain_[i].inequality_.task_prev_id_;
-//     else if (i == size()) {
-//         return permutation_chain_[size() - 1].inequality_.task_next_id_;
-//     } else
-//         CoutError("Out-or-range error in ChainPermutation!");
-//     return -1;
-// }
-
 }  // namespace DAG_SPACE

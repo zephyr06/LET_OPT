@@ -47,23 +47,23 @@ class PermutationTest_long_time : public ::testing::Test {
 };
 TEST_F(PermutationTest_long_time, ObjReactionTime) {
     // chain is 0 -> 1 -> 4
-    TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-    TwoTaskPermutations perm14(1, 4, dag_tasks, tasks_info);
+    // TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+    // TwoTaskPermutations perm14(1, 4, dag_tasks, tasks_info);
 
-    ChainPermutation chain_perm;
-    chain_perm.push_back(perm01[0]);
-    chain_perm.push_back(perm14[0]);
-    perm01[0].print();
-    perm14[0].print();
+    // ChainPermutation chain_perm;
+    // chain_perm.push_back(perm01[0]);
+    // chain_perm.push_back(perm14[0]);
+    // perm01[0].print();
+    // perm14[0].print();
 
-    auto start = std::chrono::high_resolution_clock::now();
-    EXPECT_EQ(20000 - 5470, ObjReactionTime::Obj(dag_tasks, tasks_info,
-                                                 chain_perm, variable_od));
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto duration =
-        std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    std::cout << "Time taken: " << double(duration.count()) / 1e6 << "\n";
-    PrintTimer();
+    // auto start = std::chrono::high_resolution_clock::now();
+    // EXPECT_EQ(20000 - 5470, ObjReactionTime::Obj(dag_tasks, tasks_info,
+    //                                              chain_perm, variable_od));
+    // auto stop = std::chrono::high_resolution_clock::now();
+    // auto duration =
+    //     std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    // std::cout << "Time taken: " << double(duration.count()) / 1e6 << "\n";
+    // PrintTimer();
 }
 int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);

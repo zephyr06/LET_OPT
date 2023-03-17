@@ -26,13 +26,7 @@ JobCEC GetFirstReactJob(const JobCEC &job_curr,
                         const ChainPermutation &chain_perm,
                         const Edge &edge_curr,
                         const TaskSetInfoDerived &tasks_info) {
-#ifdef PROFILE_CODE
-    BeginTimer(__FUNCTION__);
-#endif
-
-    BeginTimer("SinglePairPermutation[]1");
     const SinglePairPermutation &pair_perm_curr = chain_perm[edge_curr];
-    EndTimer("SinglePairPermutation[]1");
     int task_id_prev = job_curr.taskId;
     if (task_id_prev != pair_perm_curr.inequality_.task_prev_id_)
         CoutError("Wrong task_index_in_chain index in GetFirstReactJob!");
@@ -50,9 +44,6 @@ JobCEC GetFirstReactJob(const JobCEC &job_curr,
         JobCEC(job_curr.taskId, job_curr.jobId % prev_jobs_in_sp),
         pair_perm_curr);
     react_job.jobId += sp_index * next_jobs_in_sp;
-#ifdef PROFILE_CODE
-    EndTimer(__FUNCTION__);
-#endif
     return react_job;
 }
 
@@ -60,9 +51,6 @@ double ObjReactionTimeIntermediate::ObjSingleChain(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
     const ChainPermutation &chain_perm, const std::vector<int> &chain,
     const VariableOD &variable_od) {
-#ifdef PROFILE_CODE
-    BeginTimer(__FUNCTION__);
-#endif
     int max_reaction_time = -1;
     for (uint j = 0; j < tasks_info.sizeOfVariables[chain[0]];
          j++)  // iterate each source job within a hyper-period
@@ -84,9 +72,6 @@ double ObjReactionTimeIntermediate::ObjSingleChain(
             max_reaction_time,
             int(deadline_curr - GetActivationTime(job_source, tasks_info)));
     }
-#ifdef PROFILE_CODE
-    EndTimer(__FUNCTION__);
-#endif
     return max_reaction_time;
 }
 
