@@ -232,28 +232,28 @@ TEST_F(PermutationTest1, simple_contructor_harmonic) {
 
     EXPECT_TRUE(
         JobCEC(2, 0) ==
-        two_task_permutation[0].job_first_react_matches_[JobCEC(0, 0)][0]);
+        two_task_permutation[0].job_first_react_matches_.at(JobCEC(0, 0))[0]);
     EXPECT_TRUE(
         JobCEC(2, 0) ==
-        two_task_permutation[0].job_first_react_matches_[JobCEC(0, 1)][0]);
+        two_task_permutation[0].job_first_react_matches_.at(JobCEC(0, 1))[0]);
     EXPECT_EQ(3, two_task_permutation.size());
     EXPECT_EQ(-10, two_task_permutation[0].inequality_.upper_bound_);
 
     EXPECT_TRUE(
         JobCEC(2, 0) ==
-        two_task_permutation[1].job_first_react_matches_[JobCEC(0, 0)][0]);
+        two_task_permutation[1].job_first_react_matches_.at(JobCEC(0, 0))[0]);
     EXPECT_TRUE(
         JobCEC(2, 1) ==
-        two_task_permutation[1].job_first_react_matches_[JobCEC(0, 1)][0]);
+        two_task_permutation[1].job_first_react_matches_.at(JobCEC(0, 1))[0]);
     EXPECT_EQ(-10, two_task_permutation[1].inequality_.lower_bound_);
     EXPECT_EQ(0, two_task_permutation[1].inequality_.upper_bound_);
 
     EXPECT_TRUE(
         JobCEC(2, 1) ==
-        two_task_permutation[2].job_first_react_matches_[JobCEC(0, 0)][0]);
+        two_task_permutation[2].job_first_react_matches_.at(JobCEC(0, 0))[0]);
     EXPECT_TRUE(
         JobCEC(2, 1) ==
-        two_task_permutation[2].job_first_react_matches_[JobCEC(0, 1)][0]);
+        two_task_permutation[2].job_first_react_matches_.at(JobCEC(0, 1))[0]);
     EXPECT_EQ(0, two_task_permutation[2].inequality_.lower_bound_);
     EXPECT_EQ(10, two_task_permutation[2].inequality_.upper_bound_);
 }
@@ -264,8 +264,10 @@ TEST_F(PermutationTest1, simple_contructor_harmonic_v2) {
     EXPECT_EQ(3, two_task_permutation.size());
 
     int permutation_index = 0;
-    EXPECT_TRUE(JobCEC(0, 0) == two_task_permutation[permutation_index]
-                                    .job_first_react_matches_[JobCEC(2, 0)][0]);
+    EXPECT_TRUE(
+        JobCEC(0, 0) ==
+        two_task_permutation[permutation_index].job_first_react_matches_.at(
+            JobCEC(2, 0))[0]);
     EXPECT_THAT(
         two_task_permutation[permutation_index].inequality_.lower_bound_,
         testing::Ge(-10));
@@ -273,16 +275,20 @@ TEST_F(PermutationTest1, simple_contructor_harmonic_v2) {
               two_task_permutation[permutation_index].inequality_.upper_bound_);
 
     permutation_index++;
-    EXPECT_TRUE(JobCEC(0, 1) == two_task_permutation[permutation_index]
-                                    .job_first_react_matches_[JobCEC(2, 0)][0]);
+    EXPECT_TRUE(
+        JobCEC(0, 1) ==
+        two_task_permutation[permutation_index].job_first_react_matches_.at(
+            JobCEC(2, 0))[0]);
     EXPECT_EQ(0,
               two_task_permutation[permutation_index].inequality_.lower_bound_);
     EXPECT_EQ(10,
               two_task_permutation[permutation_index].inequality_.upper_bound_);
 
     permutation_index++;
-    EXPECT_TRUE(JobCEC(0, 2) == two_task_permutation[permutation_index]
-                                    .job_first_react_matches_[JobCEC(2, 0)][0]);
+    EXPECT_TRUE(
+        JobCEC(0, 2) ==
+        two_task_permutation[permutation_index].job_first_react_matches_.at(
+            JobCEC(2, 0))[0]);
     EXPECT_EQ(10,
               two_task_permutation[permutation_index].inequality_.lower_bound_);
     EXPECT_EQ(20,
@@ -296,37 +302,49 @@ TEST_F(PermutationTest3, simple_contructor_non_harmonic) {
     int permutation_index = 0;
     EXPECT_TRUE(
         JobCEC(1, 0) ==
-        two_task_permutation[0].job_first_react_matches_[JobCEC(0, 0)][0]);
+        two_task_permutation[0].job_first_react_matches_.at(JobCEC(0, 0))[0]);
     EXPECT_TRUE(
         JobCEC(1, 0) ==
-        two_task_permutation[0].job_first_react_matches_[JobCEC(0, 1)][0]);
+        two_task_permutation[0].job_first_react_matches_.at(JobCEC(0, 1))[0]);
     EXPECT_TRUE(
         JobCEC(1, 1) ==
-        two_task_permutation[0].job_first_react_matches_[JobCEC(0, 2)][0]);
+        two_task_permutation[0].job_first_react_matches_.at(JobCEC(0, 2))[0]);
     EXPECT_THAT(two_task_permutation[0].inequality_.lower_bound_,
                 testing::Ge(-15));
     // EXPECT_EQ(-15, two_task_permutation[0].inequality_.lower_bound_);
     EXPECT_EQ(-10, two_task_permutation[0].inequality_.upper_bound_);
 
     permutation_index++;
-    EXPECT_TRUE(JobCEC(1, 0) == two_task_permutation[permutation_index]
-                                    .job_first_react_matches_[JobCEC(0, 0)][0]);
-    EXPECT_TRUE(JobCEC(1, 1) == two_task_permutation[permutation_index]
-                                    .job_first_react_matches_[JobCEC(0, 1)][0]);
-    EXPECT_TRUE(JobCEC(1, 1) == two_task_permutation[permutation_index]
-                                    .job_first_react_matches_[JobCEC(0, 2)][0]);
+    EXPECT_TRUE(
+        JobCEC(1, 0) ==
+        two_task_permutation[permutation_index].job_first_react_matches_.at(
+            JobCEC(0, 0))[0]);
+    EXPECT_TRUE(
+        JobCEC(1, 1) ==
+        two_task_permutation[permutation_index].job_first_react_matches_.at(
+            JobCEC(0, 1))[0]);
+    EXPECT_TRUE(
+        JobCEC(1, 1) ==
+        two_task_permutation[permutation_index].job_first_react_matches_.at(
+            JobCEC(0, 2))[0]);
     EXPECT_EQ(-10,
               two_task_permutation[permutation_index].inequality_.lower_bound_);
     EXPECT_EQ(-5,
               two_task_permutation[permutation_index].inequality_.upper_bound_);
 
     permutation_index++;
-    EXPECT_TRUE(JobCEC(1, 0) == two_task_permutation[permutation_index]
-                                    .job_first_react_matches_[JobCEC(0, 0)][0]);
-    EXPECT_TRUE(JobCEC(1, 1) == two_task_permutation[permutation_index]
-                                    .job_first_react_matches_[JobCEC(0, 1)][0]);
-    EXPECT_TRUE(JobCEC(1, 2) == two_task_permutation[permutation_index]
-                                    .job_first_react_matches_[JobCEC(0, 2)][0]);
+    EXPECT_TRUE(
+        JobCEC(1, 0) ==
+        two_task_permutation[permutation_index].job_first_react_matches_.at(
+            JobCEC(0, 0))[0]);
+    EXPECT_TRUE(
+        JobCEC(1, 1) ==
+        two_task_permutation[permutation_index].job_first_react_matches_.at(
+            JobCEC(0, 1))[0]);
+    EXPECT_TRUE(
+        JobCEC(1, 2) ==
+        two_task_permutation[permutation_index].job_first_react_matches_.at(
+            JobCEC(0, 2))[0]);
     EXPECT_EQ(-5,
               two_task_permutation[permutation_index].inequality_.lower_bound_);
     EXPECT_EQ(0,
@@ -334,24 +352,36 @@ TEST_F(PermutationTest3, simple_contructor_non_harmonic) {
 
     // **********************************************************
     permutation_index++;
-    EXPECT_TRUE(JobCEC(1, 1) == two_task_permutation[permutation_index]
-                                    .job_first_react_matches_[JobCEC(0, 0)][0]);
-    EXPECT_TRUE(JobCEC(1, 1) == two_task_permutation[permutation_index]
-                                    .job_first_react_matches_[JobCEC(0, 1)][0]);
-    EXPECT_TRUE(JobCEC(1, 2) == two_task_permutation[permutation_index]
-                                    .job_first_react_matches_[JobCEC(0, 2)][0]);
+    EXPECT_TRUE(
+        JobCEC(1, 1) ==
+        two_task_permutation[permutation_index].job_first_react_matches_.at(
+            JobCEC(0, 0))[0]);
+    EXPECT_TRUE(
+        JobCEC(1, 1) ==
+        two_task_permutation[permutation_index].job_first_react_matches_.at(
+            JobCEC(0, 1))[0]);
+    EXPECT_TRUE(
+        JobCEC(1, 2) ==
+        two_task_permutation[permutation_index].job_first_react_matches_.at(
+            JobCEC(0, 2))[0]);
     EXPECT_EQ(0,
               two_task_permutation[permutation_index].inequality_.lower_bound_);
     EXPECT_EQ(5,
               two_task_permutation[permutation_index].inequality_.upper_bound_);
 
     permutation_index++;
-    EXPECT_TRUE(JobCEC(1, 1) == two_task_permutation[permutation_index]
-                                    .job_first_react_matches_[JobCEC(0, 0)][0]);
-    EXPECT_TRUE(JobCEC(1, 2) == two_task_permutation[permutation_index]
-                                    .job_first_react_matches_[JobCEC(0, 1)][0]);
-    EXPECT_TRUE(JobCEC(1, 2) == two_task_permutation[permutation_index]
-                                    .job_first_react_matches_[JobCEC(0, 2)][0]);
+    EXPECT_TRUE(
+        JobCEC(1, 1) ==
+        two_task_permutation[permutation_index].job_first_react_matches_.at(
+            JobCEC(0, 0))[0]);
+    EXPECT_TRUE(
+        JobCEC(1, 2) ==
+        two_task_permutation[permutation_index].job_first_react_matches_.at(
+            JobCEC(0, 1))[0]);
+    EXPECT_TRUE(
+        JobCEC(1, 2) ==
+        two_task_permutation[permutation_index].job_first_react_matches_.at(
+            JobCEC(0, 2))[0]);
     EXPECT_EQ(5,
               two_task_permutation[permutation_index].inequality_.lower_bound_);
     EXPECT_EQ(10,

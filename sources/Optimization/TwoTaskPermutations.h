@@ -110,7 +110,7 @@ class TwoTaskPermutations {
 
     inline size_t size() const { return single_permutations_.size(); }
 
-    inline SinglePairPermutation operator[](size_t i) {
+    inline const SinglePairPermutation& operator[](size_t i) const {
         if (i >= size()) CoutError("Out-of-range error in TwoTaskPermutations");
         return single_permutations_[i];
     }
