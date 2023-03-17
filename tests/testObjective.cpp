@@ -55,7 +55,7 @@ class PermutationTest1 : public ::testing::Test {
 };
 
 // TEST_F(PermutationTest1, GetTaskId) {
-//     ChainPermutation chain_perm;
+//     ChainsPermutation chain_perm;
 //     chain_perm.push_back(perm01[0]);
 //     chain_perm.push_back(perm12[0]);
 //     EXPECT_EQ(0, chain_perm.GetTaskId(0));
@@ -68,7 +68,7 @@ TEST_F(PermutationTest1, GetFirstReactJob) {
     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
 
-    ChainPermutation chain_perm;
+    ChainsPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
     chain_perm.push_back(perm12[0]);
 
@@ -89,12 +89,12 @@ TEST_F(PermutationTest1, GetFirstReactJob) {
                                              Edge(1, 2), tasks_info));
 }
 
-TEST_F(PermutationTest1, ChainPermutation_v1) {
+TEST_F(PermutationTest1, ChainsPermutation_v1) {
     // chain is 0 -> 1 -> 2
     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
 
-    ChainPermutation chain_perm;
+    ChainsPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
     chain_perm.push_back(perm12[0]);
     EXPECT_EQ(20, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
@@ -177,12 +177,12 @@ class PermutationTest_Non_Har : public ::testing::Test {
     VariableOD variable_od;
 };
 
-TEST_F(PermutationTest_Non_Har, ChainPermutation_v1) {
+TEST_F(PermutationTest_Non_Har, ChainsPermutation_v1) {
     // chain is 0 -> 1 -> 2
     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
 
-    ChainPermutation chain_perm;
+    ChainsPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
     chain_perm.push_back(perm12[0]);
     perm01[0].print();
@@ -212,7 +212,7 @@ TEST_F(PermutationTest_Non_Har, diff_deadline_from_variable) {
     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
 
-    ChainPermutation chain_perm;
+    ChainsPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
     chain_perm.push_back(perm12[0]);
     perm01[0].print();
@@ -345,7 +345,7 @@ class PermutationTest_2chain_v1 : public ::testing::Test {
 TEST_F(PermutationTest_2chain_v1, Obj_RT) {
     // chain is 0 -> 3 -> 4
     // chain is 1 -> 3 -> 4
-    ChainPermutation chain_perm;
+    ChainsPermutation chain_perm;
     chain_perm.push_back(perm03[0]);
     chain_perm.push_back(perm34[0]);
     chain_perm.push_back(perm13[0]);
@@ -401,7 +401,7 @@ TEST_F(PermutationTest_2chain_v1, PerformStandardLETAnalysis) {
 //     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
 //     TwoTaskPermutations perm14(1, 4, dag_tasks, tasks_info);
 
-//     ChainPermutation chain_perm;
+//     ChainsPermutation chain_perm;
 //     chain_perm.push_back(perm01[0]);
 //     chain_perm.push_back(perm14[0]);
 //     perm01[0].print();

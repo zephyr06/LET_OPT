@@ -52,7 +52,7 @@ TEST_F(PermutationTest_long_time23, ObjReactionTime) {
     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
     TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info);
-    ChainPermutation chain_perm;
+    ChainsPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
     chain_perm.push_back(perm12[0]);
     chain_perm.push_back(perm23[0]);
@@ -109,7 +109,7 @@ TEST_F(PermutationTest_long_time22, ObjReactionTime_v2) {
     TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info);
     TwoTaskPermutations perm21(2, 1, dag_tasks, tasks_info);
     TwoTaskPermutations perm32(3, 2, dag_tasks, tasks_info);
-    ChainPermutation chain_perm;
+    ChainsPermutation chain_perm;
     chain_perm.push_back(perm10[0]);
     chain_perm.push_back(perm21[0]);
     chain_perm.push_back(perm32[0]);

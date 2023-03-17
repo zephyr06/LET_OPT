@@ -4,7 +4,7 @@
 namespace DAG_SPACE {
 
 // VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
-//                                  const ChainPermutation& chain_perm,
+//                                  const ChainsPermutation& chain_perm,
 //                                  std::vector<int> task_id_chain) {
 //     const TaskSet& tasks = dag_tasks.GetTaskSet();
 //     VariableOD variable(dag_tasks.GetTaskSet());
@@ -31,7 +31,7 @@ namespace DAG_SPACE {
 // assumes acyclic graph
 void SetVariableHelper(int task_id,
                        std::unordered_map<int, bool>& variable_set_record,
-                       VariableOD& variable, const ChainPermutation& chain_perm,
+                       VariableOD& variable, const ChainsPermutation& chain_perm,
                        const GraphOfChains& graph_of_all_ca_chains,
                        const DAG_Model& dag_tasks) {
     if (variable_set_record.find(task_id) == variable_set_record.end() ||
@@ -65,7 +65,7 @@ void SetVariableHelper(int task_id,
 }
 
 VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
-                                 const ChainPermutation& chain_perm,
+                                 const ChainsPermutation& chain_perm,
                                  const GraphOfChains& graph_of_all_ca_chains) {
     const TaskSet& tasks = dag_tasks.GetTaskSet();
     VariableOD variable(dag_tasks.GetTaskSet());

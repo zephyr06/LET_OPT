@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sources/Optimization/ChainPermutation.h"
+#include "sources/Optimization/ChainsPermutation.h"
 #include "sources/Optimization/TwoTaskPermutations.h"
 #include "sources/Utils/BatchUtils.h"
 namespace DAG_SPACE {
@@ -21,7 +21,7 @@ SinglePairPermutation GetSinglePermutationStanLET(
     const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,
     int prev_task_id, int next_task_id);
 
-ChainPermutation GetStandardLETChain(
+ChainsPermutation GetStandardLETChain(
     const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,
     const std::vector<std::vector<int>>& task_chains);
 
@@ -32,7 +32,7 @@ ScheduleResult PerformStandardLETAnalysis(const DAG_Model& dag_tasks) {
     ScheduleResult res;
     const TaskSet& tasks = dag_tasks.GetTaskSet();
     TaskSetInfoDerived tasks_info(tasks);
-    ChainPermutation chain_perm =
+    ChainsPermutation chain_perm =
         GetStandardLETChain(dag_tasks, tasks_info, dag_tasks.chains_);
     VariableOD variable_od = VariableOD(tasks);
     res.obj_ = ObjectiveFunctionBase::Obj(dag_tasks, tasks_info, chain_perm,

@@ -1,5 +1,5 @@
 #include "gmock/gmock.h"  // Brings in gMock.
-#include "sources/Optimization/ChainPermutation.h"
+#include "sources/Optimization/ChainsPermutation.h"
 #include "sources/Optimization/ObjectiveFunction.h"
 #include "sources/Optimization/PermutationInequality.h"
 #include "sources/Optimization/TaskSetPermutation.h"
@@ -204,7 +204,7 @@ TEST_F(PermutationTest1, SinglePairPermutation_valid) {
                                         tasks_info);
 
     VariableRange variable_range_od = FindVariableRange(dag_tasks);
-    ChainPermutation chain_perm;
+    ChainsPermutation chain_perm;
     chain_perm.push_back(single_perm01);
     // chain_perm.push_back(single_perm12);
 
@@ -244,7 +244,7 @@ TEST_F(PermutationTest3, SinglePairPermutation_constructor) {
     EXPECT_EQ(0, single_perm12.inequality_.upper_bound_);
 }
 
-TEST_F(PermutationTest3, ChainPermutation_valid_v1) {
+TEST_F(PermutationTest3, ChainsPermutation_valid_v1) {
     int prev_id = 0, next_id = 1;
     std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches01;
     for (uint i = 0; i < 5; i++) {
@@ -266,7 +266,7 @@ TEST_F(PermutationTest3, ChainPermutation_valid_v1) {
     SinglePairPermutation single_perm12(perm_ineq12, job_first_react_matches12);
 
     VariableRange variable_range_od = FindVariableRange(dag_tasks);
-    ChainPermutation chain_perm;
+    ChainsPermutation chain_perm;
     chain_perm.push_back(single_perm01);
     // EXPECT_TRUE(chain_perm.IsValid(variable_range_od));
     // chain_perm.push_back(single_perm12);
@@ -314,7 +314,7 @@ class PermutationTest4 : public ::testing::Test {
         {0, 1}, {0, 2}};  // from 0 to 1, from 0 to 2
 };
 
-TEST_F(PermutationTest4, ChainPermutation_valid_v1) {
+TEST_F(PermutationTest4, ChainsPermutation_valid_v1) {
     GraphOfChains graph_chains(task_chains);
     EXPECT_EQ(2, graph_chains.edge_records_.size());
     EXPECT_EQ(2, graph_chains.edge_vec_ordered_.size());
@@ -359,7 +359,7 @@ class PermutationTest5 : public ::testing::Test {
     std::vector<std::vector<int>> task_chains = {
         {0, 1, 6, 7}, {0, 2}, {20, 1}, {25, 6, 7}};
 };
-TEST_F(PermutationTest5, ChainPermutation_valid_v1) {
+TEST_F(PermutationTest5, ChainsPermutation_valid_v1) {
     GraphOfChains graph_chains(task_chains);
     EXPECT_EQ(6, graph_chains.edge_records_.size());
     EXPECT_EQ(6, graph_chains.edge_vec_ordered_.size());
@@ -471,7 +471,7 @@ class PermutationTest6 : public ::testing::Test {
 TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSource) {
     perm01[0].print();
     perm04[1].print();
-    ChainPermutation chain_perm;
+    ChainsPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
     // chain_perm.push_back(perm04[3]);
     dag_tasks.chains_ = {{0, 1}, {0, 4}};
@@ -495,7 +495,7 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSource_ret_false) {
     perm10[0].print();
     perm13[4].print();
 
-    ChainPermutation chain_perm;
+    ChainsPermutation chain_perm;
     chain_perm.push_back(perm10[0]);
     // chain_perm.push_back(perm04[3]);
     dag_tasks.chains_ = {{1, 0}, {1, 3}};
@@ -516,7 +516,7 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSink) {
     TwoTaskPermutations perm41(4, 1, dag_tasks, tasks_info);
     perm01[0].print();
     perm41[1].print();
-    ChainPermutation chain_perm;
+    ChainsPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
     dag_tasks.chains_ = {{0, 1}, {4, 1}};
     GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
@@ -539,7 +539,7 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSink_ret_false) {
     perm01[0].print();
     perm31[4].print();
 
-    ChainPermutation chain_perm;
+    ChainsPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
     dag_tasks.chains_ = {{0, 1}, {3, 1}};
     GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);

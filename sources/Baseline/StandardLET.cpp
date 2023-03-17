@@ -50,10 +50,10 @@ SinglePairPermutation GetSinglePermutationStanLET(
         GetJobMatch(dag_tasks, tasks_info, prev_task_id, next_task_id));
 }
 
-ChainPermutation GetStandardLETChain(
+ChainsPermutation GetStandardLETChain(
     const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,
     const std::vector<std::vector<int>>& task_chains) {
-    ChainPermutation chain_perm(1e2);
+    ChainsPermutation chain_perm(1e2);
     for (const auto& chain : task_chains) {
         for (uint i = 0; i < chain.size() - 1; i++) {
             chain_perm.push_back(GetSinglePermutationStanLET(

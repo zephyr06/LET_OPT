@@ -1,6 +1,6 @@
 
 
-#include "sources/Optimization/ChainPermutation.h"
+#include "sources/Optimization/ChainsPermutation.h"
 
 #include "sources/Utils/Interval.h"
 
@@ -83,7 +83,7 @@ bool IsTwoPermConflicted_SerialConnect(const VariableRange& variable_od_range,
     return true;
 }
 
-bool ChainPermutation::IsPermConflicted_CheckAllWithSameSource(
+bool ChainsPermutation::IsPermConflicted_CheckAllWithSameSource(
     const VariableRange& variable_od_range,
     const SinglePairPermutation& perm_curr,
     const GraphOfChains& graph_of_all_ca_chains) const {
@@ -109,7 +109,7 @@ bool ChainPermutation::IsPermConflicted_CheckAllWithSameSource(
     return true;
 }
 
-bool ChainPermutation::IsPermConflicted_CheckAllWithSameSink(
+bool ChainsPermutation::IsPermConflicted_CheckAllWithSameSink(
     const VariableRange& variable_od_range,
     const SinglePairPermutation& perm_curr,
     const GraphOfChains& graph_of_all_ca_chains) const {
@@ -133,7 +133,7 @@ bool ChainPermutation::IsPermConflicted_CheckAllWithSameSink(
     return true;
 }
 
-bool ChainPermutation::IsPermConflicted_CheckAllSerialConnect(
+bool ChainsPermutation::IsPermConflicted_CheckAllSerialConnect(
     const VariableRange& variable_od_range,
     const SinglePairPermutation& perm_curr,
     const GraphOfChains& graph_of_all_ca_chains) const {
@@ -175,7 +175,7 @@ bool ChainPermutation::IsPermConflicted_CheckAllSerialConnect(
     return true;
 }
 
-bool ChainPermutation::IsValid(
+bool ChainsPermutation::IsValid(
     const VariableRange& variable_od_range,
     const SinglePairPermutation& perm_curr,
     const GraphOfChains& graph_of_all_ca_chains) const {

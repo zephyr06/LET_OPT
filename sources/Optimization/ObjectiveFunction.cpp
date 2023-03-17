@@ -23,7 +23,7 @@ JobCEC GetFirstReactJobWithSuperPeriod(
 }
 
 JobCEC GetFirstReactJob(const JobCEC &job_curr,
-                        const ChainPermutation &chain_perm,
+                        const ChainsPermutation &chain_perm,
                         const Edge &edge_curr,
                         const TaskSetInfoDerived &tasks_info) {
     const SinglePairPermutation &pair_perm_curr = chain_perm[edge_curr];
@@ -49,7 +49,7 @@ JobCEC GetFirstReactJob(const JobCEC &job_curr,
 
 double ObjReactionTimeIntermediate::ObjSingleChain(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-    const ChainPermutation &chain_perm, const std::vector<int> &chain,
+    const ChainsPermutation &chain_perm, const std::vector<int> &chain,
     const VariableOD &variable_od) {
     BeginTimer("ObjSingleChain");
     int max_reaction_time = -1;
@@ -80,14 +80,14 @@ double ObjReactionTimeIntermediate::ObjSingleChain(
 
 double ObjectiveFunctionBaseIntermediate::Obj(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-    const ChainPermutation &chain_perm, const VariableOD &variable_od) {
+    const ChainsPermutation &chain_perm, const VariableOD &variable_od) {
 #ifdef PROFILE_CODE
     BeginTimer(__FUNCTION__);
 #endif
     int max_obj = 0;
 
     for (const auto &chain : dag_tasks.chains_) {
-        // ChainPermutation chain_perm_curr;
+        // ChainsPermutation chain_perm_curr;
         // for (uint i = 0; i < chain.size() - 1; i++) {
         //     Edge edge_curr(chain[i], chain[i + 1]);
         //     chain_perm_curr.push_back(chain_perm[edge_curr]);

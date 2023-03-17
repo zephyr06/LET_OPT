@@ -12,11 +12,11 @@ Interval GetOffsetRange(const VariableRange &variable_od_range,
                         const SinglePairPermutation &perm_prev);
 
 // this class actually stores graphs rather than a single chain
-class ChainPermutation {
+class ChainsPermutation {
    public:
-    ChainPermutation() {}
+    ChainsPermutation() {}
 
-    ChainPermutation(uint n) { permutation_chain_map_.reserve(n); }
+    ChainsPermutation(uint n) { permutation_chain_map_.reserve(n); }
 
     inline size_t size() const { return permutation_chain_map_.size(); }
 
@@ -28,7 +28,7 @@ class ChainPermutation {
             permutation_chain_map_[edge_curr] != perm)
             CoutError(
                 "Insert conflicted SinglePairPermutation into "
-                "ChainPermutation!");
+                "ChainsPermutation!");
         permutation_chain_map_[edge_curr] = perm;
     }
 

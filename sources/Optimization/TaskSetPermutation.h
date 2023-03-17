@@ -1,7 +1,7 @@
 #pragma once
 
 #include "sources/Baseline/StandardLET.h"
-#include "sources/Optimization/ChainPermutation.h"
+#include "sources/Optimization/ChainsPermutation.h"
 #include "sources/Optimization/GraphOfChains.h"
 #include "sources/Optimization/ObjectiveFunction.h"
 #include "sources/Utils/BatchUtils.h"
@@ -11,11 +11,11 @@ namespace DAG_SPACE {
 
 // assume the simple response time analysis
 // VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
-//                                  const ChainPermutation& chain_perm,
+//                                  const ChainsPermutation& chain_perm,
 //                                  std::vector<int> task_chain);
 
 VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
-                                 const ChainPermutation& chain_perm,
+                                 const ChainsPermutation& chain_perm,
                                  const GraphOfChains& graph_of_all_ca_chains);
 
 // currently, as asusme there is only one chain
@@ -50,19 +50,19 @@ class TaskSetPermutation {
     }
 
     int PerformOptimization() {
-        ChainPermutation chain_perm;
-        IterateAllChainPermutations(0, chain_perm);
+        ChainsPermutation chain_perm;
+        IterateAllChainsPermutations(0, chain_perm);
         return best_yet_obj_;
     }
 
     // depth equals the number of edge pais
-    void IterateAllChainPermutations(uint position,
-                                     ChainPermutation& chain_perm) {
+    void IterateAllChainsPermutations(uint position,
+                                     ChainsPermutation& chain_perm) {
         if (position ==
             graph_of_all_ca_chains_.edge_records_
                 .size()) {  // finish iterate all the pair permutations
             iteration_count_++;
-            EvaluateChainPermutation(chain_perm);
+            EvaluateChainsPermutation(chain_perm);
             return;
         }
 
@@ -75,13 +75,13 @@ class TaskSetPermutation {
                                    graph_of_all_ca_chains_)) {
                 chain_perm.push_back(
                     adjacent_two_task_permutations_[position][i]);
-                IterateAllChainPermutations(position + 1, chain_perm);
+                IterateAllChainsPermutations(position + 1, chain_perm);
                 chain_perm.pop(adjacent_two_task_permutations_[position][i]);
             }
         }
     }
 
-    void EvaluateChainPermutation(const ChainPermutation& chain_perm) {
+    void EvaluateChainsPermutation(const ChainsPermutation& chain_perm) {
 #ifdef PROFILE_CODE
         BeginTimer(__FUNCTION__);
 #endif
@@ -127,8 +127,8 @@ class TaskSetPermutation {
     RegularTaskSystem::TaskSetInfoDerived tasks_info_;
     GraphOfChains graph_of_all_ca_chains_;
     std::vector<TwoTaskPermutations> adjacent_two_task_permutations_;
-    std::vector<ChainPermutation> chain_permutations_;
-    ChainPermutation best_yet_chain_;
+    std::vector<ChainsPermutation> chain_permutations_;
+    ChainsPermutation best_yet_chain_;
     int best_yet_obj_;
     int iteration_count_;
     VariableOD best_yet_variable_od_;
