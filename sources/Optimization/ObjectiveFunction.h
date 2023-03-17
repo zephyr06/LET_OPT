@@ -1,6 +1,7 @@
 #pragma once
 #include "sources/Optimization/ChainPermutation.h"
 #include "sources/Optimization/Variable.h"
+#include "sources/Utils/profilier.h"
 namespace DAG_SPACE {
 
 // task_index_in_chain: the index of a task in a cause-effect chain
