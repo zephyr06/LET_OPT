@@ -351,10 +351,10 @@ class PermutationTest_2chain_v1 : public ::testing::Test {
         perm34 = TwoTaskPermutations(3, 4, dag_tasks, tasks_info);
         perm13 = TwoTaskPermutations(1, 3, dag_tasks, tasks_info);
 
-        perm01[0].print();
-        perm03[0].print();
-        perm34[0].print();
-        perm13[0].print();
+        // perm01[0].print();
+        // perm03[0].print();
+        // perm34[0].print();
+        // perm13[0].print();
         // perm12[1].print();
 
         variable_od = VariableOD(tasks);
@@ -413,6 +413,24 @@ TEST_F(PermutationTest_2chain_v1, PerformStandardLETAnalysis) {
     // chain is 1 -> 3 -> 4
     ScheduleResult res = PerformStandardLETAnalysis<ObjReactionTime>(dag_tasks);
     EXPECT_EQ(600 + 600, res.obj_);
+}
+
+double ObjSF(const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+             const ChainsPermutation &chain_perm,
+             const VariableOD &variable_od) {
+    return 0;
+}
+TEST_F(PermutationTest_2chain_v1, sensor_fusion) {
+    // chain is 0 -> 3 -> 4
+    // chain is 1 -> 3 -> 4
+    ChainsPermutation chain_perm;
+    chain_perm.push_back(perm03[0]);
+    chain_perm.push_back(perm34[0]);
+    chain_perm.push_back(perm13[0]);
+    perm03[0].print();
+    perm34[0].print();
+    perm13[0].print();
+    EXPECT_EQ(0, ObjSF(dag_tasks, tasks_info, chain_perm, variable_od));
 }
 
 int main(int argc, char **argv) {

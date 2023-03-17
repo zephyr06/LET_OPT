@@ -9,6 +9,7 @@ const std::string ObjReactionTimeIntermediate::type_trait(
 const std::string ObjReactionTime::type_trait("ReactionTime");
 const std::string ObjDataAgeIntermediate::type_trait("ObjDataAgeIntermediate");
 const std::string ObjDataAge::type_trait("DataAge");
+const std::string ObjSensorFusion::type_trait("SensorFusion");
 
 JobCEC GetFirstReactJobWithSuperPeriod(
     const JobCEC &job_curr, const SinglePairPermutation &pair_perm_curr) {
@@ -151,5 +152,12 @@ double ObjDataAgeIntermediate::ObjSingleChain(
         }
     }
     return max_data_age;
+}
+
+double ObjSensorFusion::Obj(const DAG_Model &dag_tasks,
+                            const TaskSetInfoDerived &tasks_info,
+                            const ChainsPermutation &chain_perm,
+                            const VariableOD &variable_od) {
+    return 0;
 }
 }  // namespace DAG_SPACE
