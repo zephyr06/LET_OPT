@@ -20,7 +20,7 @@ class ChainsPermutation {
 
     inline size_t size() const { return permutation_chain_map_.size(); }
 
-    inline void push_back(const SinglePairPermutation &perm) {
+    void push_back(const SinglePairPermutation &perm) {
         // permutation_chain_.push_back(perm);
         Edge edge_curr(perm.GetPrevTaskId(), perm.GetNextTaskId());
         if (permutation_chain_map_.find(edge_curr) !=

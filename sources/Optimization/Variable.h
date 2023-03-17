@@ -21,11 +21,13 @@ class VariableOD {
         }
         valid_ = true;
     }
+
+    // this function will update values
     OD_Vir& operator[](uint task_id) {
         auto itr = variables_.find(task_id);
         if (itr == variables_.end())
             CoutError("Not found task id in VariableOD!");
-        return variables_[task_id];
+        return variables_.at(task_id);
     }
     const OD_Vir& at(uint task_id) const {
         auto itr = variables_.find(task_id);
