@@ -300,4 +300,7 @@ class TaskSetInfoDerived {
     std::vector<LLint> sizeOfVariables;
 };
 
+int GetHyperPeriod(const TaskSetInfoDerived &tasks_info,
+                   const std::vector<int> &chain);
+
 }  // namespace RegularTaskSystem

@@ -53,7 +53,8 @@ double ObjReactionTimeIntermediate::ObjSingleChain(
     const VariableOD &variable_od) {
     BeginTimer("ObjSingleChain");
     int max_reaction_time = -1;
-    for (uint j = 0; j < tasks_info.GetVariableSize(chain[0]);
+    int hyper_period = GetHyperPeriod(tasks_info, chain);
+    for (uint j = 0; j < hyper_period / tasks_info.GetTask(chain[0]).period;
          j++)  // iterate each source job within a hyper-period
     {
         JobCEC job_source(chain[0], j);

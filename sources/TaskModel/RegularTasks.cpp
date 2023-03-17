@@ -129,5 +129,12 @@ ProcessorTaskSet ExtractProcessorTaskSet(const TaskSet &tasks) {
     }
     return processorTasks;
 }
-
+int GetHyperPeriod(const TaskSetInfoDerived &tasks_info,
+                   const std::vector<int> &chain) {
+    int hp = 1;
+    for (int task_id : chain) {
+        hp = std::lcm(hp, tasks_info.GetTask(task_id).period);
+    }
+    return hp;
+}
 }  // namespace RegularTaskSystem

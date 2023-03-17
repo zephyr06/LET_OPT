@@ -122,6 +122,18 @@ TEST(DAG_Model, read_chains) {
 
     AssertEqualVectorExact<int>(chain1, dag_tasks.chains_[1], 0, __LINE__);
 }
+
+TEST(DAG_Model, GetHyperPeriod) {
+    string path =
+        GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v20.csv";
+    DAG_Model dag_tasks =
+        ReadDAG_Tasks(path, "RM", GlobalVariablesDAGOpt::CHAIN_NUMBER);
+    const TaskSetInfoDerived tasks_info(dag_tasks.GetTasks());
+    EXPECT_LONGS_EQUAL(100, GetHyperPeriod(tasks_info, {0}));
+    EXPECT_LONGS_EQUAL(500, GetHyperPeriod(tasks_info, {0, 1}));
+    EXPECT_LONGS_EQUAL(1000, GetHyperPeriod(tasks_info, {0, 1, 4}));
+    EXPECT_LONGS_EQUAL(100, GetHyperPeriod(tasks_info, {0, 3}));
+}
 int main() {
     TestResult tr;
     return TestRegistry::runAllTests(tr);
