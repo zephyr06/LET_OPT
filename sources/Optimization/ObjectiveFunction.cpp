@@ -8,26 +8,14 @@ const std::string ObjReactionTimeIntermediate::type_trait(
     "ObjReactionTimeIntermediate");
 const std::string ObjReactionTime::type_trait("ReactionTime");
 
-JobCEC GetFirstReactJobWithSuperPeriod(const JobCEC &job_curr,
-                                       const ChainPermutation &chain_perm,
-                                       const Edge &edge_curr) {
-#ifdef PROFILE_CODE
-    BeginTimer(__FUNCTION__);
-#endif
-
-    BeginTimer("SinglePairPermutation[]2");
-    const SinglePairPermutation &pair_perm_curr = chain_perm[edge_curr];
-    EndTimer("SinglePairPermutation[]2");
-    // pair_perm_curr.print();
+JobCEC GetFirstReactJobWithSuperPeriod(
+    const JobCEC &job_curr, const SinglePairPermutation &pair_perm_curr) {
     auto itr = pair_perm_curr.job_first_react_matches_.find(job_curr);
     if (itr == pair_perm_curr.job_first_react_matches_.end())
         CoutError(
             "Didn't find job_curr records in "
             "GetFirstReactJobWithSuperPeriod!");
     else {
-#ifdef PROFILE_CODE
-        EndTimer(__FUNCTION__);
-#endif
         return itr->second.front();  // assume it is sorted, TODO: guarantee it
     }
 
@@ -59,8 +47,8 @@ JobCEC GetFirstReactJob(const JobCEC &job_curr,
 
     int sp_index = job_curr.jobId / prev_jobs_in_sp;
     JobCEC react_job = GetFirstReactJobWithSuperPeriod(
-        JobCEC(job_curr.taskId, job_curr.jobId % prev_jobs_in_sp), chain_perm,
-        edge_curr);
+        JobCEC(job_curr.taskId, job_curr.jobId % prev_jobs_in_sp),
+        pair_perm_curr);
     react_job.jobId += sp_index * next_jobs_in_sp;
 #ifdef PROFILE_CODE
     EndTimer(__FUNCTION__);
