@@ -83,13 +83,7 @@ double ObjectiveFunctionBaseIntermediate::Obj(
     BeginTimer(__FUNCTION__);
 #endif
     int max_obj = 0;
-
     for (const auto &chain : dag_tasks.chains_) {
-        // ChainsPermutation chain_perm_curr;
-        // for (uint i = 0; i < chain.size() - 1; i++) {
-        //     Edge edge_curr(chain[i], chain[i + 1]);
-        //     chain_perm_curr.push_back(chain_perm[edge_curr]);
-        // }
         max_obj += ObjSingleChain(dag_tasks, tasks_info, chain_perm, chain,
                                   variable_od);
     }

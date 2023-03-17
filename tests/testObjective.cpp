@@ -104,41 +104,6 @@ TEST_F(PermutationTest1, ChainsPermutation_v1) {
                                        variable_od));
 }
 
-// double ObjSingleChainDA(const DAG_Model &dag_tasks,
-//                         const TaskSetInfoDerived &tasks_info,
-//                         const ChainsPermutation &chain_perm,
-//                         const std::vector<int> &chain,
-//                         const VariableOD &variable_od) {
-//     int max_data_age = -1;
-//     int hyper_period = GetHyperPeriod(tasks_info, chain);
-//     int job_num_in_hyper_period =
-//         hyper_period / tasks_info.GetTask(chain[0]).period;
-//     std::unordered_map<JobCEC, JobCEC> first_react_map =
-//         GetFirstReactMap(dag_tasks, tasks_info, chain_perm, chain,
-//         variable_od);
-//     for (int j = 1; j <= job_num_in_hyper_period + 1;
-//          j++)  // iterate each source job within a hyper-period
-//     {
-//         JobCEC job_source(chain[0], j);
-//         JobCEC job_first_reacted = first_react_map[job_source];
-//         JobCEC job_source_prev_job(job_source.taskId, job_source.jobId - 1);
-//         if (first_react_map[job_source_prev_job] != job_first_reacted &&
-//             job_first_reacted.jobId > 0) {
-//             JobCEC first_reacted_job_prev_job(job_first_reacted.taskId,
-//                                               job_first_reacted.jobId - 1);
-//             int deadline_curr = GetDeadline(first_reacted_job_prev_job,
-//                                             variable_od, tasks_info);
-//             max_data_age = std::max(
-//                 max_data_age,
-//                 int(deadline_curr -
-//                     GetActivationTime(
-//                         JobCEC(job_source.taskId, job_source.jobId - 1),
-//                         tasks_info)));
-//         }
-//     }
-//     return max_data_age;
-// }
-
 TEST_F(PermutationTest1, data_age) {
     // chain is 0 -> 1 -> 2
     std::vector<int> chain = {0, 1, 2};
