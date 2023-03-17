@@ -7,9 +7,8 @@ namespace DAG_SPACE {
 // task_index_in_chain: the index of a task in a cause-effect chain
 // for example: consider a chain 0->1->2, task0's index is 0, task1's index is
 // 1, task2's index is 2;
-JobCEC GetFirstReactJobWithSuperPeriod(const JobCEC &job_curr,
-                                       const ChainPermutation &chain_perm,
-                                       const Edge &edge_curr);
+JobCEC GetFirstReactJobWithSuperPeriod(
+    const JobCEC &job_curr, const SinglePairPermutation &pair_perm_curr);
 
 JobCEC GetFirstReactJob(const JobCEC &job_curr,
                         const ChainPermutation &chain_perm,
