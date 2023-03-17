@@ -160,7 +160,8 @@ int main(int argc, char *argv[]) {
                     i--;
                     continue;
                 }
-                if (examChainsWithSharedNodes) {
+                if (examChainsWithSharedNodes &&
+                    GlobalVariablesDAGOpt::CHAIN_NUMBER != 1) {
                     if (!WhetherDAGChainsShareNodes(dag_tasks)) {
                         i--;
                         continue;
