@@ -141,9 +141,9 @@ std::vector<BatchResult> BatchOptimizeOrder(
         SA              // 3
     };
     std::vector<BatchResult> batchResVec;
-    for (auto method : baselineMethodsAll) {
-        int i = method;
-        BatchResult batchRes{Average(schedulableAll[i]), Average(objsAll[i]),
+    for (uint i = 0; i < baselineMethods.size(); i++) {
+        BatchResult batchRes{Average(schedulableAll[i]),
+                             Average(objsAll[i], objsAll[0]),
                              Average(runTimeAll[i])};
         batchResVec.push_back(batchRes);
     }
