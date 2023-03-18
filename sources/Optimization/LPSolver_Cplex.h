@@ -2,7 +2,7 @@
 
 #include "ilcplex/cplex.h"
 #include "ilcplex/ilocplex.h"
-#include "sources/Optimization/TaskSetPermutations.h"
+#include "sources/Optimization/TaskSetPermutation.h"
 #include "sources/TaskModel/DAG_Model.h"
 
 namespace DAG_SPACE {
@@ -13,14 +13,13 @@ class LPOptimizer {
     LPOptimizer(const DAG_Model &dagTasks, const TaskSetInfoDerived &tasks_info,
                 const ChainsPermutation &chains_perm,
                 const GraphOfChains &graph_of_all_ca_chains,
-                const VariableOD &variable_od, const std::string &obj_trait,
+                const std::string &obj_trait,
                 const std::unordered_map<JobCEC, JobCEC> &react_chain_map,
                 const std::vector<int> &rta)
         : dag_tasks_(dagTasks),
-          tasks_info_(tasks_info_),
+          tasks_info_(tasks_info),
           chains_perm_(chains_perm),
           graph_of_all_ca_chains_(graph_of_all_ca_chains),
-          variable_od_(variable_od),
           obj_trait_(obj_trait),
           react_chain_map_(react_chain_map),
           rta_(rta) {
@@ -29,7 +28,7 @@ class LPOptimizer {
 
     void Init();
     void ClearCplexMemory();
-    void Optimize();
+    VectorDynamic Optimize();
 
     // protected:
     void AddVariables();
@@ -58,8 +57,7 @@ class LPOptimizer {
 
     // default values if infeasible
     inline void SetOptimizedStartTimeVector() {
-        optimizedStartTimeVector_ =
-            GenerateVectorDynamic(tasks_info_.variableDimension);
+        optimizedStartTimeVector_ = GenerateVectorDynamic(tasks_info_.N * 2);
     }
 
    public:
@@ -67,10 +65,10 @@ class LPOptimizer {
     TaskSetInfoDerived tasks_info_;
     ChainsPermutation chains_perm_;
     GraphOfChains graph_of_all_ca_chains_;
-    VariableOD variable_od_;
+    // VariableOD variable_od_;
     int numVariables_;
     std::string obj_trait_;
-    std::unordered_map<JobCEC, JobCEC> react_chain_map_;
+    std::unordered_map<JobCEC, JobCEC> react_chain_map_;  // TODO: make it work
     std::vector<int> rta_;
 
     IloEnv env_;
@@ -80,6 +78,8 @@ class LPOptimizer {
     IloNumVarArray varArray_;
     VectorDynamic initialStartTimeVector_;
     VectorDynamic optimizedStartTimeVector_;
+    int optimal_obj_ = -1;
     // std::unordered_map<int, uint> task_id2position_cplex_;
 };
+
 }  // namespace DAG_SPACE

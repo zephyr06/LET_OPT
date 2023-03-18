@@ -35,6 +35,13 @@ int GetResponseTime(const DAG_Model &dag_tasks, int task_id) {
     return res;
 }
 
+std::vector<int> GetResponseTimeTaskSet(const DAG_Model &dag_tasks) {
+    std::vector<int> rta(dag_tasks.GetTaskSet().size());
+    for (uint i = 0; i < rta.size(); i++) {
+        rta[i] = GetResponseTime(dag_tasks, i);
+    }
+    return rta;
+}
 /**
  * @brief
  *
