@@ -282,6 +282,72 @@ TEST_F(PermutationTest_Non_Har, FindODFromPermutation_valid) {
     EXPECT_EQ(15, variable[2].deadline);
 }
 
+class PermutationTest3 : public ::testing::Test {
+   protected:
+    void SetUp() override {
+        dag_tasks = ReadDAG_Tasks(
+            GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v26.csv",
+            "RM", 2);
+        tasks = dag_tasks.GetTaskSet();
+        tasks_info = TaskSetInfoDerived(tasks);
+    };
+
+    DAG_Model dag_tasks;
+    TaskSet tasks;
+    TaskSetInfoDerived tasks_info;
+    Task task0;
+    Task task1;
+    Task task2;
+    JobCEC job00;
+    JobCEC job01;
+    JobCEC job10;
+    JobCEC job20;
+};
+
+TEST_F(PermutationTest3, Find_OD) {
+    TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+    ChainsPermutation chains_perm;
+    chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[0][0]);
+    chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[1][0]);
+    chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[2][1]);
+    chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[3][1]);
+
+    VariableOD variable_od = FindODFromPermutation(
+        dag_tasks, chains_perm, task_set_perms.graph_of_all_ca_chains_);
+
+    std::unordered_map<JobCEC, JobCEC> react_chain_map;
+    std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+    auto res =
+        FindODWithLP(task_set_perms.dag_tasks_, task_set_perms.tasks_info_,
+                     chains_perm, task_set_perms.graph_of_all_ca_chains_,
+                     "ReactionTime", react_chain_map, rta);
+    EXPECT_EQ(res.first.valid_, variable_od.valid_);
+}
+
+TEST_F(PermutationTest3, Find_OD_v2) {
+    TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+    ChainsPermutation chains_perm;
+    chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[0][1]);
+    chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[1][0]);
+    chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[2][1]);
+    chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[3][1]);
+    task_set_perms.adjacent_two_task_permutations_[0][1].print();
+    task_set_perms.adjacent_two_task_permutations_[1][0].print();
+    task_set_perms.adjacent_two_task_permutations_[2][1].print();
+    task_set_perms.adjacent_two_task_permutations_[3][1].print();
+
+    VariableOD variable_od = FindODFromPermutation(
+        dag_tasks, chains_perm, task_set_perms.graph_of_all_ca_chains_);
+
+    std::unordered_map<JobCEC, JobCEC> react_chain_map;
+    std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+    auto res =
+        FindODWithLP(task_set_perms.dag_tasks_, task_set_perms.tasks_info_,
+                     chains_perm, task_set_perms.graph_of_all_ca_chains_,
+                     "ReactionTime", react_chain_map, rta);
+    EXPECT_EQ(res.first.valid_, variable_od.valid_);
+}
+
 int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);
     ::testing::InitGoogleMock(&argc, argv);

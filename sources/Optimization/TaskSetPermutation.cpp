@@ -82,6 +82,26 @@ void SetVariableHelper(int task_id,
         return;
 }
 
+bool ExamVariableFeasibility(const VariableOD& variable,
+                             const ChainsPermutation& chain_perm,
+                             const GraphOfChains& graph_of_all_ca_chains) {
+    for (const auto& edge : graph_of_all_ca_chains.edge_vec_ordered_) {
+        const PermutationInequality& inequality = chain_perm[edge].inequality_;
+        int prev_id = inequality.task_prev_id_;
+        int next_id = inequality.task_next_id_;
+        if (inequality.lower_bound_valid_) {
+            if (variable.at(next_id).offset + inequality.lower_bound_ >=
+                    variable.at(prev_id).deadline ||
+                variable.at(prev_id).deadline >
+                    variable.at(next_id).offset + inequality.upper_bound_) {
+                if (GlobalVariablesDAGOpt::debugMode) inequality.print();
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
                                  const ChainsPermutation& chain_perm,
                                  const GraphOfChains& graph_of_all_ca_chains) {
@@ -95,7 +115,10 @@ VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
                           variable, chain_perm, graph_of_all_ca_chains,
                           dag_tasks);
     }
-
+    if (variable.valid_)
+        variable.valid_ = ExamVariableFeasibility(variable, chain_perm,
+                                                  graph_of_all_ca_chains);
     return variable;
 }
+
 }  // namespace DAG_SPACE

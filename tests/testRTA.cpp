@@ -200,6 +200,26 @@ TEST_F(PermutationTest8, v1) {
     EXPECT_EQ(35, GetResponseTime(dag_tasks, 3));
     EXPECT_EQ(143, GetResponseTime(dag_tasks, 4));
 }
+class PermutationTest9 : public ::testing::Test {
+   protected:
+    void SetUp() override {
+        dag_tasks = ReadDAG_Tasks(
+            GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v26.csv",
+            "RM", 1);
+        tasks = dag_tasks.GetTaskSet();
+        tasks_info = TaskSetInfoDerived(tasks);
+    };
+
+    DAG_Model dag_tasks;
+    TaskSet tasks;
+    TaskSetInfoDerived tasks_info;
+};
+TEST_F(PermutationTest9, GetResponseTimeTaskSet) {
+    EXPECT_EQ(77, GetResponseTime(
+                      dag_tasks,
+                      4));  // beacuse it's assigned to a different processor
+    EXPECT_EQ(77, GetResponseTimeTaskSet(dag_tasks)[4]);
+}
 
 int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);

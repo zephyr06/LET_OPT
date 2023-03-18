@@ -14,6 +14,10 @@ namespace DAG_SPACE {
 //                                  const ChainsPermutation& chain_perm,
 //                                  std::vector<int> task_chain);
 
+bool ExamVariableFeasibility(const VariableOD& variable,
+                             const ChainsPermutation& chain_perm,
+                             const GraphOfChains& graph_of_all_ca_chains);
+
 VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
                                  const ChainsPermutation& chain_perm,
                                  const GraphOfChains& graph_of_all_ca_chains);
@@ -92,10 +96,14 @@ class TaskSetPermutation {
                 dag_tasks_, tasks_info_, chain_perm, graph_of_all_ca_chains_,
                 ObjectiveFunctionBase::type_trait, react_chain_map, rta);
             if (res.first.valid_ != variable_od.valid_ ||
-                res.second > ObjectiveFunctionBase::Obj(dag_tasks_, tasks_info_,
-                                                        chain_perm,
-                                                        variable_od))
+                (res.first.valid_ &&
+                 res.second >
+                     ObjectiveFunctionBase::Obj(dag_tasks_, tasks_info_,
+                                                chain_perm, variable_od))) {
+                std::cout << "***************************\n";
+                variable_od.print();
                 CoutError("Find a case where LP performs worse!");
+            }
         }
 
 #ifdef PROFILE_CODE
