@@ -35,7 +35,8 @@ TEST_F(PermutationTest1, mapPrev) {
     std::vector<int> rta = {1, 3, 6};
     LPOptimizer lp_optimizer(dag_tasks, tasks_info, chain_perm, graph_chains,
                              "ReactionTime", react_chain_map, rta);
-    VectorDynamic startTimeVectorOptmized = lp_optimizer.Optimize();
+    auto res = lp_optimizer.Optimize();
+    EXPECT_EQ(20, res.second);
 }
 
 int main(int argc, char** argv) {

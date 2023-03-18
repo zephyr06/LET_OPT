@@ -2,7 +2,9 @@
 
 #include "ilcplex/cplex.h"
 #include "ilcplex/ilocplex.h"
-#include "sources/Optimization/TaskSetPermutation.h"
+#include "sources/Optimization/ChainsPermutation.h"
+#include "sources/Optimization/GraphOfChains.h"
+#include "sources/Optimization/ObjectiveFunction.h"
 #include "sources/TaskModel/DAG_Model.h"
 
 namespace DAG_SPACE {
@@ -10,13 +12,14 @@ namespace DAG_SPACE {
 // rta is organized by task_id
 class LPOptimizer {
    public:
-    LPOptimizer(const DAG_Model &dagTasks, const TaskSetInfoDerived &tasks_info,
+    LPOptimizer(const DAG_Model &dag_tasks,
+                const TaskSetInfoDerived &tasks_info,
                 const ChainsPermutation &chains_perm,
                 const GraphOfChains &graph_of_all_ca_chains,
                 const std::string &obj_trait,
                 const std::unordered_map<JobCEC, JobCEC> &react_chain_map,
                 const std::vector<int> &rta)
-        : dag_tasks_(dagTasks),
+        : dag_tasks_(dag_tasks),
           tasks_info_(tasks_info),
           chains_perm_(chains_perm),
           graph_of_all_ca_chains_(graph_of_all_ca_chains),
@@ -28,7 +31,7 @@ class LPOptimizer {
 
     void Init();
     void ClearCplexMemory();
-    VectorDynamic Optimize();
+    std::pair<VariableOD, int> Optimize();
 
     // protected:
     void AddVariables();
@@ -40,7 +43,7 @@ class LPOptimizer {
     void AddObjectiveFunctionReactionTime();
     IloExpr GetStartTimeExpression(JobCEC &jobCEC);
     IloExpr GetFinishTimeExpression(JobCEC &jobCEC);
-    void UpdateOptimizedStartTimeVector(IloNumArray &values_optimized);
+    VariableOD ExtratOptSolution(IloNumArray &values_optimized);
 
     inline int GetVariableIndexVirtualOffset(int task_id) {
         return task_id * 2;
@@ -55,17 +58,12 @@ class LPOptimizer {
         return GetVariableIndexVirtualDeadline(job.taskId);
     }
 
-    // default values if infeasible
-    inline void SetOptimizedStartTimeVector() {
-        optimizedStartTimeVector_ = GenerateVectorDynamic(tasks_info_.N * 2);
-    }
-
    public:
     DAG_Model dag_tasks_;
     TaskSetInfoDerived tasks_info_;
     ChainsPermutation chains_perm_;
     GraphOfChains graph_of_all_ca_chains_;
-    // VariableOD variable_od_;
+    VariableOD variable_od_opt_;
     int numVariables_;
     std::string obj_trait_;
     std::unordered_map<JobCEC, JobCEC> react_chain_map_;  // TODO: make it work
@@ -78,8 +76,19 @@ class LPOptimizer {
     IloNumVarArray varArray_;
     VectorDynamic initialStartTimeVector_;
     VectorDynamic optimizedStartTimeVector_;
-    int optimal_obj_ = -1;
+    int optimal_obj_ = 1e8;
     // std::unordered_map<int, uint> task_id2position_cplex_;
 };
 
+inline std::pair<VariableOD, int> FindODWithLP(
+    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+    const ChainsPermutation &chains_perm,
+    const GraphOfChains &graph_of_all_ca_chains, const std::string &obj_trait,
+    const std::unordered_map<JobCEC, JobCEC> &react_chain_map,
+    const std::vector<int> &rta) {
+    LPOptimizer lp_optimizer(dag_tasks, tasks_info, chains_perm,
+                             graph_of_all_ca_chains, obj_trait, react_chain_map,
+                             rta);
+    return lp_optimizer.Optimize();
+}
 }  // namespace DAG_SPACE

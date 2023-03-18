@@ -3,10 +3,10 @@
 #include "sources/Baseline/StandardLET.h"
 #include "sources/Optimization/ChainsPermutation.h"
 #include "sources/Optimization/GraphOfChains.h"
+#include "sources/Optimization/LPSolver_Cplex.h"
 #include "sources/Optimization/ObjectiveFunction.h"
 #include "sources/Utils/BatchUtils.h"
 #include "sources/Utils/profilier.h"
-
 namespace DAG_SPACE {
 
 // assume the simple response time analysis
@@ -23,31 +23,10 @@ class TaskSetPermutation {
    public:
     TaskSetPermutation() {}
     TaskSetPermutation(const DAG_Model& dag_tasks,
-                       const std::vector<std::vector<int>>& chains)
-        : start_time_((std::chrono::high_resolution_clock::now())),
-          dag_tasks_(dag_tasks),
-          tasks_info_(
-              RegularTaskSystem::TaskSetInfoDerived(dag_tasks.GetTaskSet())),
-          graph_of_all_ca_chains_(chains),
-          best_yet_obj_(1e9),
-          iteration_count_(0),
-          variable_range_od_(FindVariableRange(dag_tasks_)) {
-        adjacent_two_task_permutations_.reserve(
-            1e2);  // there are never more than 1e2 edges
-        FindPairPermutations();
-        chain_permutations_.reserve(1e5);
-    }
+                       const std::vector<std::vector<int>>& chains);
 
-    void FindPairPermutations() {
-        for (const auto& edge_curr :
-             graph_of_all_ca_chains_.edge_vec_ordered_) {
-            if (ifTimeout(start_time_)) break;
-            adjacent_two_task_permutations_.push_back(TwoTaskPermutations(
-                edge_curr.from_id, edge_curr.to_id, dag_tasks_, tasks_info_));
-            std::cout << "Pair permutation #: "
-                      << adjacent_two_task_permutations_.back().size() << "\n";
-        }
-    }
+    void FindPairPermutations();
+    bool ExamSchedulabilityOptSol() const;
 
     template <typename ObjectiveFunctionBase>
     int PerformOptimization() {
@@ -105,25 +84,23 @@ class TaskSetPermutation {
                 best_yet_variable_od_ = variable_od;
             }
         }
+        // test the performance of the LP optimizer
+        {
+            std::unordered_map<JobCEC, JobCEC> react_chain_map;
+            std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks_);
+            auto res = FindODWithLP(
+                dag_tasks_, tasks_info_, chain_perm, graph_of_all_ca_chains_,
+                ObjectiveFunctionBase::type_trait, react_chain_map, rta);
+            if (res.first.valid_ != variable_od.valid_ ||
+                res.second > ObjectiveFunctionBase::Obj(dag_tasks_, tasks_info_,
+                                                        chain_perm,
+                                                        variable_od))
+                CoutError("Find a case where LP performs worse!");
+        }
+
 #ifdef PROFILE_CODE
         EndTimer(__FUNCTION__);
 #endif
-    }
-
-    bool ExamSchedulabilityOptSol() const {
-        if (best_yet_variable_od_.size() == 0) return false;
-        for (int i = 0; i < tasks_info_.N; i++) {
-            int offset = best_yet_variable_od_.at(i).offset;
-            int deadline = best_yet_variable_od_.at(i).deadline;
-            int rta = GetResponseTime(dag_tasks_, i);
-            if (rta + offset > deadline ||
-                deadline > dag_tasks_.GetTask(i).deadline)
-                return false;
-        }
-        if (GlobalVariablesDAGOpt::debugMode == 1) {
-            best_yet_variable_od_.print();
-        }
-        return true;
     }
 
     // data members

@@ -3,35 +3,53 @@
 
 namespace DAG_SPACE {
 
-// VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
-//                                  const ChainsPermutation& chain_perm,
-//                                  std::vector<int> task_id_chain) {
-//     const TaskSet& tasks = dag_tasks.GetTaskSet();
-//     VariableOD variable(dag_tasks.GetTaskSet());
+TaskSetPermutation::TaskSetPermutation(
+    const DAG_Model& dag_tasks, const std::vector<std::vector<int>>& chains)
+    : start_time_((std::chrono::high_resolution_clock::now())),
+      dag_tasks_(dag_tasks),
+      tasks_info_(
+          RegularTaskSystem::TaskSetInfoDerived(dag_tasks.GetTaskSet())),
+      graph_of_all_ca_chains_(chains),
+      best_yet_obj_(1e9),
+      iteration_count_(0),
+      variable_range_od_(FindVariableRange(dag_tasks_)) {
+    adjacent_two_task_permutations_.reserve(
+        1e2);  // there are never more than 1e2 edges
+    FindPairPermutations();
+    chain_permutations_.reserve(1e5);
+}
 
-//     // in each iteration, we consider task i's virtual deadline and task
-//     i+1's
-//     // virtual offset assignment
-//     for (uint chain_index = 0; chain_index < task_id_chain.size() - 1;
-//          chain_index++) {
-//         int task_id = task_id_chain[chain_index];
-//         bool schedulable = variable.SetMinDeadline(task_id, dag_tasks);
-//         if (!schedulable) break;
-//         if (chain_perm[chain_index].inequality_.upper_bound_valid_)
-//             variable.SetOffset(
-//                 task_id_chain[chain_index + 1],
-//                 variable[task_id].deadline -
-//                     chain_perm[chain_index].inequality_.upper_bound_);
-//     }
-//     variable.SetMinDeadline(task_id_chain.back(), dag_tasks);
-//     return variable;
-// }
+void TaskSetPermutation::FindPairPermutations() {
+    for (const auto& edge_curr : graph_of_all_ca_chains_.edge_vec_ordered_) {
+        if (ifTimeout(start_time_)) break;
+        adjacent_two_task_permutations_.push_back(TwoTaskPermutations(
+            edge_curr.from_id, edge_curr.to_id, dag_tasks_, tasks_info_));
+        std::cout << "Pair permutation #: "
+                  << adjacent_two_task_permutations_.back().size() << "\n";
+    }
+}
+bool TaskSetPermutation::ExamSchedulabilityOptSol() const {
+    if (best_yet_variable_od_.size() == 0) return false;
+    for (int i = 0; i < tasks_info_.N; i++) {
+        int offset = best_yet_variable_od_.at(i).offset;
+        int deadline = best_yet_variable_od_.at(i).deadline;
+        int rta = GetResponseTime(dag_tasks_, i);
+        if (rta + offset > deadline ||
+            deadline > dag_tasks_.GetTask(i).deadline)
+            return false;
+    }
+    if (GlobalVariablesDAGOpt::debugMode == 1) {
+        best_yet_variable_od_.print();
+    }
+    return true;
+}
 
 // set each variable's offset and deadline
 // assumes acyclic graph
 void SetVariableHelper(int task_id,
                        std::unordered_map<int, bool>& variable_set_record,
-                       VariableOD& variable, const ChainsPermutation& chain_perm,
+                       VariableOD& variable,
+                       const ChainsPermutation& chain_perm,
                        const GraphOfChains& graph_of_all_ca_chains,
                        const DAG_Model& dag_tasks) {
     if (variable_set_record.find(task_id) == variable_set_record.end() ||

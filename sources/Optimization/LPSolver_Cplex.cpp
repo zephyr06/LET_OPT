@@ -13,7 +13,6 @@ void LPOptimizer::Init() {
     model_ = IloModel(env_);
     cplexSolver_ = IloCplex(env_);
     cplexSolver_.setOut(env_.getNullStream());
-    SetOptimizedStartTimeVector();
 }
 
 void LPOptimizer::ClearCplexMemory() {
@@ -23,7 +22,7 @@ void LPOptimizer::ClearCplexMemory() {
     env_.end();
 }
 
-VectorDynamic LPOptimizer::Optimize() {
+std::pair<VariableOD, int> LPOptimizer::Optimize() {
     // BeginTimer("Build_LP_Model");
     Init();
     AddVariables();  // must be called first
@@ -47,12 +46,12 @@ VectorDynamic LPOptimizer::Optimize() {
                       << " solution found: " << cplexSolver_.getObjValue()
                       << "\n";
         }
-        UpdateOptimizedStartTimeVector(values_optimized);
+        variable_od_opt_ = ExtratOptSolution(values_optimized);
         optimal_obj_ = cplexSolver_.getObjValue();
     } else if (GlobalVariablesDAGOpt::debugMode)
         std::cout << "No feasible solution found!\n";
     ClearCplexMemory();
-    return optimizedStartTimeVector_;
+    return std::make_pair(variable_od_opt_, optimal_obj_);
 }
 
 // this function doesn't include artificial variables
@@ -284,18 +283,16 @@ IloExpr LPOptimizer::GetFinishTimeExpression(JobCEC &job) {
     return exp;
 }
 
-void LPOptimizer::UpdateOptimizedStartTimeVector(
-    IloNumArray &values_optimized) {
-    for (int i = 0; i < numVariables_; i++) {
-        optimizedStartTimeVector_(i) = values_optimized[i];
-        // Round the optimized start time to interger when locate in 1e-4 range.
-        // This can avoid float number precision error in further feasibility
-        // check.
-        if (abs(round(optimizedStartTimeVector_(i)) -
-                optimizedStartTimeVector_(i)) < 1e-4) {
-            optimizedStartTimeVector_(i) = round(optimizedStartTimeVector_(i));
-        }
+VariableOD LPOptimizer::ExtratOptSolution(IloNumArray &values_optimized) {
+    VariableOD variable_od_opt(dag_tasks_.GetTaskSet());
+    for (int task_id = 0; task_id < tasks_info_.N; task_id++) {
+        variable_od_opt.SetOffset(
+            task_id, values_optimized[GetVariableIndexVirtualOffset(task_id)]);
+        variable_od_opt.SetDeadline(
+            task_id,
+            values_optimized[GetVariableIndexVirtualDeadline(task_id)]);
     }
+    return variable_od_opt;
 }
 
 }  // namespace DAG_SPACE
