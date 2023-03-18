@@ -20,6 +20,8 @@ extern int SKIP_PERM;
 extern int TIME_LIMIT;
 extern double SAMPLE_SMALL_TASKS;
 
+extern const double kCplexInequalityThreshold;
+
 // Task set settings
 extern const std::string testDataSetName;
 extern const std::string priorityMode;

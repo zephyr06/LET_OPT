@@ -13,6 +13,9 @@ int SKIP_PERM = (int)ConfigParameters["SKIP_PERM"];
 int TIME_LIMIT = (int)ConfigParameters["TIME_LIMIT"];
 double SAMPLE_SMALL_TASKS = (double)ConfigParameters["SAMPLE_SMALL_TASKS"];
 
+const double kCplexInequalityThreshold =
+    (double)ConfigParameters["kCplexInequalityThreshold"];
+
 // Task set settings
 const std::string testDataSetName =
     (std::string)ConfigParameters["testDataSetName"];

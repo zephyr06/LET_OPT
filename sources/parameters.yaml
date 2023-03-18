@@ -18,9 +18,14 @@ CHAIN_NUMBER: 2
 
 
 #*************************************************************
+
+# Cplex settings
+kCplexInequalityThreshold: 1e-3
+
 # used in SA
 coolingRateSA: 0.1
 randomInitialize: 0
 temperatureSA: 100000000
 SA_iteration: 100000
+
 
