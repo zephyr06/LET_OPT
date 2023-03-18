@@ -49,20 +49,23 @@ class TaskSetPermutation {
         }
     }
 
+    template <typename ObjectiveFunctionBase>
     int PerformOptimization() {
         ChainsPermutation chain_perm;
-        IterateAllChainsPermutations(0, chain_perm);
+        IterateAllChainsPermutations<ObjectiveFunctionBase>(0, chain_perm);
         return best_yet_obj_;
     }
 
     // depth equals the number of edge pais
+
+    template <typename ObjectiveFunctionBase>
     void IterateAllChainsPermutations(uint position,
                                       ChainsPermutation& chain_perm) {
         if (position ==
             graph_of_all_ca_chains_.edge_records_
                 .size()) {  // finish iterate all the pair permutations
             iteration_count_++;
-            EvaluateChainsPermutation(chain_perm);
+            EvaluateChainsPermutation<ObjectiveFunctionBase>(chain_perm);
             return;
         }
 
@@ -75,12 +78,14 @@ class TaskSetPermutation {
                                    graph_of_all_ca_chains_)) {
                 chain_perm.push_back(
                     adjacent_two_task_permutations_[position][i]);
-                IterateAllChainsPermutations(position + 1, chain_perm);
+                IterateAllChainsPermutations<ObjectiveFunctionBase>(
+                    position + 1, chain_perm);
                 chain_perm.pop(adjacent_two_task_permutations_[position][i]);
             }
         }
     }
 
+    template <typename ObjectiveFunctionBase>
     void EvaluateChainsPermutation(const ChainsPermutation& chain_perm) {
 #ifdef PROFILE_CODE
         BeginTimer(__FUNCTION__);
@@ -92,8 +97,8 @@ class TaskSetPermutation {
         if (variable_od.valid_)  // if valid, we'll exam obj; otherwise, we'll
                                  // just move forward
         {
-            double obj_curr = ObjReactionTime::Obj(dag_tasks_, tasks_info_,
-                                                   chain_perm, variable_od);
+            double obj_curr = ObjectiveFunctionBase::Obj(
+                dag_tasks_, tasks_info_, chain_perm, variable_od);
             if (obj_curr < best_yet_obj_) {
                 best_yet_obj_ = obj_curr;
                 best_yet_chain_ = chain_perm;
@@ -141,7 +146,7 @@ ScheduleResult PerformTOM_OPT(const DAG_Model& dag_tasks) {
     ScheduleResult res;
     TaskSetPermutation task_sets_perms =
         TaskSetPermutation(dag_tasks, dag_tasks.chains_);
-    res.obj_ = task_sets_perms.PerformOptimization();
+    res.obj_ = task_sets_perms.PerformOptimization<ObjectiveFunctionBase>();
     if (res.obj_ >= 1e8) {
         res.obj_ =
             PerformStandardLETAnalysis<ObjectiveFunctionBase>(dag_tasks).obj_;

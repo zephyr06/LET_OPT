@@ -52,7 +52,7 @@ class PermutationTest1 : public ::testing::Test {
 };
 
 TEST_F(PermutationTest1, Iteration) {
-    int obj_find = task_sets_perms.PerformOptimization();
+    int obj_find = task_sets_perms.PerformOptimization<ObjReactionTime>();
     // task_sets_perms.best_yet_chain_[0].print();
     // task_sets_perms.best_yet_chain_[1].print();
     EXPECT_THAT(task_sets_perms.iteration_count_, testing::Le(6));

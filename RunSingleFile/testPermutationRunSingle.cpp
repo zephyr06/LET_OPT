@@ -23,7 +23,7 @@ TEST(RunSingle, v1) {
 
     TaskSetPermutation task_sets_perms =
         TaskSetPermutation(dag_tasks, {dag_tasks.chains_});
-    int obj_find = task_sets_perms.PerformOptimization();
+    int obj_find = task_sets_perms.PerformOptimization<ObjReactionTime>();
 
     // print some info
 
