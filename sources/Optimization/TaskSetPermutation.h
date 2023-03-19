@@ -16,7 +16,8 @@ namespace DAG_SPACE {
 
 bool ExamVariableFeasibility(const VariableOD& variable,
                              const ChainsPermutation& chain_perm,
-                             const GraphOfChains& graph_of_all_ca_chains);
+                             const GraphOfChains& graph_of_all_ca_chains,
+                             const DAG_Model& dag_task);
 
 VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
                                  const ChainsPermutation& chain_perm,

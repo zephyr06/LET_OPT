@@ -22,6 +22,11 @@ class ObjReactionTimeIntermediate : public ObjectiveFunctionBaseIntermediate {
                           const ChainsPermutation &chain_perm,
                           const std::vector<int> &chain,
                           const VariableOD &variable_od) override;
+
+    double ObjWithoutAllPermsSingleChain(
+        const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+        const ChainsPermutation &chain_perm, const std::vector<int> &chain,
+        const VariableOD &variable_od) override;
 };
 
 class ObjReactionTime {
@@ -33,6 +38,14 @@ class ObjReactionTime {
                       const VariableOD &variable_od) {
         ObjReactionTimeIntermediate obj;
         return obj.Obj(dag_tasks, tasks_info, chain_perm, variable_od);
+    }
+
+    static double ObjWithoutAllPermsSingleChain(
+        const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+        const ChainsPermutation &chain_perm, const VariableOD &variable_od) {
+        ObjReactionTimeIntermediate obj;
+        return obj.ObjWithoutAllPerms(dag_tasks, tasks_info, chain_perm,
+                                      variable_od);
     }
 };
 }  // namespace DAG_SPACE

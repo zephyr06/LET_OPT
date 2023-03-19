@@ -14,6 +14,11 @@ class ObjDataAgeIntermediate : public ObjectiveFunctionBaseIntermediate {
                           const ChainsPermutation &chain_perm,
                           const std::vector<int> &chain,
                           const VariableOD &variable_od) override;
+
+    double ObjWithoutAllPermsSingleChain(
+        const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+        const ChainsPermutation &chain_perm, const std::vector<int> &chain,
+        const VariableOD &variable_od) override;
 };
 
 class ObjDataAge {
@@ -25,6 +30,15 @@ class ObjDataAge {
                       const VariableOD &variable_od) {
         ObjDataAgeIntermediate obj;
         return obj.Obj(dag_tasks, tasks_info, chain_perm, variable_od);
+    }
+
+    static double ObjWithoutAllPermsSingleChain(
+        const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+        const ChainsPermutation &chain_perm, const std::vector<int> &chain,
+        const VariableOD &variable_od) {
+        ObjDataAgeIntermediate obj;
+        return obj.ObjWithoutAllPerms(dag_tasks, tasks_info, chain_perm,
+                                      variable_od);
     }
 };
 }  // namespace DAG_SPACE

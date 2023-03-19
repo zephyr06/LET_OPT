@@ -311,12 +311,21 @@ TEST_F(PermutationTest3, Find_OD) {
     chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[1][0]);
     chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[2][1]);
     chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[3][1]);
+    task_set_perms.adjacent_two_task_permutations_[0][0].print();
+    task_set_perms.adjacent_two_task_permutations_[1][0].print();
+    task_set_perms.adjacent_two_task_permutations_[2][1].print();
+    task_set_perms.adjacent_two_task_permutations_[3][1].print();
 
     VariableOD variable_od = FindODFromPermutation(
         dag_tasks, chains_perm, task_set_perms.graph_of_all_ca_chains_);
+    variable_od.print();
 
     std::unordered_map<JobCEC, JobCEC> react_chain_map;
     std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+    int index = 0;
+    for (int x : rta) {
+        std::cout << "RTA of task " << index++ << ": " << x << "\n";
+    }
     auto res =
         FindODWithLP(task_set_perms.dag_tasks_, task_set_perms.tasks_info_,
                      chains_perm, task_set_perms.graph_of_all_ca_chains_,
@@ -346,7 +355,7 @@ TEST_F(PermutationTest3, Find_OD_v2) {
                      chains_perm, task_set_perms.graph_of_all_ca_chains_,
                      "ReactionTime", react_chain_map, rta);
     // this is just the limitation of FindODFromPermutation
-    EXPECT_FALSE(res.first.valid_ == variable_od.valid_);
+    EXPECT_FALSE(res.first.valid_ != variable_od.valid_);
 }
 
 int main(int argc, char** argv) {

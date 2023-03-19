@@ -74,6 +74,29 @@ void SetVariableHelper(int task_id,
         variable[task_id].offset = offset_min;
         variable[task_id].deadline =
             offset_min + GetResponseTime(dag_tasks, task_id);
+        // exam whether the current offset assignment violates prev tasks'
+        // lower bound constraints
+        if (graph_of_all_ca_chains.prev_tasks_.find(task_id) !=
+            graph_of_all_ca_chains.prev_tasks_.end()) {
+            const std::vector<int>& dependent_tasks =
+                graph_of_all_ca_chains.prev_tasks_.at(task_id);
+            for (int dependent_task : dependent_tasks) {
+                SetVariableHelper(dependent_task, variable_set_record, variable,
+                                  chain_perm, graph_of_all_ca_chains,
+                                  dag_tasks);
+                Edge edge_curr(dependent_task, task_id);
+                const PermutationInequality& ineq =
+                    chain_perm[edge_curr].inequality_;
+                if (variable[task_id].offset + ineq.lower_bound_ >=
+                    variable[dependent_task].deadline) {
+                    variable[dependent_task].deadline =
+                        variable[task_id].offset + ineq.lower_bound_ + 1;
+                    if (variable[dependent_task].deadline >
+                        dag_tasks.GetTask(dependent_task).deadline)
+                        variable.valid_ = false;
+                }
+            }
+        }
         if (variable[task_id].deadline > dag_tasks.GetTask(task_id).deadline) {
             variable.valid_ = false;
         }
@@ -84,7 +107,8 @@ void SetVariableHelper(int task_id,
 
 bool ExamVariableFeasibility(const VariableOD& variable,
                              const ChainsPermutation& chain_perm,
-                             const GraphOfChains& graph_of_all_ca_chains) {
+                             const GraphOfChains& graph_of_all_ca_chains,
+                             const DAG_Model& dag_task) {
     for (const auto& edge : graph_of_all_ca_chains.edge_vec_ordered_) {
         const PermutationInequality& inequality = chain_perm[edge].inequality_;
         int prev_id = inequality.task_prev_id_;
@@ -98,6 +122,10 @@ bool ExamVariableFeasibility(const VariableOD& variable,
                 return false;
             }
         }
+    }
+    for (uint i = 0; i < variable.size(); i++) {
+        if (variable.at(i).deadline > dag_task.GetTask(i).deadline)
+            return false;
     }
     return true;
 }
@@ -116,8 +144,8 @@ VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
                           dag_tasks);
     }
     if (variable.valid_)
-        variable.valid_ = ExamVariableFeasibility(variable, chain_perm,
-                                                  graph_of_all_ca_chains);
+        variable.valid_ = ExamVariableFeasibility(
+            variable, chain_perm, graph_of_all_ca_chains, dag_tasks);
     return variable;
 }
 
