@@ -73,36 +73,21 @@ class TaskSetPermutation {
 #ifdef PROFILE_CODE
         BeginTimer(__FUNCTION__);
 #endif
-        // evaluate schedulability
-        VariableOD variable_od = FindODFromPermutation(dag_tasks_, chain_perm,
-                                                       graph_of_all_ca_chains_);
 
-        if (variable_od.valid_)  // if valid, we'll exam obj; otherwise, we'll
-                                 // just move forward
+        std::unordered_map<JobCEC, JobCEC> react_chain_map;
+        std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks_);
+
+        std::pair<VariableOD, int> res = FindODWithLP(
+            dag_tasks_, tasks_info_, chain_perm, graph_of_all_ca_chains_,
+            ObjectiveFunctionBase::type_trait, react_chain_map, rta);
+
+        if (res.first.valid_)  // if valid, we'll exam obj; otherwise, we'll
+                               // just move forward
         {
-            double obj_curr = ObjectiveFunctionBase::Obj(
-                dag_tasks_, tasks_info_, chain_perm, variable_od);
-            if (obj_curr < best_yet_obj_) {
-                best_yet_obj_ = obj_curr;
+            if (res.second < best_yet_obj_) {
+                best_yet_obj_ = res.second;
                 best_yet_chain_ = chain_perm;
-                best_yet_variable_od_ = variable_od;
-            }
-        }
-        // test the performance of the LP optimizer
-        {
-            std::unordered_map<JobCEC, JobCEC> react_chain_map;
-            std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks_);
-            auto res = FindODWithLP(
-                dag_tasks_, tasks_info_, chain_perm, graph_of_all_ca_chains_,
-                ObjectiveFunctionBase::type_trait, react_chain_map, rta);
-            if (res.first.valid_ != variable_od.valid_ ||
-                (res.first.valid_ &&
-                 res.second >
-                     ObjectiveFunctionBase::Obj(dag_tasks_, tasks_info_,
-                                                chain_perm, variable_od))) {
-                std::cout << "***************************\n";
-                variable_od.print();
-                CoutError("Find a case where LP performs worse!");
+                best_yet_variable_od_ = res.first;
             }
         }
 
