@@ -41,7 +41,10 @@ TaskSetPermutation::TaskSetPermutation(
       graph_of_all_ca_chains_(chains),
       best_yet_obj_(1e9),
       iteration_count_(0),
-      variable_range_od_(FindVariableRange(dag_tasks_)) {
+      variable_range_od_(FindVariableRange(dag_tasks_)),
+      rta_(GetResponseTimeTaskSet(dag_tasks_)),
+      best_possible_variable_od_(
+          FindBestPossibleVariableOD(dag_tasks_, tasks_info_, rta_)) {
     adjacent_two_task_permutations_.reserve(
         1e2);  // there are never more than 1e2 edges
     FindPairPermutations();

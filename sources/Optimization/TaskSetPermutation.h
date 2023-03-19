@@ -153,6 +153,7 @@ class TaskSetPermutation {
     int best_yet_obj_;
     int iteration_count_;
     VariableOD best_yet_variable_od_;
+    std::vector<int> rta_;
     VariableOD best_possible_variable_od_;
     VariableRange variable_range_od_;
 };
