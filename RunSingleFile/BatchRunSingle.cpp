@@ -22,6 +22,7 @@ int main(int argc, char *argv[]) {
     std::vector<DAG_SPACE::BaselineMethods> baselineMethods = {
         DAG_SPACE::InitialMethod, DAG_SPACE::TOM};  // , DAG_SPACE::TOM_FAST
     // ObjReactionTime
-    DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjDataAge>(baselineMethods, N);
+    DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTime>(baselineMethods,
+                                                              N);
     std::cout << "N: " << N << "\n";
 }

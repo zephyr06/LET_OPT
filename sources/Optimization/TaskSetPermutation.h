@@ -61,24 +61,25 @@ class TaskSetPermutation {
         for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
              i++) {
             if (ifTimeout(start_time_)) break;
-            if ((!GlobalVariablesDAGOpt::SKIP_PERM) ||
-                chain_perm.IsValid(variable_range_od_,
+            if (chain_perm.IsValid(variable_range_od_,
                                    adjacent_two_task_permutations_[position][i],
                                    graph_of_all_ca_chains_)) {
                 chain_perm.push_back(
                     adjacent_two_task_permutations_[position][i]);
 
                 // try to skip some permutations
-                // std::vector<std::vector<int>> sub_chains =
-                //     GetSubChains(dag_tasks_.chains_, chain_perm);
-                // double obj_curr = ObjectiveFunctionBase::Obj(
-                //     dag_tasks_, tasks_info_, chain_perm,
-                //     best_yet_variable_od_, sub_chains);
-                // if (obj_curr > best_yet_obj_) {
-                //     chain_perm.pop(
-                //         adjacent_two_task_permutations_[position][i]);
-                //     continue;
-                // }
+                if (GlobalVariablesDAGOpt::SKIP_PERM) {
+                    std::vector<std::vector<int>> sub_chains =
+                        GetSubChains(dag_tasks_.chains_, chain_perm);
+                    double obj_curr = ObjectiveFunctionBase::Obj(
+                        dag_tasks_, tasks_info_, chain_perm,
+                        best_possible_variable_od_, sub_chains);
+                    if (obj_curr > best_yet_obj_) {
+                        chain_perm.pop(
+                            adjacent_two_task_permutations_[position][i]);
+                        continue;
+                    }
+                }
 
                 IterateAllChainsPermutations<ObjectiveFunctionBase>(
                     position + 1, chain_perm);
@@ -94,11 +95,10 @@ class TaskSetPermutation {
 #endif
 
         std::unordered_map<JobCEC, JobCEC> react_chain_map;
-        std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks_);
 
         std::pair<VariableOD, int> res = FindODWithLP(
             dag_tasks_, tasks_info_, chain_perm, graph_of_all_ca_chains_,
-            ObjectiveFunctionBase::type_trait, react_chain_map, rta);
+            ObjectiveFunctionBase::type_trait, react_chain_map, rta_);
 
         if (res.first.valid_)  // if valid, we'll exam obj; otherwise, we'll
                                // just move forward
