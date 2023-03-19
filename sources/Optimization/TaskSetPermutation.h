@@ -67,6 +67,19 @@ class TaskSetPermutation {
                                    graph_of_all_ca_chains_)) {
                 chain_perm.push_back(
                     adjacent_two_task_permutations_[position][i]);
+
+                // try to skip some permutations
+                // std::vector<std::vector<int>> sub_chains =
+                //     GetSubChains(dag_tasks_.chains_, chain_perm);
+                // double obj_curr = ObjectiveFunctionBase::Obj(
+                //     dag_tasks_, tasks_info_, chain_perm,
+                //     best_yet_variable_od_, sub_chains);
+                // if (obj_curr > best_yet_obj_) {
+                //     chain_perm.pop(
+                //         adjacent_two_task_permutations_[position][i]);
+                //     continue;
+                // }
+
                 IterateAllChainsPermutations<ObjectiveFunctionBase>(
                     position + 1, chain_perm);
                 chain_perm.pop(adjacent_two_task_permutations_[position][i]);
@@ -98,30 +111,31 @@ class TaskSetPermutation {
         }
 
         // Test purposes
-        {
-            VariableOD variable_od2 = FindODFromPermutation(
-                dag_tasks_, chain_perm, graph_of_all_ca_chains_);
-            if (variable_od2.valid_ != res.first.valid_) {
-                chain_perm.print();
-                int index = 0;
-                for (int x : rta) {
-                    std::cout << "RTA of task " << index++ << ": " << x << "\n";
-                }
-                FindODFromPermutation(dag_tasks_, chain_perm,
-                                      graph_of_all_ca_chains_);
-                CoutError("Find a case where FindODFromPermutation fails!");
-            }
+        // {
+        //     VariableOD variable_od2 = FindODFromPermutation(
+        //         dag_tasks_, chain_perm, graph_of_all_ca_chains_);
+        //     if (variable_od2.valid_ != res.first.valid_) {
+        //         chain_perm.print();
+        //         int index = 0;
+        //         for (int x : rta) {
+        //             std::cout << "RTA of task " << index++ << ": " << x <<
+        //             "\n";
+        //         }
+        //         FindODFromPermutation(dag_tasks_, chain_perm,
+        //                               graph_of_all_ca_chains_);
+        //         CoutError("Find a case where FindODFromPermutation fails!");
+        //     }
 
-            if (variable_od2.valid_) {
-                double obj_curr = ObjectiveFunctionBase::Obj(
-                    dag_tasks_, tasks_info_, chain_perm, variable_od2,
-                    dag_tasks_.chains_);
-                if (obj_curr < res.second)
-                    CoutError(
-                        "Find a case where FindODFromPermutation fails in "
-                        "evaluating obj!");
-            }
-        }
+        //     if (variable_od2.valid_) {
+        //         double obj_curr = ObjectiveFunctionBase::Obj(
+        //             dag_tasks_, tasks_info_, chain_perm, variable_od2,
+        //             dag_tasks_.chains_);
+        //         if (obj_curr < res.second)
+        //             CoutError(
+        //                 "Find a case where FindODFromPermutation fails in "
+        //                 "evaluating obj!");
+        //     }
+        // }
 
 #ifdef PROFILE_CODE
         EndTimer(__FUNCTION__);
@@ -139,6 +153,7 @@ class TaskSetPermutation {
     int best_yet_obj_;
     int iteration_count_;
     VariableOD best_yet_variable_od_;
+    VariableOD best_possible_variable_od_;
     VariableRange variable_range_od_;
 };
 

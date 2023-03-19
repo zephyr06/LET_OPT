@@ -453,6 +453,22 @@ TEST_F(PermutationTest5, Find_OD) {
     // if (res.first.valid_ != variable_od.valid_ && res.first.valid_)
     //     res.first.print();
 }
+
+TEST_F(PermutationTest1, Find_OD) {
+    std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+    int index = 0;
+    for (int x : rta) {
+        std::cout << "RTA of task " << index++ << ": " << x << "\n";
+    }
+    VariableOD variable_od =
+        FindBestPossibleVariableOD(dag_tasks, tasks_info, rta);
+    EXPECT_EQ(9, variable_od[0].offset);
+    EXPECT_EQ(1, variable_od[0].deadline);
+    EXPECT_EQ(17, variable_od[1].offset);
+    EXPECT_EQ(3, variable_od[1].deadline);
+    EXPECT_EQ(14, variable_od[2].offset);
+    EXPECT_EQ(6, variable_od[2].deadline);
+}
 int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);
     ::testing::InitGoogleMock(&argc, argv);

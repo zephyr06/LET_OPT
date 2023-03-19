@@ -21,4 +21,15 @@ void VariableOD::print() const {
                   << " deadline: " << variables_.at(i).deadline << "\n";
     }
 }
+
+VariableOD FindBestPossibleVariableOD(const DAG_Model& dag_tasks,
+                                      const TaskSetInfoDerived& tasks_info,
+                                      const std::vector<int>& rta) {
+    VariableOD variable(dag_tasks.GetTaskSet());
+    for (int i = 0; i < tasks_info.N; i++) {
+        variable.SetOffset(i, dag_tasks.GetTask(i).deadline - rta[i]);
+        variable.SetDeadline(i, rta[i]);
+    }
+    return variable;
+}
 }  // namespace DAG_SPACE
