@@ -9,10 +9,12 @@
 
 namespace DAG_SPACE {
 void LPOptimizer::Init() {
+    BeginTimer("Init");
     env_ = IloEnv();
     model_ = IloModel(env_);
     cplexSolver_ = IloCplex(env_);
     cplexSolver_.setOut(env_.getNullStream());
+    EndTimer("Init");
 }
 
 void LPOptimizer::ClearCplexMemory() {
@@ -54,19 +56,19 @@ std::pair<VariableOD, int> LPOptimizer::Optimize() {
     return std::make_pair(variable_od_opt_, optimal_obj_);
 }
 
-std::pair<VariableOD, int> LPOptimizer::OptimizeConstant() {
+std::pair<VariableOD, int> LPOptimizer::OptimizeWithoutClear() {
     // BeginTimer("Build_LP_Model");
-    Init();
-    AddVariables();  // must be called first
-    AddPermutationInequalityConstraints();
-    AddSchedulabilityConstraints();
-    AddConstantObjectiveFunctions();
-    cplexSolver_.extract(model_);
+    // Init();
+    // AddVariables();  // must be called first
+    // AddPermutationInequalityConstraints();
+    // AddSchedulabilityConstraints();
+    // AddObjectiveFunctions();
+    // cplexSolver_.extract(model_);
     // EndTimer("Build_LP_Model");
 
-    // BeginTimer("Solve_LP");
+    BeginTimer("Solve_LP");
     bool found_feasible_solution = cplexSolver_.solve();
-    // EndTimer("Solve_LP");
+    EndTimer("Solve_LP");
     IloNumArray values_optimized(env_, numVariables_);
 
     if (found_feasible_solution) {
@@ -82,7 +84,40 @@ std::pair<VariableOD, int> LPOptimizer::OptimizeConstant() {
         optimal_obj_ = cplexSolver_.getObjValue();
     } else if (GlobalVariablesDAGOpt::debugMode)
         std::cout << "No feasible solution found!\n";
+    return std::make_pair(variable_od_opt_, optimal_obj_);
+}
+
+std::pair<VariableOD, int> LPOptimizer::OptimizeConstant() {
+    BeginTimer("Build_LP_Model");
+    Init();
+    AddVariables();  // must be called first
+    AddPermutationInequalityConstraints();
+    AddSchedulabilityConstraints();
+    AddConstantObjectiveFunctions();
+    cplexSolver_.extract(model_);
+    EndTimer("Build_LP_Model");
+
+    BeginTimer("Solve_LP");
+    bool found_feasible_solution = cplexSolver_.solve();
+    EndTimer("Solve_LP");
+
+    BeginTimer("AfterSolve_LP");
+    IloNumArray values_optimized(env_, numVariables_);
+    if (found_feasible_solution) {
+        auto status = cplexSolver_.getStatus();
+        cplexSolver_.getValues(varArray_, values_optimized);
+        if (GlobalVariablesDAGOpt::debugMode) {
+            std::cout << "Values are :" << values_optimized << "\n";
+            std::cout << status
+                      << " solution found: " << cplexSolver_.getObjValue()
+                      << "\n";
+        }
+        variable_od_opt_ = ExtratOptSolution(values_optimized);
+        optimal_obj_ = cplexSolver_.getObjValue();
+    } else if (GlobalVariablesDAGOpt::debugMode)
+        std::cout << "No feasible solution found!\n";
     ClearCplexMemory();
+    EndTimer("AfterSolve_LP");
     return std::make_pair(variable_od_opt_, optimal_obj_);
 }
 
@@ -181,7 +216,7 @@ void LPOptimizer::AddObjectiveFunctions() {
     IloExpr rtda_expression(env_);
     std::stringstream var_name;
     int chain_count = 0;
-    const TaskSet &tasks = dag_tasks_.GetTaskSet();
+    // const TaskSet &tasks = dag_tasks_.GetTaskSet();
 
     for (auto chain : dag_tasks_.chains_) {
         var_name << "Chain_" << chain_count << "_RT";
@@ -196,7 +231,8 @@ void LPOptimizer::AddObjectiveFunctions() {
             GetFirstReactMap(dag_tasks_, tasks_info_, chains_perm_, chain);
 
         int hyper_period = GetHyperPeriod(tasks_info_, chain);
-        LLint total_start_jobs = hyper_period / tasks[chain[0]].period + 1;
+        LLint total_start_jobs =
+            hyper_period / dag_tasks_.GetTask(chain[0]).period + 1;
         for (LLint start_instance_index = 0;
              start_instance_index <= total_start_jobs; start_instance_index++) {
             JobCEC start_job = {chain[0], (start_instance_index)};

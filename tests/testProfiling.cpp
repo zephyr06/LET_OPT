@@ -3,6 +3,7 @@
 #include "sources/Optimization/TaskSetPermutation.h"
 using namespace DAG_SPACE;
 
+int REPEAT = 10000;
 class PermutationTest_long_time23 : public ::testing::Test {
    protected:
     void SetUp() override {
@@ -39,8 +40,39 @@ class PermutationTest_long_time23 : public ::testing::Test {
 
     VariableOD variable_od;
 };
-TEST_F(PermutationTest_long_time23, ObjReactionTime) {
-    int REPEAT = 10000;
+// TEST_F(PermutationTest_long_time23, ExamFeasibility) {
+//
+//     // chain is 0 -> 1 -> 4
+//     dag_tasks.chains_ = {{0, 1, 2, 3}};
+//     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+//     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+//     TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info);
+//     ChainsPermutation chain_perm;
+//     chain_perm.push_back(perm01[0]);
+//     chain_perm.push_back(perm12[0]);
+//     chain_perm.push_back(perm23[0]);
+
+//     GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
+
+//     std::unordered_map<JobCEC, JobCEC> react_chain_map =
+//         GetFirstReactMap(dag_tasks, tasks_info, chain_perm,
+//                          dag_tasks.chains_[0]);  // not useful for now
+//     std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+//     auto start = std::chrono::high_resolution_clock::now();
+//     for (int i = 0; i < REPEAT; i++) {
+//         ExamFeasibility(dag_tasks, tasks_info, chain_perm,
+//         graph_of_all_ca_chains,
+//                         "ReactionTime", react_chain_map, rta);
+//     }
+//     auto stop = std::chrono::high_resolution_clock::now();
+//     auto duration =
+//         std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+//     std::cout << "Time taken during schedulabiltiy analysis: "
+//               << double(duration.count()) / 1e6 << "\n";
+//     PrintTimer();
+// }
+
+TEST_F(PermutationTest_long_time23, Optimize) {
     // chain is 0 -> 1 -> 4
     dag_tasks.chains_ = {{0, 1, 2, 3}};
     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
@@ -51,7 +83,7 @@ TEST_F(PermutationTest_long_time23, ObjReactionTime) {
     chain_perm.push_back(perm12[0]);
     chain_perm.push_back(perm23[0]);
 
-    GraphOfChains graph_chains(dag_tasks.chains_);
+    GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
 
     std::unordered_map<JobCEC, JobCEC> react_chain_map =
         GetFirstReactMap(dag_tasks, tasks_info, chain_perm,
@@ -59,14 +91,87 @@ TEST_F(PermutationTest_long_time23, ObjReactionTime) {
     std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < REPEAT; i++) {
-        ExamFeasibility(dag_tasks, tasks_info, chain_perm, graph_chains,
-                        "ReactionTime", react_chain_map, rta);
+        FindODWithLP(dag_tasks, tasks_info, chain_perm, graph_of_all_ca_chains,
+                     "ReactionTime", react_chain_map, rta);
     }
-
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration =
         std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    std::cout << "Time taken: " << double(duration.count()) / 1e6 << "\n";
+    std::cout << "Time taken during schedulabiltiy analysis: "
+              << double(duration.count()) / 1e6 << "\n";
+    PrintTimer();
+}
+
+TEST_F(PermutationTest_long_time23, Incre_Optimize) {
+    // chain is 0 -> 1 -> 4
+    dag_tasks.chains_ = {{0, 1, 2, 3}};
+    TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+    TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+    TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info);
+    ChainsPermutation chain_perm;
+    chain_perm.push_back(perm01[0]);
+    chain_perm.push_back(perm12[0]);
+    chain_perm.push_back(perm23[0]);
+
+    GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
+
+    std::unordered_map<JobCEC, JobCEC> react_chain_map =
+        GetFirstReactMap(dag_tasks, tasks_info, chain_perm,
+                         dag_tasks.chains_[0]);  // not useful for now
+    std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+
+    LPOptimizer lp_optimizer(dag_tasks, tasks_info, chain_perm,
+                             graph_of_all_ca_chains, "ReactionTime",
+                             react_chain_map, rta);
+
+    lp_optimizer.Init();
+    lp_optimizer.AddVariables();  // must be called first
+    lp_optimizer.AddPermutationInequalityConstraints();
+    lp_optimizer.AddSchedulabilityConstraints();
+    lp_optimizer.AddObjectiveFunctions();
+    lp_optimizer.cplexSolver_.extract(lp_optimizer.model_);
+
+    lp_optimizer.OptimizeWithoutClear();
+    auto start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < REPEAT; i++) {
+        // FindODWithLP(lp_optimizer, dag_tasks, tasks_info, chain_perm,
+        //              graph_of_all_ca_chains, "ReactionTime", react_chain_map,
+        //              rta);
+        lp_optimizer.OptimizeWithoutClear();
+    }
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration =
+        std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    std::cout << "Time taken during schedulabiltiy analysis: "
+              << double(duration.count()) / 1e6 << "\n";
+    PrintTimer();
+}
+TEST_F(PermutationTest_long_time23, ExamObj) {
+    // chain is 0 -> 1 -> 4
+    dag_tasks.chains_ = {{0, 1, 2, 3}};
+    TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+    TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+    TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info);
+    ChainsPermutation chain_perm;
+    chain_perm.push_back(perm01[0]);
+    chain_perm.push_back(perm12[0]);
+    chain_perm.push_back(perm23[0]);
+
+    GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
+
+    std::unordered_map<JobCEC, JobCEC> react_chain_map =
+        GetFirstReactMap(dag_tasks, tasks_info, chain_perm,
+                         dag_tasks.chains_[0]);  // not useful for now
+    std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+    auto start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < REPEAT; i++) {
+        ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm, variable_od);
+    }
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration =
+        std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    std::cout << "Time taken during objective function evaluation: "
+              << double(duration.count()) / 1e6 << "\n";
     PrintTimer();
 }
 int main(int argc, char** argv) {
