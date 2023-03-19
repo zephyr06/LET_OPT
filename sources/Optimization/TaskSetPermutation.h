@@ -109,7 +109,8 @@ class TaskSetPermutation {
 
             if (variable_od2.valid_) {
                 double obj_curr = ObjectiveFunctionBase::Obj(
-                    dag_tasks_, tasks_info_, chain_perm, variable_od2);
+                    dag_tasks_, tasks_info_, chain_perm, variable_od2,
+                    dag_tasks_.chains_);
                 if (obj_curr < res.second)
                     CoutError(
                         "Find a case where FindODFromPermutation fails in "

@@ -166,7 +166,8 @@ TEST_F(PermutationTest_long_time23, ExamObj) {
     std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < REPEAT; i++) {
-        ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm, variable_od);
+        ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm, variable_od,
+                             dag_tasks.chains_);
     }
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration =

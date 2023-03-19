@@ -89,44 +89,52 @@ TEST_F(PermutationTest1, ChainsPermutation_v1) {
     chain_perm.push_back(perm01[0]);
     chain_perm.push_back(perm12[0]);
     EXPECT_EQ(20, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
-                                       variable_od));
+                                       variable_od, dag_tasks.chains_));
 
     chain_perm.clear();
     chain_perm.push_back(perm01[0]);
     chain_perm.push_back(perm12[1]);
     EXPECT_EQ(40, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
-                                       variable_od));
+                                       variable_od, dag_tasks.chains_));
 
     chain_perm.clear();
     chain_perm.push_back(perm01[1]);
     chain_perm.push_back(perm12[1]);
     EXPECT_EQ(50, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
-                                       variable_od));
+                                       variable_od, dag_tasks.chains_));
 }
 
-// TEST_F(PermutationTest1, incomplete_perms_reaction_time) {
-//     // chain is 0 -> 1 -> 2
-//     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-//     // TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+std::vector<std::vector<int>> GetSubChains() {
+    std::vector<std::vector<int>> sub_chains;
+    return sub_chains;
+}
 
-//     ChainsPermutation chain_perm;
-//     chain_perm.push_back(perm01[0]);
-//     // chain_perm.push_back(perm12[0]);
-//     EXPECT_EQ(20, ObjReactionTime::ObjWithoutAllPermsSingleChain(
-//                       dag_tasks, tasks_info, chain_perm, variable_od));
+TEST_F(PermutationTest1, incomplete_perms_reaction_time) {
+    // chain is 0 -> 1 -> 2
+    // TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+    // // TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
 
-//     chain_perm.clear();
-//     // chain_perm.push_back(perm01[0]);
-//     chain_perm.push_back(perm12[0]);
-//     EXPECT_EQ(20 + 1, ObjReactionTime::ObjWithoutAllPermsSingleChain(
-//                           dag_tasks, tasks_info, chain_perm, variable_od));
+    // ChainsPermutation chain_perm;
+    // chain_perm.push_back(perm01[0]);
+    // // chain_perm.push_back(perm12[0]);
+    // EXPECT_EQ(20, ObjReactionTime::ObjWithoutAllPermsSingleChain(
+    //                   dag_tasks, tasks_info, chain_perm, variable_od,
+    //                   dag_tasks.chains_));
 
-//     chain_perm.clear();
-//     chain_perm.push_back(perm01[1]);
-//     // chain_perm.push_back(perm12[1]);
-//     EXPECT_EQ(50, ObjReactionTime::ObjWithoutAllPermsSingleChain(
-//                       dag_tasks, tasks_info, chain_perm, variable_od));
-// }
+    // chain_perm.clear();
+    // // chain_perm.push_back(perm01[0]);
+    // chain_perm.push_back(perm12[0]);
+    // EXPECT_EQ(20 + 1, ObjReactionTime::ObjWithoutAllPermsSingleChain(
+    //                       dag_tasks, tasks_info, chain_perm, variable_od,
+    //                       dag_tasks.chains_));
+
+    // chain_perm.clear();
+    // chain_perm.push_back(perm01[1]);
+    // // chain_perm.push_back(perm12[1]);
+    // EXPECT_EQ(50, ObjReactionTime::ObjWithoutAllPermsSingleChain(
+    //                   dag_tasks, tasks_info, chain_perm, variable_od,
+    //                   dag_tasks.chains_));
+}
 
 TEST_F(PermutationTest1, data_age) {
     // chain is 0 -> 1 -> 2
@@ -138,20 +146,20 @@ TEST_F(PermutationTest1, data_age) {
     ChainsPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
     chain_perm.push_back(perm12[0]);
-    EXPECT_EQ(10,
-              ObjDataAge::Obj(dag_tasks, tasks_info, chain_perm, variable_od));
+    EXPECT_EQ(10, ObjDataAge::Obj(dag_tasks, tasks_info, chain_perm,
+                                  variable_od, dag_tasks.chains_));
 
     chain_perm.clear();
     chain_perm.push_back(perm01[0]);
     chain_perm.push_back(perm12[1]);
-    EXPECT_EQ(10 + 20,
-              ObjDataAge::Obj(dag_tasks, tasks_info, chain_perm, variable_od));
+    EXPECT_EQ(10 + 20, ObjDataAge::Obj(dag_tasks, tasks_info, chain_perm,
+                                       variable_od, dag_tasks.chains_));
 
     chain_perm.clear();
     chain_perm.push_back(perm01[1]);
     chain_perm.push_back(perm12[1]);
-    EXPECT_EQ(40,
-              ObjDataAge::Obj(dag_tasks, tasks_info, chain_perm, variable_od));
+    EXPECT_EQ(40, ObjDataAge::Obj(dag_tasks, tasks_info, chain_perm,
+                                  variable_od, dag_tasks.chains_));
 }
 TEST_F(PermutationTest1, GetPossibleReactingJobsLET) {
     // chain is 0 -> 1 -> 2
@@ -220,7 +228,7 @@ TEST_F(PermutationTest_Non_Har, ChainsPermutation_v1) {
     perm01[0].print();
     perm12[0].print();
     EXPECT_EQ(15, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
-                                       variable_od));
+                                       variable_od, dag_tasks.chains_));
 
     chain_perm.clear();
     chain_perm.push_back(perm01[0]);
@@ -228,7 +236,7 @@ TEST_F(PermutationTest_Non_Har, ChainsPermutation_v1) {
     perm01[0].print();
     perm12[1].print();
     EXPECT_EQ(30, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
-                                       variable_od));
+                                       variable_od, dag_tasks.chains_));
 
     chain_perm.clear();
     chain_perm.push_back(perm01[1]);
@@ -236,7 +244,7 @@ TEST_F(PermutationTest_Non_Har, ChainsPermutation_v1) {
     perm01[1].print();
     perm12[1].print();
     EXPECT_EQ(35, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
-                                       variable_od));
+                                       variable_od, dag_tasks.chains_));
 }
 TEST_F(PermutationTest_Non_Har, data_age) {
     // chain is 0 -> 1 -> 2
@@ -247,20 +255,20 @@ TEST_F(PermutationTest_Non_Har, data_age) {
     ChainsPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
     chain_perm.push_back(perm12[0]);
-    EXPECT_EQ(10,
-              ObjDataAge::Obj(dag_tasks, tasks_info, chain_perm, variable_od));
+    EXPECT_EQ(10, ObjDataAge::Obj(dag_tasks, tasks_info, chain_perm,
+                                  variable_od, dag_tasks.chains_));
 
     chain_perm.clear();
     chain_perm.push_back(perm01[0]);
     chain_perm.push_back(perm12[1]);
-    EXPECT_EQ(10 + 15,
-              ObjDataAge::Obj(dag_tasks, tasks_info, chain_perm, variable_od));
+    EXPECT_EQ(10 + 15, ObjDataAge::Obj(dag_tasks, tasks_info, chain_perm,
+                                       variable_od, dag_tasks.chains_));
 
     chain_perm.clear();
     chain_perm.push_back(perm01[1]);
     chain_perm.push_back(perm12[1]);
-    EXPECT_EQ(30,
-              ObjDataAge::Obj(dag_tasks, tasks_info, chain_perm, variable_od));
+    EXPECT_EQ(30, ObjDataAge::Obj(dag_tasks, tasks_info, chain_perm,
+                                  variable_od, dag_tasks.chains_));
 
     perm01[0].print();
     perm01[1].print();
@@ -282,7 +290,7 @@ TEST_F(PermutationTest_Non_Har, diff_deadline_from_variable) {
 
     auto start = std::chrono::high_resolution_clock::now();
     EXPECT_EQ(10, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
-                                       variable_od));
+                                       variable_od, dag_tasks.chains_));
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration =
         std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
@@ -411,11 +419,12 @@ TEST_F(PermutationTest_2chain_v1, Obj_RT) {
     chain_perm.push_back(perm34[0]);
     chain_perm.push_back(perm13[0]);
     EXPECT_EQ(200 + 200, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
-                                              variable_od));
+                                              variable_od, dag_tasks.chains_));
     dag_tasks.chains_.push_back({0, 1, 3});
     chain_perm.push_back(perm01[0]);
-    EXPECT_EQ(200 + 200 + 200, ObjReactionTime::Obj(dag_tasks, tasks_info,
-                                                    chain_perm, variable_od));
+    EXPECT_EQ(200 + 200 + 200,
+              ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
+                                   variable_od, dag_tasks.chains_));
 }
 TEST_F(PermutationTest_2chain_v1, data_age) {
     // chain is 0 -> 3 -> 4
@@ -425,11 +434,12 @@ TEST_F(PermutationTest_2chain_v1, data_age) {
     chain_perm.push_back(perm34[0]);
     chain_perm.push_back(perm13[0]);
     EXPECT_EQ(200 + 200, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
-                                              variable_od));
+                                              variable_od, dag_tasks.chains_));
     dag_tasks.chains_.push_back({0, 1, 3});
     chain_perm.push_back(perm01[0]);
-    EXPECT_EQ(200 + 200 + 200, ObjReactionTime::Obj(dag_tasks, tasks_info,
-                                                    chain_perm, variable_od));
+    EXPECT_EQ(200 + 200 + 200,
+              ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
+                                   variable_od, dag_tasks.chains_));
 }
 
 TEST_F(PermutationTest_2chain_v1, PerformStandardLETAnalysis) {

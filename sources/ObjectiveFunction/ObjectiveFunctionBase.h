@@ -19,7 +19,8 @@ class ObjectiveFunctionBaseIntermediate {
 
     double Obj(const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
                const ChainsPermutation &chain_perm,
-               const VariableOD &variable_od);
+               const VariableOD &variable_od,
+               const std::vector<std::vector<int>> &chains_to_analyze);
 
     virtual double ObjWithoutAllPermsSingleChain(
         const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
@@ -29,10 +30,10 @@ class ObjectiveFunctionBaseIntermediate {
         return 0;
     }
 
-    double ObjWithoutAllPerms(const DAG_Model &dag_tasks,
-                              const TaskSetInfoDerived &tasks_info,
-                              const ChainsPermutation &chain_perm,
-                              const VariableOD &variable_od);
+    double ObjWithoutAllPerms(
+        const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+        const ChainsPermutation &chain_perm, const VariableOD &variable_od,
+        const std::vector<std::vector<int>> &chains_to_analyze);
 };
 
 }  // namespace DAG_SPACE

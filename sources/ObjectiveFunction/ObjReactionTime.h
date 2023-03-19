@@ -35,17 +35,20 @@ class ObjReactionTime {
     static double Obj(const DAG_Model &dag_tasks,
                       const TaskSetInfoDerived &tasks_info,
                       const ChainsPermutation &chain_perm,
-                      const VariableOD &variable_od) {
+                      const VariableOD &variable_od,
+                      const std::vector<std::vector<int>> &chains_to_analyze) {
         ObjReactionTimeIntermediate obj;
-        return obj.Obj(dag_tasks, tasks_info, chain_perm, variable_od);
+        return obj.Obj(dag_tasks, tasks_info, chain_perm, variable_od,
+                       chains_to_analyze);
     }
 
     static double ObjWithoutAllPermsSingleChain(
         const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-        const ChainsPermutation &chain_perm, const VariableOD &variable_od) {
+        const ChainsPermutation &chain_perm, const VariableOD &variable_od,
+        const std::vector<std::vector<int>> &chains_to_analyze) {
         ObjReactionTimeIntermediate obj;
         return obj.ObjWithoutAllPerms(dag_tasks, tasks_info, chain_perm,
-                                      variable_od);
+                                      variable_od, chains_to_analyze);
     }
 };
 }  // namespace DAG_SPACE

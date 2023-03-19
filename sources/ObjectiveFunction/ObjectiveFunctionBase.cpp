@@ -7,12 +7,14 @@ const std::string ObjectiveFunctionBaseIntermediate::type_trait(
 
 double ObjectiveFunctionBaseIntermediate::Obj(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-    const ChainsPermutation &chain_perm, const VariableOD &variable_od) {
+    const ChainsPermutation &chain_perm, const VariableOD &variable_od,
+    const std::vector<std::vector<int>> &chains_to_analyze) {
 #ifdef PROFILE_CODE
     BeginTimer(__FUNCTION__);
 #endif
+
     int max_obj = 0;
-    for (const auto &chain : dag_tasks.chains_) {
+    for (const auto &chain : chains_to_analyze) {
         max_obj += ObjSingleChain(dag_tasks, tasks_info, chain_perm, chain,
                                   variable_od);
     }
@@ -25,7 +27,8 @@ double ObjectiveFunctionBaseIntermediate::Obj(
 
 double ObjectiveFunctionBaseIntermediate::ObjWithoutAllPerms(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-    const ChainsPermutation &chain_perm, const VariableOD &variable_od) {
+    const ChainsPermutation &chain_perm, const VariableOD &variable_od,
+    const std::vector<std::vector<int>> &chains_to_analyze) {
 #ifdef PROFILE_CODE
     BeginTimer(__FUNCTION__);
 #endif
