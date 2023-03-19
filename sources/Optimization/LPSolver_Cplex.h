@@ -33,12 +33,14 @@ class LPOptimizer {
     void Init();
     void ClearCplexMemory();
     std::pair<VariableOD, int> Optimize();
+    std::pair<VariableOD, int> OptimizeConstant();
 
     // protected:
     void AddVariables();
     void AddPermutationInequalityConstraints();
     void AddSchedulabilityConstraints();
 
+    void AddConstantObjectiveFunctions();
     void AddObjectiveFunctions();  // RTDA obj
     void AddObjectiveFunctionDataAge();
     void AddObjectiveFunctionReactionTime();
@@ -91,5 +93,17 @@ inline std::pair<VariableOD, int> FindODWithLP(
                              graph_of_all_ca_chains, obj_trait, react_chain_map,
                              rta);
     return lp_optimizer.Optimize();
+}
+
+inline bool ExamFeasibility(
+    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+    const ChainsPermutation &chains_perm,
+    const GraphOfChains &graph_of_all_ca_chains, const std::string &obj_trait,
+    const std::unordered_map<JobCEC, JobCEC> &react_chain_map,
+    const std::vector<int> &rta) {
+    LPOptimizer lp_optimizer(dag_tasks, tasks_info, chains_perm,
+                             graph_of_all_ca_chains, obj_trait, react_chain_map,
+                             rta);
+    return lp_optimizer.OptimizeConstant().first.valid_;
 }
 }  // namespace DAG_SPACE

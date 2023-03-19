@@ -54,6 +54,38 @@ std::pair<VariableOD, int> LPOptimizer::Optimize() {
     return std::make_pair(variable_od_opt_, optimal_obj_);
 }
 
+std::pair<VariableOD, int> LPOptimizer::OptimizeConstant() {
+    // BeginTimer("Build_LP_Model");
+    Init();
+    AddVariables();  // must be called first
+    AddPermutationInequalityConstraints();
+    AddSchedulabilityConstraints();
+    AddConstantObjectiveFunctions();
+    cplexSolver_.extract(model_);
+    // EndTimer("Build_LP_Model");
+
+    // BeginTimer("Solve_LP");
+    bool found_feasible_solution = cplexSolver_.solve();
+    // EndTimer("Solve_LP");
+    IloNumArray values_optimized(env_, numVariables_);
+
+    if (found_feasible_solution) {
+        auto status = cplexSolver_.getStatus();
+        cplexSolver_.getValues(varArray_, values_optimized);
+        if (GlobalVariablesDAGOpt::debugMode) {
+            std::cout << "Values are :" << values_optimized << "\n";
+            std::cout << status
+                      << " solution found: " << cplexSolver_.getObjValue()
+                      << "\n";
+        }
+        variable_od_opt_ = ExtratOptSolution(values_optimized);
+        optimal_obj_ = cplexSolver_.getObjValue();
+    } else if (GlobalVariablesDAGOpt::debugMode)
+        std::cout << "No feasible solution found!\n";
+    ClearCplexMemory();
+    return std::make_pair(variable_od_opt_, optimal_obj_);
+}
+
 // this function doesn't include artificial variables
 void LPOptimizer::AddVariables() {
     numVariables_ = tasks_info_.N * 2;
@@ -198,6 +230,15 @@ void LPOptimizer::AddObjectiveFunctions() {
         rtda_expression += theta_da;
         chain_count++;
     }
+    model_.add(IloMinimize(env_, rtda_expression));
+    rtda_expression.end();
+}
+
+void LPOptimizer::AddConstantObjectiveFunctions() {
+    IloExpr rtda_expression(env_);
+    std::stringstream var_name;
+    auto theta_rt = IloNumVar(env_, 3, IloInfinity, IloNumVar::Float,
+                              var_name.str().c_str());
     model_.add(IloMinimize(env_, rtda_expression));
     rtda_expression.end();
 }
