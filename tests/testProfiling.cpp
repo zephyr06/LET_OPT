@@ -1,6 +1,6 @@
 #include "gmock/gmock.h"  // Brings in gMock.
 #include "sources/Baseline/StandardLET.h"
-#include "sources/Optimization/ObjectiveFunction.h"
+#include "sources/ObjectiveFunction/ObjectiveFunction.h"
 #include "sources/Optimization/PermutationInequality.h"
 #include "sources/Optimization/TaskSetPermutation.h"
 #include "sources/Optimization/TwoTaskPermutations.h"

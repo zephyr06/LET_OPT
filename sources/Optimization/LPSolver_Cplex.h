@@ -4,7 +4,7 @@
 #include "ilcplex/ilocplex.h"
 #include "sources/Optimization/ChainsPermutation.h"
 #include "sources/Optimization/GraphOfChains.h"
-#include "sources/Optimization/ObjectiveFunction.h"
+#include "sources/ObjectiveFunction/ObjectiveFunction.h"
 #include "sources/TaskModel/DAG_Model.h"
 
 namespace DAG_SPACE {
