@@ -2,9 +2,9 @@
 
 #include "ilcplex/cplex.h"
 #include "ilcplex/ilocplex.h"
+#include "sources/ObjectiveFunction/ObjectiveFunction.h"
 #include "sources/Optimization/ChainsPermutation.h"
 #include "sources/Optimization/GraphOfChains.h"
-#include "sources/ObjectiveFunction/ObjectiveFunction.h"
 #include "sources/TaskModel/DAG_Model.h"
 
 namespace DAG_SPACE {
@@ -26,6 +26,7 @@ class LPOptimizer {
           obj_trait_(obj_trait),
           react_chain_map_(react_chain_map),
           rta_(rta) {
+        variable_od_opt_.valid_ = false;
         env_.end();
     }
 

@@ -14,13 +14,13 @@ struct OD_Vir {
 // variableOD organizes variables following the order by task id;
 class VariableOD {
    public:
-    VariableOD() { valid_ = false; }
+    VariableOD() {}
     VariableOD(const TaskSet& tasks_) {
         variables_.reserve(tasks_.size());
         for (uint i = 0; i < tasks_.size(); i++) {
             variables_[tasks_[i].id] = (OD_Vir{0, tasks_[i].deadline});
         }
-        valid_ = false;
+        valid_ = true;
     }
 
     // this function will update values
