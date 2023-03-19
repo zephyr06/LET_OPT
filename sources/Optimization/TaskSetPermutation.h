@@ -23,7 +23,12 @@ VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
                                  const ChainsPermutation& chain_perm,
                                  const GraphOfChains& graph_of_all_ca_chains);
 
+std::vector<std::vector<int>> GetSubChains(
+    const std::vector<std::vector<int>>& chains_full_length,
+    const ChainsPermutation& chains_perm);
+
 // currently, as asusme there is only one chain
+// TODO: what's the usage of chains in arguments
 class TaskSetPermutation {
    public:
     TaskSetPermutation() {}

@@ -74,6 +74,16 @@ class ChainsPermutation {
             itr->second.print();
         }
     }
+
+    std::vector<Edge> GetEdges() const {
+        std::vector<Edge> edges;
+        edges.reserve(size());
+        for (auto itr = permutation_chain_map_.begin();
+             itr != permutation_chain_map_.end(); itr++) {
+            edges.push_back(itr->first);
+        }
+        return edges;
+    }
     // data members
    private:
     std::unordered_map<Edge, SinglePairPermutation> permutation_chain_map_;

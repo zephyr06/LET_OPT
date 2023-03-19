@@ -104,9 +104,16 @@ TEST_F(PermutationTest1, ChainsPermutation_v1) {
                                        variable_od, dag_tasks.chains_));
 }
 
-std::vector<std::vector<int>> GetSubChains() {
-    std::vector<std::vector<int>> sub_chains;
-    return sub_chains;
+TEST_F(PermutationTest1, GetSubChains) {
+    TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+    TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+    ChainsPermutation chain_perm;
+    chain_perm.push_back(perm01[0]);
+    std::vector<std::vector<int>> chains_full_length = {{0, 1, 2}};
+    std::vector<std::vector<int>> chains_sub =
+        GetSubChains(chains_full_length, chain_perm);
+    std::vector<std::vector<int>> expected_sub_chains = {{0, 1}};
+    EXPECT_TRUE(expected_sub_chains == chains_sub);
 }
 
 TEST_F(PermutationTest1, incomplete_perms_reaction_time) {
@@ -449,23 +456,80 @@ TEST_F(PermutationTest_2chain_v1, PerformStandardLETAnalysis) {
     EXPECT_EQ(600 + 600, res.obj_);
 }
 
-double ObjSF(const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-             const ChainsPermutation &chain_perm,
-             const VariableOD &variable_od) {
-    return 0;
-}
-TEST_F(PermutationTest_2chain_v1, sensor_fusion) {
+TEST_F(PermutationTest_2chain_v1, GetSubChains) {
     // chain is 0 -> 3 -> 4
     // chain is 1 -> 3 -> 4
+    TwoTaskPermutations perm03(0, 3, dag_tasks, tasks_info);
+    TwoTaskPermutations perm34(3, 4, dag_tasks, tasks_info);
+    ChainsPermutation chain_perm;
+    chain_perm.push_back(perm03[0]);
+    std::vector<std::vector<int>> chains_full_length = {{0, 3, 4}, {1, 3, 4}};
+    std::vector<std::vector<int>> chains_sub =
+        GetSubChains(chains_full_length, chain_perm);
+    std::vector<std::vector<int>> expected_sub_chains = {{0, 3}};
+    EXPECT_TRUE(expected_sub_chains == chains_sub);
+}
+
+TEST_F(PermutationTest_2chain_v1, GetSubChains_v2) {
+    // chain is 0 -> 3 -> 4
+    // chain is 1 -> 3 -> 4
+    TwoTaskPermutations perm03(0, 3, dag_tasks, tasks_info);
+    TwoTaskPermutations perm34(3, 4, dag_tasks, tasks_info);
+    ChainsPermutation chain_perm;
+    chain_perm.push_back(perm03[0]);
+    chain_perm.push_back(perm34[0]);
+    std::vector<std::vector<int>> chains_full_length = {{0, 3, 4}, {1, 3, 4}};
+    std::vector<std::vector<int>> chains_sub =
+        GetSubChains(chains_full_length, chain_perm);
+    std::vector<std::vector<int>> expected_sub_chains = {{0, 3, 4}};
+    EXPECT_TRUE(expected_sub_chains == chains_sub);
+}
+
+TEST_F(PermutationTest_2chain_v1, GetSubChains_v3) {
+    // chain is 0 -> 3 -> 4
+    // chain is 1 -> 3 -> 4
+    TwoTaskPermutations perm03(0, 3, dag_tasks, tasks_info);
+    TwoTaskPermutations perm34(3, 4, dag_tasks, tasks_info);
+    TwoTaskPermutations perm13(1, 3, dag_tasks, tasks_info);
     ChainsPermutation chain_perm;
     chain_perm.push_back(perm03[0]);
     chain_perm.push_back(perm34[0]);
     chain_perm.push_back(perm13[0]);
-    perm03[0].print();
-    perm34[0].print();
-    perm13[0].print();
-    EXPECT_EQ(0, ObjSF(dag_tasks, tasks_info, chain_perm, variable_od));
+    std::vector<std::vector<int>> chains_full_length = {{0, 3, 4}, {1, 3, 4}};
+    std::vector<std::vector<int>> chains_sub =
+        GetSubChains(chains_full_length, chain_perm);
+    std::vector<std::vector<int>> expected_sub_chains = {{0, 3, 4}, {1, 3, 4}};
+    EXPECT_TRUE(expected_sub_chains == chains_sub);
 }
+
+TEST_F(PermutationTest_2chain_v1, GetSubChains_v4) {
+    // chain is 0 -> 3 -> 4
+    // chain is 1 -> 3 -> 4
+    TwoTaskPermutations perm03(0, 3, dag_tasks, tasks_info);
+    TwoTaskPermutations perm34(3, 4, dag_tasks, tasks_info);
+    TwoTaskPermutations perm13(1, 3, dag_tasks, tasks_info);
+    ChainsPermutation chain_perm;
+    chain_perm.push_back(perm03[0]);
+    // chain_perm.push_back(perm34[0]);
+    chain_perm.push_back(perm13[0]);
+    std::vector<std::vector<int>> chains_full_length = {{0, 3, 4}, {1, 3, 4}};
+    std::vector<std::vector<int>> chains_sub =
+        GetSubChains(chains_full_length, chain_perm);
+    std::vector<std::vector<int>> expected_sub_chains = {{0, 3}, {1, 3}};
+    EXPECT_TRUE(expected_sub_chains == chains_sub);
+}
+// TEST_F(PermutationTest_2chain_v1, sensor_fusion) {
+//     // chain is 0 -> 3 -> 4
+//     // chain is 1 -> 3 -> 4
+//     ChainsPermutation chain_perm;
+//     chain_perm.push_back(perm03[0]);
+//     chain_perm.push_back(perm34[0]);
+//     chain_perm.push_back(perm13[0]);
+//     perm03[0].print();
+//     perm34[0].print();
+//     perm13[0].print();
+//     EXPECT_EQ(0, ObjSF(dag_tasks, tasks_info, chain_perm, variable_od));
+// }
 
 int main(int argc, char **argv) {
     // ::testing::InitGoogleTest(&argc, argv);

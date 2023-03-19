@@ -3,6 +3,35 @@
 
 namespace DAG_SPACE {
 
+std::vector<std::vector<int>> GetSubChains(
+    const std::vector<std::vector<int>>& chains_full_length,
+    const ChainsPermutation& chains_perm) {
+    std::vector<Edge> edges = chains_perm.GetEdges();
+    std::unordered_set<Edge> edge_record;
+    edge_record.reserve(edges.size());
+    for (const auto& edge : edges) edge_record.insert(edge);
+    std::vector<std::vector<int>> sub_chains;
+    sub_chains.reserve(chains_full_length.size());
+    for (uint i = 0; i < chains_full_length.size(); i++) {
+        const auto& chain = chains_full_length[i];
+        for (uint j = 0; j < chain.size() - 1; j++) {
+            Edge edge_curr(chain[j], chain[j + 1]);
+            if (edge_record.find(edge_curr) == edge_record.end())
+                break;
+            else {
+                if (j == 0) {
+                    sub_chains.push_back({chain[j], chain[j + 1]});
+                } else {
+                    // sub_chains.end()->push_back(chain[j]);
+                    sub_chains.back().push_back(chain[j + 1]);
+                }
+            }
+        }
+    }
+
+    return sub_chains;
+}
+
 TaskSetPermutation::TaskSetPermutation(
     const DAG_Model& dag_tasks, const std::vector<std::vector<int>>& chains)
     : start_time_((std::chrono::high_resolution_clock::now())),
