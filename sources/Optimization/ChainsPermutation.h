@@ -68,6 +68,12 @@ class ChainsPermutation {
         const SinglePairPermutation &perm_curr,
         const GraphOfChains &graph_of_all_ca_chains) const;
 
+    void print() const {
+        for (auto itr = permutation_chain_map_.begin();
+             itr != permutation_chain_map_.end(); itr++) {
+            itr->second.print();
+        }
+    }
     // data members
    private:
     std::unordered_map<Edge, SinglePairPermutation> permutation_chain_map_;

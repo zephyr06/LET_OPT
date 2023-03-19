@@ -92,6 +92,31 @@ class TaskSetPermutation {
             }
         }
 
+        // Test purposes
+        {
+            VariableOD variable_od2 = FindODFromPermutation(
+                dag_tasks_, chain_perm, graph_of_all_ca_chains_);
+            if (variable_od2.valid_ != res.first.valid_) {
+                chain_perm.print();
+                int index = 0;
+                for (int x : rta) {
+                    std::cout << "RTA of task " << index++ << ": " << x << "\n";
+                }
+                FindODFromPermutation(dag_tasks_, chain_perm,
+                                      graph_of_all_ca_chains_);
+                CoutError("Find a case where FindODFromPermutation fails!");
+            }
+
+            if (variable_od2.valid_) {
+                double obj_curr = ObjectiveFunctionBase::Obj(
+                    dag_tasks_, tasks_info_, chain_perm, variable_od2);
+                if (obj_curr < res.second)
+                    CoutError(
+                        "Find a case where FindODFromPermutation fails in "
+                        "evaluating obj!");
+            }
+        }
+
 #ifdef PROFILE_CODE
         EndTimer(__FUNCTION__);
 #endif

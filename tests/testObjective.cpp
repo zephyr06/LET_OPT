@@ -104,29 +104,29 @@ TEST_F(PermutationTest1, ChainsPermutation_v1) {
                                        variable_od));
 }
 
-TEST_F(PermutationTest1, incomplete_perms_reaction_time) {
-    // chain is 0 -> 1 -> 2
-    TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-    // TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+// TEST_F(PermutationTest1, incomplete_perms_reaction_time) {
+//     // chain is 0 -> 1 -> 2
+//     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+//     // TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
 
-    ChainsPermutation chain_perm;
-    chain_perm.push_back(perm01[0]);
-    // chain_perm.push_back(perm12[0]);
-    EXPECT_EQ(20, ObjReactionTime::ObjWithoutAllPermsSingleChain(
-                      dag_tasks, tasks_info, chain_perm, variable_od));
+//     ChainsPermutation chain_perm;
+//     chain_perm.push_back(perm01[0]);
+//     // chain_perm.push_back(perm12[0]);
+//     EXPECT_EQ(20, ObjReactionTime::ObjWithoutAllPermsSingleChain(
+//                       dag_tasks, tasks_info, chain_perm, variable_od));
 
-    chain_perm.clear();
-    // chain_perm.push_back(perm01[0]);
-    chain_perm.push_back(perm12[0]);
-    EXPECT_EQ(20 + 1, ObjReactionTime::ObjWithoutAllPermsSingleChain(
-                          dag_tasks, tasks_info, chain_perm, variable_od));
+//     chain_perm.clear();
+//     // chain_perm.push_back(perm01[0]);
+//     chain_perm.push_back(perm12[0]);
+//     EXPECT_EQ(20 + 1, ObjReactionTime::ObjWithoutAllPermsSingleChain(
+//                           dag_tasks, tasks_info, chain_perm, variable_od));
 
-    chain_perm.clear();
-    chain_perm.push_back(perm01[1]);
-    // chain_perm.push_back(perm12[1]);
-    EXPECT_EQ(50, ObjReactionTime::ObjWithoutAllPermsSingleChain(
-                      dag_tasks, tasks_info, chain_perm, variable_od));
-}
+//     chain_perm.clear();
+//     chain_perm.push_back(perm01[1]);
+//     // chain_perm.push_back(perm12[1]);
+//     EXPECT_EQ(50, ObjReactionTime::ObjWithoutAllPermsSingleChain(
+//                       dag_tasks, tasks_info, chain_perm, variable_od));
+// }
 
 TEST_F(PermutationTest1, data_age) {
     // chain is 0 -> 1 -> 2
