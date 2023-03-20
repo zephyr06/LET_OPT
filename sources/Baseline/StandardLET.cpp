@@ -56,8 +56,9 @@ ChainsPermutation GetStandardLETChain(
     ChainsPermutation chain_perm(1e2);
     for (const auto& chain : task_chains) {
         for (uint i = 0; i < chain.size() - 1; i++) {
-            chain_perm.push_back(GetSinglePermutationStanLET(
-                dag_tasks, tasks_info, chain[i], chain[i + 1]));
+            chain_perm.push_back(std::make_shared<const SinglePairPermutation>(
+                GetSinglePermutationStanLET(dag_tasks, tasks_info, chain[i],
+                                            chain[i + 1])));
         }
     }
 

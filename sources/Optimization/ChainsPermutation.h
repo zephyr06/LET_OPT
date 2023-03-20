@@ -1,4 +1,6 @@
 #pragma once
+#include <memory>
+
 #include "sources/Optimization/Edge.h"
 #include "sources/Optimization/GraphOfChains.h"
 #include "sources/Optimization/TwoTaskPermutations.h"
@@ -20,12 +22,12 @@ class ChainsPermutation {
 
     inline size_t size() const { return permutation_chain_map_.size(); }
 
-    void push_back(const SinglePairPermutation &perm) {
+    void push_back(const std::shared_ptr<const SinglePairPermutation> perm) {
         // permutation_chain_.push_back(perm);
-        Edge edge_curr(perm.GetPrevTaskId(), perm.GetNextTaskId());
+        Edge edge_curr(perm->GetPrevTaskId(), perm->GetNextTaskId());
         if (permutation_chain_map_.find(edge_curr) !=
                 permutation_chain_map_.end() &&
-            permutation_chain_map_[edge_curr] != perm)
+            *permutation_chain_map_[edge_curr] != *perm)
             CoutError(
                 "Insert conflicted SinglePairPermutation into "
                 "ChainsPermutation!");
@@ -45,7 +47,7 @@ class ChainsPermutation {
         auto itr = permutation_chain_map_.find(edge);
         if (itr == permutation_chain_map_.end())
             CoutError("Didn't find the given edge in SinglePairPermutation!");
-        return permutation_chain_map_.at(edge);
+        return *permutation_chain_map_.at(edge);
     }
 
     // several IsValid()-related functions
@@ -71,7 +73,7 @@ class ChainsPermutation {
     void print() const {
         for (auto itr = permutation_chain_map_.begin();
              itr != permutation_chain_map_.end(); itr++) {
-            itr->second.print();
+            itr->second->print();
         }
     }
 
@@ -87,7 +89,8 @@ class ChainsPermutation {
     // data members
     // TODO: use pointers to represent SinglePairPermutation for speed-up
    private:
-    std::unordered_map<Edge, SinglePairPermutation> permutation_chain_map_;
+    std::unordered_map<Edge, std::shared_ptr<const SinglePairPermutation>>
+        permutation_chain_map_;
 };
 
 VariableRange FindPossibleVariableOD(const DAG_Model &dag_tasks,

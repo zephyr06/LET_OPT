@@ -28,12 +28,6 @@ class PermutationTest1 : public ::testing::Test {
         perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
         perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
 
-        perm01[0].print();
-        perm01[1].print();
-        perm01[2].print();
-        perm12[0].print();
-        perm12[1].print();
-
         variable_od = VariableOD(tasks);
         dag_tasks.chains_[0] = {0, 1, 2};
     };
@@ -232,24 +226,24 @@ TEST_F(PermutationTest_Non_Har, ChainsPermutation_v1) {
     ChainsPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
     chain_perm.push_back(perm12[0]);
-    perm01[0].print();
-    perm12[0].print();
+    perm01[0]->print();
+    perm12[0]->print();
     EXPECT_EQ(15, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
                                        variable_od, dag_tasks.chains_));
 
     chain_perm.clear();
     chain_perm.push_back(perm01[0]);
     chain_perm.push_back(perm12[1]);
-    perm01[0].print();
-    perm12[1].print();
+    perm01[0]->print();
+    perm12[1]->print();
     EXPECT_EQ(30, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
                                        variable_od, dag_tasks.chains_));
 
     chain_perm.clear();
     chain_perm.push_back(perm01[1]);
     chain_perm.push_back(perm12[1]);
-    perm01[1].print();
-    perm12[1].print();
+    perm01[1]->print();
+    perm12[1]->print();
     EXPECT_EQ(35, ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm,
                                        variable_od, dag_tasks.chains_));
 }
@@ -276,11 +270,6 @@ TEST_F(PermutationTest_Non_Har, data_age) {
     chain_perm.push_back(perm12[1]);
     EXPECT_EQ(30, ObjDataAge::Obj(dag_tasks, tasks_info, chain_perm,
                                   variable_od, dag_tasks.chains_));
-
-    perm01[0].print();
-    perm01[1].print();
-    perm12[0].print();
-    perm12[1].print();
 }
 
 TEST_F(PermutationTest_Non_Har, diff_deadline_from_variable) {
@@ -291,8 +280,8 @@ TEST_F(PermutationTest_Non_Har, diff_deadline_from_variable) {
     ChainsPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
     chain_perm.push_back(perm12[0]);
-    perm01[0].print();
-    perm12[0].print();
+    perm01[0]->print();
+    perm12[0]->print();
     variable_od[2].deadline = 10;
 
     auto start = std::chrono::high_resolution_clock::now();

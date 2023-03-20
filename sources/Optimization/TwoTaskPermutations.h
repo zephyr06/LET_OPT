@@ -1,9 +1,10 @@
 #pragma once
 
+#include <memory>
+
 #include "sources/Optimization/PermutationInequality.h"
 #include "sources/Optimization/Variable.h"
 #include "sources/Utils/profilier.h"
-
 namespace DAG_SPACE {
 
 inline int GetSuperPeriod(const Task& task1, const Task& task2) {
@@ -110,7 +111,8 @@ class TwoTaskPermutations {
 
     inline size_t size() const { return single_permutations_.size(); }
 
-    inline const SinglePairPermutation& operator[](size_t i) const {
+    inline const std::shared_ptr<const SinglePairPermutation> operator[](
+        size_t i) const {
         if (i >= size()) CoutError("Out-of-range error in TwoTaskPermutations");
         return single_permutations_[i];
     }
@@ -132,6 +134,7 @@ class TwoTaskPermutations {
     RegularTaskSystem::TaskSetInfoDerived tasks_info_;
     int superperiod_;
     VariableRange variable_od_range_;
-    std::vector<SinglePairPermutation> single_permutations_;
+    std::vector<std::shared_ptr<const SinglePairPermutation>>
+        single_permutations_;
 };
 }  // namespace DAG_SPACE

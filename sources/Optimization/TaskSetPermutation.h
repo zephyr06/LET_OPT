@@ -57,9 +57,10 @@ class TaskSetPermutation {
         for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
              i++) {
             if (ifTimeout(start_time_)) break;
-            if (chain_perm.IsValid(variable_range_od_,
-                                   adjacent_two_task_permutations_[position][i],
-                                   graph_of_all_ca_chains_)) {
+            if (chain_perm.IsValid(
+                    variable_range_od_,
+                    *adjacent_two_task_permutations_[position][i],
+                    graph_of_all_ca_chains_)) {
                 chain_perm.push_back(
                     adjacent_two_task_permutations_[position][i]);
 
@@ -91,14 +92,14 @@ class TaskSetPermutation {
                     }
                     if (skip_to_next) {
                         chain_perm.pop(
-                            adjacent_two_task_permutations_[position][i]);
+                            *adjacent_two_task_permutations_[position][i]);
                         continue;
                     }
                 }
 
                 IterateAllChainsPermutations<ObjectiveFunction>(position + 1,
                                                                 chain_perm);
-                chain_perm.pop(adjacent_two_task_permutations_[position][i]);
+                chain_perm.pop(*adjacent_two_task_permutations_[position][i]);
             }
         }
     }

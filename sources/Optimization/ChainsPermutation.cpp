@@ -101,7 +101,7 @@ bool ChainsPermutation::IsPermConflicted_CheckAllWithSameSource(
                          // chain yet, therefore no conflictions
             continue;
         const SinglePairPermutation& perm_ite =
-            permutation_chain_map_.at(edge_ite);
+            *permutation_chain_map_.at(edge_ite);
         if (!IsTwoPermConflicted_SameSource(variable_od_range, perm_ite,
                                             perm_curr))
             return false;
@@ -125,7 +125,7 @@ bool ChainsPermutation::IsPermConflicted_CheckAllWithSameSink(
             continue;  // this edge has not been added to the
                        // chain yet, therefore no conflictions
         const SinglePairPermutation& perm_ite =
-            permutation_chain_map_.at(edge_ite);
+            *permutation_chain_map_.at(edge_ite);
         if (!IsTwoPermConflicted_SameSink(variable_od_range, perm_ite,
                                           perm_curr))
             return false;
@@ -148,7 +148,7 @@ bool ChainsPermutation::IsPermConflicted_CheckAllSerialConnect(
             continue;  // this edge has not been added to the
                        // chain yet, therefore no conflictions
         const SinglePairPermutation& perm_ite =
-            permutation_chain_map_.at(edge_ite);
+            *permutation_chain_map_.at(edge_ite);
         if (!IsTwoPermConflicted_SerialConnect(variable_od_range, perm_ite,
                                                perm_curr))
             return false;
@@ -166,7 +166,7 @@ bool ChainsPermutation::IsPermConflicted_CheckAllSerialConnect(
                          // chain yet, therefore no conflictions
             continue;
         const SinglePairPermutation& perm_ite =
-            permutation_chain_map_.at(edge_ite);
+            *permutation_chain_map_.at(edge_ite);
         if (!IsTwoPermConflicted_SerialConnect(variable_od_range, perm_curr,
                                                perm_ite))
             return false;

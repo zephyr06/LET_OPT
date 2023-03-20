@@ -117,7 +117,9 @@ void TwoTaskPermutations::AppendAllPermutations(
                         GlobalVariablesDAGOpt::SAMPLE_SMALL_TASKS) {
                     continue;
                 } else
-                    single_permutations_.push_back(permutation_current_copy);
+                    single_permutations_.push_back(
+                        std::make_shared<const SinglePairPermutation>(
+                            permutation_current_copy));
 
                 if (single_permutations_.size() > 1e5)
                     CoutError("Possibly too many permutations!");

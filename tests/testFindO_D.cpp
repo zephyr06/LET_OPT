@@ -27,11 +27,11 @@ class PermutationTest1 : public ::testing::Test {
         perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
         perm02 = TwoTaskPermutations(0, 2, dag_tasks, tasks_info);
 
-        // perm01[0].print();
-        // perm01[1].print();
-        // perm01[2].print();
-        // perm12[0].print();
-        // perm12[1].print();
+        // perm01[0]->print();
+        // perm01[1]->print();
+        // perm01[2]->print();
+        // perm12[0]->print();
+        // perm12[1]->print();
     };
 
     DAG_Model dag_tasks;
@@ -55,9 +55,9 @@ TEST_F(PermutationTest1, FindODFromSingleChainPermutation) {
     // RTA: 1, 3, 6
     ChainsPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
-    perm01[0].print();
+    perm01[0]->print();
     chain_perm.push_back(perm12[0]);
-    perm12[0].print();
+    perm12[0]->print();
 
     GraphOfChains graph_chains({task_chain});
     VariableOD variable = FindODFromSingleChainPermutation(
@@ -76,9 +76,9 @@ TEST_F(PermutationTest1, FindODFromSingleChainPermutation_v2) {
     // RTA: 1, 3, 6
     ChainsPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
-    perm01[0].print();
+    perm01[0]->print();
     chain_perm.push_back(perm12[0]);
-    perm12[0].print();
+    perm12[0]->print();
 
     GraphOfChains graph_chains({task_chain});
     VariableOD variable = FindODFromSingleChainPermutation(
@@ -97,9 +97,9 @@ TEST_F(PermutationTest1, FindODFromSingleChainPermutation_v2) {
 //     GraphOfChains graph_chains(task_chains);
 //     ChainsPermutation chain_perm;
 //     chain_perm.push_back(perm01[0]);
-//     perm01[0].print();
+//     perm01[0]->print();
 //     chain_perm.push_back(perm02[0]);
-//     perm02[0].print();
+//     perm02[0]->print();
 
 //     VariableOD variable =
 //         FindODFromSingleChainPermutation(dag_tasks, chain_perm,
@@ -119,9 +119,9 @@ TEST_F(PermutationTest1, FindODFromSingleChainPermutation_v2) {
 //     GraphOfChains graph_chains(task_chains);
 //     ChainsPermutation chain_perm;
 //     chain_perm.push_back(perm12[0]);
-//     perm12[0].print();
+//     perm12[0]->print();
 //     chain_perm.push_back(perm02[0]);
-//     perm02[0].print();
+//     perm02[0]->print();
 
 //     VariableOD variable =
 //         FindODFromSingleChainPermutation(dag_tasks, chain_perm,
@@ -154,11 +154,11 @@ class PermutationTest2 : public ::testing::Test {
         perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
         perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
 
-        // perm01[0].print();
-        // perm01[1].print();
-        // perm01[2].print();
-        // perm12[0].print();
-        // perm12[1].print();
+        // perm01[0]->print();
+        // perm01[1]->print();
+        // perm01[2]->print();
+        // perm12[0]->print();
+        // perm12[1]->print();
     };
 
     DAG_Model dag_tasks;
@@ -181,9 +181,9 @@ TEST_F(PermutationTest2, FindODFromSingleChainPermutation) {
     // RTA: 1, 3, 6
     ChainsPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
-    perm01[0].print();
+    perm01[0]->print();
     chain_perm.push_back(perm12[0]);
-    perm12[0].print();
+    perm12[0]->print();
 
     GraphOfChains graph_chains({task_chain});
     VariableOD variable = FindODFromSingleChainPermutation(
@@ -241,9 +241,9 @@ TEST_F(PermutationTest_Non_Har, FindODFromSingleChainPermutation_invalid) {
     // RTA: 1, 3, 6
     ChainsPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
-    perm01[0].print();
+    perm01[0]->print();
     chain_perm.push_back(perm12[0]);
-    perm12[0].print();
+    perm12[0]->print();
 
     GraphOfChains graph_chains({task_chain});
     VariableOD variable = FindODFromSingleChainPermutation(
@@ -262,9 +262,9 @@ TEST_F(PermutationTest_Non_Har, FindODFromSingleChainPermutation_valid) {
     // RTA: 1, 3, 6
     ChainsPermutation chain_perm;
     chain_perm.push_back(perm01[1]);
-    perm01[1].print();
+    perm01[1]->print();
     chain_perm.push_back(perm12[0]);
-    perm12[0].print();
+    perm12[0]->print();
 
     GraphOfChains graph_chains({task_chain});
     VariableOD variable = FindODFromSingleChainPermutation(
@@ -307,10 +307,10 @@ TEST_F(PermutationTest3, Find_OD) {
     chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[1][0]);
     chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[2][1]);
     chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[3][1]);
-    task_set_perms.adjacent_two_task_permutations_[0][0].print();
-    task_set_perms.adjacent_two_task_permutations_[1][0].print();
-    task_set_perms.adjacent_two_task_permutations_[2][1].print();
-    task_set_perms.adjacent_two_task_permutations_[3][1].print();
+    task_set_perms.adjacent_two_task_permutations_[0][0]->print();
+    task_set_perms.adjacent_two_task_permutations_[1][0]->print();
+    task_set_perms.adjacent_two_task_permutations_[2][1]->print();
+    task_set_perms.adjacent_two_task_permutations_[3][1]->print();
 
     VariableOD variable_od = FindODFromSingleChainPermutation(
         dag_tasks, chains_perm, task_set_perms.graph_of_all_ca_chains_,
@@ -337,10 +337,10 @@ TEST_F(PermutationTest3, Find_OD_v2) {
     chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[1][0]);
     chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[2][1]);
     chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[3][1]);
-    task_set_perms.adjacent_two_task_permutations_[0][1].print();
-    task_set_perms.adjacent_two_task_permutations_[1][0].print();
-    task_set_perms.adjacent_two_task_permutations_[2][1].print();
-    task_set_perms.adjacent_two_task_permutations_[3][1].print();
+    task_set_perms.adjacent_two_task_permutations_[0][1]->print();
+    task_set_perms.adjacent_two_task_permutations_[1][0]->print();
+    task_set_perms.adjacent_two_task_permutations_[2][1]->print();
+    task_set_perms.adjacent_two_task_permutations_[3][1]->print();
 
     VariableOD variable_od = FindODFromSingleChainPermutation(
         dag_tasks, chains_perm, task_set_perms.graph_of_all_ca_chains_,
@@ -508,9 +508,9 @@ TEST_F(PermutationTest6, Find_OD) {
     // RTA: 1, 3, 6
     ChainsPermutation chain_perm;
     chain_perm.push_back(perm01[0]);
-    perm01[0].print();
+    perm01[0]->print();
     chain_perm.push_back(perm12[0]);
-    perm12[0].print();
+    perm12[0]->print();
 
     GraphOfChains graph_chains({task_chain});
     VariableOD variable = FindODFromSingleChainPermutation(
