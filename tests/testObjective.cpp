@@ -518,6 +518,40 @@ TEST_F(PermutationTest_2chain_v1, GetSubChains_v4) {
     std::vector<std::vector<int>> expected_sub_chains = {{0, 3}, {1, 3}};
     EXPECT_TRUE(expected_sub_chains == chains_sub);
 }
+
+class PermutationTest42 : public ::testing::Test {
+   protected:
+    void SetUp() override {
+        dag_tasks = ReadDAG_Tasks(
+            GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v42.csv",
+            "RM", 2);
+        tasks = dag_tasks.GetTaskSet();
+        tasks_info = TaskSetInfoDerived(tasks);
+        variable_od = VariableOD(tasks);
+    };
+
+    DAG_Model dag_tasks;
+    TaskSet tasks;
+    TaskSetInfoDerived tasks_info;
+    VariableOD variable_od;
+};
+TEST_F(PermutationTest42, GetSubChains) {
+    // chain is 0 -> 3 -> 4
+    // chain is 1 -> 3 -> 4
+    TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info);
+    TwoTaskPermutations perm02(0, 2, dag_tasks, tasks_info);
+    TwoTaskPermutations perm14(1, 4, dag_tasks, tasks_info);
+    ChainsPermutation chain_perm;
+    chain_perm.push_back(perm14[0]);
+    chain_perm.push_back(perm02[0]);
+    chain_perm.push_back(perm23[4]);
+
+    std::vector<std::vector<int>> chains_full_length = {{1, 4}, {0, 2, 3, 4}};
+    std::vector<std::vector<int>> chains_sub =
+        GetSubChains(chains_full_length, chain_perm);
+    std::vector<std::vector<int>> expected_sub_chains = {{1, 4}, {0, 2, 3}};
+    EXPECT_TRUE(expected_sub_chains == chains_sub);
+}
 // TEST_F(PermutationTest_2chain_v1, sensor_fusion) {
 //     // chain is 0 -> 3 -> 4
 //     // chain is 1 -> 3 -> 4

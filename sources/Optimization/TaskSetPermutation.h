@@ -65,6 +65,7 @@ class TaskSetPermutation {
 
                 // try to skip some permutations
                 if (GlobalVariablesDAGOpt::SKIP_PERM) {
+                    bool skip_to_next = false;
                     std::vector<std::vector<int>> sub_chains =
                         GetSubChains(dag_tasks_.chains_, chain_perm);
                     for (const auto& sub_chain : sub_chains) {
@@ -73,23 +74,22 @@ class TaskSetPermutation {
                                  dag_tasks_, chain_perm,
                                  graph_of_all_ca_chains_, sub_chain)
                                  .valid_) {
-                            chain_perm.pop(
-                                adjacent_two_task_permutations_[position][i]);
-                            continue;
+                            skip_to_next = true;
+                            break;
                         }
                     }
-                    VariableOD best_possible_variable_od =
-                        FindBestPossibleVariableOD(dag_tasks_, tasks_info_,
-                                                   rta_, chain_perm);
-                    double obj_curr = ObjectiveFunction::Obj(
-                        dag_tasks_, tasks_info_, chain_perm,
-                        best_possible_variable_od, sub_chains);
-                    if (obj_curr > best_yet_obj_) {
-                        // if (chain_perm.size() < 3)
-                        //     CoutError("Find an early skip of chain length: "
-                        //     +
-                        //               std::to_string(chain_perm.size()));
-
+                    if (!skip_to_next) {
+                        VariableOD best_possible_variable_od =
+                            FindBestPossibleVariableOD(dag_tasks_, tasks_info_,
+                                                       rta_, chain_perm);
+                        double obj_curr = ObjectiveFunction::Obj(
+                            dag_tasks_, tasks_info_, chain_perm,
+                            best_possible_variable_od, sub_chains);
+                        if (obj_curr > best_yet_obj_) {
+                            skip_to_next = true;
+                        }
+                    }
+                    if (skip_to_next) {
                         chain_perm.pop(
                             adjacent_two_task_permutations_[position][i]);
                         continue;
