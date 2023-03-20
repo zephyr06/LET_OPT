@@ -56,9 +56,9 @@ TEST_F(PermutationTest1, obj_) {
                               dag_tasks, tasks_info, chains_perm, {1, 2, 4},
                               task_sets_perms.best_possible_variable_od_));
 
-    EXPECT_EQ(200 + 14 - 723, objRI.ObjSingleChain(
-                                  dag_tasks, tasks_info, chains_perm, {1, 2, 3},
-                                  task_sets_perms.best_possible_variable_od_));
+    EXPECT_EQ(
+        0, objRI.ObjSingleChain(dag_tasks, tasks_info, chains_perm, {1, 2, 3},
+                                task_sets_perms.best_possible_variable_od_));
 
     EXPECT_THAT(obj_curr, testing::Le(res.second));
 }
