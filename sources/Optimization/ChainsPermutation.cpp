@@ -197,4 +197,57 @@ bool ChainsPermutation::IsValid(
     return true;
 }
 
+VariableRange FindPossibleVariableOD(const DAG_Model& dag_tasks,
+                                     const TaskSetInfoDerived& tasks_info,
+                                     const std::vector<int>& rta,
+                                     const ChainsPermutation& chains_perm) {
+    VariableRange variable_range = FindVariableRange(dag_tasks);
+    variable_range.lower_bound.print();
+    variable_range.upper_bound.print();
+    std::vector<Edge> edges = chains_perm.GetEdges();
+    for (int i = 0; i < chains_perm.size() + 1;
+         i++) {  // TODO: improve efficiency there
+        for (const auto& edge_curr : edges) {
+            const PermutationInequality& ineq =
+                chains_perm[edge_curr].inequality_;
+            int prev_id = ineq.task_prev_id_;
+            int next_id = ineq.task_next_id_;
+            //      o_{task_next_id} + lower_bound < d_{task_prev_id} ;
+            variable_range.lower_bound[prev_id].deadline =
+                std::max(variable_range.lower_bound[prev_id].deadline,
+                         variable_range.lower_bound[next_id].offset +
+                             ineq.lower_bound_ + 1);
+
+            variable_range.upper_bound[next_id].offset =
+                std::min(variable_range.upper_bound[next_id].offset,
+                         variable_range.upper_bound[prev_id].deadline -
+                             ineq.lower_bound_ - 1);
+
+            //      d_{task_prev_id} <= o_{task_next_id} + upper_bound ;
+            variable_range.upper_bound[prev_id].deadline = std::min(
+                variable_range.upper_bound[prev_id].deadline,
+                variable_range.upper_bound[next_id].offset + ineq.upper_bound_);
+
+            variable_range.lower_bound[next_id].offset =
+                std::max(variable_range.lower_bound[next_id].offset,
+                         variable_range.lower_bound[prev_id].deadline -
+                             ineq.upper_bound_);
+        }
+    }
+    return variable_range;
+}
+
+VariableOD FindBestPossibleVariableOD(const DAG_Model& dag_tasks,
+                                      const TaskSetInfoDerived& tasks_info,
+                                      const std::vector<int>& rta,
+                                      const ChainsPermutation& chains_perm) {
+    VariableRange variable_range =
+        FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
+    VariableOD variable_od = variable_range.lower_bound;
+    for (int i = 0; i < tasks_info.N; i++) {
+        variable_od[i].offset = variable_range.upper_bound[i].offset;
+    }
+    return variable_od;
+}
+
 }  // namespace DAG_SPACE

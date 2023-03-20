@@ -50,7 +50,8 @@ class PermutationInequality {
     }
 
     void print() const {
-        std::cout << "o_{" << task_next_id_ << "} + " << lower_bound_ << " < "
+        std::cout << "o_{" << task_next_id_ << "} + " << lower_bound_ + 1
+                  << " <= "
                   << "d_{" << task_prev_id_ << "} <= o_{" << task_next_id_
                   << "} + " << upper_bound_ << "\n";
     }

@@ -90,4 +90,12 @@ class ChainsPermutation {
     std::unordered_map<Edge, SinglePairPermutation> permutation_chain_map_;
 };
 
+VariableRange FindPossibleVariableOD(const DAG_Model &dag_tasks,
+                                     const TaskSetInfoDerived &tasks_info,
+                                     const std::vector<int> &rta,
+                                     const ChainsPermutation &chains_perm);
+VariableOD FindBestPossibleVariableOD(const DAG_Model &dag_tasks,
+                                      const TaskSetInfoDerived &tasks_info,
+                                      const std::vector<int> &rta,
+                                      const ChainsPermutation &chains_perm);
 }  // namespace DAG_SPACE
