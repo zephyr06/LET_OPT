@@ -10,7 +10,7 @@
 namespace DAG_SPACE {
 
 // assume the simple response time analysis
-// VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
+// VariableOD FindODFromSingleChainPermutation(const DAG_Model& dag_tasks,
 //                                  const ChainsPermutation& chain_perm,
 //                                  std::vector<int> task_chain);
 
@@ -19,9 +19,9 @@ bool ExamVariableFeasibility(const VariableOD& variable,
                              const GraphOfChains& graph_of_all_ca_chains,
                              const DAG_Model& dag_task);
 
-VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
-                                 const ChainsPermutation& chain_perm,
-                                 const GraphOfChains& graph_of_all_ca_chains);
+VariableOD FindODFromSingleChainPermutation(
+    const DAG_Model& dag_tasks, const ChainsPermutation& chain_perm,
+    const GraphOfChains& graph_of_all_ca_chains);
 
 std::vector<std::vector<int>> GetSubChains(
     const std::vector<std::vector<int>>& chains_full_length,
@@ -131,7 +131,7 @@ class TaskSetPermutation {
 
         // Test purposes
         // {
-        //     VariableOD variable_od2 = FindODFromPermutation(
+        //     VariableOD variable_od2 = FindODFromSingleChainPermutation(
         //         dag_tasks_, chain_perm, graph_of_all_ca_chains_);
         //     if (variable_od2.valid_ != res.first.valid_) {
         //         chain_perm.print();
@@ -140,9 +140,10 @@ class TaskSetPermutation {
         //             std::cout << "RTA of task " << index++ << ": " << x <<
         //             "\n";
         //         }
-        //         FindODFromPermutation(dag_tasks_, chain_perm,
+        //         FindODFromSingleChainPermutation(dag_tasks_, chain_perm,
         //                               graph_of_all_ca_chains_);
-        //         CoutError("Find a case where FindODFromPermutation fails!");
+        //         CoutError("Find a case where FindODFromSingleChainPermutation
+        //         fails!");
         //     }
 
         //     if (variable_od2.valid_) {
@@ -151,8 +152,8 @@ class TaskSetPermutation {
         //             dag_tasks_.chains_);
         //         if (obj_curr < res.second)
         //             CoutError(
-        //                 "Find a case where FindODFromPermutation fails in "
-        //                 "evaluating obj!");
+        //                 "Find a case where FindODFromSingleChainPermutation
+        //                 fails in " "evaluating obj!");
         //     }
         // }
 

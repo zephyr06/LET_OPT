@@ -162,9 +162,9 @@ bool ExamVariableFeasibility(const VariableOD& variable,
     return true;
 }
 
-VariableOD FindODFromPermutation(const DAG_Model& dag_tasks,
-                                 const ChainsPermutation& chain_perm,
-                                 const GraphOfChains& graph_of_all_ca_chains) {
+VariableOD FindODFromSingleChainPermutation(
+    const DAG_Model& dag_tasks, const ChainsPermutation& chain_perm,
+    const GraphOfChains& graph_of_all_ca_chains) {
     const TaskSet& tasks = dag_tasks.GetTaskSet();
     VariableOD variable(dag_tasks.GetTaskSet());
     std::unordered_map<int, bool> variable_set_record(1e2);
