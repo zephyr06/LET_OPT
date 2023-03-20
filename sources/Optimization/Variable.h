@@ -79,6 +79,11 @@ inline int GetDeadline(const JobCEC& job_curr, const VariableOD& variable_od,
     return variable_od.at(job_curr.taskId).deadline +
            tasks_info.GetTask(job_curr.taskId).period * job_curr.jobId;
 }
+inline int GetStartTime(const JobCEC& job_curr, const VariableOD& variable_od,
+                        const TaskSetInfoDerived& tasks_info) {
+    return variable_od.at(job_curr.taskId).offset +
+           GetActivationTime(job_curr, tasks_info);
+}
 
 VariableOD FindBestPossibleVariableOD(const DAG_Model& dag_tasks,
                                       const TaskSetInfoDerived& tasks_info,

@@ -38,23 +38,23 @@ class TaskSetPermutation {
     void FindPairPermutations();
     bool ExamSchedulabilityOptSol() const;
 
-    template <typename ObjectiveFunctionBase>
+    template <typename ObjectiveFunction>
     int PerformOptimization() {
         ChainsPermutation chain_perm;
-        IterateAllChainsPermutations<ObjectiveFunctionBase>(0, chain_perm);
+        IterateAllChainsPermutations<ObjectiveFunction>(0, chain_perm);
         return best_yet_obj_;
     }
 
     // depth equals the number of edge pais
 
-    template <typename ObjectiveFunctionBase>
+    template <typename ObjectiveFunction>
     void IterateAllChainsPermutations(uint position,
                                       ChainsPermutation& chain_perm) {
         if (position ==
             graph_of_all_ca_chains_.edge_records_
                 .size()) {  // finish iterate all the pair permutations
             iteration_count_++;
-            EvaluateChainsPermutation<ObjectiveFunctionBase>(chain_perm);
+            EvaluateChainsPermutation<ObjectiveFunction>(chain_perm);
             return;
         }
 
@@ -71,24 +71,29 @@ class TaskSetPermutation {
                 if (GlobalVariablesDAGOpt::SKIP_PERM) {
                     std::vector<std::vector<int>> sub_chains =
                         GetSubChains(dag_tasks_.chains_, chain_perm);
-                    double obj_curr = ObjectiveFunctionBase::Obj(
+                    double obj_curr = ObjectiveFunction::Obj(
                         dag_tasks_, tasks_info_, chain_perm,
                         best_possible_variable_od_, sub_chains);
                     if (obj_curr > best_yet_obj_) {
+                        // if (chain_perm.size() < 3)
+                        //     CoutError("Find an early skip of chain length: "
+                        //     +
+                        //               std::to_string(chain_perm.size()));
+
                         chain_perm.pop(
                             adjacent_two_task_permutations_[position][i]);
                         continue;
                     }
                 }
 
-                IterateAllChainsPermutations<ObjectiveFunctionBase>(
-                    position + 1, chain_perm);
+                IterateAllChainsPermutations<ObjectiveFunction>(position + 1,
+                                                                chain_perm);
                 chain_perm.pop(adjacent_two_task_permutations_[position][i]);
             }
         }
     }
 
-    template <typename ObjectiveFunctionBase>
+    template <typename ObjectiveFunction>
     void EvaluateChainsPermutation(const ChainsPermutation& chain_perm) {
 #ifdef PROFILE_CODE
         BeginTimer(__FUNCTION__);
@@ -98,7 +103,7 @@ class TaskSetPermutation {
 
         std::pair<VariableOD, int> res = FindODWithLP(
             dag_tasks_, tasks_info_, chain_perm, graph_of_all_ca_chains_,
-            ObjectiveFunctionBase::type_trait, react_chain_map, rta_);
+            ObjectiveFunction::type_trait, react_chain_map, rta_);
 
         if (res.first.valid_)  // if valid, we'll exam obj; otherwise, we'll
                                // just move forward
@@ -107,6 +112,17 @@ class TaskSetPermutation {
                 best_yet_obj_ = res.second;
                 best_yet_chain_ = chain_perm;
                 best_yet_variable_od_ = res.first;
+                if (res.second == 1459) {
+                    int a = 1;
+                }
+                std::vector<std::vector<int>> sub_chains =
+                    GetSubChains(dag_tasks_.chains_, chain_perm);
+                double obj_curr = ObjectiveFunction::Obj(
+                    dag_tasks_, tasks_info_, chain_perm,
+                    best_possible_variable_od_, sub_chains);
+                if (obj_curr > best_yet_obj_)
+                    CoutError(
+                        "Something's wrong with sub-chain obj evaluation");
             }
         }
 
@@ -127,7 +143,7 @@ class TaskSetPermutation {
         //     }
 
         //     if (variable_od2.valid_) {
-        //         double obj_curr = ObjectiveFunctionBase::Obj(
+        //         double obj_curr = ObjectiveFunction::Obj(
         //             dag_tasks_, tasks_info_, chain_perm, variable_od2,
         //             dag_tasks_.chains_);
         //         if (obj_curr < res.second)
@@ -158,16 +174,16 @@ class TaskSetPermutation {
     VariableRange variable_range_od_;
 };
 
-template <typename ObjectiveFunctionBase>
+template <typename ObjectiveFunction>
 ScheduleResult PerformTOM_OPT(const DAG_Model& dag_tasks) {
     auto start = std::chrono::high_resolution_clock::now();
     ScheduleResult res;
     TaskSetPermutation task_sets_perms =
         TaskSetPermutation(dag_tasks, dag_tasks.chains_);
-    res.obj_ = task_sets_perms.PerformOptimization<ObjectiveFunctionBase>();
+    res.obj_ = task_sets_perms.PerformOptimization<ObjectiveFunction>();
     if (res.obj_ >= 1e8) {
         res.obj_ =
-            PerformStandardLETAnalysis<ObjectiveFunctionBase>(dag_tasks).obj_;
+            PerformStandardLETAnalysis<ObjectiveFunction>(dag_tasks).obj_;
     }
     res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
 

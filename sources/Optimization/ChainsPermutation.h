@@ -85,6 +85,7 @@ class ChainsPermutation {
         return edges;
     }
     // data members
+    // TODO: use pointers to represent SinglePairPermutation for speed-up
    private:
     std::unordered_map<Edge, SinglePairPermutation> permutation_chain_map_;
 };
