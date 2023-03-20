@@ -9,19 +9,15 @@
 #include "sources/Utils/profilier.h"
 namespace DAG_SPACE {
 
-// assume the simple response time analysis
-// VariableOD FindODFromSingleChainPermutation(const DAG_Model& dag_tasks,
-//                                  const ChainsPermutation& chain_perm,
-//                                  std::vector<int> task_chain);
-
 bool ExamVariableFeasibility(const VariableOD& variable,
                              const ChainsPermutation& chain_perm,
                              const GraphOfChains& graph_of_all_ca_chains,
-                             const DAG_Model& dag_task);
+                             const DAG_Model& dag_task,
+                             const std::vector<int>& chain);
 
 VariableOD FindODFromSingleChainPermutation(
     const DAG_Model& dag_tasks, const ChainsPermutation& chain_perm,
-    const GraphOfChains& graph_of_all_ca_chains);
+    const GraphOfChains& graph_of_all_ca_chains, const std::vector<int>& chain);
 
 std::vector<std::vector<int>> GetSubChains(
     const std::vector<std::vector<int>>& chains_full_length,
@@ -71,6 +67,17 @@ class TaskSetPermutation {
                 if (GlobalVariablesDAGOpt::SKIP_PERM) {
                     std::vector<std::vector<int>> sub_chains =
                         GetSubChains(dag_tasks_.chains_, chain_perm);
+                    for (const auto& sub_chain : sub_chains) {
+                        if (GlobalVariablesDAGOpt::SKIP_PERM >= 2 &&
+                            !FindODFromSingleChainPermutation(
+                                 dag_tasks_, chain_perm,
+                                 graph_of_all_ca_chains_, sub_chain)
+                                 .valid_) {
+                            chain_perm.pop(
+                                adjacent_two_task_permutations_[position][i]);
+                            continue;
+                        }
+                    }
                     VariableOD best_possible_variable_od =
                         FindBestPossibleVariableOD(dag_tasks_, tasks_info_,
                                                    rta_, chain_perm);

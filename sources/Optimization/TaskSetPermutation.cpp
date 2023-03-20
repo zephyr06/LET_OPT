@@ -78,70 +78,74 @@ bool TaskSetPermutation::ExamSchedulabilityOptSol() const {
 
 // set each variable's offset and deadline
 // assumes acyclic graph
-void SetVariableHelper(int task_id,
-                       std::unordered_map<int, bool>& variable_set_record,
-                       VariableOD& variable,
-                       const ChainsPermutation& chain_perm,
-                       const GraphOfChains& graph_of_all_ca_chains,
-                       const DAG_Model& dag_tasks) {
-    if (variable_set_record.find(task_id) == variable_set_record.end() ||
-        variable_set_record[task_id] == false) {
-        if (!variable.valid_) return;
-        int offset_min = 0;
-        if (graph_of_all_ca_chains.prev_tasks_.find(task_id) !=
-            graph_of_all_ca_chains.prev_tasks_.end()) {
-            const std::vector<int>& dependent_tasks =
-                graph_of_all_ca_chains.prev_tasks_.at(task_id);
-            for (int dependent_task : dependent_tasks) {
-                SetVariableHelper(dependent_task, variable_set_record, variable,
-                                  chain_perm, graph_of_all_ca_chains,
-                                  dag_tasks);
-                Edge edge_curr(dependent_task, task_id);
-                offset_min = std::max(
-                    offset_min,
-                    variable[dependent_task].deadline -
-                        chain_perm[edge_curr].inequality_.upper_bound_);
-            }
-        }
-        variable[task_id].offset = offset_min;
-        variable[task_id].deadline =
-            offset_min + GetResponseTime(dag_tasks, task_id);
-        // exam whether the current offset assignment violates prev tasks'
-        // lower bound constraints
-        if (graph_of_all_ca_chains.prev_tasks_.find(task_id) !=
-            graph_of_all_ca_chains.prev_tasks_.end()) {
-            const std::vector<int>& dependent_tasks =
-                graph_of_all_ca_chains.prev_tasks_.at(task_id);
-            for (int dependent_task : dependent_tasks) {
-                SetVariableHelper(dependent_task, variable_set_record, variable,
-                                  chain_perm, graph_of_all_ca_chains,
-                                  dag_tasks);
-                Edge edge_curr(dependent_task, task_id);
-                const PermutationInequality& ineq =
-                    chain_perm[edge_curr].inequality_;
-                if (variable[task_id].offset + ineq.lower_bound_ >=
-                    variable[dependent_task].deadline) {
-                    variable[dependent_task].deadline =
-                        variable[task_id].offset + ineq.lower_bound_ + 1;
-                    if (variable[dependent_task].deadline >
-                        dag_tasks.GetTask(dependent_task).deadline)
-                        variable.valid_ = false;
-                }
-            }
-        }
-        if (variable[task_id].deadline > dag_tasks.GetTask(task_id).deadline) {
-            variable.valid_ = false;
-        }
-        variable_set_record[task_id] = true;
-    } else
-        return;
-}
+// void SetVariableHelperSingleChain(
+//     int task_id, std::unordered_map<int, bool>& variable_set_record,
+//     VariableOD& variable, const ChainsPermutation& chain_perm,
+//     const GraphOfChains& graph_of_all_ca_chains, const DAG_Model& dag_tasks,
+//     const std::unordered_set<Edge>& sub_chain_edge_record) {
+//     if (variable_set_record.find(task_id) == variable_set_record.end() ||
+//         variable_set_record[task_id] == false) {
+//         if (!variable.valid_) return;
+//         int offset_min = 0;
+//         if (graph_of_all_ca_chains.prev_tasks_.find(task_id) !=
+//             graph_of_all_ca_chains.prev_tasks_.end()) {
+//             const std::vector<int>& dependent_tasks =
+//                 graph_of_all_ca_chains.prev_tasks_.at(task_id);
+//             for (int dependent_task : dependent_tasks) {
+//                 SetVariableHelperSingleChain(
+//                     dependent_task, variable_set_record, variable,
+//                     chain_perm, graph_of_all_ca_chains, dag_tasks,
+//                     sub_chain_edge_record);
+//                 Edge edge_curr(dependent_task, task_id);
+//                 offset_min = std::max(
+//                     offset_min,
+//                     variable[dependent_task].deadline -
+//                         chain_perm[edge_curr].inequality_.upper_bound_);
+//             }
+//         }
+//         variable[task_id].offset = offset_min;
+//         variable[task_id].deadline =
+//             offset_min + GetResponseTime(dag_tasks, task_id);
+//         // exam whether the current offset assignment violates prev tasks'
+//         // lower bound constraints
+//         if (graph_of_all_ca_chains.prev_tasks_.find(task_id) !=
+//             graph_of_all_ca_chains.prev_tasks_.end()) {
+//             const std::vector<int>& dependent_tasks =
+//                 graph_of_all_ca_chains.prev_tasks_.at(task_id);
+//             for (int dependent_task : dependent_tasks) {
+//                 SetVariableHelperSingleChain(
+//                     dependent_task, variable_set_record, variable,
+//                     chain_perm, graph_of_all_ca_chains, dag_tasks,
+//                     sub_chain_edge_record);
+//                 Edge edge_curr(dependent_task, task_id);
+//                 const PermutationInequality& ineq =
+//                     chain_perm[edge_curr].inequality_;
+//                 if (variable[task_id].offset + ineq.lower_bound_ >=
+//                     variable[dependent_task].deadline) {
+//                     variable[dependent_task].deadline =
+//                         variable[task_id].offset + ineq.lower_bound_ + 1;
+//                     if (variable[dependent_task].deadline >
+//                         dag_tasks.GetTask(dependent_task).deadline)
+//                         variable.valid_ = false;
+//                 }
+//             }
+//         }
+//         if (variable[task_id].deadline > dag_tasks.GetTask(task_id).deadline)
+//         {
+//             variable.valid_ = false;
+//         }
+//         variable_set_record[task_id] = true;
+//     } else
+//         return;
+// }
 
 bool ExamVariableFeasibility(const VariableOD& variable,
                              const ChainsPermutation& chain_perm,
                              const GraphOfChains& graph_of_all_ca_chains,
-                             const DAG_Model& dag_task) {
-    for (const auto& edge : graph_of_all_ca_chains.edge_vec_ordered_) {
+                             const DAG_Model& dag_task,
+                             const std::vector<int>& chain) {
+    for (uint i = 0; i < chain.size() - 1; i++) {
+        Edge edge(chain[i], chain[i + 1]);
         const PermutationInequality& inequality = chain_perm[edge].inequality_;
         int prev_id = inequality.task_prev_id_;
         int next_id = inequality.task_next_id_;
@@ -162,22 +166,57 @@ bool ExamVariableFeasibility(const VariableOD& variable,
     return true;
 }
 
+//      o_{task_next_id} + lower_bound < d_{task_prev_id} ;
+//      d_{task_prev_id} <= o_{task_next_id} + upper_bound ;
+//  const std::vector<int>& rta
+void SetVariableHelperSingleEdge(const Edge& edge, VariableOD& variable,
+                                 const PermutationInequality& ineq,
+                                 const DAG_Model& dag_tasks) {
+    //  edge.from_id, edge_to_id
+    variable.SetMinDeadline(edge.from_id, dag_tasks);
+    variable.SetOffset(edge.to_id,
+                       variable[edge.from_id].deadline - ineq.upper_bound_);
+    if (variable[edge.from_id].deadline - ineq.upper_bound_ < 0) {
+        variable[edge.to_id].offset = 0;
+        variable[edge.from_id].deadline =
+            std::max(variable[edge.from_id].deadline,
+                     variable[edge.to_id].offset + ineq.lower_bound_ + 1);
+        if (variable[edge.from_id].deadline >
+            dag_tasks.GetTask(edge.from_id).deadline) {
+            variable.valid_ = false;
+            return;
+        }
+    }
+    if (variable[edge.to_id].offset + GetResponseTime(dag_tasks, edge.to_id) >
+        dag_tasks.GetTask(edge.to_id).deadline) {
+        variable.valid_ = false;
+        return;
+    }
+}
+
 VariableOD FindODFromSingleChainPermutation(
     const DAG_Model& dag_tasks, const ChainsPermutation& chain_perm,
-    const GraphOfChains& graph_of_all_ca_chains) {
+    const GraphOfChains& graph_of_all_ca_chains,
+    const std::vector<int>& chain) {
     const TaskSet& tasks = dag_tasks.GetTaskSet();
-    VariableOD variable(dag_tasks.GetTaskSet());
-    std::unordered_map<int, bool> variable_set_record(1e2);
+    VariableOD variable(tasks);
 
-    for (const auto& edge : graph_of_all_ca_chains.edge_vec_ordered_) {
+    std::unordered_set<Edge> sub_chain_edge_record;
+    for (uint i = 0; i < chain.size() - 1; i++) {
+        Edge edge(chain[i], chain[i + 1]);
+        sub_chain_edge_record.insert(edge);
+    }
+
+    for (uint i = 0; i < chain.size() - 1; i++) {
+        Edge edge(chain[i], chain[i + 1]);
         const SinglePairPermutation& single_perm = chain_perm[edge];
-        SetVariableHelper(single_perm.GetNextTaskId(), variable_set_record,
-                          variable, chain_perm, graph_of_all_ca_chains,
-                          dag_tasks);
+        SetVariableHelperSingleEdge(edge, variable, single_perm.inequality_,
+                                    dag_tasks);
+        if (!variable.valid_) break;
     }
     if (variable.valid_)
         variable.valid_ = ExamVariableFeasibility(
-            variable, chain_perm, graph_of_all_ca_chains, dag_tasks);
+            variable, chain_perm, graph_of_all_ca_chains, dag_tasks, chain);
     return variable;
 }
 
