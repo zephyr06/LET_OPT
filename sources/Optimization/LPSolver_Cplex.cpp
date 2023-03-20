@@ -25,20 +25,21 @@ void LPOptimizer::ClearCplexMemory() {
 }
 
 std::pair<VariableOD, int> LPOptimizer::Optimize() {
-    // BeginTimer("Build_LP_Model");
+    BeginTimer("Build_LP_Model");
     Init();
     AddVariables();  // must be called first
     AddPermutationInequalityConstraints();
     AddSchedulabilityConstraints();
     AddObjectiveFunctions();
     cplexSolver_.extract(model_);
-    // EndTimer("Build_LP_Model");
+    EndTimer("Build_LP_Model");
 
-    // BeginTimer("Solve_LP");
+    BeginTimer("Solve_LP");
     bool found_feasible_solution = cplexSolver_.solve();
-    // EndTimer("Solve_LP");
-    IloNumArray values_optimized(env_, numVariables_);
+    EndTimer("Solve_LP");
 
+    BeginTimer("AfterSolve_LP");
+    IloNumArray values_optimized(env_, numVariables_);
     if (found_feasible_solution) {
         auto status = cplexSolver_.getStatus();
         cplexSolver_.getValues(varArray_, values_optimized);
@@ -53,6 +54,7 @@ std::pair<VariableOD, int> LPOptimizer::Optimize() {
     } else if (GlobalVariablesDAGOpt::debugMode)
         std::cout << "No feasible solution found!\n";
     ClearCplexMemory();
+    EndTimer("AfterSolve_LP");
     return std::make_pair(variable_od_opt_, optimal_obj_);
 }
 
