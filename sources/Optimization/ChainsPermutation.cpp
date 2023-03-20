@@ -202,8 +202,6 @@ VariableRange FindPossibleVariableOD(const DAG_Model& dag_tasks,
                                      const std::vector<int>& rta,
                                      const ChainsPermutation& chains_perm) {
     VariableRange variable_range = FindVariableRange(dag_tasks);
-    variable_range.lower_bound.print();
-    variable_range.upper_bound.print();
     std::vector<Edge> edges = chains_perm.GetEdges();
     for (int i = 0; i < chains_perm.size() + 1;
          i++) {  // TODO: improve efficiency there

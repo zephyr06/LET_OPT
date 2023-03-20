@@ -63,6 +63,7 @@ TEST_F(PermutationTest1, obj_) {
     EXPECT_THAT(obj_curr, testing::Le(res.second));
 }
 
+// TODO: add it to TaskSetPermutation
 TEST_F(PermutationTest1, FindBestPossibleVariableOD) {
     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
     TwoTaskPermutations perm24(2, 4, dag_tasks, tasks_info);

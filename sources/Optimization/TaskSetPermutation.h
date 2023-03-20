@@ -71,9 +71,12 @@ class TaskSetPermutation {
                 if (GlobalVariablesDAGOpt::SKIP_PERM) {
                     std::vector<std::vector<int>> sub_chains =
                         GetSubChains(dag_tasks_.chains_, chain_perm);
+                    VariableOD best_possible_variable_od =
+                        FindBestPossibleVariableOD(dag_tasks_, tasks_info_,
+                                                   rta_, chain_perm);
                     double obj_curr = ObjectiveFunction::Obj(
                         dag_tasks_, tasks_info_, chain_perm,
-                        best_possible_variable_od_, sub_chains);
+                        best_possible_variable_od, sub_chains);
                     if (obj_curr > best_yet_obj_) {
                         // if (chain_perm.size() < 3)
                         //     CoutError("Find an early skip of chain length: "
@@ -112,9 +115,9 @@ class TaskSetPermutation {
                 best_yet_obj_ = res.second;
                 best_yet_chain_ = chain_perm;
                 best_yet_variable_od_ = res.first;
-                if (res.second == 1459) {
-                    int a = 1;
-                }
+                // if (res.second == 1459) {
+                //     int a = 1;
+                // }
                 std::vector<std::vector<int>> sub_chains =
                     GetSubChains(dag_tasks_.chains_, chain_perm);
                 double obj_curr = ObjectiveFunction::Obj(
