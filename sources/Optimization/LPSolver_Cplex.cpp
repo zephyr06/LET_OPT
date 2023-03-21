@@ -25,13 +25,16 @@ void LPOptimizer::ClearCplexMemory() {
 }
 
 std::pair<VariableOD, int> LPOptimizer::Optimize() {
-    BeginTimer("Build_LP_Model");
     Init();
+    BeginTimer("Build_LP_Model");
     AddVariables();  // must be called first
     AddPermutationInequalityConstraints();
     AddSchedulabilityConstraints();
-    AddObjectiveFunctions();
+    // AddObjectiveFunctions();
+    AddConstantObjectiveFunctions();
+    BeginTimer("extract_model");
     cplexSolver_.extract(model_);
+    EndTimer("extract_model");
     EndTimer("Build_LP_Model");
 
     BeginTimer("Solve_LP");
@@ -125,12 +128,15 @@ std::pair<VariableOD, int> LPOptimizer::OptimizeConstant() {
 
 // this function doesn't include artificial variables
 void LPOptimizer::AddVariables() {
+    BeginTimer("AddVariables");
     numVariables_ = tasks_info_.N * 2;
     varArray_ = IloNumVarArray(env_, numVariables_, 0, tasks_info_.hyper_period,
                                IloNumVar::Float);
+    EndTimer("AddVariables");
 }
 
 void LPOptimizer::AddPermutationInequalityConstraints() {
+    BeginTimer("AddPermutationInequalityConstraints");
     for (const auto &edge_curr : graph_of_all_ca_chains_.edge_vec_ordered_) {
         const SinglePairPermutation &perm_curr = chains_perm_[edge_curr];
         const PermutationInequality ineq = perm_curr.inequality_;
@@ -150,8 +156,10 @@ void LPOptimizer::AddPermutationInequalityConstraints() {
             ineq.print();
         }
     }
+    EndTimer("AddPermutationInequalityConstraints");
 }
 void LPOptimizer::AddSchedulabilityConstraints() {
+    BeginTimer("AddSchedulabilityConstraints");
     for (int task_id = 0; task_id < tasks_info_.N; task_id++) {
         model_.add(varArray_[GetVariableIndexVirtualOffset(task_id)] +
                        rta_[task_id] <=
@@ -167,6 +175,7 @@ void LPOptimizer::AddSchedulabilityConstraints() {
                       << " <= " << dag_tasks_.GetTask(task_id).deadline << "\n";
         }
     }
+    EndTimer("AddSchedulabilityConstraints");
 }
 
 // void LPOptimizer::AddSensorFusionConstraints() {
@@ -215,6 +224,7 @@ void LPOptimizer::AddSchedulabilityConstraints() {
 
 // TODO: replace this function with other functions
 void LPOptimizer::AddObjectiveFunctions() {
+    BeginTimer("AddObjective");
     IloExpr rtda_expression(env_);
     std::stringstream var_name;
     int chain_count = 0;
@@ -270,6 +280,7 @@ void LPOptimizer::AddObjectiveFunctions() {
     }
     model_.add(IloMinimize(env_, rtda_expression));
     rtda_expression.end();
+    EndTimer("AddObjective");
 }
 
 void LPOptimizer::AddConstantObjectiveFunctions() {

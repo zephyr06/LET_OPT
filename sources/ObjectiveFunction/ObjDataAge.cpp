@@ -7,6 +7,10 @@ const std::string ObjDataAge::type_trait("DataAge");
 std::unordered_map<JobCEC, JobCEC> GetFirstReactMap(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
     const ChainsPermutation &chain_perm, const std::vector<int> &chain) {
+#ifdef PROFILE_CODE
+    BeginTimer(__FUNCTION__);
+#endif
+
     std::unordered_map<JobCEC, JobCEC> first_react_map;
     int hyper_period = GetHyperPeriod(tasks_info, chain);
     int job_num_in_hyper_period =
@@ -26,6 +30,9 @@ std::unordered_map<JobCEC, JobCEC> GetFirstReactMap(
         }
         first_react_map[job_source] = job_curr;
     }
+#ifdef PROFILE_CODE
+    EndTimer(__FUNCTION__);
+#endif
     return first_react_map;
 }
 
