@@ -30,8 +30,8 @@ std::pair<VariableOD, int> LPOptimizer::Optimize() {
     AddVariables();  // must be called first
     AddPermutationInequalityConstraints();
     AddSchedulabilityConstraints();
-    // AddObjectiveFunctions();
-    AddConstantObjectiveFunctions();
+    AddObjectiveFunctions();
+    // AddConstantObjectiveFunctions();
     BeginTimer("extract_model");
     cplexSolver_.extract(model_);
     EndTimer("extract_model");
