@@ -16,11 +16,13 @@ class VariableOD {
    public:
     VariableOD() {}
     VariableOD(const TaskSet& tasks_) {
+        BeginTimer("VariableOD");
         variables_.reserve(tasks_.size());
         for (uint i = 0; i < tasks_.size(); i++) {
             variables_[tasks_[i].id] = (OD_Vir{0, tasks_[i].deadline});
         }
         valid_ = true;
+        EndTimer("VariableOD");
     }
 
     // this function will update values

@@ -143,6 +143,9 @@ bool ExamVariableFeasibility(const VariableOD& variable,
                              const GraphOfChains& graph_of_all_ca_chains,
                              const DAG_Model& dag_task,
                              const std::vector<int>& chain) {
+#ifdef PROFILE_CODE
+    BeginTimer(__FUNCTION__);
+#endif
     for (uint i = 0; i < chain.size() - 1; i++) {
         Edge edge(chain[i], chain[i + 1]);
         const PermutationInequality& inequality = chain_perm[edge].inequality_;
@@ -154,14 +157,24 @@ bool ExamVariableFeasibility(const VariableOD& variable,
                 variable.at(prev_id).deadline >
                     variable.at(next_id).offset + inequality.upper_bound_) {
                 if (GlobalVariablesDAGOpt::debugMode) inequality.print();
+#ifdef PROFILE_CODE
+                BeginTimer(__FUNCTION__);
+#endif
                 return false;
             }
         }
     }
     for (uint i = 0; i < variable.size(); i++) {
-        if (variable.at(i).deadline > dag_task.GetTask(i).deadline)
+        if (variable.at(i).deadline > dag_task.GetTask(i).deadline) {
+#ifdef PROFILE_CODE
+            BeginTimer(__FUNCTION__);
+#endif
             return false;
+        }
     }
+#ifdef PROFILE_CODE
+    BeginTimer(__FUNCTION__);
+#endif
     return true;
 }
 
@@ -172,6 +185,9 @@ void SetVariableHelperSingleEdge(const Edge& edge, VariableOD& variable,
                                  const PermutationInequality& ineq,
                                  const DAG_Model& dag_tasks,
                                  const std::vector<int>& rta) {
+#ifdef PROFILE_CODE
+    BeginTimer(__FUNCTION__);
+#endif
     //  edge.from_id, edge_to_id
     variable.SetMinDeadline(edge.from_id, dag_tasks, rta);
     variable.SetOffset(edge.to_id,
@@ -184,28 +200,28 @@ void SetVariableHelperSingleEdge(const Edge& edge, VariableOD& variable,
         if (variable[edge.from_id].deadline >
             dag_tasks.GetTask(edge.from_id).deadline) {
             variable.valid_ = false;
-            return;
+            // return;
         }
     }
     if (variable[edge.to_id].offset + GetResponseTime(dag_tasks, edge.to_id) >
         dag_tasks.GetTask(edge.to_id).deadline) {
         variable.valid_ = false;
-        return;
+        // return;
     }
+#ifdef PROFILE_CODE
+    EndTimer(__FUNCTION__);
+#endif
 }
 
 VariableOD FindODFromSingleChainPermutation(
     const DAG_Model& dag_tasks, const ChainsPermutation& chain_perm,
     const GraphOfChains& graph_of_all_ca_chains, const std::vector<int>& chain,
     const std::vector<int>& rta) {
+#ifdef PROFILE_CODE
+    BeginTimer(__FUNCTION__);
+#endif
     const TaskSet& tasks = dag_tasks.GetTaskSet();
     VariableOD variable(tasks);
-
-    std::unordered_set<Edge> sub_chain_edge_record;
-    for (uint i = 0; i < chain.size() - 1; i++) {
-        Edge edge(chain[i], chain[i + 1]);
-        sub_chain_edge_record.insert(edge);
-    }
 
     for (uint i = 0; i < chain.size() - 1; i++) {
         Edge edge(chain[i], chain[i + 1]);
@@ -217,6 +233,9 @@ VariableOD FindODFromSingleChainPermutation(
     if (variable.valid_)
         variable.valid_ = ExamVariableFeasibility(
             variable, chain_perm, graph_of_all_ca_chains, dag_tasks, chain);
+#ifdef PROFILE_CODE
+    EndTimer(__FUNCTION__);
+#endif
     return variable;
 }
 

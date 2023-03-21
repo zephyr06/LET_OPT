@@ -239,12 +239,18 @@ VariableOD FindBestPossibleVariableOD(const DAG_Model& dag_tasks,
                                       const TaskSetInfoDerived& tasks_info,
                                       const std::vector<int>& rta,
                                       const ChainsPermutation& chains_perm) {
+#ifdef PROFILE_CODE
+    BeginTimer(__FUNCTION__);
+#endif
     VariableRange variable_range =
         FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
     VariableOD variable_od = variable_range.lower_bound;
     for (int i = 0; i < tasks_info.N; i++) {
         variable_od[i].offset = variable_range.upper_bound[i].offset;
     }
+#ifdef PROFILE_CODE
+    EndTimer(__FUNCTION__);
+#endif
     return variable_od;
 }
 

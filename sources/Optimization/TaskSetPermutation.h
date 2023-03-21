@@ -67,6 +67,7 @@ class TaskSetPermutation {
 
                 // try to skip some permutations
                 if (GlobalVariablesDAGOpt::SKIP_PERM) {
+                    BeginTimer("GlobalVariablesDAGOpt::SKIP_PERM");
                     bool skip_to_next = false;
                     std::vector<std::vector<int>> sub_chains =
                         GetSubChains(dag_tasks_.chains_, chain_perm);
@@ -94,8 +95,10 @@ class TaskSetPermutation {
                     if (skip_to_next) {
                         chain_perm.pop(
                             *adjacent_two_task_permutations_[position][i]);
+                        EndTimer("GlobalVariablesDAGOpt::SKIP_PERM");
                         continue;
                     }
+                    EndTimer("GlobalVariablesDAGOpt::SKIP_PERM");
                 }
 
                 IterateAllChainsPermutations<ObjectiveFunction>(position + 1,
