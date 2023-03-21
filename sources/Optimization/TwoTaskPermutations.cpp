@@ -75,6 +75,23 @@ bool SinglePairPermutation::AddMatchJobPair(const JobCEC& job_curr,
     return true;
 }
 
+void SinglePairPermutation::PopMatchJobPair(const JobCEC& job_curr,
+                                            const JobCEC& job_match) {
+    auto itr = job_first_react_matches_.find(job_curr);
+    if (itr == job_first_react_matches_.end())
+        return;
+    else {
+        if (itr->second.size() > 0) {
+            JobCEC last_matched_job = itr->second.back();
+            if (job_match.jobId == last_matched_job.jobId) {
+                itr->second.pop_back();
+                if (itr->second.size() == 0)
+                    job_first_react_matches_.erase(job_curr);
+            }
+        }
+    }
+}
+
 bool TwoTaskPermutations::AppendJobs(
     const JobCEC& job_curr, const JobCEC& job_match,
     SinglePairPermutation& permutation_current) {
@@ -103,23 +120,22 @@ void TwoTaskPermutations::AppendAllPermutations(
                                 superperiod_, tasks_info_);
 
     for (auto job_match : jobs_possible_match) {
-        SinglePairPermutation permutation_current_copy = permutation_current;
+        PermutationInequality perm_ineq_curr = permutation_current.inequality_;
+        SinglePairPermutation& permutation_current_copy = permutation_current;
         if (AppendJobs(job_curr, job_match, permutation_current_copy)) {
             if (job_curr.jobId ==
                 superperiod_ / GetPeriod(job_curr, tasks_info_) -
                     1) {  // reach end, record the current permutations
 
-                if (
-                    // tasks_info_.GetTask(job_curr.taskId).period ==
-                    //     GlobalVariablesDAGOpt::TIME_SCALE_FACTOR * 1 &&
-                    single_permutations_.size() > 20 &&
+                if (single_permutations_.size() > 20 &&
                     RandRange(0, 1) >
                         GlobalVariablesDAGOpt::SAMPLE_SMALL_TASKS) {
                     continue;
-                } else
+                } else {
                     single_permutations_.push_back(
                         std::make_shared<const SinglePairPermutation>(
                             permutation_current_copy));
+                }
 
                 if (single_permutations_.size() > 1e5)
                     CoutError("Possibly too many permutations!");
@@ -129,6 +145,8 @@ void TwoTaskPermutations::AppendAllPermutations(
             }
         } else  // skip this match because it's not feasible or useful
             ;
+        permutation_current_copy.inequality_ = perm_ineq_curr;
+        permutation_current_copy.PopMatchJobPair(job_curr, job_match);
     }
 }
 

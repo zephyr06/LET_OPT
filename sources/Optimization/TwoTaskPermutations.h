@@ -70,6 +70,7 @@ struct SinglePairPermutation {
     }
 
     bool AddMatchJobPair(const JobCEC& job_curr, const JobCEC& job_match);
+    void PopMatchJobPair(const JobCEC& job_curr, const JobCEC& job_match);
 
     void print() const;
 
