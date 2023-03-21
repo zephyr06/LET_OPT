@@ -14,6 +14,7 @@ void LPOptimizer::Init() {
     model_ = IloModel(env_);
     cplexSolver_ = IloCplex(env_);
     cplexSolver_.setOut(env_.getNullStream());
+    // constraint_array_(env_);
     EndTimer("Init");
 }
 
@@ -25,7 +26,7 @@ void LPOptimizer::ClearCplexMemory() {
 }
 
 std::pair<VariableOD, int> LPOptimizer::Optimize() {
-    Init();
+    // Init();
     BeginTimer("Build_LP_Model");
     AddVariables();  // must be called first
     AddPermutationInequalityConstraints();
@@ -158,6 +159,7 @@ void LPOptimizer::AddPermutationInequalityConstraints() {
     }
     EndTimer("AddPermutationInequalityConstraints");
 }
+
 void LPOptimizer::AddSchedulabilityConstraints() {
     BeginTimer("AddSchedulabilityConstraints");
     for (int task_id = 0; task_id < tasks_info_.N; task_id++) {

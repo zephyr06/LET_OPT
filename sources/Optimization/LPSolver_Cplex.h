@@ -25,9 +25,15 @@ class LPOptimizer {
           graph_of_all_ca_chains_(graph_of_all_ca_chains),
           obj_trait_(obj_trait),
           react_chain_map_(react_chain_map),
-          rta_(rta) {
+          rta_(rta),
+          // cplex's environments
+          env_(IloEnv()),
+          model_(env_),
+          cplexSolver_(env_),
+          constraint_array_(env_) {
         variable_od_opt_.valid_ = false;
-        env_.end();
+        cplexSolver_.setOut(env_.getNullStream());
+        // env_.end();
     }
 
     void Init();
@@ -87,8 +93,8 @@ class LPOptimizer {
     IloEnv env_;
     IloModel model_;
     IloCplex cplexSolver_;
-    // we organize the variables following task-ids, e.g., o_0,d_0,o_1,d_1,...,
     IloNumVarArray varArray_;
+    IloConstraintArray constraint_array_;
     int optimal_obj_ = 1e8;
     // std::unordered_map<int, uint> task_id2position_cplex_;
 };
