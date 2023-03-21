@@ -158,7 +158,7 @@ bool ExamVariableFeasibility(const VariableOD& variable,
                     variable.at(next_id).offset + inequality.upper_bound_) {
                 if (GlobalVariablesDAGOpt::debugMode) inequality.print();
 #ifdef PROFILE_CODE
-                BeginTimer(__FUNCTION__);
+                EndTimer(__FUNCTION__);
 #endif
                 return false;
             }
@@ -167,13 +167,13 @@ bool ExamVariableFeasibility(const VariableOD& variable,
     for (uint i = 0; i < variable.size(); i++) {
         if (variable.at(i).deadline > dag_task.GetTask(i).deadline) {
 #ifdef PROFILE_CODE
-            BeginTimer(__FUNCTION__);
+            EndTimer(__FUNCTION__);
 #endif
             return false;
         }
     }
 #ifdef PROFILE_CODE
-    BeginTimer(__FUNCTION__);
+    EndTimer(__FUNCTION__);
 #endif
     return true;
 }
