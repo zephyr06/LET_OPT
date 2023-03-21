@@ -48,7 +48,6 @@ TaskSetPermutation::TaskSetPermutation(
     adjacent_two_task_permutations_.reserve(
         1e2);  // there are never more than 1e2 edges
     FindPairPermutations();
-    chain_permutations_.reserve(1e5);
 }
 
 void TaskSetPermutation::FindPairPermutations() {

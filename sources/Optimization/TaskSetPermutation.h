@@ -176,7 +176,6 @@ class TaskSetPermutation {
     RegularTaskSystem::TaskSetInfoDerived tasks_info_;
     GraphOfChains graph_of_all_ca_chains_;
     std::vector<TwoTaskPermutations> adjacent_two_task_permutations_;
-    std::vector<ChainsPermutation> chain_permutations_;
     ChainsPermutation best_yet_chain_;
     int best_yet_obj_;
     int iteration_count_;
