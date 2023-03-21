@@ -170,9 +170,10 @@ bool ExamVariableFeasibility(const VariableOD& variable,
 //  const std::vector<int>& rta
 void SetVariableHelperSingleEdge(const Edge& edge, VariableOD& variable,
                                  const PermutationInequality& ineq,
-                                 const DAG_Model& dag_tasks) {
+                                 const DAG_Model& dag_tasks,
+                                 const std::vector<int>& rta) {
     //  edge.from_id, edge_to_id
-    variable.SetMinDeadline(edge.from_id, dag_tasks);
+    variable.SetMinDeadline(edge.from_id, dag_tasks, rta);
     variable.SetOffset(edge.to_id,
                        variable[edge.from_id].deadline - ineq.upper_bound_);
     if (variable[edge.from_id].deadline - ineq.upper_bound_ < 0) {
@@ -195,8 +196,8 @@ void SetVariableHelperSingleEdge(const Edge& edge, VariableOD& variable,
 
 VariableOD FindODFromSingleChainPermutation(
     const DAG_Model& dag_tasks, const ChainsPermutation& chain_perm,
-    const GraphOfChains& graph_of_all_ca_chains,
-    const std::vector<int>& chain) {
+    const GraphOfChains& graph_of_all_ca_chains, const std::vector<int>& chain,
+    const std::vector<int>& rta) {
     const TaskSet& tasks = dag_tasks.GetTaskSet();
     VariableOD variable(tasks);
 
@@ -210,7 +211,7 @@ VariableOD FindODFromSingleChainPermutation(
         Edge edge(chain[i], chain[i + 1]);
         const SinglePairPermutation& single_perm = chain_perm[edge];
         SetVariableHelperSingleEdge(edge, variable, single_perm.inequality_,
-                                    dag_tasks);
+                                    dag_tasks, rta);
         if (!variable.valid_) break;
     }
     if (variable.valid_)

@@ -25,6 +25,8 @@ TEST(RunSingle, v1) {
         TaskSetPermutation(dag_tasks, {dag_tasks.chains_});
     int obj_find = task_sets_perms.PerformOptimization<ObjReactionTime>();
 
+    std::cout << "Infeasible iterations: "
+              << task_sets_perms.infeasible_iteration_ << "\n";
     // print some info
 
     std::cout << "The minimum objective function found is " << obj_find << "\n";

@@ -49,9 +49,9 @@ class VariableOD {
     }
 
     // assume offset is already set
-    bool SetMinDeadline(uint task_id, const DAG_Model& dag_tasks) {
-        int rta = GetResponseTime(dag_tasks, task_id);
-        return SetDeadline(task_id, variables_[task_id].offset + rta);
+    bool SetMinDeadline(uint task_id, const DAG_Model& dag_tasks,
+                        const std::vector<int>& rta) {
+        return SetDeadline(task_id, variables_[task_id].offset + rta[task_id]);
     }
 
     void SetOffset(uint task_id, int value) {

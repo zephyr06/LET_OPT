@@ -26,6 +26,7 @@ class PermutationTest1 : public ::testing::Test {
         perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
         perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
         perm02 = TwoTaskPermutations(0, 2, dag_tasks, tasks_info);
+        rta = GetResponseTimeTaskSet(dag_tasks);
 
         // perm01[0]->print();
         // perm01[1]->print();
@@ -48,6 +49,7 @@ class PermutationTest1 : public ::testing::Test {
     TwoTaskPermutations perm01;
     TwoTaskPermutations perm12;
     TwoTaskPermutations perm02;
+    std::vector<int> rta;
 };
 
 TEST_F(PermutationTest1, FindODFromSingleChainPermutation) {
@@ -61,7 +63,7 @@ TEST_F(PermutationTest1, FindODFromSingleChainPermutation) {
 
     GraphOfChains graph_chains({task_chain});
     VariableOD variable = FindODFromSingleChainPermutation(
-        dag_tasks, chain_perm, graph_chains, task_chain);
+        dag_tasks, chain_perm, graph_chains, task_chain, rta);
     EXPECT_TRUE(variable.valid_);
     EXPECT_EQ(0, variable[0].offset);
     EXPECT_EQ(1, variable[0].deadline);
@@ -82,7 +84,7 @@ TEST_F(PermutationTest1, FindODFromSingleChainPermutation_v2) {
 
     GraphOfChains graph_chains({task_chain});
     VariableOD variable = FindODFromSingleChainPermutation(
-        dag_tasks, chain_perm, graph_chains, task_chain);
+        dag_tasks, chain_perm, graph_chains, task_chain, rta);
     EXPECT_TRUE(variable.valid_);
     EXPECT_EQ(0, variable[0].offset);
     EXPECT_EQ(1, variable[0].deadline);
@@ -153,6 +155,7 @@ class PermutationTest2 : public ::testing::Test {
 
         perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
         perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
+        rta = GetResponseTimeTaskSet(dag_tasks);
 
         // perm01[0]->print();
         // perm01[1]->print();
@@ -174,6 +177,7 @@ class PermutationTest2 : public ::testing::Test {
 
     TwoTaskPermutations perm01;
     TwoTaskPermutations perm12;
+    std::vector<int> rta;
 };
 
 TEST_F(PermutationTest2, FindODFromSingleChainPermutation) {
@@ -187,7 +191,7 @@ TEST_F(PermutationTest2, FindODFromSingleChainPermutation) {
 
     GraphOfChains graph_chains({task_chain});
     VariableOD variable = FindODFromSingleChainPermutation(
-        dag_tasks, chain_perm, graph_chains, task_chain);
+        dag_tasks, chain_perm, graph_chains, task_chain, rta);
     EXPECT_FALSE(variable.valid_);
 }
 
@@ -245,9 +249,10 @@ TEST_F(PermutationTest_Non_Har, FindODFromSingleChainPermutation_invalid) {
     chain_perm.push_back(perm12[0]);
     perm12[0]->print();
 
+    std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
     GraphOfChains graph_chains({task_chain});
     VariableOD variable = FindODFromSingleChainPermutation(
-        dag_tasks, chain_perm, graph_chains, task_chain);
+        dag_tasks, chain_perm, graph_chains, task_chain, rta);
     EXPECT_FALSE(variable.valid_);
     // EXPECT_EQ(0, variable[0].offset);
     // EXPECT_EQ(1, variable[0].deadline);
@@ -267,8 +272,9 @@ TEST_F(PermutationTest_Non_Har, FindODFromSingleChainPermutation_valid) {
     perm12[0]->print();
 
     GraphOfChains graph_chains({task_chain});
+    std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
     VariableOD variable = FindODFromSingleChainPermutation(
-        dag_tasks, chain_perm, graph_chains, task_chain);
+        dag_tasks, chain_perm, graph_chains, task_chain, rta);
     EXPECT_TRUE(variable.valid_);
     EXPECT_EQ(0, variable[0].offset);
     EXPECT_EQ(1, variable[0].deadline);
@@ -312,13 +318,13 @@ TEST_F(PermutationTest3, Find_OD) {
     task_set_perms.adjacent_two_task_permutations_[2][1]->print();
     task_set_perms.adjacent_two_task_permutations_[3][1]->print();
 
+    std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
     VariableOD variable_od = FindODFromSingleChainPermutation(
         dag_tasks, chains_perm, task_set_perms.graph_of_all_ca_chains_,
-        {1, 2, 3, 4});
+        {1, 2, 3, 4}, rta);
     variable_od.print();
 
     std::unordered_map<JobCEC, JobCEC> react_chain_map;
-    std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
     int index = 0;
     for (int x : rta) {
         std::cout << "RTA of task " << index++ << ": " << x << "\n";
@@ -342,12 +348,12 @@ TEST_F(PermutationTest3, Find_OD_v2) {
     task_set_perms.adjacent_two_task_permutations_[2][1]->print();
     task_set_perms.adjacent_two_task_permutations_[3][1]->print();
 
+    std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
     VariableOD variable_od = FindODFromSingleChainPermutation(
         dag_tasks, chains_perm, task_set_perms.graph_of_all_ca_chains_,
-        {1, 2, 3, 4});
+        {1, 2, 3, 4}, rta);
 
     std::unordered_map<JobCEC, JobCEC> react_chain_map;
-    std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
     auto res =
         FindODWithLP(task_set_perms.dag_tasks_, task_set_perms.tasks_info_,
                      chains_perm, task_set_perms.graph_of_all_ca_chains_,
@@ -386,12 +392,12 @@ TEST_F(PermutationTest4, Find_OD_v2) {
     chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[3][3]);
     chains_perm.print();
 
+    std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
     VariableOD variable_od = FindODFromSingleChainPermutation(
         dag_tasks, chains_perm, task_set_perms.graph_of_all_ca_chains_,
-        {1, 3, 4});
+        {1, 3, 4}, rta);
 
     std::unordered_map<JobCEC, JobCEC> react_chain_map;
-    std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
     int index = 0;
     for (int x : rta) {
         std::cout << "RTA of task " << index++ << ": " << x << "\n";
@@ -434,11 +440,12 @@ TEST_F(PermutationTest5, Find_OD) {
     chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[1][2]);
     chains_perm.print();
 
+    std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
     VariableOD variable_od = FindODFromSingleChainPermutation(
-        dag_tasks, chains_perm, task_set_perms.graph_of_all_ca_chains_, {1, 4});
+        dag_tasks, chains_perm, task_set_perms.graph_of_all_ca_chains_, {1, 4},
+        rta);
 
     std::unordered_map<JobCEC, JobCEC> react_chain_map;
-    std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
     int index = 0;
     for (int x : rta) {
         std::cout << "RTA of task " << index++ << ": " << x << "\n";
@@ -513,8 +520,9 @@ TEST_F(PermutationTest6, Find_OD) {
     perm12[0]->print();
 
     GraphOfChains graph_chains({task_chain});
+    std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
     VariableOD variable = FindODFromSingleChainPermutation(
-        dag_tasks, chain_perm, graph_chains, task_chain);
+        dag_tasks, chain_perm, graph_chains, task_chain, rta);
     EXPECT_TRUE(variable.valid_);
 }
 

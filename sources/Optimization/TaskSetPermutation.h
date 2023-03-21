@@ -17,7 +17,8 @@ bool ExamVariableFeasibility(const VariableOD& variable,
 
 VariableOD FindODFromSingleChainPermutation(
     const DAG_Model& dag_tasks, const ChainsPermutation& chain_perm,
-    const GraphOfChains& graph_of_all_ca_chains, const std::vector<int>& chain);
+    const GraphOfChains& graph_of_all_ca_chains, const std::vector<int>& chain,
+    const std::vector<int>& rta);
 
 std::vector<std::vector<int>> GetSubChains(
     const std::vector<std::vector<int>>& chains_full_length,
@@ -73,7 +74,7 @@ class TaskSetPermutation {
                         if (GlobalVariablesDAGOpt::SKIP_PERM >= 2 &&
                             !FindODFromSingleChainPermutation(
                                  dag_tasks_, chain_perm,
-                                 graph_of_all_ca_chains_, sub_chain)
+                                 graph_of_all_ca_chains_, sub_chain, rta_)
                                  .valid_) {
                             skip_to_next = true;
                             break;
@@ -135,6 +136,8 @@ class TaskSetPermutation {
                     CoutError(
                         "Something's wrong with sub-chain obj evaluation");
             }
+        } else {
+            infeasible_iteration_++;
         }
 
         // Test purposes
@@ -183,6 +186,7 @@ class TaskSetPermutation {
     std::vector<int> rta_;
     VariableOD best_possible_variable_od_;
     VariableRange variable_range_od_;
+    int infeasible_iteration_ = 0;
 };
 
 template <typename ObjectiveFunction>
