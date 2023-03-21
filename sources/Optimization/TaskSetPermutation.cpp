@@ -54,7 +54,7 @@ void TaskSetPermutation::FindPairPermutations() {
     for (const auto& edge_curr : graph_of_all_ca_chains_.edge_vec_ordered_) {
         if (ifTimeout(start_time_)) break;
         adjacent_two_task_permutations_.push_back(TwoTaskPermutations(
-            edge_curr.from_id, edge_curr.to_id, dag_tasks_, tasks_info_));
+            edge_curr.from_id, edge_curr.to_id, dag_tasks_, tasks_info_, rta_));
         std::cout << "Pair permutation #: "
                   << adjacent_two_task_permutations_.back().size() << "\n";
     }
@@ -203,7 +203,7 @@ void SetVariableHelperSingleEdge(const Edge& edge, VariableOD& variable,
             // return;
         }
     }
-    if (variable[edge.to_id].offset + GetResponseTime(dag_tasks, edge.to_id) >
+    if (variable[edge.to_id].offset + rta[edge.to_id] >
         dag_tasks.GetTask(edge.to_id).deadline) {
         variable.valid_ = false;
         // return;
