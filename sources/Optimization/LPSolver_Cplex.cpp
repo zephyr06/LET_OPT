@@ -138,20 +138,40 @@ void LPOptimizer::AddVariables() {
 
 void LPOptimizer::AddPermutationInequalityConstraints() {
     BeginTimer("AddPermutationInequalityConstraints");
-    for (const auto &edge_curr : graph_of_all_ca_chains_.edge_vec_ordered_) {
-        const SinglePairPermutation &perm_curr = chains_perm_[edge_curr];
-        const PermutationInequality ineq = perm_curr.inequality_;
-        // ineq.task_prev_id_, ineq.task_next_id_
-        model_.add(
-            varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] +
-                ineq.lower_bound_ <=
-            varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)] +
-                GlobalVariablesDAGOpt::kCplexInequalityThreshold);
 
-        model_.add(
-            varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)] <=
+    // for (const auto &edge_curr : graph_of_all_ca_chains_.edge_vec_ordered_) {
+    for (uint i = 0; i < graph_of_all_ca_chains_.edge_vec_ordered_.size();
+         i++) {
+        const Edge &edge_curr = graph_of_all_ca_chains_.edge_vec_ordered_[i];
+        const PermutationInequality ineq = chains_perm_[edge_curr].inequality_;
+        // model_.add(
+        //     varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] +
+        //         ineq.lower_bound_ <=
+        //     varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)] +
+        //         GlobalVariablesDAGOpt::kCplexInequalityThreshold);
+        std::string const_name1 = "perm_constraint_" + std::to_string(i * 2);
+        IloRange myConstraint1(
+            env_, -IloInfinity,
             varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] +
-                ineq.upper_bound_);
+                ineq.lower_bound_ -
+                varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)] -
+                GlobalVariablesDAGOpt::kCplexInequalityThreshold,
+            0, const_name1.c_str());
+        model_.add(myConstraint1);
+
+        // model_.add(
+        //     varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)] <=
+        //     varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] +
+        //         ineq.upper_bound_);
+        std::string const_name2 =
+            "perm_constraint_" + std::to_string(i * 2 + 1);
+        IloRange myConstraint2(
+            env_, -IloInfinity,
+            varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)] -
+                ineq.upper_bound_ -
+                varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)],
+            0, const_name2.c_str());
+        model_.add(myConstraint2);
 
         if (GlobalVariablesDAGOpt::debugMode) {
             ineq.print();
@@ -159,6 +179,7 @@ void LPOptimizer::AddPermutationInequalityConstraints() {
     }
     EndTimer("AddPermutationInequalityConstraints");
 }
+void LPOptimizer::UpdatePermutationInequalityConstraints() {}
 
 void LPOptimizer::AddSchedulabilityConstraints() {
     BeginTimer("AddSchedulabilityConstraints");
@@ -228,19 +249,17 @@ void LPOptimizer::AddSchedulabilityConstraints() {
 void LPOptimizer::AddObjectiveFunctions() {
     BeginTimer("AddObjective");
     IloExpr rtda_expression(env_);
-    std::stringstream var_name;
     int chain_count = 0;
     // const TaskSet &tasks = dag_tasks_.GetTaskSet();
 
     for (auto chain : dag_tasks_.chains_) {
-        var_name << "Chain_" << chain_count << "_RT";
-        auto theta_rt = IloNumVar(env_, 0, IloInfinity, IloNumVar::Float,
-                                  var_name.str().c_str());
-        var_name.str("");
-        var_name << "Chain_" << chain_count << "_DA";
-        auto theta_da = IloNumVar(env_, 0, IloInfinity, IloNumVar::Float,
-                                  var_name.str().c_str());
-        var_name.str("");
+        std::string var_name = "Chain_" + std::to_string(chain_count) + "_RT";
+        auto theta_rt =
+            IloNumVar(env_, 0, IloInfinity, IloNumVar::Float, var_name.c_str());
+        var_name = "Chain_" + std::to_string(chain_count) + "_DA";
+        auto theta_da =
+            IloNumVar(env_, 0, IloInfinity, IloNumVar::Float, var_name.c_str());
+
         auto react_chain_map =
             GetFirstReactMap(dag_tasks_, tasks_info_, chains_perm_, chain);
 
@@ -252,9 +271,20 @@ void LPOptimizer::AddObjectiveFunctions() {
             JobCEC start_job = {chain[0], (start_instance_index)};
             JobCEC first_react_job = react_chain_map[start_job];
             if (obj_trait_ == "ReactionTime") {
-                model_.add(theta_rt >=
-                           (GetFinishTimeExpression(first_react_job) -
-                            GetStartTimeExpression(start_job)));
+                // model_.add(theta_rt >=
+                //            (GetFinishTimeExpression(first_react_job) -
+                //             GetStartTimeExpression(start_job)));
+                std::string const_name =
+                    "rt_constraint_" + std::to_string(start_instance_index);
+                IloExpr finish_expr = GetFinishTimeExpression(first_react_job);
+                IloExpr start_expr = GetStartTimeExpression(start_job);
+
+                IloRange myConstraint1(env_, 0,
+                                       theta_rt - finish_expr + start_expr,
+                                       IloInfinity, const_name.c_str());
+                model_.add(myConstraint1);
+                finish_expr.end();
+                start_expr.end();
                 if (GlobalVariablesDAGOpt::debugMode) {
                     std::cout << "Chain_" << chain_count << "_RT"
                               << " >= "
@@ -269,6 +299,7 @@ void LPOptimizer::AddObjectiveFunctions() {
                     first_react_job.jobId > 0) {
                     JobCEC last_react_job(first_react_job.taskId,
                                           first_react_job.jobId - 1);
+                    //   TODO: make the constraint name trick work!
                     model_.add(theta_da >=
                                (GetFinishTimeExpression(last_react_job) -
                                 GetStartTimeExpression(last_start_job)));
@@ -294,72 +325,75 @@ void LPOptimizer::AddConstantObjectiveFunctions() {
     rtda_expression.end();
 }
 
-void LPOptimizer::AddObjectiveFunctionReactionTime() {
-    IloExpr rtda_expression(env_);
-    std::stringstream var_name;
-    int chain_count = 0;
-    const TaskSet &tasks = dag_tasks_.GetTaskSet();
+// void LPOptimizer::AddObjectiveFunctionReactionTime() {
+//     IloExpr rtda_expression(env_);
+//     std::stringstream var_name;
+//     int chain_count = 0;
+//     const TaskSet &tasks = dag_tasks_.GetTaskSet();
 
-    for (auto chain : dag_tasks_.chains_) {
-        var_name.str("");
-        var_name << "Chain_" << chain_count << "_RT";
-        auto theta_rt = IloNumVar(env_, 0, IloInfinity, IloNumVar::Float,
-                                  var_name.str().c_str());
-        auto react_chain_map =
-            GetFirstReactMap(dag_tasks_, tasks_info_, chains_perm_, chain);
+//     for (auto chain : dag_tasks_.chains_) {
+//         var_name.str("");
+//         var_name << "Chain_" << chain_count << "_RT";
+//         auto theta_rt = IloNumVar(env_, 0, IloInfinity, IloNumVar::Float,
+//                                   var_name.str().c_str());
+//         auto react_chain_map =
+//             GetFirstReactMap(dag_tasks_, tasks_info_, chains_perm_, chain);
 
-        int hyper_period = GetHyperPeriod(tasks_info_, chain);
-        LLint total_start_jobs = hyper_period / tasks[chain[0]].period + 1;
-        for (LLint start_instance_index = 0;
-             start_instance_index <= total_start_jobs; start_instance_index++) {
-            JobCEC start_job = {chain[0], (start_instance_index)};
-            JobCEC first_react_job = react_chain_map[start_job];
-            model_.add(theta_rt >= (GetFinishTimeExpression(first_react_job) -
-                                    GetStartTimeExpression(start_job)));
-        }
-        rtda_expression += theta_rt;
-        chain_count++;
-    }
-    model_.add(IloMinimize(env_, rtda_expression));
-    rtda_expression.end();
-}
-void LPOptimizer::AddObjectiveFunctionDataAge() {
-    IloExpr rtda_expression(env_);
-    std::stringstream var_name;
-    int chain_count = 0;
-    const TaskSet &tasks = dag_tasks_.GetTaskSet();
+//         int hyper_period = GetHyperPeriod(tasks_info_, chain);
+//         LLint total_start_jobs = hyper_period / tasks[chain[0]].period + 1;
+//         for (LLint start_instance_index = 0;
+//              start_instance_index <= total_start_jobs;
+//              start_instance_index++) {
+//             JobCEC start_job = {chain[0], (start_instance_index)};
+//             JobCEC first_react_job = react_chain_map[start_job];
+//             model_.add(theta_rt >= (GetFinishTimeExpression(first_react_job)
+//             -
+//                                     GetStartTimeExpression(start_job)));
+//         }
+//         rtda_expression += theta_rt;
+//         chain_count++;
+//     }
+//     model_.add(IloMinimize(env_, rtda_expression));
+//     rtda_expression.end();
+// }
+// void LPOptimizer::AddObjectiveFunctionDataAge() {
+//     IloExpr rtda_expression(env_);
+//     std::stringstream var_name;
+//     int chain_count = 0;
+//     const TaskSet &tasks = dag_tasks_.GetTaskSet();
 
-    for (auto chain : dag_tasks_.chains_) {
-        var_name.str("");
-        var_name << "Chain_" << chain_count << "_DA";
-        auto theta_da = IloNumVar(env_, 0, IloInfinity, IloNumVar::Float,
-                                  var_name.str().c_str());
-        auto react_chain_map =
-            GetFirstReactMap(dag_tasks_, tasks_info_, chains_perm_, chain);
+//     for (auto chain : dag_tasks_.chains_) {
+//         var_name.str("");
+//         var_name << "Chain_" << chain_count << "_DA";
+//         auto theta_da = IloNumVar(env_, 0, IloInfinity, IloNumVar::Float,
+//                                   var_name.str().c_str());
+//         auto react_chain_map =
+//             GetFirstReactMap(dag_tasks_, tasks_info_, chains_perm_, chain);
 
-        int hyper_period = GetHyperPeriod(tasks_info_, chain);
-        LLint total_start_jobs = hyper_period / tasks[chain[0]].period + 1;
-        for (LLint start_instance_index = 1;
-             start_instance_index <= total_start_jobs; start_instance_index++) {
-            JobCEC start_job = {chain[0], (start_instance_index)};
-            JobCEC first_react_job = react_chain_map[start_job];
-            JobCEC last_start_job = {chain[0], (start_instance_index - 1)};
-            if (start_instance_index > 0 &&
-                react_chain_map[last_start_job] != first_react_job &&
-                first_react_job.jobId > 0) {
-                JobCEC last_react_job(first_react_job.taskId,
-                                      first_react_job.jobId - 1);
-                model_.add(theta_da >=
-                           (GetFinishTimeExpression(last_react_job) -
-                            GetStartTimeExpression(last_start_job)));
-            }
-        }
-        rtda_expression += theta_da;
-        chain_count++;
-    }
-    model_.add(IloMinimize(env_, rtda_expression));
-    rtda_expression.end();
-}
+//         int hyper_period = GetHyperPeriod(tasks_info_, chain);
+//         LLint total_start_jobs = hyper_period / tasks[chain[0]].period + 1;
+//         for (LLint start_instance_index = 1;
+//              start_instance_index <= total_start_jobs;
+//              start_instance_index++) {
+//             JobCEC start_job = {chain[0], (start_instance_index)};
+//             JobCEC first_react_job = react_chain_map[start_job];
+//             JobCEC last_start_job = {chain[0], (start_instance_index - 1)};
+//             if (start_instance_index > 0 &&
+//                 react_chain_map[last_start_job] != first_react_job &&
+//                 first_react_job.jobId > 0) {
+//                 JobCEC last_react_job(first_react_job.taskId,
+//                                       first_react_job.jobId - 1);
+//                 model_.add(theta_da >=
+//                            (GetFinishTimeExpression(last_react_job) -
+//                             GetStartTimeExpression(last_start_job)));
+//             }
+//         }
+//         rtda_expression += theta_da;
+//         chain_count++;
+//     }
+//     model_.add(IloMinimize(env_, rtda_expression));
+//     rtda_expression.end();
+// }
 
 IloExpr LPOptimizer::GetStartTimeExpression(JobCEC &job) {
     IloExpr exp(env_);

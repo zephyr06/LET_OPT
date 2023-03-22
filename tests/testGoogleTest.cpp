@@ -1,89 +1,106 @@
 // #include <gtest/gtest.h>
-#include "gmock/gmock.h" // Brings in gMock.
+#include <ilcplex/ilocplex.h>
 
-// Demonstrate some basic assertions.
-TEST(HelloTest, BasicAssertions)
-{
-    // Expect two strings not to be equal.
-    EXPECT_STRNE("hello", "world");
-    // Expect equality.
-    EXPECT_EQ(7 * 6, 42);
-}
+#include "gmock/gmock.h"  // Brings in gMock.
+#include "sources/Optimization/LPSolver_Cplex.h"
 
-class Turtle
-{
-public:
-    // virtual ~Turtle() {}
-    virtual void PenUp() = 0;
-    virtual void PenDown() = 0;
-    virtual void Forward(int distance) = 0;
-    virtual void Turn(int degrees) = 0;
-    virtual void GoTo(int x, int y) = 0;
-    virtual int GetX() const = 0;
-    virtual int GetY() const = 0;
-};
-
-class TurtleImpl : public Turtle
-{
-public:
-    // virtual ~TurtleImpl() { ; }
-    void PenUp() override { ; }
-    void PenDown() override { ; }
-    void Forward(int distance) override { ; }
-    void Turn(int degrees) override { ; }
-    void GoTo(int x, int y) override { ; }
-    int GetX() const override { return 0; }
-    int GetY() const override { return 0; }
-
-public:
-    TurtleImpl() { ; }
-    void call() { PenDown(); }
-};
-class MockTurtle : public Turtle
-{
-public:
-    MOCK_METHOD(void, PenUp, (), (override));
-    MOCK_METHOD(void, PenDown, (), (override));
-    MOCK_METHOD(void, Forward, (int distance), (override));
-    MOCK_METHOD(void, Turn, (int degrees), (override));
-    MOCK_METHOD(void, GoTo, (int x, int y), (override));
-    MOCK_METHOD(int, GetX, (), (const, override));
-    MOCK_METHOD(int, GetY, (), (const, override));
-};
-
-class Painter
-{
-    Turtle *turtle;
-
-public:
-    Painter(Turtle *turtle)
-        : turtle(turtle) {}
-
-    bool DrawCircle(int, int, int)
-    {
-        turtle->PenDown();
-        return true;
-    }
-};
-using ::testing::AtLeast; // #1
+using ::testing::AtLeast;  // #1
 using ::testing::Return;
-TEST(PainterTest, CanDrawSomething)
-{
-    MockTurtle turtle;             // #2
-    EXPECT_CALL(turtle, PenDown()) // #3
-        .Times(AtLeast(1));
-    EXPECT_CALL(turtle, GetX())
-        .WillRepeatedly(Return(300));
-
-    // TurtleImpl tImpl;
-    // tImpl.call();
-    Painter painter(&turtle);
-    EXPECT_TRUE(painter.DrawCircle(0, 0, 10));
-    EXPECT_EQ(300, turtle.GetX());
+using namespace std;
+TEST(BasicExample, v1) {
+    // Model Definition
+    IloEnv myenv;                                  // environment object
+    IloModel mymodel(myenv);                       // model object
+    IloNumVar x(myenv, 0, IloInfinity, ILOFLOAT);  // variable x on [0,infinity)
+    IloNumVar y(myenv, 0, IloInfinity, ILOFLOAT);  // variable y on [0,infinity)
+    mymodel.add(x + y <= 200);                     // constraint x+y <= 200
+    mymodel.add(x + 4 * y <= 400);                 // constraint 5x + 15y <= 400
+    mymodel.add(IloMinimize(myenv, 5 * x + 15 * y));  // objective max 5x + 15y
+    // Model Solution
+    IloCplex mycplex(myenv);
+    mycplex.extract(mymodel);
+    IloBool feasible =
+        mycplex.solve();  // solves model and stores whether or ...
+    // not it is feasible in an IloBool variable called "feasible"
+    // Printing the Solution
+    if (feasible == IloTrue) {
+        cout << "\nProblem feasible." << endl;
+        cout << "x = " << mycplex.getValue(x) << endl;       // value of x
+        cout << "y = " << mycplex.getValue(y) << endl;       // value of y
+        cout << "cost = " << mycplex.getObjValue() << endl;  // objective
+    } else
+        cout << "\nProblem infeasible." << endl;
+    // Closing the Model
+    mycplex.clear();
+    myenv.end();
 }
 
-int main(int argc, char **argv)
-{
+TEST(BasicExample, v2) {
+    const int n = 4;  // number of variables/constraints
+    // Model Definition
+    IloEnv myenv;             // environment object
+    IloModel mymodel(myenv);  // model object
+    IloNumVarArray x(myenv, n, 0.0, IloInfinity,
+                     ILOFLOAT);  // array ...
+    // of n unbounded variables x
+    // Constraint Generation
+    IloConstraintArray cons_array(myenv);
+    for (int i = 0; i < n; i++) {
+        IloExpr myexpr(myenv);  // empty expression
+        for (int j = 0; j < n; j++) {
+            if (j == i)
+                myexpr += 2 * x[j];  // coefficient 2 on diagonal
+            else
+                myexpr += x[j];  // coefficient 1 elsewhere
+        }
+        IloConstraint cons = IloRange(myenv, 1, myexpr, IloInfinity);
+        mymodel.add(cons);  // i-th constraint
+        cons_array.add(cons);
+        myexpr.end();  // clear memory
+    }
+    // Objective Generation
+    IloExpr myexpr(myenv);                       // empty expression
+    for (int i = 0; i < n; i++) myexpr += x[i];  // summing all variables
+    mymodel.add(IloMinimize(myenv, myexpr));  // adding minimization objective
+    myexpr.end();                             // clear memory
+
+    mymodel.remove(cons_array[0]);
+    mymodel.remove(cons_array[1]);
+    for (int i = 0; i < 2; i++) {
+        IloExpr myexpr(myenv);  // empty expression
+        for (int j = 0; j < n; j++) {
+            if (j == i)
+                myexpr += 2 * x[j];  // coefficient 2 on diagonal
+            else
+                myexpr += x[j];  // coefficient 1 elsewhere
+        }
+        IloConstraint cons = IloRange(myenv, 1, myexpr, IloInfinity);
+        mymodel.add(cons);  // i-th constraint
+        cons_array.add(cons);
+        myexpr.end();  // clear memory
+    }
+    mymodel.remove(cons_array[0]);
+    mymodel.remove(cons_array[1]);
+
+    IloCplex cplex(mymodel);
+    cplex.extract(mymodel);
+    cplex.exportModel("recourse.lp");
+
+    // Model Solution
+    IloCplex mycplex(myenv);
+    mycplex.extract(mymodel);
+    mycplex.solve();
+    // Printing the Solution
+    for (int i = 0; i < n; i++)
+        cout << "x(" << i + 1 << ") = " << mycplex.getValue(x[i]) << endl;
+    cout << "cost = " << mycplex.getObjValue() << endl;
+    // Closing the Model
+    mycplex.clear();
+    myenv.end();
+    // wait for user t
+}
+
+int main(int argc, char **argv) {
     // ::testing::InitGoogleTest(&argc, argv);
     ::testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();

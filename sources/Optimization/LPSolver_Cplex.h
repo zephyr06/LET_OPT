@@ -56,11 +56,21 @@ class LPOptimizer {
     void AddVariables();
     void AddPermutationInequalityConstraints();
     void AddSchedulabilityConstraints();
+    // void UpdateSchedulabilityConstraints();
 
     void AddConstantObjectiveFunctions();
     void AddObjectiveFunctions();  // RTDA obj
-    void AddObjectiveFunctionDataAge();
-    void AddObjectiveFunctionReactionTime();
+    // void AddObjectiveFunctionDataAge();
+    // void AddObjectiveFunctionReactionTime();
+
+    void UpdatePermutationInequalityConstraints();
+    void UpdateConstantObjectiveFunctions();
+
+    inline void UpdateSystem(const ChainsPermutation &chains_perm) {
+        UpdateConstantObjectiveFunctions();
+        UpdatePermutationInequalityConstraints();
+    }
+
     IloExpr GetStartTimeExpression(JobCEC &jobCEC);
     IloExpr GetFinishTimeExpression(JobCEC &jobCEC);
     VariableOD ExtratOptSolution(IloNumArray &values_optimized);
