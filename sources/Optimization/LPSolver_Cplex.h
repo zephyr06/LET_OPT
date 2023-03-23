@@ -33,6 +33,7 @@ class LPOptimizer {
           constraint_array_(env_) {
         variable_od_opt_.valid_ = false;
         cplexSolver_.setOut(env_.getNullStream());
+        name2ilo_const_.reserve(1e3);
         // env_.end();
     }
 
@@ -41,6 +42,7 @@ class LPOptimizer {
     std::pair<VariableOD, int> Optimize();
     std::pair<VariableOD, int> OptimizeConstant();
     std::pair<VariableOD, int> OptimizeWithoutClear();
+    std::pair<VariableOD, int> OptimizeAfterUpdate();
 
     inline void UpdateModel(
         const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
@@ -63,12 +65,14 @@ class LPOptimizer {
     // void AddObjectiveFunctionDataAge();
     // void AddObjectiveFunctionReactionTime();
 
-    void UpdatePermutationInequalityConstraints();
-    void UpdateConstantObjectiveFunctions();
+    void UpdatePermutationInequalityConstraints(
+        const ChainsPermutation &chains_perm);
+    void UpdateObjectiveFunctions(const ChainsPermutation &chains_perm);
 
     inline void UpdateSystem(const ChainsPermutation &chains_perm) {
-        UpdateConstantObjectiveFunctions();
-        UpdatePermutationInequalityConstraints();
+        UpdatePermutationInequalityConstraints(chains_perm);
+        UpdateObjectiveFunctions(chains_perm);
+        // chains_perm_ = chains_perm;
     }
 
     IloExpr GetStartTimeExpression(JobCEC &jobCEC);
@@ -98,6 +102,7 @@ class LPOptimizer {
     std::string obj_trait_;
     const std::unordered_map<JobCEC, JobCEC>
         &react_chain_map_;  // TODO: make it work
+    std::vector<std::unordered_map<JobCEC, JobCEC>> react_chain_map_prevs_;
     const std::vector<int> &rta_;
 
     IloEnv env_;
@@ -106,6 +111,8 @@ class LPOptimizer {
     IloNumVarArray varArray_;
     IloConstraintArray constraint_array_;
     int optimal_obj_ = 1e8;
+    std::unordered_map<std::string, IloRange> name2ilo_const_;
+    std::unordered_map<std::string, IloNumVar> name2ilo_var_;
     // std::unordered_map<int, uint> task_id2position_cplex_;
 };
 

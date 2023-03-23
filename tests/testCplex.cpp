@@ -38,6 +38,37 @@ TEST_F(PermutationTest1, mapPrev) {
     auto res = lp_optimizer.Optimize();
     EXPECT_EQ(20, res.second);
 }
+TEST_F(PermutationTest1, Incremental) {
+    dag_tasks.chains_ = {{0, 1, 2}};
+    GraphOfChains graph_chains(dag_tasks.chains_);
+    std::vector<int> rta = {1, 3, 6};
+    TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+    TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+
+    ChainsPermutation chain_perm1;
+    chain_perm1.push_back(perm01[0]);
+    chain_perm1.push_back(perm12[0]);
+
+    ChainsPermutation chain_perm2;
+    chain_perm2.push_back(perm01[1]);
+    chain_perm2.push_back(perm12[0]);
+
+    std::unordered_map<JobCEC, JobCEC> react_chain_map;
+    LPOptimizer lp_optimizer(dag_tasks, tasks_info, chain_perm2, graph_chains,
+                             "ReactionTime", react_chain_map, rta);
+    auto res = lp_optimizer.OptimizeWithoutClear();
+    IloCplex cplex(lp_optimizer.model_);
+    cplex.extract(lp_optimizer.model_);
+    cplex.exportModel("recourse1.lp");
+
+    lp_optimizer.UpdateSystem(chain_perm1);
+    IloCplex cplex2(lp_optimizer.model_);
+    cplex2.extract(lp_optimizer.model_);
+    cplex2.exportModel("recourse2.lp");
+    res = lp_optimizer.OptimizeAfterUpdate();
+
+    EXPECT_EQ(20, res.second);
+}
 
 int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);
