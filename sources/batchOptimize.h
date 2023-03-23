@@ -8,7 +8,7 @@
 
 #include "assert.h"
 #include "sources/Baseline/StandardLET.h"
-#include "sources/Optimization/TaskSetPermutation.h"
+#include "sources/Optimization/TaskSetPermutationEnumerate.h"
 #include "sources/Utils/BatchUtils.h"
 #include "sources/Utils/VariadicTable.h"
 

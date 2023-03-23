@@ -26,11 +26,11 @@ std::vector<std::vector<int>> GetSubChains(
 
 // currently, as asusme there is only one chain
 // TODO: what's the usage of chains in arguments
-class TaskSetPermutation {
+class TaskSetPermutationEnumerate {
    public:
-    // TaskSetPermutation() {}
-    TaskSetPermutation(const DAG_Model& dag_tasks,
-                       const std::vector<std::vector<int>>& chains);
+    // TaskSetPermutationEnumerate() {}
+    TaskSetPermutationEnumerate(const DAG_Model& dag_tasks,
+                                const std::vector<std::vector<int>>& chains);
 
     void FindPairPermutations();
     bool ExamSchedulabilityOptSol() const;
@@ -115,19 +115,19 @@ class TaskSetPermutation {
         BeginTimer(__FUNCTION__);
 #endif
 
-        // std::pair<VariableOD, int> res = FindODWithLP(
-        //     dag_tasks_, tasks_info_, chain_perm, graph_of_all_ca_chains_,
-        //     ObjectiveFunction::type_trait, react_chain_map, rta_);
+        std::pair<VariableOD, int> res = FindODWithLP(
+            dag_tasks_, tasks_info_, chain_perm, graph_of_all_ca_chains_,
+            ObjectiveFunction::type_trait, rta_);
         // LPOptimizer lp_optimizer(dag_tasks_, tasks_info_,
         //                          graph_of_all_ca_chains_,
         //                          ObjectiveFunction::type_trait, rta_);
-        std::pair<VariableOD, int> res;
-        if (lp_optimizer_.name2ilo_const_.size() != 0) {
-            res = lp_optimizer_.IncrementOptimize(chain_perm);
-        } else {
-            lp_optimizer_.obj_trait_ = ObjectiveFunction::type_trait;
-            res = lp_optimizer_.OptimizeWithoutClear(chain_perm);
-        }
+        // std::pair<VariableOD, int> res;
+        // if (lp_optimizer_.name2ilo_const_.size() != 0) {
+        //     res = lp_optimizer_.IncrementOptimize(chain_perm);
+        // } else {
+        //     lp_optimizer_.obj_trait_ = ObjectiveFunction::type_trait;
+        //     res = lp_optimizer_.OptimizeWithoutClear(chain_perm);
+        // }
 
         if (GlobalVariablesDAGOpt::debugMode == 1)
             lp_optimizer_.WriteModelToFile();
@@ -208,8 +208,8 @@ template <typename ObjectiveFunction>
 ScheduleResult PerformTOM_OPT(const DAG_Model& dag_tasks) {
     auto start = std::chrono::high_resolution_clock::now();
     ScheduleResult res;
-    TaskSetPermutation task_sets_perms =
-        TaskSetPermutation(dag_tasks, dag_tasks.chains_);
+    TaskSetPermutationEnumerate task_sets_perms =
+        TaskSetPermutationEnumerate(dag_tasks, dag_tasks.chains_);
     res.obj_ = task_sets_perms.PerformOptimization<ObjectiveFunction>();
     if (res.obj_ >= 1e8) {
         res.obj_ =

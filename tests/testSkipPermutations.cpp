@@ -2,7 +2,7 @@
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
 #include "sources/Optimization/ChainsPermutation.h"
 #include "sources/Optimization/PermutationInequality.h"
-#include "sources/Optimization/TaskSetPermutation.h"
+#include "sources/Optimization/TaskSetPermutationEnumerate.h"
 #include "sources/Optimization/TwoTaskPermutations.h"
 #include "sources/Optimization/Variable.h"
 #include "sources/RTA/RTA_LL.h"
@@ -20,13 +20,13 @@ class PermutationTest1 : public ::testing::Test {
             "RM", 2);
         tasks = dag_tasks.GetTaskSet();
         tasks_info = TaskSetInfoDerived(tasks);
-        // task_sets_perms = TaskSetPermutation(dag_tasks, dag_tasks.chains_);
+        // task_sets_perms = TaskSetPermutationEnumerate(dag_tasks, dag_tasks.chains_);
     };
 
     DAG_Model dag_tasks;
     TaskSet tasks;
     TaskSetInfoDerived tasks_info;
-    // TaskSetPermutation task_sets_perms;
+    // TaskSetPermutationEnumerate task_sets_perms;
 };
 
 TEST_F(PermutationTest1, obj_) {
@@ -38,7 +38,7 @@ TEST_F(PermutationTest1, obj_) {
     chains_perm.push_back(perm24[11]);
     chains_perm.push_back(perm23[3]);
     chains_perm.print();
-    TaskSetPermutation task_sets_perms(dag_tasks, dag_tasks.chains_);
+    TaskSetPermutationEnumerate task_sets_perms(dag_tasks, dag_tasks.chains_);
     std::pair<VariableOD, int> res =
         FindODWithLP(task_sets_perms.dag_tasks_, task_sets_perms.tasks_info_,
                      chains_perm, task_sets_perms.graph_of_all_ca_chains_,
@@ -62,7 +62,7 @@ TEST_F(PermutationTest1, obj_) {
     EXPECT_THAT(obj_curr, testing::Le(res.second));
 }
 
-// TODO: add it to TaskSetPermutation
+// TODO: add it to TaskSetPermutationEnumerate
 TEST_F(PermutationTest1, FindBestPossibleVariableOD) {
     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
     TwoTaskPermutations perm24(2, 4, dag_tasks, tasks_info);
@@ -73,7 +73,7 @@ TEST_F(PermutationTest1, FindBestPossibleVariableOD) {
     chains_perm.push_back(perm23[3]);
     chains_perm.print();
 
-    TaskSetPermutation task_sets_perms(dag_tasks, dag_tasks.chains_);
+    TaskSetPermutationEnumerate task_sets_perms(dag_tasks, dag_tasks.chains_);
     VariableRange variable_range = FindPossibleVariableOD(
         dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm);
 
@@ -118,13 +118,13 @@ class PermutationTest2 : public ::testing::Test {
             "RM", 2);
         tasks = dag_tasks.GetTaskSet();
         tasks_info = TaskSetInfoDerived(tasks);
-        // task_sets_perms = TaskSetPermutation(dag_tasks, dag_tasks.chains_);
+        // task_sets_perms = TaskSetPermutationEnumerate(dag_tasks, dag_tasks.chains_);
     };
 
     DAG_Model dag_tasks;
     TaskSet tasks;
     TaskSetInfoDerived tasks_info;
-    // TaskSetPermutation task_sets_perms;
+    // TaskSetPermutationEnumerate task_sets_perms;
 };
 
 TEST_F(PermutationTest2, FindBestPossibleVariableOD) {
@@ -137,7 +137,7 @@ TEST_F(PermutationTest2, FindBestPossibleVariableOD) {
     // chains_perm.push_back(perm23[3]);
     chains_perm.print();
 
-    TaskSetPermutation task_sets_perms(dag_tasks, dag_tasks.chains_);
+    TaskSetPermutationEnumerate task_sets_perms(dag_tasks, dag_tasks.chains_);
     VariableRange variable_range = FindPossibleVariableOD(
         dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm);
     EXPECT_EQ(0, variable_range.lower_bound[0].offset);

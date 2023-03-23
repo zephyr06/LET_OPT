@@ -1,5 +1,5 @@
 
-#include "sources/Optimization/TaskSetPermutation.h"
+#include "sources/Optimization/TaskSetPermutationEnumerate.h"
 
 namespace DAG_SPACE {
 
@@ -32,7 +32,7 @@ std::vector<std::vector<int>> GetSubChains(
     return sub_chains;
 }
 
-TaskSetPermutation::TaskSetPermutation(
+TaskSetPermutationEnumerate::TaskSetPermutationEnumerate(
     const DAG_Model& dag_tasks, const std::vector<std::vector<int>>& chains)
     : start_time_((std::chrono::high_resolution_clock::now())),
       dag_tasks_(dag_tasks),
@@ -54,7 +54,7 @@ TaskSetPermutation::TaskSetPermutation(
     FindPairPermutations();
 }
 
-void TaskSetPermutation::FindPairPermutations() {
+void TaskSetPermutationEnumerate::FindPairPermutations() {
     for (const auto& edge_curr : graph_of_all_ca_chains_.edge_vec_ordered_) {
         if (ifTimeout(start_time_)) break;
         adjacent_two_task_permutations_.push_back(TwoTaskPermutations(
@@ -63,7 +63,7 @@ void TaskSetPermutation::FindPairPermutations() {
                   << adjacent_two_task_permutations_.back().size() << "\n";
     }
 }
-bool TaskSetPermutation::ExamSchedulabilityOptSol() const {
+bool TaskSetPermutationEnumerate::ExamSchedulabilityOptSol() const {
     if (best_yet_variable_od_.size() == 0) return false;
     for (int i = 0; i < tasks_info_.N; i++) {
         int offset = best_yet_variable_od_.at(i).offset;
