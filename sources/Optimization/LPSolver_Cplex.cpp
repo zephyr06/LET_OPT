@@ -262,7 +262,7 @@ void LPOptimizer::AddObjectiveFunctions() {
 
         auto react_chain_map =
             GetFirstReactMap(dag_tasks_, tasks_info_, chains_perm_, chain);
-        // react_chain_map_prevs_.push_back(react_chain_map);
+        react_chain_map_prevs_.push_back(react_chain_map);
 
         int hyper_period = GetHyperPeriod(tasks_info_, chain);
         LLint total_start_jobs =
@@ -320,8 +320,8 @@ void LPOptimizer::UpdateObjectiveFunctions(
 
         std::unordered_map<JobCEC, JobCEC> react_chain_map =
             GetFirstReactMap(dag_tasks_, tasks_info_, chains_perm, chain);
-        // std::unordered_map<JobCEC, JobCEC> react_chain_map_prev =
-        //     react_chain_map_prevs_[chain_count];
+        const std::unordered_map<JobCEC, JobCEC> &react_chain_map_prev =
+            react_chain_map_prevs_[chain_count];
 
         int hyper_period = GetHyperPeriod(tasks_info_, chain);
         LLint total_start_jobs =
@@ -330,7 +330,7 @@ void LPOptimizer::UpdateObjectiveFunctions(
              start_instance_index <= total_start_jobs; start_instance_index++) {
             JobCEC start_job = {chain[0], (start_instance_index)};
             JobCEC first_react_job = react_chain_map[start_job];
-            // if (react_chain_map_prev[start_job] == first_react_job) continue;
+            if (react_chain_map_prev.at(start_job) == first_react_job) continue;
             if (obj_trait_ == "ReactionTime") {
                 // model_.add(theta_rt >=
                 //            (GetFinishTimeExpression(first_react_job) -
@@ -343,31 +343,11 @@ void LPOptimizer::UpdateObjectiveFunctions(
                 IloExpr full_expr = theta_rt - finish_expr + start_expr;
                 IloRange myConstraint1(env_, 0, full_expr, IloInfinity,
                                        const_name.c_str());
-                // IloExpr full_exp = theta_rt -
-                //                    GetFinishTimeExpression(first_react_job) +
-                //                    GetStartTimeExpression(start_job);
-                // myConstraint1.setExpr(full_exp >= 0);
-                // name2ilo_const_[const_name].setExpr(
-                //     theta_rt - GetFinishTimeExpression(first_react_job) +
-                //         GetStartTimeExpression(start_job) >=
-                //     0);
-                // full_exp.end();
-                // model_.add(theta_rt -
-                // GetFinishTimeExpression(first_react_job) +
-                //                GetStartTimeExpression(start_job) >=
-                //            0);
                 name2ilo_const_[const_name] = myConstraint1;
                 model_.add(myConstraint1);
                 finish_expr.end();
                 start_expr.end();
                 full_expr.end();
-                if (GlobalVariablesDAGOpt::debugMode) {
-                    std::cout << "Chain_" << chain_count << "_RT"
-                              << " >= "
-                              << "Deadline_" << first_react_job.ToString()
-                              << " - "
-                              << "Offset_" << start_job.ToString() << "\n";
-                }
             } else if (obj_trait_ == "DataAge") {
                 JobCEC last_start_job = {chain[0], (start_instance_index - 1)};
                 if (start_instance_index > 0 &&
@@ -382,15 +362,12 @@ void LPOptimizer::UpdateObjectiveFunctions(
                 }
             }
         }
-        // Normal obj to optmize RTDA: obj = max_RTs + max_DAs
-        // rtda_expression += theta_rt;
-        // rtda_expression += theta_da;
+        react_chain_map_prevs_[chain_count] = react_chain_map;
         chain_count++;
     }
-    // model_.add(IloMinimize(env_, rtda_expression));
-    // rtda_expression.end();
     EndTimer("UpdateObjectiveFunctions");
 }
+
 void LPOptimizer::AddConstantObjectiveFunctions() {
     IloExpr rtda_expression(env_);
     std::stringstream var_name;
