@@ -49,14 +49,43 @@ class PermutationTest18 : public ::testing::Test {
     std::vector<int> task_chain = {0, 1, 2};
 };
 
+std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
+    const ChainsPermutation& chain_perm,
+    const std::shared_ptr<const SinglePairPermutation> single_perm,
+    const std::vector<std::vector<int>>& chains) {
+    std::vector<std::unordered_map<JobCEC, JobCEC>> map;
+    map.reserve(chains.size());
+    for (uint i = 0; i < chains.size(); i++) {
+        std::unordered_map<JobCEC, JobCEC> m;
+        map.push_back(m);
+    }
+
+    // TODO: Improve efficiency there!
+    ChainsPermutation chains_perm_more = chain_perm;
+    chains_perm_more.push_back(single_perm);
+    std::vector<std::vector<int>> sub_chains =
+        GetSubChains(chains, chains_perm_more);
+    for (uint i = 0; i < chains.size(); i++) {
+        const std::vector<int>& chain_sub = sub_chains[i];
+    }
+    return map;
+}
+
 TEST_F(PermutationTest18, Iteration) {
-    TaskSetPermutation task_sets_perms(dag_tasks, {task_chain});
-    int obj_find =
-        task_sets_perms.PerformOptimizationEnumerate<ObjReactionTime>();
-    // task_sets_perms.best_yet_chain_[0]->print();
-    // task_sets_perms.best_yet_chain_[1]->print();
-    EXPECT_THAT(task_sets_perms.iteration_count_, testing::Le(6));
-    EXPECT_EQ(20, obj_find);
+    TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+    TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+    perm01[0]->print();
+    perm12[0]->print();
+
+    ChainsPermutation chain_perm;
+    chain_perm.push_back(perm01[0]);
+    // chain_perm.push_back(perm12[0]);
+    std::vector<std::unordered_map<JobCEC, JobCEC>> curr_first_job_maps =
+        GetFirstReactMaps(chain_perm, perm12[0], dag_tasks.chains_);
+
+    EXPECT_EQ(1, curr_first_job_maps.size());  // only 1 chain
+    // EXPECT_EQ(JobCEC(2, 0), curr_first_job_maps[0][JobCEC(0, 0)]);
+    // EXPECT_EQ(JobCEC(2, 0), curr_first_job_maps[0][JobCEC(0, 1)]);
 }
 
 int main(int argc, char** argv) {

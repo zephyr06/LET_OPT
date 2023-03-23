@@ -455,7 +455,7 @@ TEST_F(PermutationTest_2chain_v1, GetSubChains) {
     std::vector<std::vector<int>> chains_full_length = {{0, 3, 4}, {1, 3, 4}};
     std::vector<std::vector<int>> chains_sub =
         GetSubChains(chains_full_length, chain_perm);
-    std::vector<std::vector<int>> expected_sub_chains = {{0, 3}};
+    std::vector<std::vector<int>> expected_sub_chains = {{0, 3}, {}};
     EXPECT_TRUE(expected_sub_chains == chains_sub);
 }
 
@@ -470,7 +470,7 @@ TEST_F(PermutationTest_2chain_v1, GetSubChains_v2) {
     std::vector<std::vector<int>> chains_full_length = {{0, 3, 4}, {1, 3, 4}};
     std::vector<std::vector<int>> chains_sub =
         GetSubChains(chains_full_length, chain_perm);
-    std::vector<std::vector<int>> expected_sub_chains = {{0, 3, 4}};
+    std::vector<std::vector<int>> expected_sub_chains = {{0, 3, 4}, {}};
     EXPECT_TRUE(expected_sub_chains == chains_sub);
 }
 

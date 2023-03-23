@@ -15,6 +15,7 @@ double ObjectiveFunctionBaseIntermediate::Obj(
 
     int max_obj = 0;
     for (const auto &chain : chains_to_analyze) {
+        if (chain.size() == 0) continue;
         max_obj += ObjSingleChain(dag_tasks, tasks_info, chain_perm, chain,
                                   variable_od);
     }

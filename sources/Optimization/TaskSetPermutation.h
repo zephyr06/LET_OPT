@@ -75,6 +75,7 @@ class TaskSetPermutation {
                     std::vector<std::vector<int>> sub_chains =
                         GetSubChains(dag_tasks_.chains_, chain_perm);
                     for (const auto& sub_chain : sub_chains) {
+                        if (sub_chain.size() == 0) continue;
                         if (GlobalVariablesDAGOpt::SKIP_PERM >= 2 &&
                             !FindODFromSingleChainPermutation(
                                  dag_tasks_, chain_perm,
@@ -111,6 +112,8 @@ class TaskSetPermutation {
         }
     }
 
+    // optimize with Dynamic Programming
+    // *********************************************
     template <typename ObjectiveFunction>
     int PerformOptimizationDP() {
         ChainsPermutation chain_perm;
@@ -118,12 +121,70 @@ class TaskSetPermutation {
         lp_optimizer_.ClearCplexMemory();
         return best_yet_obj_;
     }
-    template <typename ObjectiveFunction>
-    void IterateAllChainsPermutationsDP(uint position,
-                                        ChainsPermutation& chain_perm) {}
+
+    bool CompareNewPerm(const std::vector<std::unordered_map<JobCEC, JobCEC>>&
+                            curr_first_job_maps,
+                        const std::vector<std::unordered_map<JobCEC, JobCEC>>&
+                            curr_best_first_job_maps) {
+        return true;
+    }
+
+    static std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
+        const ChainsPermutation& chain_perm,
+        const SinglePairPermutation& single_perm) {
+        std::vector<std::unordered_map<JobCEC, JobCEC>> map;
+        return map;
+    }
 
     template <typename ObjectiveFunction>
-    void EvaluateChainsPermutation(const ChainsPermutation& chain_perm) {
+    double IterateAllChainsPermutationsDP(uint position,
+                                          ChainsPermutation& chain_perm) {
+        if (position ==
+            graph_of_all_ca_chains_.edge_records_
+                .size()) {  // finish iterate all the pair permutations
+            iteration_count_++;
+            return EvaluateChainsPermutation<ObjectiveFunction>(chain_perm);
+        }
+
+        std::vector<std::unordered_map<JobCEC, JobCEC>>
+            curr_best_first_job_maps;
+        double best_obj_this_level = 1e9;
+
+        for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
+             i++) {
+            if (ifTimeout(start_time_)) break;
+
+            if (chain_perm.IsValid(
+                    variable_range_od_,
+                    *adjacent_two_task_permutations_[position][i],
+                    graph_of_all_ca_chains_)) {
+                std::vector<std::unordered_map<JobCEC, JobCEC>>
+                    curr_first_job_maps = GetFirstReactMaps(
+                        chain_perm,
+                        *adjacent_two_task_permutations_[position][i]);
+                if (CompareNewPerm(curr_first_job_maps,
+                                   curr_best_first_job_maps)) {
+                    // add one type of permutation to chain_perm
+                    chain_perm.push_back(
+                        adjacent_two_task_permutations_[position][i]);
+
+                    double curr_obj =
+                        IterateAllChainsPermutationsDP<ObjectiveFunction>(
+                            position + 1, chain_perm);
+                    if (curr_obj < best_obj_this_level) {
+                        best_obj_this_level = curr_obj;
+                        curr_best_first_job_maps = curr_first_job_maps;
+                    }
+                    chain_perm.pop(
+                        *adjacent_two_task_permutations_[position][i]);
+                }
+            }
+        }
+        return best_obj_this_level;
+    }
+
+    template <typename ObjectiveFunction>
+    double EvaluateChainsPermutation(const ChainsPermutation& chain_perm) {
 #ifdef PROFILE_CODE
         BeginTimer(__FUNCTION__);
 #endif
@@ -141,9 +202,9 @@ class TaskSetPermutation {
         //     lp_optimizer_.obj_trait_ = ObjectiveFunction::type_trait;
         //     res = lp_optimizer_.OptimizeWithoutClear(chain_perm);
         // }
+        // if (GlobalVariablesDAGOpt::debugMode == 1)
+        //     lp_optimizer_.WriteModelToFile();
 
-        if (GlobalVariablesDAGOpt::debugMode == 1)
-            lp_optimizer_.WriteModelToFile();
         if (res.first.valid_)  // if valid, we'll exam obj; otherwise, we'll
                                // just move forward
         {
@@ -162,42 +223,20 @@ class TaskSetPermutation {
                 if (obj_curr > best_yet_obj_)
                     CoutError(
                         "Something's wrong with sub-chain obj evaluation");
+
+#ifdef PROFILE_CODE
+                EndTimer(__FUNCTION__);
+#endif
+                return res.second;
             }
         } else {
             infeasible_iteration_++;
         }
 
-        // Test purposes
-        // {
-        //     VariableOD variable_od2 = FindODFromSingleChainPermutation(
-        //         dag_tasks_, chain_perm, graph_of_all_ca_chains_);
-        //     if (variable_od2.valid_ != res.first.valid_) {
-        //         chain_perm.print();
-        //         int index = 0;
-        //         for (int x : rta) {
-        //             std::cout << "RTA of task " << index++ << ": " << x <<
-        //             "\n";
-        //         }
-        //         FindODFromSingleChainPermutation(dag_tasks_, chain_perm,
-        //                               graph_of_all_ca_chains_);
-        //         CoutError("Find a case where FindODFromSingleChainPermutation
-        //         fails!");
-        //     }
-
-        //     if (variable_od2.valid_) {
-        //         double obj_curr = ObjectiveFunction::Obj(
-        //             dag_tasks_, tasks_info_, chain_perm, variable_od2,
-        //             dag_tasks_.chains_);
-        //         if (obj_curr < res.second)
-        //             CoutError(
-        //                 "Find a case where FindODFromSingleChainPermutation
-        //                 fails in " "evaluating obj!");
-        //     }
-        // }
-
 #ifdef PROFILE_CODE
         EndTimer(__FUNCTION__);
 #endif
+        return 1e9;
     }
 
     // data members

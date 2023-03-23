@@ -14,13 +14,16 @@ std::vector<std::vector<int>> GetSubChains(
     sub_chains.reserve(chains_full_length.size());
     for (uint i = 0; i < chains_full_length.size(); i++) {
         const auto& chain = chains_full_length[i];
+        sub_chains.push_back({});
         for (uint j = 0; j < chain.size() - 1; j++) {
             Edge edge_curr(chain[j], chain[j + 1]);
-            if (edge_record.find(edge_curr) == edge_record.end())
+            if (edge_record.find(edge_curr) == edge_record.end()) {
                 break;
-            else {
+            } else {
                 if (j == 0) {
-                    sub_chains.push_back({chain[j], chain[j + 1]});
+                    // sub_chains.push_back({chain[j], chain[j + 1]});
+                    sub_chains.back().push_back(chain[j]);
+                    sub_chains.back().push_back(chain[j + 1]);
                 } else {
                     // sub_chains.end()->push_back(chain[j]);
                     sub_chains.back().push_back(chain[j + 1]);
