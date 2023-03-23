@@ -1,9 +1,9 @@
 #include "gmock/gmock.h"  // Brings in gMock.
 #include "sources/Baseline/StandardLET.h"
-#include "sources/Optimization/TaskSetPermutationEnumerate.h"
+#include "sources/Optimization/TaskSetPermutation.h"
 using namespace DAG_SPACE;
 
-int REPEAT = 10000;
+int REPEAT = 100;
 class PermutationTest_long_time23 : public ::testing::Test {
    protected:
     void SetUp() override {

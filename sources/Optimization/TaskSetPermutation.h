@@ -26,25 +26,27 @@ std::vector<std::vector<int>> GetSubChains(
 
 // currently, as asusme there is only one chain
 // TODO: what's the usage of chains in arguments
-class TaskSetPermutationEnumerate {
+class TaskSetPermutation {
    public:
-    // TaskSetPermutationEnumerate() {}
-    TaskSetPermutationEnumerate(const DAG_Model& dag_tasks,
-                                const std::vector<std::vector<int>>& chains);
+    // TaskSetPermutation() {}
+    TaskSetPermutation(const DAG_Model& dag_tasks,
+                       const std::vector<std::vector<int>>& chains);
 
     void FindPairPermutations();
     bool ExamSchedulabilityOptSol() const;
 
     template <typename ObjectiveFunction>
-    int PerformOptimization() {
+    int PerformOptimizationEnumerate() {
         ChainsPermutation chain_perm;
         IterateAllChainsPermutations<ObjectiveFunction>(0, chain_perm);
-        lp_optimizer_.ClearCplexMemory();
+        lp_optimizer_
+            .ClearCplexMemory();  // TODO: consider trying to optimize
+                                  // performance by directly set coefficient
+                                  // rather than remove/add constraints
         return best_yet_obj_;
     }
 
     // depth equals the number of edge pais
-
     template <typename ObjectiveFunction>
     void IterateAllChainsPermutations(uint position,
                                       ChainsPermutation& chain_perm) {
@@ -108,6 +110,17 @@ class TaskSetPermutationEnumerate {
             }
         }
     }
+
+    template <typename ObjectiveFunction>
+    int PerformOptimizationDP() {
+        ChainsPermutation chain_perm;
+        IterateAllChainsPermutationsDP<ObjectiveFunction>(0, chain_perm);
+        lp_optimizer_.ClearCplexMemory();
+        return best_yet_obj_;
+    }
+    template <typename ObjectiveFunction>
+    void IterateAllChainsPermutationsDP(uint position,
+                                        ChainsPermutation& chain_perm) {}
 
     template <typename ObjectiveFunction>
     void EvaluateChainsPermutation(const ChainsPermutation& chain_perm) {
@@ -208,9 +221,10 @@ template <typename ObjectiveFunction>
 ScheduleResult PerformTOM_OPT(const DAG_Model& dag_tasks) {
     auto start = std::chrono::high_resolution_clock::now();
     ScheduleResult res;
-    TaskSetPermutationEnumerate task_sets_perms =
-        TaskSetPermutationEnumerate(dag_tasks, dag_tasks.chains_);
-    res.obj_ = task_sets_perms.PerformOptimization<ObjectiveFunction>();
+    TaskSetPermutation task_sets_perms =
+        TaskSetPermutation(dag_tasks, dag_tasks.chains_);
+    res.obj_ =
+        task_sets_perms.PerformOptimizationEnumerate<ObjectiveFunction>();
     if (res.obj_ >= 1e8) {
         res.obj_ =
             PerformStandardLETAnalysis<ObjectiveFunction>(dag_tasks).obj_;

@@ -1,7 +1,7 @@
 
 
 #include "gmock/gmock.h"
-#include "sources/Optimization/TaskSetPermutationEnumerate.h"
+#include "sources/Optimization/TaskSetPermutation.h"
 
 using namespace DAG_SPACE;
 TEST(RunSingle, v1) {
@@ -21,9 +21,10 @@ TEST(RunSingle, v1) {
 
     std::cout << "Schedulable? " << CheckSchedulability(dag_tasks) << "\n";
 
-    TaskSetPermutationEnumerate task_sets_perms =
-        TaskSetPermutationEnumerate(dag_tasks, {dag_tasks.chains_});
-    int obj_find = task_sets_perms.PerformOptimization<ObjReactionTime>();
+    TaskSetPermutation task_sets_perms =
+        TaskSetPermutation(dag_tasks, {dag_tasks.chains_});
+    int obj_find =
+        task_sets_perms.PerformOptimizationEnumerate<ObjReactionTime>();
 
     std::cout << "Infeasible iterations: "
               << task_sets_perms.infeasible_iteration_ << "\n";

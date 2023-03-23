@@ -2,7 +2,7 @@
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
 #include "sources/Optimization/ChainsPermutation.h"
 #include "sources/Optimization/PermutationInequality.h"
-#include "sources/Optimization/TaskSetPermutationEnumerate.h"
+#include "sources/Optimization/TaskSetPermutation.h"
 #include "sources/Optimization/TwoTaskPermutations.h"
 #include "sources/Optimization/Variable.h"
 #include "sources/RTA/RTA_LL.h"
@@ -31,7 +31,7 @@ class PermutationTest1 : public ::testing::Test {
         perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
         perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
         dag_tasks.chains_[0] = {0, 1, 2};
-        // task_sets_perms = TaskSetPermutationEnumerate(dag_tasks, {task_chain});
+        // task_sets_perms = TaskSetPermutation(dag_tasks, {task_chain});
     };
 
     DAG_Model dag_tasks;
@@ -47,13 +47,14 @@ class PermutationTest1 : public ::testing::Test {
 
     TwoTaskPermutations perm01;
     TwoTaskPermutations perm12;
-    // TaskSetPermutationEnumerate task_sets_perms;
+    // TaskSetPermutation task_sets_perms;
     std::vector<int> task_chain = {0, 1, 2};
 };
 
 TEST_F(PermutationTest1, Iteration) {
-    TaskSetPermutationEnumerate task_sets_perms(dag_tasks, {task_chain});
-    int obj_find = task_sets_perms.PerformOptimization<ObjReactionTime>();
+    TaskSetPermutation task_sets_perms(dag_tasks, {task_chain});
+    int obj_find =
+        task_sets_perms.PerformOptimizationEnumerate<ObjReactionTime>();
     // task_sets_perms.best_yet_chain_[0]->print();
     // task_sets_perms.best_yet_chain_[1]->print();
     EXPECT_THAT(task_sets_perms.iteration_count_, testing::Le(6));
@@ -91,7 +92,7 @@ class PermutationTest2 : public ::testing::Test {
 
         perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
         perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
-        // task_sets_perms = TaskSetPermutationEnumerate(dag_tasks, {task_chain});
+        // task_sets_perms = TaskSetPermutation(dag_tasks, {task_chain});
     };
 
     DAG_Model dag_tasks;
@@ -107,7 +108,7 @@ class PermutationTest2 : public ::testing::Test {
 
     TwoTaskPermutations perm01;
     TwoTaskPermutations perm12;
-    // TaskSetPermutationEnumerate task_sets_perms;
+    // TaskSetPermutation task_sets_perms;
     std::vector<int> task_chain = {4, 3, 0};
 };
 
@@ -417,7 +418,7 @@ class PermutationTest_2chain_v1 : public ::testing::Test {
     VariableOD variable_od;
 };
 
-TEST_F(PermutationTest_2chain_v1, TaskSetPermutationEnumerate) {
+TEST_F(PermutationTest_2chain_v1, TaskSetPermutation) {
     // dag_tasks.chains_[0] = {0, 3, 4};
     // dag_tasks.chains_.push_back({1, 3, 4});
     auto res = PerformTOM_OPT<ObjReactionTime>(dag_tasks);

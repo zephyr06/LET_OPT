@@ -2,7 +2,7 @@
 
 #include "gmock/gmock.h"
 #include "sources/Baseline/StandardLET.h"
-#include "sources/Optimization/TaskSetPermutationEnumerate.h"
+#include "sources/Optimization/TaskSetPermutation.h"
 
 using namespace DAG_SPACE;
 TEST(RunSingle, v1) {
