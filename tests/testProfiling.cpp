@@ -71,7 +71,7 @@ TEST_F(PermutationTest_long_time23, Optimize_direct) {
     PrintTimer();
 }
 
-TEST_F(PermutationTest_long_time23, Incre_Optimize) {
+TEST_F(PermutationTest_long_time23, Optimize_Incre) {
     // chain is 0 -> 1 -> 4
     dag_tasks.chains_ = {{0, 1, 2, 3}};
     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
@@ -111,6 +111,7 @@ TEST_F(PermutationTest_long_time23, Incre_Optimize) {
               << double(duration.count()) / 1e6 << "\n";
     PrintTimer();
 }
+
 // TEST_F(PermutationTest_long_time23, ExamObj) {
 //     // chain is 0 -> 1 -> 4
 //     dag_tasks.chains_ = {{0, 1, 2, 3}};
@@ -137,6 +138,38 @@ TEST_F(PermutationTest_long_time23, Incre_Optimize) {
 //     auto duration =
 //         std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
 //     std::cout << "Time taken during objective function evaluation: "
+//               << double(duration.count()) / 1e6 << "\n";
+//     PrintTimer();
+// }
+
+// TEST_F(PermutationTest_long_time23, Optimize_constant) {
+//     // chain is 0 -> 1 -> 4
+//     dag_tasks.chains_ = {{0, 1, 2, 3}};
+//     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+//     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+//     TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info);
+//     ChainsPermutation chain_perm;
+//     chain_perm.push_back(perm01[0]);
+//     chain_perm.push_back(perm12[0]);
+//     chain_perm.push_back(perm23[0]);
+
+//     GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
+
+//     std::unordered_map<JobCEC, JobCEC> react_chain_map =
+//         GetFirstReactMap(dag_tasks, tasks_info, chain_perm,
+//                          dag_tasks.chains_[0]);  // not useful for now
+//     std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+//     auto start = std::chrono::high_resolution_clock::now();
+//     for (int i = 0; i < REPEAT; i++) {
+//         LPOptimizer lp_optimizer(dag_tasks, tasks_info, chain_perm,
+//                                  graph_of_all_ca_chains, "ReactionTime",
+//                                  react_chain_map, rta);
+//         lp_optimizer.OptimizeConstant();
+//     }
+//     auto stop = std::chrono::high_resolution_clock::now();
+//     auto duration =
+//         std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+//     std::cout << "Time taken during Optimize_direct: "
 //               << double(duration.count()) / 1e6 << "\n";
 //     PrintTimer();
 // }

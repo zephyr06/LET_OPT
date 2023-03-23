@@ -19,47 +19,22 @@ void LPOptimizer::Init() {
 }
 
 void LPOptimizer::ClearCplexMemory() {
+#ifdef PROFILE_CODE
+    BeginTimer(__FUNCTION__);
+#endif
     // release memory
     cplexSolver_.end();
     model_.end();
     env_.end();
+#ifdef PROFILE_CODE
+    EndTimer(__FUNCTION__);
+#endif
 }
 
 std::pair<VariableOD, int> LPOptimizer::Optimize() {
-    // Init();
-    BeginTimer("Build_LP_Model");
-    AddVariables();  // must be called first
-    AddPermutationInequalityConstraints();
-    AddSchedulabilityConstraints();
-    AddObjectiveFunctions();
-    // AddConstantObjectiveFunctions();
-    BeginTimer("extract_model");
-    cplexSolver_.extract(model_);
-    EndTimer("extract_model");
-    EndTimer("Build_LP_Model");
-
-    BeginTimer("Solve_LP");
-    bool found_feasible_solution = cplexSolver_.solve();
-    EndTimer("Solve_LP");
-
-    BeginTimer("AfterSolve_LP");
-    IloNumArray values_optimized(env_, numVariables_);
-    if (found_feasible_solution) {
-        auto status = cplexSolver_.getStatus();
-        cplexSolver_.getValues(varArray_, values_optimized);
-        if (GlobalVariablesDAGOpt::debugMode) {
-            std::cout << "Values are :" << values_optimized << "\n";
-            std::cout << status
-                      << " solution found: " << cplexSolver_.getObjValue()
-                      << "\n";
-        }
-        variable_od_opt_ = ExtratOptSolution(values_optimized);
-        optimal_obj_ = cplexSolver_.getObjValue();
-    } else if (GlobalVariablesDAGOpt::debugMode)
-        std::cout << "No feasible solution found!\n";
+    auto res = OptimizeWithoutClear();
     ClearCplexMemory();
-    EndTimer("AfterSolve_LP");
-    return std::make_pair(variable_od_opt_, optimal_obj_);
+    return res;
 }
 
 std::pair<VariableOD, int> LPOptimizer::OptimizeAfterUpdate() {
@@ -102,37 +77,6 @@ std::pair<VariableOD, int> LPOptimizer::OptimizeWithoutClear() {
     BeginTimer("Solve_LP");
     bool found_feasible_solution = cplexSolver_.solve();
     EndTimer("Solve_LP");
-    IloNumArray values_optimized(env_, numVariables_);
-
-    if (found_feasible_solution) {
-        auto status = cplexSolver_.getStatus();
-        cplexSolver_.getValues(varArray_, values_optimized);
-        if (GlobalVariablesDAGOpt::debugMode) {
-            std::cout << "Values are :" << values_optimized << "\n";
-            std::cout << status
-                      << " solution found: " << cplexSolver_.getObjValue()
-                      << "\n";
-        }
-        variable_od_opt_ = ExtratOptSolution(values_optimized);
-        optimal_obj_ = cplexSolver_.getObjValue();
-    } else if (GlobalVariablesDAGOpt::debugMode)
-        std::cout << "No feasible solution found!\n";
-    return std::make_pair(variable_od_opt_, optimal_obj_);
-}
-
-std::pair<VariableOD, int> LPOptimizer::OptimizeConstant() {
-    BeginTimer("Build_LP_Model");
-    Init();
-    AddVariables();  // must be called first
-    AddPermutationInequalityConstraints();
-    AddSchedulabilityConstraints();
-    AddConstantObjectiveFunctions();
-    cplexSolver_.extract(model_);
-    EndTimer("Build_LP_Model");
-
-    BeginTimer("Solve_LP");
-    bool found_feasible_solution = cplexSolver_.solve();
-    EndTimer("Solve_LP");
 
     BeginTimer("AfterSolve_LP");
     IloNumArray values_optimized(env_, numVariables_);
@@ -149,7 +93,6 @@ std::pair<VariableOD, int> LPOptimizer::OptimizeConstant() {
         optimal_obj_ = cplexSolver_.getObjValue();
     } else if (GlobalVariablesDAGOpt::debugMode)
         std::cout << "No feasible solution found!\n";
-    ClearCplexMemory();
     EndTimer("AfterSolve_LP");
     return std::make_pair(variable_od_opt_, optimal_obj_);
 }
@@ -213,22 +156,13 @@ void LPOptimizer::UpdatePermutationInequalityConstraints(
     for (uint i = 0; i < graph_of_all_ca_chains_.edge_vec_ordered_.size();
          i++) {
         const Edge &edge_curr = graph_of_all_ca_chains_.edge_vec_ordered_[i];
-        const PermutationInequality ineq = chains_perm[edge_curr].inequality_;
+        const PermutationInequality &ineq = chains_perm[edge_curr].inequality_;
         // model_.add(
         //     varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] +
         //         ineq.lower_bound_ <=
         //     varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)] +
         //         GlobalVariablesDAGOpt::kCplexInequalityThreshold);
         std::string const_name1 = "perm_constraint_" + std::to_string(i * 2);
-        // model_.remove(name2ilo_const_[const_name1]);
-        // IloRange myConstraint1(
-        //     env_, -IloInfinity,
-        //     varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] -
-        //         varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)],
-        //     GlobalVariablesDAGOpt::kCplexInequalityThreshold -
-        //         ineq.lower_bound_,
-        //     const_name1.c_str());
-        // model_.add(myConstraint1);
         double ub_curr = GlobalVariablesDAGOpt::kCplexInequalityThreshold -
                          ineq.lower_bound_;
         if (name2ilo_const_[const_name1].getUB() != ub_curr)
@@ -243,18 +177,6 @@ void LPOptimizer::UpdatePermutationInequalityConstraints(
         double ub_curr2 = ineq.upper_bound_;
         if (name2ilo_const_[const_name2].getUB() != ub_curr2)
             name2ilo_const_[const_name2].setUB(ub_curr2);
-        // model_.remove(name2ilo_const_[const_name2]);
-        // IloRange myConstraint2(
-        //     env_, -IloInfinity,
-        //     varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)] -
-        //         ineq.upper_bound_ -
-        //         varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)],
-        //     0, const_name2.c_str());
-        // model_.add(myConstraint2);
-
-        if (GlobalVariablesDAGOpt::debugMode) {
-            ineq.print();
-        }
     }
     EndTimer("UpdatePermutationInequalityConstraints");
 }
@@ -350,14 +272,10 @@ void LPOptimizer::AddObjectiveFunctions() {
             JobCEC start_job = {chain[0], (start_instance_index)};
             JobCEC first_react_job = react_chain_map[start_job];
             if (obj_trait_ == "ReactionTime") {
-                // model_.add(theta_rt >=
-                //            (GetFinishTimeExpression(first_react_job) -
-                //             GetStartTimeExpression(start_job)));
                 std::string const_name =
                     "rt_constraint_" + std::to_string(start_instance_index);
                 IloExpr finish_expr = GetFinishTimeExpression(first_react_job);
                 IloExpr start_expr = GetStartTimeExpression(start_job);
-
                 IloRange myConstraint1(env_, 0,
                                        theta_rt - finish_expr + start_expr,
                                        IloInfinity, const_name.c_str());
@@ -365,13 +283,6 @@ void LPOptimizer::AddObjectiveFunctions() {
                 name2ilo_const_[const_name] = myConstraint1;
                 finish_expr.end();
                 start_expr.end();
-                if (GlobalVariablesDAGOpt::debugMode) {
-                    std::cout << "Chain_" << chain_count << "_RT"
-                              << " >= "
-                              << "Deadline_" << first_react_job.ToString()
-                              << " - "
-                              << "Offset_" << start_job.ToString() << "\n";
-                }
             } else if (obj_trait_ == "DataAge") {
                 JobCEC last_start_job = {chain[0], (start_instance_index - 1)};
                 if (start_instance_index > 0 &&

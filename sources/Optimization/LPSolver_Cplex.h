@@ -34,31 +34,19 @@ class LPOptimizer {
         variable_od_opt_.valid_ = false;
         cplexSolver_.setOut(env_.getNullStream());
         name2ilo_const_.reserve(1e3);
-        // env_.end();
+        react_chain_map_prevs_.reserve(dag_tasks.chains_.size());
     }
 
     void Init();
     void ClearCplexMemory();
     std::pair<VariableOD, int> Optimize();
-    std::pair<VariableOD, int> OptimizeConstant();
     std::pair<VariableOD, int> OptimizeWithoutClear();
     std::pair<VariableOD, int> OptimizeAfterUpdate();
-
-    inline void UpdateModel(
-        const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-        const ChainsPermutation &chains_perm,
-        const GraphOfChains &graph_of_all_ca_chains,
-        const std::string &obj_trait,
-        const std::unordered_map<JobCEC, JobCEC> &react_chain_map,
-        const std::vector<int> &rta) {
-        ;
-    }
 
     // protected:
     void AddVariables();
     void AddPermutationInequalityConstraints();
     void AddSchedulabilityConstraints();
-    // void UpdateSchedulabilityConstraints();
 
     void AddConstantObjectiveFunctions();
     void AddObjectiveFunctions();  // RTDA obj
@@ -67,6 +55,7 @@ class LPOptimizer {
 
     void UpdatePermutationInequalityConstraints(
         const ChainsPermutation &chains_perm);
+
     void UpdateObjectiveFunctions(const ChainsPermutation &chains_perm);
 
     inline void UpdateSystem(const ChainsPermutation &chains_perm) {
@@ -90,6 +79,11 @@ class LPOptimizer {
     }
     inline int GetVariableIndexVirtualDeadline(const JobCEC &job) {
         return GetVariableIndexVirtualDeadline(job.taskId);
+    }
+
+    inline void WriteModelToFile(const std::string file_name = "LP_Model.lp") {
+        cplexSolver_.extract(model_);
+        cplexSolver_.exportModel(file_name.c_str());
     }
 
    public:
@@ -117,18 +111,6 @@ class LPOptimizer {
 };
 
 inline std::pair<VariableOD, int> FindODWithLP(
-    LPOptimizer &lp_optimizer, const DAG_Model &dag_tasks,
-    const TaskSetInfoDerived &tasks_info, const ChainsPermutation &chains_perm,
-    const GraphOfChains &graph_of_all_ca_chains, const std::string &obj_trait,
-    const std::unordered_map<JobCEC, JobCEC> &react_chain_map,
-    const std::vector<int> &rta) {
-    lp_optimizer.UpdateModel(dag_tasks, tasks_info, chains_perm,
-                             graph_of_all_ca_chains, obj_trait, react_chain_map,
-                             rta);
-    return lp_optimizer.Optimize();
-}
-
-inline std::pair<VariableOD, int> FindODWithLP(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
     const ChainsPermutation &chains_perm,
     const GraphOfChains &graph_of_all_ca_chains, const std::string &obj_trait,
@@ -140,15 +122,15 @@ inline std::pair<VariableOD, int> FindODWithLP(
     return lp_optimizer.Optimize();
 }
 
-inline bool ExamFeasibility(
-    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-    const ChainsPermutation &chains_perm,
-    const GraphOfChains &graph_of_all_ca_chains, const std::string &obj_trait,
-    const std::unordered_map<JobCEC, JobCEC> &react_chain_map,
-    const std::vector<int> &rta) {
-    LPOptimizer lp_optimizer(dag_tasks, tasks_info, chains_perm,
-                             graph_of_all_ca_chains, obj_trait, react_chain_map,
-                             rta);
-    return lp_optimizer.OptimizeConstant().first.valid_;
-}
+// inline bool ExamFeasibility(
+//     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+//     const ChainsPermutation &chains_perm,
+//     const GraphOfChains &graph_of_all_ca_chains, const std::string
+//     &obj_trait, const std::unordered_map<JobCEC, JobCEC> &react_chain_map,
+//     const std::vector<int> &rta) {
+//     LPOptimizer lp_optimizer(dag_tasks, tasks_info, chains_perm,
+//                              graph_of_all_ca_chains, obj_trait,
+//                              react_chain_map, rta);
+//     return lp_optimizer.OptimizeConstant().first.valid_;
+// }
 }  // namespace DAG_SPACE
