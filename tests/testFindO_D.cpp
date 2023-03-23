@@ -324,15 +324,13 @@ TEST_F(PermutationTest3, Find_OD) {
         {1, 2, 3, 4}, rta);
     variable_od.print();
 
-    std::unordered_map<JobCEC, JobCEC> react_chain_map;
     int index = 0;
     for (int x : rta) {
         std::cout << "RTA of task " << index++ << ": " << x << "\n";
     }
-    auto res =
-        FindODWithLP(task_set_perms.dag_tasks_, task_set_perms.tasks_info_,
-                     chains_perm, task_set_perms.graph_of_all_ca_chains_,
-                     "ReactionTime", react_chain_map, rta);
+    auto res = FindODWithLP(
+        task_set_perms.dag_tasks_, task_set_perms.tasks_info_, chains_perm,
+        task_set_perms.graph_of_all_ca_chains_, "ReactionTime", rta);
     EXPECT_EQ(res.first.valid_, variable_od.valid_);
 }
 
@@ -353,11 +351,9 @@ TEST_F(PermutationTest3, Find_OD_v2) {
         dag_tasks, chains_perm, task_set_perms.graph_of_all_ca_chains_,
         {1, 2, 3, 4}, rta);
 
-    std::unordered_map<JobCEC, JobCEC> react_chain_map;
-    auto res =
-        FindODWithLP(task_set_perms.dag_tasks_, task_set_perms.tasks_info_,
-                     chains_perm, task_set_perms.graph_of_all_ca_chains_,
-                     "ReactionTime", react_chain_map, rta);
+    auto res = FindODWithLP(
+        task_set_perms.dag_tasks_, task_set_perms.tasks_info_, chains_perm,
+        task_set_perms.graph_of_all_ca_chains_, "ReactionTime", rta);
     // this is just the limitation of FindODFromSingleChainPermutation
     EXPECT_FALSE(res.first.valid_ != variable_od.valid_);
 }
@@ -397,15 +393,13 @@ TEST_F(PermutationTest4, Find_OD_v2) {
         dag_tasks, chains_perm, task_set_perms.graph_of_all_ca_chains_,
         {1, 3, 4}, rta);
 
-    std::unordered_map<JobCEC, JobCEC> react_chain_map;
     int index = 0;
     for (int x : rta) {
         std::cout << "RTA of task " << index++ << ": " << x << "\n";
     }
-    auto res =
-        FindODWithLP(task_set_perms.dag_tasks_, task_set_perms.tasks_info_,
-                     chains_perm, task_set_perms.graph_of_all_ca_chains_,
-                     "ReactionTime", react_chain_map, rta);
+    auto res = FindODWithLP(
+        task_set_perms.dag_tasks_, task_set_perms.tasks_info_, chains_perm,
+        task_set_perms.graph_of_all_ca_chains_, "ReactionTime", rta);
     // this is just the limitation of FindODFromSingleChainPermutation
     EXPECT_EQ(res.first.valid_, variable_od.valid_);
     if (res.first.valid_ != variable_od.valid_ && res.first.valid_)
@@ -445,15 +439,13 @@ TEST_F(PermutationTest5, Find_OD) {
         dag_tasks, chains_perm, task_set_perms.graph_of_all_ca_chains_, {1, 4},
         rta);
 
-    std::unordered_map<JobCEC, JobCEC> react_chain_map;
     int index = 0;
     for (int x : rta) {
         std::cout << "RTA of task " << index++ << ": " << x << "\n";
     }
-    auto res =
-        FindODWithLP(task_set_perms.dag_tasks_, task_set_perms.tasks_info_,
-                     chains_perm, task_set_perms.graph_of_all_ca_chains_,
-                     "ReactionTime", react_chain_map, rta);
+    auto res = FindODWithLP(
+        task_set_perms.dag_tasks_, task_set_perms.tasks_info_, chains_perm,
+        task_set_perms.graph_of_all_ca_chains_, "ReactionTime", rta);
     // TOOD: pass this test
     // EXPECT_EQ(res.first.valid_, variable_od.valid_);
     // if (res.first.valid_ != variable_od.valid_ && res.first.valid_)

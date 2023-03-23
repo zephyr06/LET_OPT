@@ -16,15 +16,12 @@ class LPOptimizer {
                 const TaskSetInfoDerived &tasks_info,
                 // const ChainsPermutation &chains_perm,
                 const GraphOfChains &graph_of_all_ca_chains,
-                const std::string &obj_trait,
-                const std::unordered_map<JobCEC, JobCEC> &react_chain_map,
-                const std::vector<int> &rta)
+                const std::string &obj_trait, const std::vector<int> &rta)
         : dag_tasks_(dag_tasks),
           tasks_info_(tasks_info),
           //   chains_perm_(chains_perm),
           graph_of_all_ca_chains_(graph_of_all_ca_chains),
           obj_trait_(obj_trait),
-          react_chain_map_(react_chain_map),
           rta_(rta),
           // cplex's environments
           env_(IloEnv()),
@@ -98,8 +95,6 @@ class LPOptimizer {
     VariableOD variable_od_opt_;
     int numVariables_;
     std::string obj_trait_;
-    const std::unordered_map<JobCEC, JobCEC>
-        &react_chain_map_;  // TODO: make it work
     std::vector<std::unordered_map<JobCEC, JobCEC>> react_chain_map_prevs_;
     const std::vector<int> &rta_;
 
@@ -118,10 +113,9 @@ inline std::pair<VariableOD, int> FindODWithLP(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
     const ChainsPermutation &chains_perm,
     const GraphOfChains &graph_of_all_ca_chains, const std::string &obj_trait,
-    const std::unordered_map<JobCEC, JobCEC> &react_chain_map,
     const std::vector<int> &rta) {
     LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_of_all_ca_chains,
-                             obj_trait, react_chain_map, rta);
+                             obj_trait, rta);
     return lp_optimizer.Optimize(chains_perm);
 }
 

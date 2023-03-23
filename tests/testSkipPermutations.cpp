@@ -39,11 +39,10 @@ TEST_F(PermutationTest1, obj_) {
     chains_perm.push_back(perm23[3]);
     chains_perm.print();
 
-    std::unordered_map<JobCEC, JobCEC> react_chain_map;
     std::pair<VariableOD, int> res =
         FindODWithLP(task_sets_perms.dag_tasks_, task_sets_perms.tasks_info_,
                      chains_perm, task_sets_perms.graph_of_all_ca_chains_,
-                     "ReactionTime", react_chain_map, task_sets_perms.rta_);
+                     "ReactionTime",  task_sets_perms.rta_);
 
     std::vector<std::vector<int>> sub_chains =
         GetSubChains(task_sets_perms.dag_tasks_.chains_, chains_perm);

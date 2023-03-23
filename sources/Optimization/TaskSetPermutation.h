@@ -114,14 +114,12 @@ class TaskSetPermutation {
         BeginTimer(__FUNCTION__);
 #endif
 
-        std::unordered_map<JobCEC, JobCEC> react_chain_map;
-
         // std::pair<VariableOD, int> res = FindODWithLP(
         //     dag_tasks_, tasks_info_, chain_perm, graph_of_all_ca_chains_,
         //     ObjectiveFunction::type_trait, react_chain_map, rta_);
-        LPOptimizer lp_optimizer(
-            dag_tasks_, tasks_info_, graph_of_all_ca_chains_,
-            ObjectiveFunction::type_trait, react_chain_map, rta_);
+        LPOptimizer lp_optimizer(dag_tasks_, tasks_info_,
+                                 graph_of_all_ca_chains_,
+                                 ObjectiveFunction::type_trait, rta_);
         std::pair<VariableOD, int> res = lp_optimizer.Optimize(chain_perm);
 
         if (res.first.valid_)  // if valid, we'll exam obj; otherwise, we'll
