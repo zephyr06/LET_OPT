@@ -120,9 +120,9 @@ class TaskSetPermutation {
         //     dag_tasks_, tasks_info_, chain_perm, graph_of_all_ca_chains_,
         //     ObjectiveFunction::type_trait, react_chain_map, rta_);
         LPOptimizer lp_optimizer(
-            dag_tasks_, tasks_info_, chain_perm, graph_of_all_ca_chains_,
+            dag_tasks_, tasks_info_, graph_of_all_ca_chains_,
             ObjectiveFunction::type_trait, react_chain_map, rta_);
-        std::pair<VariableOD, int> res = lp_optimizer.Optimize();
+        std::pair<VariableOD, int> res = lp_optimizer.Optimize(chain_perm);
 
         if (res.first.valid_)  // if valid, we'll exam obj; otherwise, we'll
                                // just move forward
@@ -194,6 +194,7 @@ class TaskSetPermutation {
     VariableOD best_possible_variable_od_;
     VariableRange variable_range_od_;
     int infeasible_iteration_ = 0;
+    // LPOptimizer lp_optimizer_;
 };
 
 template <typename ObjectiveFunction>

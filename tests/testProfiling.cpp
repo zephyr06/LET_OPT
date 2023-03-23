@@ -94,15 +94,14 @@ TEST_F(PermutationTest_long_time23, Optimize_Incre) {
                          dag_tasks.chains_[0]);  // not useful for now
     std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
 
-    LPOptimizer lp_optimizer(dag_tasks, tasks_info, chain_perm2,
-                             graph_of_all_ca_chains, "ReactionTime",
-                             react_chain_map, rta);
-    lp_optimizer.OptimizeWithoutClear();
+    LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_of_all_ca_chains,
+                             "ReactionTime", react_chain_map, rta);
+    lp_optimizer.OptimizeWithoutClear(chain_perm2);
 
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < REPEAT; i++) {
         lp_optimizer.UpdateSystem(chain_perm);
-        lp_optimizer.OptimizeAfterUpdate();
+        lp_optimizer.OptimizeAfterUpdate(chain_perm);
     }
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration =

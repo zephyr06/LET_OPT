@@ -14,14 +14,14 @@ class LPOptimizer {
    public:
     LPOptimizer(const DAG_Model &dag_tasks,
                 const TaskSetInfoDerived &tasks_info,
-                const ChainsPermutation &chains_perm,
+                // const ChainsPermutation &chains_perm,
                 const GraphOfChains &graph_of_all_ca_chains,
                 const std::string &obj_trait,
                 const std::unordered_map<JobCEC, JobCEC> &react_chain_map,
                 const std::vector<int> &rta)
         : dag_tasks_(dag_tasks),
           tasks_info_(tasks_info),
-          chains_perm_(chains_perm),
+          //   chains_perm_(chains_perm),
           graph_of_all_ca_chains_(graph_of_all_ca_chains),
           obj_trait_(obj_trait),
           react_chain_map_(react_chain_map),
@@ -39,17 +39,21 @@ class LPOptimizer {
 
     void Init();
     void ClearCplexMemory();
-    std::pair<VariableOD, int> Optimize();
-    std::pair<VariableOD, int> OptimizeWithoutClear();
-    std::pair<VariableOD, int> OptimizeAfterUpdate();
+    std::pair<VariableOD, int> Optimize(const ChainsPermutation &chains_perm);
+    std::pair<VariableOD, int> OptimizeWithoutClear(
+        const ChainsPermutation &chains_perm);
+    std::pair<VariableOD, int> OptimizeAfterUpdate(
+        const ChainsPermutation &chains_perm);
 
     // protected:
     void AddVariables();
-    void AddPermutationInequalityConstraints();
+    void AddPermutationInequalityConstraints(
+        const ChainsPermutation &chains_perm);
     void AddSchedulabilityConstraints();
 
-    void AddConstantObjectiveFunctions();
-    void AddObjectiveFunctions();  // RTDA obj
+    void AddConstantObjectiveFunctions(const ChainsPermutation &chains_perm);
+    void AddObjectiveFunctions(
+        const ChainsPermutation &chains_perm);  // RTDA obj
     // void AddObjectiveFunctionDataAge();
     // void AddObjectiveFunctionReactionTime();
 
@@ -89,7 +93,7 @@ class LPOptimizer {
    public:
     const DAG_Model &dag_tasks_;
     const TaskSetInfoDerived &tasks_info_;
-    const ChainsPermutation &chains_perm_;
+    // const ChainsPermutation &chains_perm_;
     const GraphOfChains &graph_of_all_ca_chains_;
     VariableOD variable_od_opt_;
     int numVariables_;
@@ -116,10 +120,9 @@ inline std::pair<VariableOD, int> FindODWithLP(
     const GraphOfChains &graph_of_all_ca_chains, const std::string &obj_trait,
     const std::unordered_map<JobCEC, JobCEC> &react_chain_map,
     const std::vector<int> &rta) {
-    LPOptimizer lp_optimizer(dag_tasks, tasks_info, chains_perm,
-                             graph_of_all_ca_chains, obj_trait, react_chain_map,
-                             rta);
-    return lp_optimizer.Optimize();
+    LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_of_all_ca_chains,
+                             obj_trait, react_chain_map, rta);
+    return lp_optimizer.Optimize(chains_perm);
 }
 
 // inline bool ExamFeasibility(

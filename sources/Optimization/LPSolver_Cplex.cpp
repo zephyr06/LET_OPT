@@ -31,13 +31,15 @@ void LPOptimizer::ClearCplexMemory() {
 #endif
 }
 
-std::pair<VariableOD, int> LPOptimizer::Optimize() {
-    auto res = OptimizeWithoutClear();
+std::pair<VariableOD, int> LPOptimizer::Optimize(
+    const ChainsPermutation &chains_perm) {
+    auto res = OptimizeWithoutClear(chains_perm);
     ClearCplexMemory();
     return res;
 }
 
-std::pair<VariableOD, int> LPOptimizer::OptimizeAfterUpdate() {
+std::pair<VariableOD, int> LPOptimizer::OptimizeAfterUpdate(
+    const ChainsPermutation &chains_perm) {
     BeginTimer("extract_model_AfterUpdate");
     cplexSolver_.extract(model_);
     EndTimer("extract_model_AfterUpdate");
@@ -65,12 +67,13 @@ std::pair<VariableOD, int> LPOptimizer::OptimizeAfterUpdate() {
     return std::make_pair(variable_od_opt_, optimal_obj_);
 }
 
-std::pair<VariableOD, int> LPOptimizer::OptimizeWithoutClear() {
+std::pair<VariableOD, int> LPOptimizer::OptimizeWithoutClear(
+    const ChainsPermutation &chains_perm) {
     BeginTimer("Build_LP_Model");
     AddVariables();  // must be called first
-    AddPermutationInequalityConstraints();
+    AddPermutationInequalityConstraints(chains_perm);
     AddSchedulabilityConstraints();
-    AddObjectiveFunctions();
+    AddObjectiveFunctions(chains_perm);
     cplexSolver_.extract(model_);
     EndTimer("Build_LP_Model");
 
@@ -106,13 +109,14 @@ void LPOptimizer::AddVariables() {
     EndTimer("AddVariables");
 }
 
-void LPOptimizer::AddPermutationInequalityConstraints() {
+void LPOptimizer::AddPermutationInequalityConstraints(
+    const ChainsPermutation &chains_perm) {
     BeginTimer("AddPermutationInequalityConstraints");
 
     for (uint i = 0; i < graph_of_all_ca_chains_.edge_vec_ordered_.size();
          i++) {
         const Edge &edge_curr = graph_of_all_ca_chains_.edge_vec_ordered_[i];
-        const PermutationInequality &ineq = chains_perm_[edge_curr].inequality_;
+        const PermutationInequality &ineq = chains_perm[edge_curr].inequality_;
         // model_.add(
         //     varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] +
         //         ineq.lower_bound_ <=
@@ -246,7 +250,7 @@ void LPOptimizer::AddSchedulabilityConstraints() {
 // }
 
 // TODO: replace this function with other functions
-void LPOptimizer::AddObjectiveFunctions() {
+void LPOptimizer::AddObjectiveFunctions(const ChainsPermutation &chains_perm) {
     BeginTimer("AddObjective");
     IloExpr rtda_expression(env_);
     int chain_count = 0;
@@ -261,7 +265,7 @@ void LPOptimizer::AddObjectiveFunctions() {
         name2ilo_var_[var_name] = theta_da;
 
         auto react_chain_map =
-            GetFirstReactMap(dag_tasks_, tasks_info_, chains_perm_, chain);
+            GetFirstReactMap(dag_tasks_, tasks_info_, chains_perm, chain);
         react_chain_map_prevs_.push_back(react_chain_map);
 
         int hyper_period = GetHyperPeriod(tasks_info_, chain);
@@ -368,7 +372,8 @@ void LPOptimizer::UpdateObjectiveFunctions(
     EndTimer("UpdateObjectiveFunctions");
 }
 
-void LPOptimizer::AddConstantObjectiveFunctions() {
+void LPOptimizer::AddConstantObjectiveFunctions(
+    const ChainsPermutation &chains_perm) {
     IloExpr rtda_expression(env_);
     std::stringstream var_name;
     auto theta_rt = IloNumVar(env_, 3, IloInfinity, IloNumVar::Float,

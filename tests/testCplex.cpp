@@ -33,9 +33,9 @@ TEST_F(PermutationTest1, mapPrev) {
         GetFirstReactMap(dag_tasks, tasks_info, chain_perm,
                          dag_tasks.chains_[0]);  // not useful for now
     std::vector<int> rta = {1, 3, 6};
-    LPOptimizer lp_optimizer(dag_tasks, tasks_info, chain_perm, graph_chains,
+    LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains,
                              "ReactionTime", react_chain_map, rta);
-    auto res = lp_optimizer.Optimize();
+    auto res = lp_optimizer.Optimize(chain_perm);
     EXPECT_EQ(20, res.second);
 }
 TEST_F(PermutationTest1, Incremental) {
@@ -54,9 +54,9 @@ TEST_F(PermutationTest1, Incremental) {
     chain_perm2.push_back(perm12[0]);
 
     std::unordered_map<JobCEC, JobCEC> react_chain_map;
-    LPOptimizer lp_optimizer(dag_tasks, tasks_info, chain_perm2, graph_chains,
+    LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains,
                              "ReactionTime", react_chain_map, rta);
-    auto res = lp_optimizer.OptimizeWithoutClear();
+    auto res = lp_optimizer.OptimizeWithoutClear(chain_perm2);
     IloCplex cplex(lp_optimizer.model_);
     cplex.extract(lp_optimizer.model_);
     cplex.exportModel("recourse1.lp");
@@ -65,7 +65,7 @@ TEST_F(PermutationTest1, Incremental) {
     IloCplex cplex2(lp_optimizer.model_);
     cplex2.extract(lp_optimizer.model_);
     cplex2.exportModel("recourse2.lp");
-    res = lp_optimizer.OptimizeAfterUpdate();
+    res = lp_optimizer.OptimizeAfterUpdate(chain_perm1);
 
     EXPECT_EQ(20, res.second);
 }
