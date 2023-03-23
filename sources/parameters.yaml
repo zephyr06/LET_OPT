@@ -1,7 +1,7 @@
 %YAML:1.0
-debugMode: 0
+debugMode: 1
 printSchedule: 0
-TIME_LIMIT: 10 # seconds, -1 means unlimited time
+TIME_LIMIT: 100 # seconds, -1 means unlimited time
 SKIP_PERM: 2
 # the proportion of permutations to keep! 1 means no sampling
 SAMPLE_SMALL_TASKS: 1

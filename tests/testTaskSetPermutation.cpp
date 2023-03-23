@@ -31,7 +31,7 @@ class PermutationTest1 : public ::testing::Test {
         perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
         perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
         dag_tasks.chains_[0] = {0, 1, 2};
-        task_sets_perms = TaskSetPermutation(dag_tasks, {task_chain});
+        // task_sets_perms = TaskSetPermutation(dag_tasks, {task_chain});
     };
 
     DAG_Model dag_tasks;
@@ -47,11 +47,12 @@ class PermutationTest1 : public ::testing::Test {
 
     TwoTaskPermutations perm01;
     TwoTaskPermutations perm12;
-    TaskSetPermutation task_sets_perms;
+    // TaskSetPermutation task_sets_perms;
     std::vector<int> task_chain = {0, 1, 2};
 };
 
 TEST_F(PermutationTest1, Iteration) {
+    TaskSetPermutation task_sets_perms(dag_tasks, {task_chain});
     int obj_find = task_sets_perms.PerformOptimization<ObjReactionTime>();
     // task_sets_perms.best_yet_chain_[0]->print();
     // task_sets_perms.best_yet_chain_[1]->print();
@@ -90,7 +91,7 @@ class PermutationTest2 : public ::testing::Test {
 
         perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
         perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
-        task_sets_perms = TaskSetPermutation(dag_tasks, {task_chain});
+        // task_sets_perms = TaskSetPermutation(dag_tasks, {task_chain});
     };
 
     DAG_Model dag_tasks;
@@ -106,7 +107,7 @@ class PermutationTest2 : public ::testing::Test {
 
     TwoTaskPermutations perm01;
     TwoTaskPermutations perm12;
-    TaskSetPermutation task_sets_perms;
+    // TaskSetPermutation task_sets_perms;
     std::vector<int> task_chain = {4, 3, 0};
 };
 
@@ -295,7 +296,6 @@ class PermutationTest4 : public ::testing::Test {
 
         perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
         perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
-        // task_sets_perms = TaskSetPermutation(dag_tasks, {task_chain});
     };
 
     DAG_Model dag_tasks;
@@ -311,7 +311,6 @@ class PermutationTest4 : public ::testing::Test {
 
     TwoTaskPermutations perm01;
     TwoTaskPermutations perm12;
-    TaskSetPermutation task_sets_perms;
     std::vector<std::vector<int>> task_chains = {
         {0, 1}, {0, 2}};  // from 0 to 1, from 0 to 2
 };
@@ -341,7 +340,6 @@ class PermutationTest5 : public ::testing::Test {
         job01 = JobCEC(0, 1);
         job10 = JobCEC(1, 0);
         job20 = JobCEC(2, 0);
-        // task_sets_perms = TaskSetPermutation(dag_tasks, {task_chain});
     };
 
     DAG_Model dag_tasks;
@@ -357,7 +355,6 @@ class PermutationTest5 : public ::testing::Test {
 
     TwoTaskPermutations perm01;
     TwoTaskPermutations perm12;
-    TaskSetPermutation task_sets_perms;
     std::vector<std::vector<int>> task_chains = {
         {0, 1, 6, 7}, {0, 2}, {20, 1}, {25, 6, 7}};
 };

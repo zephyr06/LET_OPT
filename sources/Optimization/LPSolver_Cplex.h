@@ -42,8 +42,19 @@ class LPOptimizer {
     std::pair<VariableOD, int> OptimizeAfterUpdate(
         const ChainsPermutation &chains_perm);
 
-    // protected:
-    void AddVariables();
+    inline const std::pair<VariableOD, int> IncrementOptimize(
+        const ChainsPermutation &chains_perm) {
+        UpdateSystem(chains_perm);
+        return OptimizeAfterUpdate(chains_perm);
+    }
+
+    inline void AddVariables() {
+        AddVariablesOD();
+        AddArtificialVariables();
+    }
+
+    void AddVariablesOD();
+    void AddArtificialVariables();
     void AddPermutationInequalityConstraints(
         const ChainsPermutation &chains_perm);
     void AddSchedulabilityConstraints();
@@ -86,6 +97,16 @@ class LPOptimizer {
         cplexSolver_.extract(model_);
         cplexSolver_.exportModel(file_name.c_str());
     }
+    inline std::string GetPermuIneqConstraintNamePrev(int edge_id) {
+        return "perm_constraint_" + std::to_string(edge_id * 2);
+    }
+    inline std::string GetPermuIneqConstraintNameNext(int edge_id) {
+        return "perm_constraint_" + std::to_string(edge_id * 2 + 1);
+    }
+    inline std::string GetReactConstraintName(int chain_id, int job_id) {
+        return "chain_" + std::to_string(chain_id) + "constraint_" +
+               std::to_string(job_id);
+    }
 
    public:
     const DAG_Model &dag_tasks_;
@@ -102,6 +123,7 @@ class LPOptimizer {
     IloModel model_;
     IloCplex cplexSolver_;
     IloNumVarArray varArray_;
+    IloNumVarArray varArray_art_;
     IloConstraintArray constraint_array_;
     int optimal_obj_ = 1e8;
     std::unordered_map<std::string, IloRange> name2ilo_const_;

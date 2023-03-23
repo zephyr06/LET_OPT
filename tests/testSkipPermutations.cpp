@@ -20,13 +20,13 @@ class PermutationTest1 : public ::testing::Test {
             "RM", 2);
         tasks = dag_tasks.GetTaskSet();
         tasks_info = TaskSetInfoDerived(tasks);
-        task_sets_perms = TaskSetPermutation(dag_tasks, dag_tasks.chains_);
+        // task_sets_perms = TaskSetPermutation(dag_tasks, dag_tasks.chains_);
     };
 
     DAG_Model dag_tasks;
     TaskSet tasks;
     TaskSetInfoDerived tasks_info;
-    TaskSetPermutation task_sets_perms;
+    // TaskSetPermutation task_sets_perms;
 };
 
 TEST_F(PermutationTest1, obj_) {
@@ -38,11 +38,11 @@ TEST_F(PermutationTest1, obj_) {
     chains_perm.push_back(perm24[11]);
     chains_perm.push_back(perm23[3]);
     chains_perm.print();
-
+    TaskSetPermutation task_sets_perms(dag_tasks, dag_tasks.chains_);
     std::pair<VariableOD, int> res =
         FindODWithLP(task_sets_perms.dag_tasks_, task_sets_perms.tasks_info_,
                      chains_perm, task_sets_perms.graph_of_all_ca_chains_,
-                     "ReactionTime",  task_sets_perms.rta_);
+                     "ReactionTime", task_sets_perms.rta_);
 
     std::vector<std::vector<int>> sub_chains =
         GetSubChains(task_sets_perms.dag_tasks_.chains_, chains_perm);
@@ -73,6 +73,7 @@ TEST_F(PermutationTest1, FindBestPossibleVariableOD) {
     chains_perm.push_back(perm23[3]);
     chains_perm.print();
 
+    TaskSetPermutation task_sets_perms(dag_tasks, dag_tasks.chains_);
     VariableRange variable_range = FindPossibleVariableOD(
         dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm);
 
@@ -117,13 +118,13 @@ class PermutationTest2 : public ::testing::Test {
             "RM", 2);
         tasks = dag_tasks.GetTaskSet();
         tasks_info = TaskSetInfoDerived(tasks);
-        task_sets_perms = TaskSetPermutation(dag_tasks, dag_tasks.chains_);
+        // task_sets_perms = TaskSetPermutation(dag_tasks, dag_tasks.chains_);
     };
 
     DAG_Model dag_tasks;
     TaskSet tasks;
     TaskSetInfoDerived tasks_info;
-    TaskSetPermutation task_sets_perms;
+    // TaskSetPermutation task_sets_perms;
 };
 
 TEST_F(PermutationTest2, FindBestPossibleVariableOD) {
@@ -136,6 +137,7 @@ TEST_F(PermutationTest2, FindBestPossibleVariableOD) {
     // chains_perm.push_back(perm23[3]);
     chains_perm.print();
 
+    TaskSetPermutation task_sets_perms(dag_tasks, dag_tasks.chains_);
     VariableRange variable_range = FindPossibleVariableOD(
         dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm);
     EXPECT_EQ(0, variable_range.lower_bound[0].offset);

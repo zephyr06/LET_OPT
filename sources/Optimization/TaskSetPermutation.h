@@ -28,7 +28,7 @@ std::vector<std::vector<int>> GetSubChains(
 // TODO: what's the usage of chains in arguments
 class TaskSetPermutation {
    public:
-    TaskSetPermutation() {}
+    // TaskSetPermutation() {}
     TaskSetPermutation(const DAG_Model& dag_tasks,
                        const std::vector<std::vector<int>>& chains);
 
@@ -39,6 +39,7 @@ class TaskSetPermutation {
     int PerformOptimization() {
         ChainsPermutation chain_perm;
         IterateAllChainsPermutations<ObjectiveFunction>(0, chain_perm);
+        lp_optimizer_.ClearCplexMemory();
         return best_yet_obj_;
     }
 
@@ -117,11 +118,19 @@ class TaskSetPermutation {
         // std::pair<VariableOD, int> res = FindODWithLP(
         //     dag_tasks_, tasks_info_, chain_perm, graph_of_all_ca_chains_,
         //     ObjectiveFunction::type_trait, react_chain_map, rta_);
-        LPOptimizer lp_optimizer(dag_tasks_, tasks_info_,
-                                 graph_of_all_ca_chains_,
-                                 ObjectiveFunction::type_trait, rta_);
-        std::pair<VariableOD, int> res = lp_optimizer.Optimize(chain_perm);
+        // LPOptimizer lp_optimizer(dag_tasks_, tasks_info_,
+        //                          graph_of_all_ca_chains_,
+        //                          ObjectiveFunction::type_trait, rta_);
+        std::pair<VariableOD, int> res;
+        if (lp_optimizer_.name2ilo_const_.size() != 0) {
+            res = lp_optimizer_.IncrementOptimize(chain_perm);
+        } else {
+            lp_optimizer_.obj_trait_ = ObjectiveFunction::type_trait;
+            res = lp_optimizer_.OptimizeWithoutClear(chain_perm);
+        }
 
+        if (GlobalVariablesDAGOpt::debugMode == 1)
+            lp_optimizer_.WriteModelToFile();
         if (res.first.valid_)  // if valid, we'll exam obj; otherwise, we'll
                                // just move forward
         {
@@ -192,7 +201,7 @@ class TaskSetPermutation {
     VariableOD best_possible_variable_od_;
     VariableRange variable_range_od_;
     int infeasible_iteration_ = 0;
-    // LPOptimizer lp_optimizer_;
+    LPOptimizer lp_optimizer_;
 };
 
 template <typename ObjectiveFunction>

@@ -53,14 +53,10 @@ TEST_F(PermutationTest1, Incremental) {
     LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains,
                              "ReactionTime", rta);
     auto res = lp_optimizer.OptimizeWithoutClear(chain_perm2);
-    IloCplex cplex(lp_optimizer.model_);
-    cplex.extract(lp_optimizer.model_);
-    cplex.exportModel("recourse1.lp");
+    lp_optimizer.WriteModelToFile("recourse1.lp");
 
     lp_optimizer.UpdateSystem(chain_perm1);
-    IloCplex cplex2(lp_optimizer.model_);
-    cplex2.extract(lp_optimizer.model_);
-    cplex2.exportModel("recourse2.lp");
+    lp_optimizer.WriteModelToFile("recourse2.lp");
     res = lp_optimizer.OptimizeAfterUpdate(chain_perm1);
 
     EXPECT_EQ(20, res.second);

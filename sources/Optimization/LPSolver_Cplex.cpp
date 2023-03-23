@@ -71,8 +71,8 @@ std::pair<VariableOD, int> LPOptimizer::OptimizeWithoutClear(
     const ChainsPermutation &chains_perm) {
     BeginTimer("Build_LP_Model");
     AddVariables();  // must be called first
-    AddPermutationInequalityConstraints(chains_perm);
     AddSchedulabilityConstraints();
+    AddPermutationInequalityConstraints(chains_perm);
     AddObjectiveFunctions(chains_perm);
     cplexSolver_.extract(model_);
     EndTimer("Build_LP_Model");
@@ -101,12 +101,21 @@ std::pair<VariableOD, int> LPOptimizer::OptimizeWithoutClear(
 }
 
 // this function doesn't include artificial variables
-void LPOptimizer::AddVariables() {
-    BeginTimer("AddVariables");
+void LPOptimizer::AddVariablesOD() {
+    BeginTimer("AddVariablesOD");
     numVariables_ = tasks_info_.N * 2;
     varArray_ = IloNumVarArray(env_, numVariables_, 0, tasks_info_.hyper_period,
                                IloNumVar::Float);
-    EndTimer("AddVariables");
+    EndTimer("AddVariablesOD");
+}
+
+void LPOptimizer::AddArtificialVariables() {
+    if (obj_trait_ == "ReactionTime" || obj_trait_ == "DataAge")
+        varArray_art_ =
+            IloNumVarArray(env_, static_cast<int>(dag_tasks_.chains_.size()), 0,
+                           IloInfinity, IloNumVar::Float);
+    else
+        CoutError("Unrecognized obj_trait in LPSolver!");
 }
 
 void LPOptimizer::AddPermutationInequalityConstraints(
@@ -122,7 +131,7 @@ void LPOptimizer::AddPermutationInequalityConstraints(
         //         ineq.lower_bound_ <=
         //     varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)] +
         //         GlobalVariablesDAGOpt::kCplexInequalityThreshold);
-        std::string const_name1 = "perm_constraint_" + std::to_string(i * 2);
+        std::string const_name1 = GetPermuIneqConstraintNamePrev(i);
         IloRange myConstraint1(
             env_, -IloInfinity,
             varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] -
@@ -137,8 +146,7 @@ void LPOptimizer::AddPermutationInequalityConstraints(
         //     varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)] <=
         //     varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] +
         //         ineq.upper_bound_);
-        std::string const_name2 =
-            "perm_constraint_" + std::to_string(i * 2 + 1);
+        std::string const_name2 = GetPermuIneqConstraintNameNext(i);
         IloRange myConstraint2(
             env_, -IloInfinity,
             varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)] -
@@ -166,9 +174,10 @@ void LPOptimizer::UpdatePermutationInequalityConstraints(
         //         ineq.lower_bound_ <=
         //     varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)] +
         //         GlobalVariablesDAGOpt::kCplexInequalityThreshold);
-        std::string const_name1 = "perm_constraint_" + std::to_string(i * 2);
+        std::string const_name1 = GetPermuIneqConstraintNamePrev(i);
         double ub_curr = GlobalVariablesDAGOpt::kCplexInequalityThreshold -
                          ineq.lower_bound_;
+
         if (name2ilo_const_[const_name1].getUB() != ub_curr)
             name2ilo_const_[const_name1].setUB(ub_curr);
 
@@ -176,8 +185,7 @@ void LPOptimizer::UpdatePermutationInequalityConstraints(
         //     varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)] <=
         //     varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] +
         //         ineq.upper_bound_);
-        std::string const_name2 =
-            "perm_constraint_" + std::to_string(i * 2 + 1);
+        std::string const_name2 = GetPermuIneqConstraintNameNext(i);
         double ub_curr2 = ineq.upper_bound_;
         if (name2ilo_const_[const_name2].getUB() != ub_curr2)
             name2ilo_const_[const_name2].setUB(ub_curr2);
@@ -255,14 +263,16 @@ void LPOptimizer::AddObjectiveFunctions(const ChainsPermutation &chains_perm) {
     IloExpr rtda_expression(env_);
     int chain_count = 0;
     for (auto chain : dag_tasks_.chains_) {
-        std::string var_name = "Chain_" + std::to_string(chain_count) + "_RT";
-        auto theta_rt =
-            IloNumVar(env_, 0, IloInfinity, IloNumVar::Float, var_name.c_str());
-        name2ilo_var_[var_name] = theta_rt;
-        var_name = "Chain_" + std::to_string(chain_count) + "_DA";
-        auto theta_da =
-            IloNumVar(env_, 0, IloInfinity, IloNumVar::Float, var_name.c_str());
-        name2ilo_var_[var_name] = theta_da;
+        // std::string var_name = "Chain_" + std::to_string(chain_count) +
+        // "_RT"; auto theta_rt =
+        //     IloNumVar(env_, 0, IloInfinity, IloNumVar::Float,
+        //     var_name.c_str());
+        // name2ilo_var_[var_name] = theta_rt;
+        // var_name = "Chain_" + std::to_string(chain_count) + "_DA";
+        // auto theta_da =
+        //     IloNumVar(env_, 0, IloInfinity, IloNumVar::Float,
+        //     var_name.c_str());
+        // name2ilo_var_[var_name] = theta_da;
 
         auto react_chain_map =
             GetFirstReactMap(dag_tasks_, tasks_info_, chains_perm, chain);
@@ -275,14 +285,15 @@ void LPOptimizer::AddObjectiveFunctions(const ChainsPermutation &chains_perm) {
              start_instance_index <= total_start_jobs; start_instance_index++) {
             JobCEC start_job = {chain[0], (start_instance_index)};
             JobCEC first_react_job = react_chain_map[start_job];
+            std::string const_name =
+                GetReactConstraintName(chain_count, start_instance_index);
             if (obj_trait_ == "ReactionTime") {
-                std::string const_name =
-                    "rt_constraint_" + std::to_string(start_instance_index);
                 IloExpr finish_expr = GetFinishTimeExpression(first_react_job);
                 IloExpr start_expr = GetStartTimeExpression(start_job);
-                IloRange myConstraint1(env_, 0,
-                                       theta_rt - finish_expr + start_expr,
-                                       IloInfinity, const_name.c_str());
+                IloRange myConstraint1(
+                    env_, 0,
+                    varArray_art_[chain_count] - finish_expr + start_expr,
+                    IloInfinity, const_name.c_str());
                 model_.add(myConstraint1);
                 name2ilo_const_[const_name] = myConstraint1;
                 finish_expr.end();
@@ -295,15 +306,15 @@ void LPOptimizer::AddObjectiveFunctions(const ChainsPermutation &chains_perm) {
                     JobCEC last_react_job(first_react_job.taskId,
                                           first_react_job.jobId - 1);
                     //   TODO: make the constraint name trick work!
-                    model_.add(theta_da >=
+                    model_.add(varArray_art_[chain_count] >=
                                (GetFinishTimeExpression(last_react_job) -
                                 GetStartTimeExpression(last_start_job)));
                 }
             }
         }
         // Normal obj to optmize RTDA: obj = max_RTs + max_DAs
-        rtda_expression += theta_rt;
-        rtda_expression += theta_da;
+        rtda_expression += varArray_art_[chain_count];
+        // rtda_expression += theta_da;
         chain_count++;
     }
     model_.add(IloMinimize(env_, rtda_expression));
@@ -317,10 +328,10 @@ void LPOptimizer::UpdateObjectiveFunctions(
     // IloExpr rtda_expression(env_);
     int chain_count = 0;
     for (auto chain : dag_tasks_.chains_) {
-        std::string var_name = "Chain_" + std::to_string(chain_count) + "_RT";
-        auto theta_rt = name2ilo_var_[var_name];
-        var_name = "Chain_" + std::to_string(chain_count) + "_DA";
-        auto theta_da = name2ilo_var_[var_name];
+        // std::string var_name = "Chain_" + std::to_string(chain_count) +
+        // "_RT"; auto &theta_rt = name2ilo_var_[var_name]; var_name = "Chain_"
+        // + std::to_string(chain_count) + "_DA"; auto &theta_da =
+        // name2ilo_var_[var_name];
 
         std::unordered_map<JobCEC, JobCEC> react_chain_map =
             GetFirstReactMap(dag_tasks_, tasks_info_, chains_perm, chain);
@@ -335,16 +346,17 @@ void LPOptimizer::UpdateObjectiveFunctions(
             JobCEC start_job = {chain[0], (start_instance_index)};
             JobCEC first_react_job = react_chain_map[start_job];
             if (react_chain_map_prev.at(start_job) == first_react_job) continue;
+            std::string const_name =
+                GetReactConstraintName(chain_count, start_instance_index);
             if (obj_trait_ == "ReactionTime") {
                 // model_.add(theta_rt >=
                 //            (GetFinishTimeExpression(first_react_job) -
                 //             GetStartTimeExpression(start_job)));
-                std::string const_name =
-                    "rt_constraint_" + std::to_string(start_instance_index);
                 model_.remove(name2ilo_const_[const_name]);
                 IloExpr finish_expr = GetFinishTimeExpression(first_react_job);
                 IloExpr start_expr = GetStartTimeExpression(start_job);
-                IloExpr full_expr = theta_rt - finish_expr + start_expr;
+                IloExpr full_expr =
+                    varArray_art_[chain_count] - finish_expr + start_expr;
                 IloRange myConstraint1(env_, 0, full_expr, IloInfinity,
                                        const_name.c_str());
                 name2ilo_const_[const_name] = myConstraint1;
@@ -360,7 +372,7 @@ void LPOptimizer::UpdateObjectiveFunctions(
                     JobCEC last_react_job(first_react_job.taskId,
                                           first_react_job.jobId - 1);
                     //   TODO: make the constraint name trick work!
-                    model_.add(theta_da >=
+                    model_.add(varArray_art_[chain_count] >=
                                (GetFinishTimeExpression(last_react_job) -
                                 GetStartTimeExpression(last_start_job)));
                 }
