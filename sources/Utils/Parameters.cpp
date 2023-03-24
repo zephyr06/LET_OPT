@@ -15,7 +15,7 @@ double SAMPLE_SMALL_TASKS = (double)ConfigParameters["SAMPLE_SMALL_TASKS"];
 int SearchDP = (int)ConfigParameters["SearchDP"];
 const double kCplexInequalityThreshold =
     (double)ConfigParameters["kCplexInequalityThreshold"];
-
+int SearchDP_Friendly = (int)ConfigParameters["SearchDP_Friendly"];
 // Task set settings
 const std::string testDataSetName =
     (std::string)ConfigParameters["testDataSetName"];

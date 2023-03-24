@@ -91,10 +91,11 @@ bool CompareNewPerm(
             }
         }
     }
-    if (!whether_find_worse_react)
-        return true;
-    else
-        return false;
+    if (GlobalVariablesDAGOpt::SearchDP_Friendly) {
+        if (!whether_find_worse_react) return true;
+    }
+
+    return false;
 }
 
 TaskSetPermutation::TaskSetPermutation(
