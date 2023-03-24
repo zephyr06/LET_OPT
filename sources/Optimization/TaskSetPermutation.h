@@ -24,6 +24,19 @@ std::vector<std::vector<int>> GetSubChains(
     const std::vector<std::vector<int>>& chains_full_length,
     const ChainsPermutation& chains_perm);
 
+std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
+    const ChainsPermutation& chain_perm,
+    const std::shared_ptr<const SinglePairPermutation> single_perm,
+    const std::vector<std::vector<int>>& chains, const DAG_Model& dag_tasks,
+    const TaskSetInfoDerived& tasks_info);
+
+// return true if it's possible for curr_first_job_maps to achieve better
+// performance than curr_best_first_job_maps
+bool CompareNewPerm(
+    const std::vector<std::unordered_map<JobCEC, JobCEC>>& curr_first_job_maps,
+    const std::vector<std::unordered_map<JobCEC, JobCEC>>&
+        curr_best_first_job_maps);
+
 // currently, as asusme there is only one chain
 // TODO: what's the usage of chains in arguments
 class TaskSetPermutation {
@@ -122,20 +135,6 @@ class TaskSetPermutation {
         return best_yet_obj_;
     }
 
-    bool CompareNewPerm(const std::vector<std::unordered_map<JobCEC, JobCEC>>&
-                            curr_first_job_maps,
-                        const std::vector<std::unordered_map<JobCEC, JobCEC>>&
-                            curr_best_first_job_maps) {
-        return true;
-    }
-
-    static std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
-        const ChainsPermutation& chain_perm,
-        const SinglePairPermutation& single_perm) {
-        std::vector<std::unordered_map<JobCEC, JobCEC>> map;
-        return map;
-    }
-
     template <typename ObjectiveFunction>
     double IterateAllChainsPermutationsDP(uint position,
                                           ChainsPermutation& chain_perm) {
@@ -161,7 +160,9 @@ class TaskSetPermutation {
                 std::vector<std::unordered_map<JobCEC, JobCEC>>
                     curr_first_job_maps = GetFirstReactMaps(
                         chain_perm,
-                        *adjacent_two_task_permutations_[position][i]);
+                        adjacent_two_task_permutations_[position][i],
+                        graph_of_all_ca_chains_.chains_, dag_tasks_,
+                        tasks_info_);
                 if (CompareNewPerm(curr_first_job_maps,
                                    curr_best_first_job_maps)) {
                     // add one type of permutation to chain_perm

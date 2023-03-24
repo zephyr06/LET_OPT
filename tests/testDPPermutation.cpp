@@ -49,29 +49,7 @@ class PermutationTest18 : public ::testing::Test {
     std::vector<int> task_chain = {0, 1, 2};
 };
 
-std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
-    const ChainsPermutation& chain_perm,
-    const std::shared_ptr<const SinglePairPermutation> single_perm,
-    const std::vector<std::vector<int>>& chains) {
-    std::vector<std::unordered_map<JobCEC, JobCEC>> map;
-    map.reserve(chains.size());
-    for (uint i = 0; i < chains.size(); i++) {
-        std::unordered_map<JobCEC, JobCEC> m;
-        map.push_back(m);
-    }
-
-    // TODO: Improve efficiency there!
-    ChainsPermutation chains_perm_more = chain_perm;
-    chains_perm_more.push_back(single_perm);
-    std::vector<std::vector<int>> sub_chains =
-        GetSubChains(chains, chains_perm_more);
-    for (uint i = 0; i < chains.size(); i++) {
-        const std::vector<int>& chain_sub = sub_chains[i];
-    }
-    return map;
-}
-
-TEST_F(PermutationTest18, Iteration) {
+TEST_F(PermutationTest18, GetFirstReactMaps) {
     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
     perm01[0]->print();
@@ -81,13 +59,160 @@ TEST_F(PermutationTest18, Iteration) {
     chain_perm.push_back(perm01[0]);
     // chain_perm.push_back(perm12[0]);
     std::vector<std::unordered_map<JobCEC, JobCEC>> curr_first_job_maps =
-        GetFirstReactMaps(chain_perm, perm12[0], dag_tasks.chains_);
+        GetFirstReactMaps(chain_perm, perm12[0], dag_tasks.chains_, dag_tasks,
+                          tasks_info);
 
     EXPECT_EQ(1, curr_first_job_maps.size());  // only 1 chain
-    // EXPECT_EQ(JobCEC(2, 0), curr_first_job_maps[0][JobCEC(0, 0)]);
-    // EXPECT_EQ(JobCEC(2, 0), curr_first_job_maps[0][JobCEC(0, 1)]);
+    EXPECT_EQ(JobCEC(2, 0), curr_first_job_maps[0][JobCEC(0, 0)]);
+    EXPECT_EQ(JobCEC(2, 0), curr_first_job_maps[0][JobCEC(0, 1)]);
 }
 
+TEST_F(PermutationTest18, CompareNewPerm) {
+    TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+    TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+    perm01[0]->print();
+    perm12[0]->print();
+    ChainsPermutation chain_perm1;
+    chain_perm1.push_back(perm01[0]);
+    // chain_perm1.push_back(perm12[0]);
+
+    ChainsPermutation chain_perm2;
+    chain_perm2.push_back(perm01[0]);
+    // chain_perm2.push_back(perm12[1]);
+    std::vector<std::unordered_map<JobCEC, JobCEC>> curr_first_job_maps1 =
+        GetFirstReactMaps(chain_perm1, perm12[0], dag_tasks.chains_, dag_tasks,
+                          tasks_info);
+
+    std::vector<std::unordered_map<JobCEC, JobCEC>> curr_first_job_maps2 =
+        GetFirstReactMaps(chain_perm1, perm12[1], dag_tasks.chains_, dag_tasks,
+                          tasks_info);
+    EXPECT_TRUE(CompareNewPerm(curr_first_job_maps1, curr_first_job_maps2));
+    EXPECT_FALSE(CompareNewPerm(curr_first_job_maps2, curr_first_job_maps1));
+}
+
+class PermutationTest_2chain_v1 : public ::testing::Test {
+   protected:
+    void SetUp() override {
+        dag_tasks = ReadDAG_Tasks(
+            GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v18.csv",
+            "orig", 2);
+        tasks = dag_tasks.GetTaskSet();
+        tasks_info = TaskSetInfoDerived(tasks);
+        task0 = tasks[0];
+        task1 = tasks[1];
+        task2 = tasks[2];
+        job00 = JobCEC(0, 0);
+        job01 = JobCEC(0, 1);
+        job10 = JobCEC(1, 0);
+        job20 = JobCEC(2, 0);
+
+        perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
+        perm03 = TwoTaskPermutations(0, 3, dag_tasks, tasks_info);
+        perm34 = TwoTaskPermutations(3, 4, dag_tasks, tasks_info);
+        perm13 = TwoTaskPermutations(1, 3, dag_tasks, tasks_info);
+        variable_od = VariableOD(tasks);
+        dag_tasks.chains_[0] = {0, 3, 4};
+        dag_tasks.chains_.push_back({1, 3, 4});
+    };
+
+    DAG_Model dag_tasks;
+    TaskSet tasks;
+    TaskSetInfoDerived tasks_info;
+    Task task0;
+    Task task1;
+    Task task2;
+    JobCEC job00;
+    JobCEC job01;
+    JobCEC job10;
+    JobCEC job20;
+
+    TwoTaskPermutations perm01;
+    TwoTaskPermutations perm03;
+    TwoTaskPermutations perm34;
+    TwoTaskPermutations perm13;
+    VariableOD variable_od;
+};
+
+TEST_F(PermutationTest_2chain_v1, GetFirstReactMaps) {
+    ChainsPermutation chain_perm;
+    chain_perm.push_back(perm03[0]);
+    chain_perm.push_back(perm34[0]);
+    // chain_perm.push_back(perm13[0]);
+    perm13[0]->print();
+    chain_perm.print();
+
+    std::vector<std::unordered_map<JobCEC, JobCEC>> curr_first_job_maps =
+        GetFirstReactMaps(chain_perm, perm13[0], dag_tasks.chains_, dag_tasks,
+                          tasks_info);
+
+    EXPECT_EQ(2, curr_first_job_maps.size());
+    EXPECT_EQ(JobCEC(4, 0), curr_first_job_maps[0][JobCEC(0, 0)]);
+    EXPECT_EQ(JobCEC(4, 0), curr_first_job_maps[0][JobCEC(0, 1)]);
+    EXPECT_EQ(3, curr_first_job_maps[1].size());
+    EXPECT_EQ(JobCEC(4, 0), curr_first_job_maps[1][JobCEC(1, 0)]);
+}
+
+TEST_F(PermutationTest_2chain_v1, GetFirstReactMaps_v2) {
+    ChainsPermutation chain_perm;
+    chain_perm.push_back(perm03[0]);
+    // chain_perm.push_back(perm34[0]);
+    // chain_perm.push_back(perm13[0]);
+    chain_perm.print();
+
+    std::vector<std::unordered_map<JobCEC, JobCEC>> curr_first_job_maps =
+        GetFirstReactMaps(chain_perm, perm13[0], dag_tasks.chains_, dag_tasks,
+                          tasks_info);
+
+    EXPECT_EQ(2, curr_first_job_maps.size());
+    EXPECT_EQ(JobCEC(3, 0), curr_first_job_maps[0][JobCEC(0, 0)]);
+    EXPECT_EQ(JobCEC(3, 0), curr_first_job_maps[0][JobCEC(0, 1)]);
+    EXPECT_EQ(JobCEC(3, 0), curr_first_job_maps[1][JobCEC(1, 0)]);
+}
+
+TEST_F(PermutationTest_2chain_v1, CompareNewPermv1) {
+    ChainsPermutation chain_perm1;
+    chain_perm1.push_back(perm03[0]);
+    chain_perm1.push_back(perm34[0]);
+    // chain_perm1.push_back(perm13[0]);
+    chain_perm1.print();
+
+    ChainsPermutation chain_perm2;
+    chain_perm2.push_back(perm03[0]);
+    chain_perm2.push_back(perm34[0]);
+    // chain_perm2.push_back(perm13[0]);
+    chain_perm2.print();
+    std::vector<std::unordered_map<JobCEC, JobCEC>> curr_first_job_maps1 =
+        GetFirstReactMaps(chain_perm1, perm13[0], dag_tasks.chains_, dag_tasks,
+                          tasks_info);
+
+    std::vector<std::unordered_map<JobCEC, JobCEC>> curr_first_job_maps2 =
+        GetFirstReactMaps(chain_perm1, perm13[1], dag_tasks.chains_, dag_tasks,
+                          tasks_info);
+    EXPECT_TRUE(CompareNewPerm(curr_first_job_maps1, curr_first_job_maps2));
+    EXPECT_FALSE(CompareNewPerm(curr_first_job_maps2, curr_first_job_maps1));
+}
+TEST_F(PermutationTest_2chain_v1, CompareNewPermv2) {
+    ChainsPermutation chain_perm1;
+    chain_perm1.push_back(perm03[0]);
+    // chain_perm1.push_back(perm34[0]);
+    chain_perm1.push_back(perm13[0]);
+    chain_perm1.print();
+
+    ChainsPermutation chain_perm2;
+    chain_perm2.push_back(perm03[0]);
+    // chain_perm2.push_back(perm34[0]);
+    chain_perm2.push_back(perm13[0]);
+    chain_perm2.print();
+    std::vector<std::unordered_map<JobCEC, JobCEC>> curr_first_job_maps1 =
+        GetFirstReactMaps(chain_perm1, perm34[0], dag_tasks.chains_, dag_tasks,
+                          tasks_info);
+
+    std::vector<std::unordered_map<JobCEC, JobCEC>> curr_first_job_maps2 =
+        GetFirstReactMaps(chain_perm1, perm34[1], dag_tasks.chains_, dag_tasks,
+                          tasks_info);
+    EXPECT_TRUE(CompareNewPerm(curr_first_job_maps1, curr_first_job_maps2));
+    EXPECT_FALSE(CompareNewPerm(curr_first_job_maps2, curr_first_job_maps1));
+}
 int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);
     ::testing::InitGoogleMock(&argc, argv);
