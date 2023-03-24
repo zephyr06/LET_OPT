@@ -66,6 +66,7 @@ bool CompareNewPerm(
     const std::vector<std::unordered_map<JobCEC, JobCEC>>& curr_first_job_maps,
     const std::vector<std::unordered_map<JobCEC, JobCEC>>&
         curr_best_first_job_maps) {
+    if (curr_best_first_job_maps.size() == 0) return true;
     uint chain_size = curr_first_job_maps.size();
     if (chain_size != curr_best_first_job_maps.size())
         CoutError("Inconsistent map size in CompareNewPerm!");
