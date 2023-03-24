@@ -8,6 +8,8 @@ struct Interval {
 
     Interval(double s1, double l1) : start(s1), length(l1) {}
 
+    inline double getFinish() const { return start + length; }
+
     inline bool IfBelong(double x) { return x >= start && x <= start + length; }
     // whether interval x belongs to this
     inline bool IfBelong(Interval x) {

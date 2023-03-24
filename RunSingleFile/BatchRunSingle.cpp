@@ -25,4 +25,5 @@ int main(int argc, char *argv[]) {
     DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTime>(baselineMethods,
                                                               N);
     std::cout << "N: " << N << "\n";
+    PrintTimer();
 }
