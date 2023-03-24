@@ -280,6 +280,10 @@ ScheduleResult PerformTOM_OPT(const DAG_Model& dag_tasks) {
     res.timeTaken_ = double(duration.count()) / 1e6;
     std::cout << "The total number of permutation iterations is: "
               << task_sets_perms.iteration_count_ << "\n";
+    if (GlobalVariablesDAGOpt::debugMode == 1) {
+        std::cout << "The best permutation is: \n";
+        task_sets_perms.best_yet_chain_.print();
+    }
     if (!res.schedulable_ &&
         res.timeTaken_ < GlobalVariablesDAGOpt::TIME_LIMIT - 5)
         CoutError("Find an unschedulable case!");

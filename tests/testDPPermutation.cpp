@@ -213,6 +213,46 @@ TEST_F(PermutationTest_2chain_v1, CompareNewPermv2) {
     EXPECT_TRUE(CompareNewPerm(curr_first_job_maps1, curr_first_job_maps2));
     EXPECT_FALSE(CompareNewPerm(curr_first_job_maps2, curr_first_job_maps1));
 }
+class PermutationTest46 : public ::testing::Test {
+   protected:
+    void SetUp() override {
+        dag_tasks = ReadDAG_Tasks(
+            GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v46.csv",
+            "RM", 2);
+        tasks = dag_tasks.GetTaskSet();
+        tasks_info = TaskSetInfoDerived(tasks);
+        variable_od = VariableOD(tasks);
+    };
+
+    DAG_Model dag_tasks;
+    TaskSet tasks;
+    TaskSetInfoDerived tasks_info;
+    VariableOD variable_od;
+};
+TEST_F(PermutationTest46, CompareNewPermv1) {
+    TwoTaskPermutations perm23 =
+        TwoTaskPermutations(2, 3, dag_tasks, tasks_info);
+    TwoTaskPermutations perm34 =
+        TwoTaskPermutations(3, 4, dag_tasks, tasks_info);
+    ChainsPermutation chain_perm1;
+    chain_perm1.push_back(perm23[0]);
+    // chain_perm1.push_back(perm34[0]);
+    chain_perm1.print();
+
+    ChainsPermutation chain_perm2;
+    chain_perm2.push_back(perm23[0]);
+    // // chain_perm2.push_back(perm34[0]);
+    // chain_perm2.print();
+    std::vector<std::unordered_map<JobCEC, JobCEC>> curr_first_job_maps1 =
+        GetFirstReactMaps(chain_perm1, perm34[0], dag_tasks.chains_, dag_tasks,
+                          tasks_info);
+
+    std::vector<std::unordered_map<JobCEC, JobCEC>> curr_first_job_maps2 =
+        GetFirstReactMaps(chain_perm1, perm34[3], dag_tasks.chains_, dag_tasks,
+                          tasks_info);
+    EXPECT_TRUE(CompareNewPerm(curr_first_job_maps1, curr_first_job_maps2));
+    EXPECT_TRUE(CompareNewPerm(curr_first_job_maps2, curr_first_job_maps1));
+}
 int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);
     ::testing::InitGoogleMock(&argc, argv);

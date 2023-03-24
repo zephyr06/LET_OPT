@@ -70,6 +70,8 @@ bool CompareNewPerm(
     uint chain_size = curr_first_job_maps.size();
     if (chain_size != curr_best_first_job_maps.size())
         CoutError("Inconsistent map size in CompareNewPerm!");
+    bool whether_find_better_react = false;
+    bool whether_find_worse_react = false;  // TODO: use it
     for (uint i = 0; i < chain_size; i++) {
         const std::unordered_map<JobCEC, JobCEC>& curr_map =
             curr_first_job_maps[i];
@@ -81,12 +83,18 @@ bool CompareNewPerm(
             if (curr_map.find(start_job) == curr_map.end()) {
                 CoutError("Job not found in CompareNewPerm!");
             } else {
-                if (best_react_job.jobId > curr_map.at(start_job).jobId)
+                if (best_react_job.jobId > curr_map.at(start_job).jobId) {
+                    whether_find_better_react = true;
                     return true;
+                } else if (best_react_job.jobId < curr_map.at(start_job).jobId)
+                    whether_find_worse_react = true;
             }
         }
     }
-    return false;
+    if (!whether_find_worse_react)
+        return true;
+    else
+        return false;
 }
 
 TaskSetPermutation::TaskSetPermutation(

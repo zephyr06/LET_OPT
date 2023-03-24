@@ -23,8 +23,7 @@ TEST(RunSingle, v1) {
 
     TaskSetPermutation task_sets_perms =
         TaskSetPermutation(dag_tasks, {dag_tasks.chains_});
-    int obj_find =
-        task_sets_perms.PerformOptimizationEnumerate<ObjReactionTime>();
+    int obj_find = task_sets_perms.PerformOptimizationDP<ObjReactionTime>();
 
     std::cout << "The best permutation is: \n";
     task_sets_perms.best_yet_chain_.print();
