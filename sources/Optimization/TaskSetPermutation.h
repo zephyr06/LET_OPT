@@ -23,9 +23,9 @@ VariableOD FindODFromSingleChainPermutation(
 std::vector<std::vector<int>> GetSubChains(
     const std::vector<std::vector<int>>& chains_full_length,
     const ChainsPermutation& chains_perm);
-
+// Note: this function doesn't change chain_perm
 std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
-    const ChainsPermutation& chain_perm,
+     ChainsPermutation& chain_perm,
     const std::shared_ptr<const SinglePairPermutation> single_perm,
     const std::vector<std::vector<int>>& chains, const DAG_Model& dag_tasks,
     const TaskSetInfoDerived& tasks_info);

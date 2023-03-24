@@ -34,29 +34,35 @@ std::vector<std::vector<int>> GetSubChains(
 
     return sub_chains;
 }
-
+// Note: this function doesn't change chain_perm
 std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
-    const ChainsPermutation& chain_perm,
+    ChainsPermutation& chain_perm,
     const std::shared_ptr<const SinglePairPermutation> single_perm,
     const std::vector<std::vector<int>>& chains, const DAG_Model& dag_tasks,
     const TaskSetInfoDerived& tasks_info) {
+#ifdef PROFILE_CODE
+    BeginTimer(__FUNCTION__);
+#endif
+
     std::vector<std::unordered_map<JobCEC, JobCEC>> first_job_map;
     first_job_map.reserve(chains.size());
 
-    // TODO: Improve efficiency there!
-    ChainsPermutation chains_perm_more = chain_perm;
-    chains_perm_more.push_back(single_perm);
-    std::vector<std::vector<int>> sub_chains =
-        GetSubChains(chains, chains_perm_more);
+    // ChainsPermutation chain_perm = chain_perm1;
+    chain_perm.push_back(single_perm);
+    std::vector<std::vector<int>> sub_chains = GetSubChains(chains, chain_perm);
     for (uint i = 0; i < chains.size(); i++) {
         const std::vector<int>& chain_sub = sub_chains[i];
         if (chain_sub.size() == 0) {
             first_job_map.push_back(std::unordered_map<JobCEC, JobCEC>());
         } else {
-            first_job_map.push_back(GetFirstReactMap(
-                dag_tasks, tasks_info, chains_perm_more, chain_sub));
+            first_job_map.push_back(
+                GetFirstReactMap(dag_tasks, tasks_info, chain_perm, chain_sub));
         }
     }
+    chain_perm.pop(*single_perm);
+#ifdef PROFILE_CODE
+    EndTimer(__FUNCTION__);
+#endif
     return first_job_map;
 }
 
