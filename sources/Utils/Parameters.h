@@ -19,7 +19,7 @@ extern int debugMode;
 extern int SKIP_PERM;
 extern int TIME_LIMIT;
 extern double SAMPLE_SMALL_TASKS;
-
+extern int SearchDP;
 extern const double kCplexInequalityThreshold;
 
 // Task set settings

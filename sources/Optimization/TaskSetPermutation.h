@@ -51,7 +51,10 @@ class TaskSetPermutation {
     template <typename ObjectiveFunction>
     int PerformOptimizationEnumerate() {
         ChainsPermutation chain_perm;
-        IterateAllChainsPermutations<ObjectiveFunction>(0, chain_perm);
+        if (GlobalVariablesDAGOpt::SearchDP)
+            IterateAllChainsPermutationsDP<ObjectiveFunction>(0, chain_perm);
+        else
+            IterateAllChainsPermutations<ObjectiveFunction>(0, chain_perm);
         lp_optimizer_
             .ClearCplexMemory();  // TODO: consider trying to optimize
                                   // performance by directly set coefficient
@@ -275,7 +278,8 @@ ScheduleResult PerformTOM_OPT(const DAG_Model& dag_tasks) {
     auto duration =
         std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
     res.timeTaken_ = double(duration.count()) / 1e6;
-
+    std::cout << "The total number of permutation iterations is: "
+              << task_sets_perms.iteration_count_ << "\n";
     if (!res.schedulable_ &&
         res.timeTaken_ < GlobalVariablesDAGOpt::TIME_LIMIT - 5)
         CoutError("Find an unschedulable case!");
