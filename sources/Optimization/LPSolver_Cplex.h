@@ -49,11 +49,13 @@ class LPOptimizer {
     }
 
     inline void AddVariables() {
-        AddVariablesOD();
+        AddVariablesOD(tasks_info_.N);
         AddArtificialVariables();
     }
 
-    void AddVariablesOD();
+    Interval FindOffsetRange(int task_id, const ChainsPermutation &chains_perm);
+
+    void AddVariablesOD(int number_of_tasks_to_opt);
     void AddArtificialVariables();
     void AddPermutationInequalityConstraints(
         const ChainsPermutation &chains_perm);

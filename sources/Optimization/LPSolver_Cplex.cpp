@@ -101,9 +101,9 @@ std::pair<VariableOD, int> LPOptimizer::OptimizeWithoutClear(
 }
 
 // this function doesn't include artificial variables
-void LPOptimizer::AddVariablesOD() {
+void LPOptimizer::AddVariablesOD(int number_of_tasks_to_opt) {
     BeginTimer("AddVariablesOD");
-    numVariables_ = tasks_info_.N * 2;
+    numVariables_ = number_of_tasks_to_opt * 2;
     varArray_ = IloNumVarArray(env_, numVariables_, 0, tasks_info_.hyper_period,
                                IloNumVar::Float);
     EndTimer("AddVariablesOD");
@@ -129,14 +129,14 @@ void LPOptimizer::AddPermutationInequalityConstraints(
         // model_.add(
         //     varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] +
         //         ineq.lower_bound_ <=
-        //     varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)] +
+        //     varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)] -
         //         GlobalVariablesDAGOpt::kCplexInequalityThreshold);
         std::string const_name1 = GetPermuIneqConstraintNamePrev(i);
         IloRange myConstraint1(
             env_, -IloInfinity,
             varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] -
                 varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)],
-            GlobalVariablesDAGOpt::kCplexInequalityThreshold -
+            -1 * GlobalVariablesDAGOpt::kCplexInequalityThreshold -
                 ineq.lower_bound_,
             const_name1.c_str());
         model_.add(myConstraint1);
