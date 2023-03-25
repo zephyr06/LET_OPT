@@ -146,12 +146,10 @@ class TaskSetPermutation {
 
   // return true if the minimum possible offset becomes smaller
   template <typename ObjectiveFunction>
-  bool CompareAndUpdateMinOffsetLB(
-      int min_offset_best,
-      const std::shared_ptr<const SinglePairPermutation>& curr_try_single_perm,
-      ChainsPermutation& chains_perm) {
-    int task_id = curr_try_single_perm->GetNextTaskId();
-    chains_perm.push_back(curr_try_single_perm);
+  bool CompareAndUpdateMinOffsetLB(int min_offset_best,
+                                   ChainsPermutation& chains_perm,
+                                   int task_id) {
+    // int task_id = chains_perm.back()->GetNextTaskId();
 
     int min_offset_curr = GetMinOffSet(task_id, dag_tasks_, tasks_info_,
                                        chains_perm, graph_of_all_ca_chains_,
@@ -163,7 +161,6 @@ class TaskSetPermutation {
                                         // chain permutations improve
       min_offset_best = min_offset_curr;
     }
-    chains_perm.pop(*curr_try_single_perm);
     return min_offset_curr < min_offset_best_prev_record;
   }
 
@@ -187,21 +184,20 @@ class TaskSetPermutation {
       if (chains_perm.IsValid(variable_range_od_,
                               *adjacent_two_task_permutations_[position][i],
                               graph_of_all_ca_chains_)) {
-        std::vector<std::unordered_map<JobCEC, JobCEC>> curr_first_job_maps =
-            GetFirstReactMaps(
-                chains_perm, adjacent_two_task_permutations_[position][i],
-                graph_of_all_ca_chains_.chains_, dag_tasks_, tasks_info_);
-        bool if_improve_react =
-            CompareNewPerm(curr_first_job_maps, curr_best_first_job_maps);
-        bool if_reduce_offset = CompareAndUpdateMinOffsetLB<ObjectiveFunction>(
-            min_offset_tried, adjacent_two_task_permutations_[position][i],
-            chains_perm);
-        if (if_improve_react || if_reduce_offset) {
-          // add one type of permutation to chains_perm
-          chains_perm.push_back(adjacent_two_task_permutations_[position][i]);
+        chains_perm.push_back(adjacent_two_task_permutations_[position][i]);
 
-          // try to skip some permutations
-          if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {
+        if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {
+          std::vector<std::unordered_map<JobCEC, JobCEC>> curr_first_job_maps =
+              GetFirstReactMaps(chains_perm, graph_of_all_ca_chains_.chains_,
+                                dag_tasks_, tasks_info_);
+          bool if_improve_react =
+              CompareNewPerm(curr_first_job_maps, curr_best_first_job_maps);
+          bool if_reduce_offset =
+              CompareAndUpdateMinOffsetLB<ObjectiveFunction>(
+                  min_offset_tried, chains_perm,
+                  adjacent_two_task_permutations_[position][i]
+                      ->GetNextTaskId());
+          if (if_improve_react || if_reduce_offset) {
             double curr_obj = IterateAllChainsPermutationsDP<ObjectiveFunction>(
                 position + 1, chains_perm);
             if (curr_obj < best_obj_this_level) {
@@ -214,8 +210,9 @@ class TaskSetPermutation {
                   ObjectiveFunction::type_trait, rta_);
             }
           }
-          chains_perm.pop(*adjacent_two_task_permutations_[position][i]);
         }
+
+        chains_perm.pop(*adjacent_two_task_permutations_[position][i]);
       }
     }
     return best_obj_this_level;
