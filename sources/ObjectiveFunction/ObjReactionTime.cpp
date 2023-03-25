@@ -20,10 +20,10 @@ JobCEC GetFirstReactJobWithSuperPeriod(
 }
 
 JobCEC GetFirstReactJob(const JobCEC &job_curr,
-                        const ChainsPermutation &chain_perm,
+                        const ChainsPermutation &chains_perm,
                         const Edge &edge_curr,
                         const TaskSetInfoDerived &tasks_info) {
-    const SinglePairPermutation &pair_perm_curr = chain_perm[edge_curr];
+    const SinglePairPermutation &pair_perm_curr = chains_perm[edge_curr];
     int task_id_prev = job_curr.taskId;
     if (task_id_prev != pair_perm_curr.inequality_.task_prev_id_)
         CoutError("Wrong task_index_in_chain index in GetFirstReactJob!");
@@ -46,7 +46,7 @@ JobCEC GetFirstReactJob(const JobCEC &job_curr,
 
 double ObjReactionTimeIntermediate::ObjSingleChain(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-    const ChainsPermutation &chain_perm, const std::vector<int> &chain,
+    const ChainsPermutation &chains_perm, const std::vector<int> &chain,
     const VariableOD &variable_od) {
     int max_reaction_time = 0;
     int hyper_period = GetHyperPeriod(tasks_info, chain);
@@ -60,7 +60,7 @@ double ObjReactionTimeIntermediate::ObjSingleChain(
         {
             Edge edge_i(chain[i], chain[i + 1]);
             job_curr =
-                GetFirstReactJob(job_curr, chain_perm, edge_i, tasks_info);
+                GetFirstReactJob(job_curr, chains_perm, edge_i, tasks_info);
         }
 
         int deadline_curr = GetDeadline(job_curr, variable_od, tasks_info);
@@ -74,7 +74,7 @@ double ObjReactionTimeIntermediate::ObjSingleChain(
 
 double ObjReactionTimeIntermediate::ObjWithoutAllPermsSingleChain(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-    const ChainsPermutation &chain_perm, const std::vector<int> &chain,
+    const ChainsPermutation &chains_perm, const std::vector<int> &chain,
     const VariableOD &variable_od) {
     int max_reaction_time = -1;
     int hyper_period = GetHyperPeriod(tasks_info, chain);
@@ -88,7 +88,7 @@ double ObjReactionTimeIntermediate::ObjWithoutAllPermsSingleChain(
         {
             Edge edge_i(chain[i], chain[i + 1]);
             job_curr =
-                GetFirstReactJob(job_curr, chain_perm, edge_i, tasks_info);
+                GetFirstReactJob(job_curr, chains_perm, edge_i, tasks_info);
         }
 
         int deadline_curr = GetDeadline(job_curr, variable_od, tasks_info);

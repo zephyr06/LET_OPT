@@ -10,22 +10,22 @@
 namespace DAG_SPACE {
 
 bool ExamVariableFeasibility(const VariableOD& variable,
-                             const ChainsPermutation& chain_perm,
+                             const ChainsPermutation& chains_perm,
                              const GraphOfChains& graph_of_all_ca_chains,
                              const DAG_Model& dag_task,
                              const std::vector<int>& chain);
 
 VariableOD FindODFromSingleChainPermutation(
-    const DAG_Model& dag_tasks, const ChainsPermutation& chain_perm,
+    const DAG_Model& dag_tasks, const ChainsPermutation& chains_perm,
     const GraphOfChains& graph_of_all_ca_chains, const std::vector<int>& chain,
     const std::vector<int>& rta);
 
 std::vector<std::vector<int>> GetSubChains(
     const std::vector<std::vector<int>>& chains_full_length,
     const ChainsPermutation& chains_perm);
-// Note: this function doesn't change chain_perm
+// Note: this function doesn't change chains_perm
 std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
-    ChainsPermutation& chain_perm,
+    ChainsPermutation& chains_perm,
     const std::shared_ptr<const SinglePairPermutation> single_perm,
     const std::vector<std::vector<int>>& chains, const DAG_Model& dag_tasks,
     const TaskSetInfoDerived& tasks_info);
@@ -50,11 +50,11 @@ class TaskSetPermutation {
 
   template <typename ObjectiveFunction>
   int PerformOptimizationEnumerate() {
-    ChainsPermutation chain_perm;
+    ChainsPermutation chains_perm;
     if (GlobalVariablesDAGOpt::SearchDP)
-      IterateAllChainsPermutationsDP<ObjectiveFunction>(0, chain_perm);
+      IterateAllChainsPermutationsDP<ObjectiveFunction>(0, chains_perm);
     else
-      IterateAllChainsPermutations<ObjectiveFunction>(0, chain_perm);
+      IterateAllChainsPermutations<ObjectiveFunction>(0, chains_perm);
     lp_optimizer_
         .ClearCplexMemory();  // TODO: consider trying to optimize
                               // performance by directly set coefficient
@@ -62,20 +62,21 @@ class TaskSetPermutation {
     return best_yet_obj_;
   }
 
-  // chain_perm already pushed the new perm_single
+  // chains_perm already pushed the new perm_single
   template <typename ObjectiveFunction>
-  bool WhetherSkipToNextPerm(const ChainsPermutation& chain_perm) {
+  bool WhetherSkipToNextPerm(const ChainsPermutation& chains_perm) {
 #ifdef PROFILE_CODE
     BeginTimer(__FUNCTION__);
 #endif
 
     std::vector<std::vector<int>> sub_chains =
-        GetSubChains(dag_tasks_.chains_, chain_perm);
+        GetSubChains(dag_tasks_.chains_, chains_perm);
     for (const auto& sub_chain : sub_chains) {
       if (sub_chain.size() == 0) continue;
       if (GlobalVariablesDAGOpt::SKIP_PERM >= 2 &&
-          !FindODFromSingleChainPermutation(
-               dag_tasks_, chain_perm, graph_of_all_ca_chains_, sub_chain, rta_)
+          !FindODFromSingleChainPermutation(dag_tasks_, chains_perm,
+                                            graph_of_all_ca_chains_, sub_chain,
+                                            rta_)
                .valid_) {
 #ifdef PROFILE_CODE
         EndTimer(__FUNCTION__);
@@ -85,9 +86,9 @@ class TaskSetPermutation {
     }
 
     VariableOD best_possible_variable_od =
-        FindBestPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chain_perm);
+        FindBestPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm);
     double obj_curr =
-        ObjectiveFunction::Obj(dag_tasks_, tasks_info_, chain_perm,
+        ObjectiveFunction::Obj(dag_tasks_, tasks_info_, chains_perm,
                                best_possible_variable_od, sub_chains);
 #ifdef PROFILE_CODE
     EndTimer(__FUNCTION__);
@@ -102,28 +103,28 @@ class TaskSetPermutation {
   // depth equals the number of edge pais
   template <typename ObjectiveFunction>
   void IterateAllChainsPermutations(uint position,
-                                    ChainsPermutation& chain_perm) {
+                                    ChainsPermutation& chains_perm) {
     if (position == graph_of_all_ca_chains_.edge_records_
                         .size()) {  // finish iterate all the pair permutations
       iteration_count_++;
-      EvaluateChainsPermutation<ObjectiveFunction>(chain_perm);
+      EvaluateChainsPermutation<ObjectiveFunction>(chains_perm);
       return;
     }
 
     for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
          i++) {
       if (ifTimeout(start_time_)) break;
-      if (chain_perm.IsValid(variable_range_od_,
-                             *adjacent_two_task_permutations_[position][i],
-                             graph_of_all_ca_chains_)) {
-        chain_perm.push_back(adjacent_two_task_permutations_[position][i]);
+      if (chains_perm.IsValid(variable_range_od_,
+                              *adjacent_two_task_permutations_[position][i],
+                              graph_of_all_ca_chains_)) {
+        chains_perm.push_back(adjacent_two_task_permutations_[position][i]);
 
         // try to skip some permutations
-        if (!WhetherSkipToNextPerm<ObjectiveFunction>(chain_perm)) {
+        if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {
           IterateAllChainsPermutations<ObjectiveFunction>(position + 1,
-                                                          chain_perm);
+                                                          chains_perm);
         }
-        chain_perm.pop(*adjacent_two_task_permutations_[position][i]);
+        chains_perm.pop(*adjacent_two_task_permutations_[position][i]);
       }
     }
   }
@@ -132,8 +133,8 @@ class TaskSetPermutation {
   // *********************************************
   template <typename ObjectiveFunction>
   int PerformOptimizationDP() {
-    ChainsPermutation chain_perm;
-    IterateAllChainsPermutationsDP<ObjectiveFunction>(0, chain_perm);
+    ChainsPermutation chains_perm;
+    IterateAllChainsPermutationsDP<ObjectiveFunction>(0, chains_perm);
     lp_optimizer_.ClearCplexMemory();
     return best_yet_obj_;
   }
@@ -143,12 +144,12 @@ class TaskSetPermutation {
   bool CompareAndUpdateMinOffsetLB(
       int min_offset_best,
       const std::shared_ptr<const SinglePairPermutation>& curr_try_single_perm,
-      ChainsPermutation& chain_perm) {
+      ChainsPermutation& chains_perm) {
     int task_id = curr_try_single_perm->GetNextTaskId();
-    chain_perm.push_back(curr_try_single_perm);
+    chains_perm.push_back(curr_try_single_perm);
 
     int min_offset_curr = GetMinOffSet(task_id, dag_tasks_, tasks_info_,
-                                       chain_perm, graph_of_all_ca_chains_,
+                                       chains_perm, graph_of_all_ca_chains_,
                                        ObjectiveFunction::type_trait, rta_);
     int min_offset_best_prev_record = min_offset_best;
     if (min_offset_curr <
@@ -157,17 +158,17 @@ class TaskSetPermutation {
                                         // chain permutations improve
       min_offset_best = min_offset_curr;
     }
-    chain_perm.pop(*curr_try_single_perm);
+    chains_perm.pop(*curr_try_single_perm);
     return min_offset_curr < min_offset_best_prev_record;
   }
 
   template <typename ObjectiveFunction>
   double IterateAllChainsPermutationsDP(uint position,
-                                        ChainsPermutation& chain_perm) {
+                                        ChainsPermutation& chains_perm) {
     if (position == graph_of_all_ca_chains_.edge_records_
                         .size()) {  // finish iterate all the pair permutations
       iteration_count_++;
-      return EvaluateChainsPermutation<ObjectiveFunction>(chain_perm);
+      return EvaluateChainsPermutation<ObjectiveFunction>(chains_perm);
     }
 
     std::vector<std::unordered_map<JobCEC, JobCEC>> curr_best_first_job_maps;
@@ -178,38 +179,38 @@ class TaskSetPermutation {
          i++) {
       if (ifTimeout(start_time_)) break;
 
-      if (chain_perm.IsValid(variable_range_od_,
-                             *adjacent_two_task_permutations_[position][i],
-                             graph_of_all_ca_chains_)) {
+      if (chains_perm.IsValid(variable_range_od_,
+                              *adjacent_two_task_permutations_[position][i],
+                              graph_of_all_ca_chains_)) {
         std::vector<std::unordered_map<JobCEC, JobCEC>> curr_first_job_maps =
             GetFirstReactMaps(
-                chain_perm, adjacent_two_task_permutations_[position][i],
+                chains_perm, adjacent_two_task_permutations_[position][i],
                 graph_of_all_ca_chains_.chains_, dag_tasks_, tasks_info_);
 
         if (CompareNewPerm(curr_first_job_maps, curr_best_first_job_maps) ||
             CompareAndUpdateMinOffsetLB<ObjectiveFunction>(
                 min_offset, adjacent_two_task_permutations_[position][i],
-                chain_perm)) {  // TODO: clean and test
-          // add one type of permutation to chain_perm
-          chain_perm.push_back(adjacent_two_task_permutations_[position][i]);
+                chains_perm)) {  // TODO: clean and test
+          // add one type of permutation to chains_perm
+          chains_perm.push_back(adjacent_two_task_permutations_[position][i]);
 
           // try to skip some permutations
-          if (!WhetherSkipToNextPerm<ObjectiveFunction>(chain_perm)) {
+          if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {
             double curr_obj = IterateAllChainsPermutationsDP<ObjectiveFunction>(
-                position + 1, chain_perm);
+                position + 1, chains_perm);
             if (curr_obj < best_obj_this_level) {
               best_obj_this_level =
                   curr_obj;  // TODO: inherit the failed offset
               curr_best_first_job_maps = curr_first_job_maps;
               min_offset = GetMinOffSet(
                   adjacent_two_task_permutations_[position][i]->GetNextTaskId(),
-                  dag_tasks_, tasks_info_, chain_perm, graph_of_all_ca_chains_,
+                  dag_tasks_, tasks_info_, chains_perm, graph_of_all_ca_chains_,
                   ObjectiveFunction::type_trait, rta_);
               // curr_best_single_perm =
               //     adjacent_two_task_permutations_[position][i];
             }
           }
-          chain_perm.pop(*adjacent_two_task_permutations_[position][i]);
+          chains_perm.pop(*adjacent_two_task_permutations_[position][i]);
         }
       }
     }
@@ -217,23 +218,23 @@ class TaskSetPermutation {
   }
 
   template <typename ObjectiveFunction>
-  double EvaluateChainsPermutation(const ChainsPermutation& chain_perm) {
+  double EvaluateChainsPermutation(const ChainsPermutation& chains_perm) {
 #ifdef PROFILE_CODE
     BeginTimer(__FUNCTION__);
 #endif
 
     std::pair<VariableOD, int> res = FindODWithLP(
-        dag_tasks_, tasks_info_, chain_perm, graph_of_all_ca_chains_,
+        dag_tasks_, tasks_info_, chains_perm, graph_of_all_ca_chains_,
         ObjectiveFunction::type_trait, rta_);
     // LPOptimizer lp_optimizer(dag_tasks_, tasks_info_,
     //                          graph_of_all_ca_chains_,
     //                          ObjectiveFunction::type_trait, rta_);
     // std::pair<VariableOD, int> res;
     // if (lp_optimizer_.name2ilo_const_.size() != 0) {
-    //     res = lp_optimizer_.IncrementOptimize(chain_perm);
+    //     res = lp_optimizer_.IncrementOptimize(chains_perm);
     // } else {
     //     lp_optimizer_.obj_trait_ = ObjectiveFunction::type_trait;
-    //     res = lp_optimizer_.OptimizeWithoutClear(chain_perm);
+    //     res = lp_optimizer_.OptimizeWithoutClear(chains_perm);
     // }
     // if (GlobalVariablesDAGOpt::debugMode == 1)
     //     lp_optimizer_.WriteModelToFile();
@@ -243,15 +244,15 @@ class TaskSetPermutation {
     {
       if (res.second < best_yet_obj_) {
         best_yet_obj_ = res.second;
-        best_yet_chain_ = chain_perm;
+        best_yet_chain_ = chains_perm;
         best_yet_variable_od_ = res.first;
         // if (res.second == 1459) {
         //     int a = 1;
         // }
         std::vector<std::vector<int>> sub_chains =
-            GetSubChains(dag_tasks_.chains_, chain_perm);
+            GetSubChains(dag_tasks_.chains_, chains_perm);
         double obj_curr =
-            ObjectiveFunction::Obj(dag_tasks_, tasks_info_, chain_perm,
+            ObjectiveFunction::Obj(dag_tasks_, tasks_info_, chains_perm,
                                    best_possible_variable_od_, sub_chains);
         if (obj_curr > best_yet_obj_)
           CoutError("Something's wrong with sub-chain obj evaluation");

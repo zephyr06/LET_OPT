@@ -47,17 +47,17 @@ TEST_F(PermutationTest_long_time23, Optimize_direct) {
     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
     TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info);
-    ChainsPermutation chain_perm;
-    chain_perm.push_back(perm01[0]);
-    chain_perm.push_back(perm12[0]);
-    chain_perm.push_back(perm23[0]);
+    ChainsPermutation chains_perm;
+    chains_perm.push_back(perm01[0]);
+    chains_perm.push_back(perm12[0]);
+    chains_perm.push_back(perm23[0]);
 
     GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
 
     std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < REPEAT; i++) {
-        FindODWithLP(dag_tasks, tasks_info, chain_perm, graph_of_all_ca_chains,
+        FindODWithLP(dag_tasks, tasks_info, chains_perm, graph_of_all_ca_chains,
                      "ReactionTime", rta);
     }
     auto stop = std::chrono::high_resolution_clock::now();
@@ -74,15 +74,15 @@ TEST_F(PermutationTest_long_time23, Optimize_Incre) {
     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
     TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info);
-    ChainsPermutation chain_perm;
-    chain_perm.push_back(perm01[0]);
-    chain_perm.push_back(perm12[0]);
-    chain_perm.push_back(perm23[0]);
+    ChainsPermutation chains_perm;
+    chains_perm.push_back(perm01[0]);
+    chains_perm.push_back(perm12[0]);
+    chains_perm.push_back(perm23[0]);
 
-    ChainsPermutation chain_perm2;
-    chain_perm2.push_back(perm01[1]);
-    chain_perm2.push_back(perm12[1]);
-    chain_perm2.push_back(perm23[1]);
+    ChainsPermutation chains_perm2;
+    chains_perm2.push_back(perm01[1]);
+    chains_perm2.push_back(perm12[1]);
+    chains_perm2.push_back(perm23[1]);
 
     GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
 
@@ -90,12 +90,12 @@ TEST_F(PermutationTest_long_time23, Optimize_Incre) {
 
     LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_of_all_ca_chains,
                              "ReactionTime", rta);
-    lp_optimizer.OptimizeWithoutClear(chain_perm2);
+    lp_optimizer.OptimizeWithoutClear(chains_perm2);
 
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < REPEAT; i++) {
-        lp_optimizer.UpdateSystem(chain_perm);
-        lp_optimizer.OptimizeAfterUpdate(chain_perm);
+        lp_optimizer.UpdateSystem(chains_perm);
+        lp_optimizer.OptimizeAfterUpdate(chains_perm);
     }
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration =
@@ -111,20 +111,20 @@ TEST_F(PermutationTest_long_time23, Optimize_Incre) {
 //     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
 //     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
 //     TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info);
-//     ChainsPermutation chain_perm;
-//     chain_perm.push_back(perm01[0]);
-//     chain_perm.push_back(perm12[0]);
-//     chain_perm.push_back(perm23[0]);
+//     ChainsPermutation chains_perm;
+//     chains_perm.push_back(perm01[0]);
+//     chains_perm.push_back(perm12[0]);
+//     chains_perm.push_back(perm23[0]);
 
 //     GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
 
 //     std::unordered_map<JobCEC, JobCEC> react_chain_map =
-//         GetFirstReactMap(dag_tasks, tasks_info, chain_perm,
+//         GetFirstReactMap(dag_tasks, tasks_info, chains_perm,
 //                          dag_tasks.chains_[0]);  // not useful for now
 //     std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
 //     auto start = std::chrono::high_resolution_clock::now();
 //     for (int i = 0; i < REPEAT; i++) {
-//         ObjReactionTime::Obj(dag_tasks, tasks_info, chain_perm, variable_od,
+//         ObjReactionTime::Obj(dag_tasks, tasks_info, chains_perm, variable_od,
 //                              dag_tasks.chains_);
 //     }
 //     auto stop = std::chrono::high_resolution_clock::now();
@@ -141,20 +141,20 @@ TEST_F(PermutationTest_long_time23, Optimize_Incre) {
 //     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
 //     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
 //     TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info);
-//     ChainsPermutation chain_perm;
-//     chain_perm.push_back(perm01[0]);
-//     chain_perm.push_back(perm12[0]);
-//     chain_perm.push_back(perm23[0]);
+//     ChainsPermutation chains_perm;
+//     chains_perm.push_back(perm01[0]);
+//     chains_perm.push_back(perm12[0]);
+//     chains_perm.push_back(perm23[0]);
 
 //     GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
 
 //     std::unordered_map<JobCEC, JobCEC> react_chain_map =
-//         GetFirstReactMap(dag_tasks, tasks_info, chain_perm,
+//         GetFirstReactMap(dag_tasks, tasks_info, chains_perm,
 //                          dag_tasks.chains_[0]);  // not useful for now
 //     std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
 //     auto start = std::chrono::high_resolution_clock::now();
 //     for (int i = 0; i < REPEAT; i++) {
-//         LPOptimizer lp_optimizer(dag_tasks, tasks_info, chain_perm,
+//         LPOptimizer lp_optimizer(dag_tasks, tasks_info, chains_perm,
 //                                  graph_of_all_ca_chains, "ReactionTime",
 //                                  react_chain_map, rta);
 //         lp_optimizer.OptimizeConstant();

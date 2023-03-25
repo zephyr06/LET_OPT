@@ -34,9 +34,9 @@ std::vector<std::vector<int>> GetSubChains(
 
     return sub_chains;
 }
-// Note: this function doesn't change chain_perm
+// Note: this function doesn't change chains_perm
 std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
-    ChainsPermutation& chain_perm,
+    ChainsPermutation& chains_perm,
     const std::shared_ptr<const SinglePairPermutation> single_perm,
     const std::vector<std::vector<int>>& chains, const DAG_Model& dag_tasks,
     const TaskSetInfoDerived& tasks_info) {
@@ -47,19 +47,19 @@ std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
     std::vector<std::unordered_map<JobCEC, JobCEC>> first_job_map;
     first_job_map.reserve(chains.size());
 
-    // ChainsPermutation chain_perm = chain_perm1;
-    chain_perm.push_back(single_perm);
-    std::vector<std::vector<int>> sub_chains = GetSubChains(chains, chain_perm);
+    // ChainsPermutation chains_perm = chains_perm1;
+    chains_perm.push_back(single_perm);
+    std::vector<std::vector<int>> sub_chains = GetSubChains(chains, chains_perm);
     for (uint i = 0; i < chains.size(); i++) {
         const std::vector<int>& chain_sub = sub_chains[i];
         if (chain_sub.size() == 0) {
             first_job_map.push_back(std::unordered_map<JobCEC, JobCEC>());
         } else {
             first_job_map.push_back(
-                GetFirstReactMap(dag_tasks, tasks_info, chain_perm, chain_sub));
+                GetFirstReactMap(dag_tasks, tasks_info, chains_perm, chain_sub));
         }
     }
-    chain_perm.pop(*single_perm);
+    chains_perm.pop(*single_perm);
 #ifdef PROFILE_CODE
     EndTimer(__FUNCTION__);
 #endif
@@ -155,7 +155,7 @@ bool TaskSetPermutation::ExamSchedulabilityOptSol() const {
 // assumes acyclic graph
 // void SetVariableHelperSingleChain(
 //     int task_id, std::unordered_map<int, bool>& variable_set_record,
-//     VariableOD& variable, const ChainsPermutation& chain_perm,
+//     VariableOD& variable, const ChainsPermutation& chains_perm,
 //     const GraphOfChains& graph_of_all_ca_chains, const DAG_Model& dag_tasks,
 //     const std::unordered_set<Edge>& sub_chain_edge_record) {
 //     if (variable_set_record.find(task_id) == variable_set_record.end() ||
@@ -169,13 +169,13 @@ bool TaskSetPermutation::ExamSchedulabilityOptSol() const {
 //             for (int dependent_task : dependent_tasks) {
 //                 SetVariableHelperSingleChain(
 //                     dependent_task, variable_set_record, variable,
-//                     chain_perm, graph_of_all_ca_chains, dag_tasks,
+//                     chains_perm, graph_of_all_ca_chains, dag_tasks,
 //                     sub_chain_edge_record);
 //                 Edge edge_curr(dependent_task, task_id);
 //                 offset_min = std::max(
 //                     offset_min,
 //                     variable[dependent_task].deadline -
-//                         chain_perm[edge_curr].inequality_.upper_bound_);
+//                         chains_perm[edge_curr].inequality_.upper_bound_);
 //             }
 //         }
 //         variable[task_id].offset = offset_min;
@@ -190,11 +190,11 @@ bool TaskSetPermutation::ExamSchedulabilityOptSol() const {
 //             for (int dependent_task : dependent_tasks) {
 //                 SetVariableHelperSingleChain(
 //                     dependent_task, variable_set_record, variable,
-//                     chain_perm, graph_of_all_ca_chains, dag_tasks,
+//                     chains_perm, graph_of_all_ca_chains, dag_tasks,
 //                     sub_chain_edge_record);
 //                 Edge edge_curr(dependent_task, task_id);
 //                 const PermutationInequality& ineq =
-//                     chain_perm[edge_curr].inequality_;
+//                     chains_perm[edge_curr].inequality_;
 //                 if (variable[task_id].offset + ineq.lower_bound_ >=
 //                     variable[dependent_task].deadline) {
 //                     variable[dependent_task].deadline =
@@ -215,7 +215,7 @@ bool TaskSetPermutation::ExamSchedulabilityOptSol() const {
 // }
 
 bool ExamVariableFeasibility(const VariableOD& variable,
-                             const ChainsPermutation& chain_perm,
+                             const ChainsPermutation& chains_perm,
                              const GraphOfChains& graph_of_all_ca_chains,
                              const DAG_Model& dag_task,
                              const std::vector<int>& chain) {
@@ -224,7 +224,7 @@ bool ExamVariableFeasibility(const VariableOD& variable,
 #endif
     for (uint i = 0; i < chain.size() - 1; i++) {
         Edge edge(chain[i], chain[i + 1]);
-        const PermutationInequality& inequality = chain_perm[edge].inequality_;
+        const PermutationInequality& inequality = chains_perm[edge].inequality_;
         int prev_id = inequality.task_prev_id_;
         int next_id = inequality.task_next_id_;
         if (inequality.lower_bound_valid_) {
@@ -290,7 +290,7 @@ void SetVariableHelperSingleEdge(const Edge& edge, VariableOD& variable,
 }
 
 VariableOD FindODFromSingleChainPermutation(
-    const DAG_Model& dag_tasks, const ChainsPermutation& chain_perm,
+    const DAG_Model& dag_tasks, const ChainsPermutation& chains_perm,
     const GraphOfChains& graph_of_all_ca_chains, const std::vector<int>& chain,
     const std::vector<int>& rta) {
 #ifdef PROFILE_CODE
@@ -301,14 +301,14 @@ VariableOD FindODFromSingleChainPermutation(
 
     for (uint i = 0; i < chain.size() - 1; i++) {
         Edge edge(chain[i], chain[i + 1]);
-        const SinglePairPermutation& single_perm = chain_perm[edge];
+        const SinglePairPermutation& single_perm = chains_perm[edge];
         SetVariableHelperSingleEdge(edge, variable, single_perm.inequality_,
                                     dag_tasks, rta);
         if (!variable.valid_) break;
     }
     if (variable.valid_)
         variable.valid_ = ExamVariableFeasibility(
-            variable, chain_perm, graph_of_all_ca_chains, dag_tasks, chain);
+            variable, chains_perm, graph_of_all_ca_chains, dag_tasks, chain);
 #ifdef PROFILE_CODE
     EndTimer(__FUNCTION__);
 #endif

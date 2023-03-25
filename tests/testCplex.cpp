@@ -23,16 +23,16 @@ TEST_F(PermutationTest1, mapPrev) {
     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
 
-    ChainsPermutation chain_perm;
-    chain_perm.push_back(perm01[0]);
-    chain_perm.push_back(perm12[0]);
+    ChainsPermutation chains_perm;
+    chains_perm.push_back(perm01[0]);
+    chains_perm.push_back(perm12[0]);
 
     GraphOfChains graph_chains(dag_tasks.chains_);
 
     std::vector<int> rta = {1, 3, 6};
     LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains,
                              "ReactionTime", rta);
-    auto res = lp_optimizer.Optimize(chain_perm);
+    auto res = lp_optimizer.Optimize(chains_perm);
     EXPECT_EQ(20, res.second);
 }
 TEST_F(PermutationTest1, Incremental) {
@@ -42,22 +42,22 @@ TEST_F(PermutationTest1, Incremental) {
     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
 
-    ChainsPermutation chain_perm1;
-    chain_perm1.push_back(perm01[0]);
-    chain_perm1.push_back(perm12[0]);
+    ChainsPermutation chains_perm1;
+    chains_perm1.push_back(perm01[0]);
+    chains_perm1.push_back(perm12[0]);
 
-    ChainsPermutation chain_perm2;
-    chain_perm2.push_back(perm01[1]);
-    chain_perm2.push_back(perm12[0]);
+    ChainsPermutation chains_perm2;
+    chains_perm2.push_back(perm01[1]);
+    chains_perm2.push_back(perm12[0]);
 
     LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains,
                              "ReactionTime", rta);
-    auto res = lp_optimizer.OptimizeWithoutClear(chain_perm2);
+    auto res = lp_optimizer.OptimizeWithoutClear(chains_perm2);
     lp_optimizer.WriteModelToFile("recourse1.lp");
 
-    lp_optimizer.UpdateSystem(chain_perm1);
+    lp_optimizer.UpdateSystem(chains_perm1);
     lp_optimizer.WriteModelToFile("recourse2.lp");
-    res = lp_optimizer.OptimizeAfterUpdate(chain_perm1);
+    res = lp_optimizer.OptimizeAfterUpdate(chains_perm1);
 
     EXPECT_EQ(20, res.second);
 }
@@ -67,31 +67,31 @@ TEST_F(PermutationTest1, FindMinOffset) {
     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
 
-    ChainsPermutation chain_perm;
-    chain_perm.push_back(perm01[0]);
-    chain_perm.push_back(perm12[0]);
-    chain_perm.print();
+    ChainsPermutation chains_perm;
+    chains_perm.push_back(perm01[0]);
+    chains_perm.push_back(perm12[0]);
+    chains_perm.print();
 
     GraphOfChains graph_chains(dag_tasks.chains_);
 
     std::vector<int> rta = {1, 3, 6};
     LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains,
                              "ReactionTime", rta);
-    auto range = lp_optimizer.FindMinOffset(2, chain_perm);
+    auto range = lp_optimizer.FindMinOffset(2, chains_perm);
     EXPECT_EQ(14, range);
     // EXPECT_EQ(14, range.start + range.length);
     lp_optimizer.ClearCplexMemory();
 
     LPOptimizer lp_optimizer1(dag_tasks, tasks_info, graph_chains,
                               "ReactionTime", rta);
-    range = lp_optimizer1.FindMinOffset(1, chain_perm);
+    range = lp_optimizer1.FindMinOffset(1, chains_perm);
     EXPECT_EQ(11, range);
     // EXPECT_EQ(11, range.start + range.length);
     lp_optimizer1.ClearCplexMemory();
 
     LPOptimizer lp_optimizer0(dag_tasks, tasks_info, graph_chains,
                               "ReactionTime", rta);
-    range = lp_optimizer0.FindMinOffset(0, chain_perm);
+    range = lp_optimizer0.FindMinOffset(0, chains_perm);
     EXPECT_EQ(0, range);
     // EXPECT_EQ(0, range.start + range.length);
     lp_optimizer0.ClearCplexMemory();

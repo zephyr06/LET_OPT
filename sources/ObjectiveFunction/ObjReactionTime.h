@@ -10,7 +10,7 @@ JobCEC GetFirstReactJobWithSuperPeriod(
     const JobCEC &job_curr, const SinglePairPermutation &pair_perm_curr);
 
 JobCEC GetFirstReactJob(const JobCEC &job_curr,
-                        const ChainsPermutation &chain_perm,
+                        const ChainsPermutation &chains_perm,
                         const Edge &edge_curr,
                         const TaskSetInfoDerived &tasks_info);
 
@@ -19,13 +19,13 @@ class ObjReactionTimeIntermediate : public ObjectiveFunctionBaseIntermediate {
     static const std::string type_trait;
     double ObjSingleChain(const DAG_Model &dag_tasks,
                           const TaskSetInfoDerived &tasks_info,
-                          const ChainsPermutation &chain_perm,
+                          const ChainsPermutation &chains_perm,
                           const std::vector<int> &chain,
                           const VariableOD &variable_od) override;
 
     double ObjWithoutAllPermsSingleChain(
         const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-        const ChainsPermutation &chain_perm, const std::vector<int> &chain,
+        const ChainsPermutation &chains_perm, const std::vector<int> &chain,
         const VariableOD &variable_od) override;
 };
 
@@ -34,20 +34,20 @@ class ObjReactionTime {
     static const std::string type_trait;
     static double Obj(const DAG_Model &dag_tasks,
                       const TaskSetInfoDerived &tasks_info,
-                      const ChainsPermutation &chain_perm,
+                      const ChainsPermutation &chains_perm,
                       const VariableOD &variable_od,
                       const std::vector<std::vector<int>> &chains_to_analyze) {
         ObjReactionTimeIntermediate obj;
-        return obj.Obj(dag_tasks, tasks_info, chain_perm, variable_od,
+        return obj.Obj(dag_tasks, tasks_info, chains_perm, variable_od,
                        chains_to_analyze);
     }
 
     static double ObjWithoutAllPermsSingleChain(
         const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-        const ChainsPermutation &chain_perm, const VariableOD &variable_od,
+        const ChainsPermutation &chains_perm, const VariableOD &variable_od,
         const std::vector<std::vector<int>> &chains_to_analyze) {
         ObjReactionTimeIntermediate obj;
-        return obj.ObjWithoutAllPerms(dag_tasks, tasks_info, chain_perm,
+        return obj.ObjWithoutAllPerms(dag_tasks, tasks_info, chains_perm,
                                       variable_od, chains_to_analyze);
     }
 };

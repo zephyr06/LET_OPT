@@ -32,10 +32,10 @@ ScheduleResult PerformStandardLETAnalysis(const DAG_Model& dag_tasks) {
     ScheduleResult res;
     const TaskSet& tasks = dag_tasks.GetTaskSet();
     TaskSetInfoDerived tasks_info(tasks);
-    ChainsPermutation chain_perm =
+    ChainsPermutation chains_perm =
         GetStandardLETChain(dag_tasks, tasks_info, dag_tasks.chains_);
     VariableOD variable_od = VariableOD(tasks);
-    res.obj_ = ObjectiveFunctionBase::Obj(dag_tasks, tasks_info, chain_perm,
+    res.obj_ = ObjectiveFunctionBase::Obj(dag_tasks, tasks_info, chains_perm,
                                           variable_od, dag_tasks.chains_);
     res.schedulable_ = CheckSchedulability(dag_tasks);
 

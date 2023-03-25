@@ -66,10 +66,10 @@ TEST_F(PermutationTest1, CompareAndUpdateMinOffsetLB) {
     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
 
-    ChainsPermutation chain_perm;
-    chain_perm.push_back(perm01[0]);
-    chain_perm.push_back(perm12[0]);
-    chain_perm.print();
+    ChainsPermutation chains_perm;
+    chains_perm.push_back(perm01[0]);
+    chains_perm.push_back(perm12[0]);
+    chains_perm.print();
 
     GraphOfChains graph_chains(dag_tasks.chains_);
 
@@ -77,29 +77,29 @@ TEST_F(PermutationTest1, CompareAndUpdateMinOffsetLB) {
     int min_offset_before = 2;
     std::cout << "Min offset: "
               << GetMinOffSet(min_offset_before, dag_tasks, tasks_info,
-                              chain_perm, graph_chains, "ReactionTime", rta)
+                              chains_perm, graph_chains, "ReactionTime", rta)
               << "\n";
 
-    ChainsPermutation chain_perm2;
-    chain_perm2.push_back(perm01[0]);
-    chain_perm2.push_back(perm12[1]);
-    chain_perm.print();
+    ChainsPermutation chains_perm2;
+    chains_perm2.push_back(perm01[0]);
+    chains_perm2.push_back(perm12[1]);
+    chains_perm.print();
     min_offset_before = 2;
     std::cout << "Min offset: "
               << GetMinOffSet(min_offset_before, dag_tasks, tasks_info,
-                              chain_perm2, graph_chains, "ReactionTime", rta)
+                              chains_perm2, graph_chains, "ReactionTime", rta)
               << "\n";
 
     TaskSetPermutation task_sets_perms =
         TaskSetPermutation(dag_tasks, {dag_tasks.chains_});
-    ChainsPermutation chain_perm3;
-    chain_perm3.push_back(perm01[0]);
+    ChainsPermutation chains_perm3;
+    chains_perm3.push_back(perm01[0]);
     min_offset_before =
-        GetMinOffSet(min_offset_before, dag_tasks, tasks_info, chain_perm,
+        GetMinOffSet(min_offset_before, dag_tasks, tasks_info, chains_perm,
                      graph_chains, "ReactionTime", rta);
 
     EXPECT_TRUE(task_sets_perms.CompareAndUpdateMinOffsetLB<ObjReactionTime>(
-        min_offset_before, perm12[1], chain_perm3));
+        min_offset_before, perm12[1], chains_perm3));
 }
 
 TEST_F(PermutationTest1, GenerateBoxPermutationConstraints) {
@@ -247,14 +247,14 @@ TEST_F(PermutationTest1, SinglePairPermutation_valid) {
                                         tasks_info);
 
     VariableRange variable_range_od = FindVariableRange(dag_tasks);
-    ChainsPermutation chain_perm;
-    chain_perm.push_back(
+    ChainsPermutation chains_perm;
+    chains_perm.push_back(
         std::make_shared<const SinglePairPermutation>(single_perm01));
-    // chain_perm.push_back(single_perm12);
+    // chains_perm.push_back(single_perm12);
 
     GraphOfChains graph_chains({task_chain});
     EXPECT_TRUE(
-        chain_perm.IsValid(variable_range_od, single_perm12, graph_chains));
+        chains_perm.IsValid(variable_range_od, single_perm12, graph_chains));
 }
 
 TEST_F(PermutationTest3, SinglePairPermutation_constructor) {
@@ -310,14 +310,14 @@ TEST_F(PermutationTest3, ChainsPermutation_valid_v1) {
     SinglePairPermutation single_perm12(perm_ineq12, job_first_react_matches12);
 
     VariableRange variable_range_od = FindVariableRange(dag_tasks);
-    ChainsPermutation chain_perm;
-    chain_perm.push_back(
+    ChainsPermutation chains_perm;
+    chains_perm.push_back(
         std::make_shared<const SinglePairPermutation>(single_perm01));
-    // EXPECT_TRUE(chain_perm.IsValid(variable_range_od));
-    // chain_perm.push_back(single_perm12);
+    // EXPECT_TRUE(chains_perm.IsValid(variable_range_od));
+    // chains_perm.push_back(single_perm12);
     GraphOfChains graph_chains({{0, 1, 2}});
     EXPECT_FALSE(
-        chain_perm.IsValid(variable_range_od, single_perm12, graph_chains));
+        chains_perm.IsValid(variable_range_od, single_perm12, graph_chains));
 }
 
 class PermutationTest4 : public ::testing::Test {
@@ -507,9 +507,9 @@ class PermutationTest6 : public ::testing::Test {
 TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSource) {
     perm01[0]->print();
     perm04[1]->print();
-    ChainsPermutation chain_perm;
-    chain_perm.push_back(perm01[0]);
-    // chain_perm.push_back(perm04[3]);
+    ChainsPermutation chains_perm;
+    chains_perm.push_back(perm01[0]);
+    // chains_perm.push_back(perm04[3]);
     dag_tasks.chains_ = {{0, 1}, {0, 4}};
     GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
     VariableRange variable_od_range(FindVariableRange(dag_tasks));
@@ -520,7 +520,7 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSource) {
     Interval intv2 = GetDeadlineRange(variable_od_range, *perm04[1]);
     EXPECT_EQ(-400, intv2.start);
     EXPECT_EQ(-300 + 500 - 60, intv2.start + intv2.length);
-    EXPECT_TRUE(chain_perm.IsPermConflicted_CheckAllWithSameSource(
+    EXPECT_TRUE(chains_perm.IsPermConflicted_CheckAllWithSameSource(
         variable_od_range, *perm04[1], graph_of_all_ca_chains));
 }
 
@@ -531,9 +531,9 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSource_ret_false) {
     perm10[0]->print();
     perm13[4]->print();
 
-    ChainsPermutation chain_perm;
-    chain_perm.push_back(perm10[0]);
-    // chain_perm.push_back(perm04[3]);
+    ChainsPermutation chains_perm;
+    chains_perm.push_back(perm10[0]);
+    // chains_perm.push_back(perm04[3]);
     dag_tasks.chains_ = {{1, 0}, {1, 3}};
     GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
     VariableRange variable_od_range(FindVariableRange(dag_tasks));
@@ -544,7 +544,7 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSource_ret_false) {
     Interval intv2 = GetDeadlineRange(variable_od_range, *perm13[4]);
     EXPECT_EQ(300, intv2.start);
     EXPECT_EQ(400 + 54, intv2.start + intv2.length);
-    EXPECT_FALSE(chain_perm.IsPermConflicted_CheckAllWithSameSource(
+    EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllWithSameSource(
         variable_od_range, *perm13[4], graph_of_all_ca_chains));
 }
 
@@ -552,8 +552,8 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSink) {
     TwoTaskPermutations perm41(4, 1, dag_tasks, tasks_info);
     perm01[0]->print();
     perm41[1]->print();
-    ChainsPermutation chain_perm;
-    chain_perm.push_back(perm01[0]);
+    ChainsPermutation chains_perm;
+    chains_perm.push_back(perm01[0]);
     dag_tasks.chains_ = {{0, 1}, {4, 1}};
     GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
     VariableRange variable_od_range(FindVariableRange(dag_tasks));
@@ -564,7 +564,7 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSink) {
     Interval intv2 = GetOffsetRange(variable_od_range, *perm41[1]);
     EXPECT_EQ(200 + 60, intv2.start);
     EXPECT_EQ(300 + 500, intv2.start + intv2.length);
-    EXPECT_TRUE(chain_perm.IsPermConflicted_CheckAllWithSameSink(
+    EXPECT_TRUE(chains_perm.IsPermConflicted_CheckAllWithSameSink(
         variable_od_range, *perm41[1], graph_of_all_ca_chains));
 }
 
@@ -575,8 +575,8 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSink_ret_false) {
     perm01[0]->print();
     perm31[4]->print();
 
-    ChainsPermutation chain_perm;
-    chain_perm.push_back(perm01[0]);
+    ChainsPermutation chains_perm;
+    chains_perm.push_back(perm01[0]);
     dag_tasks.chains_ = {{0, 1}, {3, 1}};
     GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
     VariableRange variable_od_range(FindVariableRange(dag_tasks));
@@ -587,7 +587,7 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSink_ret_false) {
     Interval intv2 = GetOffsetRange(variable_od_range, *perm31[4]);
     EXPECT_EQ(10 + 11 + 12 + 13 - 100, intv2.start);
     EXPECT_EQ(100, intv2.start + intv2.length);
-    EXPECT_FALSE(chain_perm.IsPermConflicted_CheckAllWithSameSink(
+    EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllWithSameSink(
         variable_od_range, *perm31[4], graph_of_all_ca_chains));
 }
 

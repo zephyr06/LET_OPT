@@ -10,7 +10,7 @@ class ObjectiveFunctionBaseIntermediate {
 
     virtual double ObjSingleChain(const DAG_Model &dag_tasks,
                                   const TaskSetInfoDerived &tasks_info,
-                                  const ChainsPermutation &chain_perm,
+                                  const ChainsPermutation &chains_perm,
                                   const std::vector<int> &chain,
                                   const VariableOD &variable_od) {
         CoutError("Base function should not be called!");
@@ -18,13 +18,13 @@ class ObjectiveFunctionBaseIntermediate {
     }
 
     double Obj(const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-               const ChainsPermutation &chain_perm,
+               const ChainsPermutation &chains_perm,
                const VariableOD &variable_od,
                const std::vector<std::vector<int>> &chains_to_analyze);
 
     virtual double ObjWithoutAllPermsSingleChain(
         const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-        const ChainsPermutation &chain_perm, const std::vector<int> &chain,
+        const ChainsPermutation &chains_perm, const std::vector<int> &chain,
         const VariableOD &variable_od) {
         CoutError("Base function should not be called!");
         return 0;
@@ -32,7 +32,7 @@ class ObjectiveFunctionBaseIntermediate {
 
     double ObjWithoutAllPerms(
         const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-        const ChainsPermutation &chain_perm, const VariableOD &variable_od,
+        const ChainsPermutation &chains_perm, const VariableOD &variable_od,
         const std::vector<std::vector<int>> &chains_to_analyze);
 };
 

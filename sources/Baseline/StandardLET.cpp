@@ -53,16 +53,16 @@ SinglePairPermutation GetSinglePermutationStanLET(
 ChainsPermutation GetStandardLETChain(
     const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,
     const std::vector<std::vector<int>>& task_chains) {
-    ChainsPermutation chain_perm(1e2);
+    ChainsPermutation chains_perm(1e2);
     for (const auto& chain : task_chains) {
         for (uint i = 0; i < chain.size() - 1; i++) {
-            chain_perm.push_back(std::make_shared<const SinglePairPermutation>(
+            chains_perm.push_back(std::make_shared<const SinglePairPermutation>(
                 GetSinglePermutationStanLET(dag_tasks, tasks_info, chain[i],
                                             chain[i + 1])));
         }
     }
 
-    return chain_perm;
+    return chains_perm;
 }
 
 }  // namespace DAG_SPACE
