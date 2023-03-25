@@ -28,6 +28,8 @@ TEST(RunSingle, v1) {
 
     std::cout << "The best permutation is: \n";
     task_sets_perms.best_yet_chain_.print();
+    std::cout << "The best offset-deadline assignments are: \n";
+    task_sets_perms.best_yet_variable_od_.print();
 
     std::cout << "Infeasible iterations: "
               << task_sets_perms.infeasible_iteration_ << "\n";
