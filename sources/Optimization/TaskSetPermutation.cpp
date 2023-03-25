@@ -6,33 +6,33 @@ namespace DAG_SPACE {
 std::vector<std::vector<int>> GetSubChains(
     const std::vector<std::vector<int>>& chains_full_length,
     const ChainsPermutation& chains_perm) {
-    std::vector<Edge> edges = chains_perm.GetEdges();
-    std::unordered_set<Edge> edge_record;
-    edge_record.reserve(edges.size());
-    for (const auto& edge : edges) edge_record.insert(edge);
-    std::vector<std::vector<int>> sub_chains;
-    sub_chains.reserve(chains_full_length.size());
-    for (uint i = 0; i < chains_full_length.size(); i++) {
-        const auto& chain = chains_full_length[i];
-        sub_chains.push_back({});
-        for (uint j = 0; j < chain.size() - 1; j++) {
-            Edge edge_curr(chain[j], chain[j + 1]);
-            if (edge_record.find(edge_curr) == edge_record.end()) {
-                break;
-            } else {
-                if (j == 0) {
-                    // sub_chains.push_back({chain[j], chain[j + 1]});
-                    sub_chains.back().push_back(chain[j]);
-                    sub_chains.back().push_back(chain[j + 1]);
-                } else {
-                    // sub_chains.end()->push_back(chain[j]);
-                    sub_chains.back().push_back(chain[j + 1]);
-                }
-            }
+  std::vector<Edge> edges = chains_perm.GetEdges();
+  std::unordered_set<Edge> edge_record;
+  edge_record.reserve(edges.size());
+  for (const auto& edge : edges) edge_record.insert(edge);
+  std::vector<std::vector<int>> sub_chains;
+  sub_chains.reserve(chains_full_length.size());
+  for (uint i = 0; i < chains_full_length.size(); i++) {
+    const auto& chain = chains_full_length[i];
+    sub_chains.push_back({});
+    for (uint j = 0; j < chain.size() - 1; j++) {
+      Edge edge_curr(chain[j], chain[j + 1]);
+      if (edge_record.find(edge_curr) == edge_record.end()) {
+        break;
+      } else {
+        if (j == 0) {
+          // sub_chains.push_back({chain[j], chain[j + 1]});
+          sub_chains.back().push_back(chain[j]);
+          sub_chains.back().push_back(chain[j + 1]);
+        } else {
+          // sub_chains.end()->push_back(chain[j]);
+          sub_chains.back().push_back(chain[j + 1]);
         }
+      }
     }
+  }
 
-    return sub_chains;
+  return sub_chains;
 }
 // Note: this function doesn't change chains_perm
 std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
@@ -40,30 +40,38 @@ std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
     const std::shared_ptr<const SinglePairPermutation> single_perm,
     const std::vector<std::vector<int>>& chains, const DAG_Model& dag_tasks,
     const TaskSetInfoDerived& tasks_info) {
+  chains_perm.push_back(single_perm);
+  auto first_job_map =
+      GetFirstReactMaps(chains_perm, chains, dag_tasks, tasks_info);
+  chains_perm.pop(*single_perm);
+  return first_job_map;
+}
+
+std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
+    const ChainsPermutation& chains_perm,
+    const std::vector<std::vector<int>>& chains, const DAG_Model& dag_tasks,
+    const TaskSetInfoDerived& tasks_info) {
 #ifdef PROFILE_CODE
-    BeginTimer(__FUNCTION__);
+  BeginTimer(__FUNCTION__);
 #endif
 
-    std::vector<std::unordered_map<JobCEC, JobCEC>> first_job_map;
-    first_job_map.reserve(chains.size());
+  std::vector<std::unordered_map<JobCEC, JobCEC>> first_job_map;
+  first_job_map.reserve(chains.size());
 
-    // ChainsPermutation chains_perm = chains_perm1;
-    chains_perm.push_back(single_perm);
-    std::vector<std::vector<int>> sub_chains = GetSubChains(chains, chains_perm);
-    for (uint i = 0; i < chains.size(); i++) {
-        const std::vector<int>& chain_sub = sub_chains[i];
-        if (chain_sub.size() == 0) {
-            first_job_map.push_back(std::unordered_map<JobCEC, JobCEC>());
-        } else {
-            first_job_map.push_back(
-                GetFirstReactMap(dag_tasks, tasks_info, chains_perm, chain_sub));
-        }
+  std::vector<std::vector<int>> sub_chains = GetSubChains(chains, chains_perm);
+  for (uint i = 0; i < chains.size(); i++) {
+    const std::vector<int>& chain_sub = sub_chains[i];
+    if (chain_sub.size() == 0) {
+      first_job_map.push_back(std::unordered_map<JobCEC, JobCEC>());
+    } else {
+      first_job_map.push_back(
+          GetFirstReactMap(dag_tasks, tasks_info, chains_perm, chain_sub));
     }
-    chains_perm.pop(*single_perm);
+  }
 #ifdef PROFILE_CODE
-    EndTimer(__FUNCTION__);
+  EndTimer(__FUNCTION__);
 #endif
-    return first_job_map;
+  return first_job_map;
 }
 
 // return true if it's possible for curr_first_job_maps to achieve better
@@ -72,36 +80,35 @@ bool CompareNewPerm(
     const std::vector<std::unordered_map<JobCEC, JobCEC>>& curr_first_job_maps,
     const std::vector<std::unordered_map<JobCEC, JobCEC>>&
         curr_best_first_job_maps) {
-    if (curr_best_first_job_maps.size() == 0) return true;
-    uint chain_size = curr_first_job_maps.size();
-    if (chain_size != curr_best_first_job_maps.size())
-        CoutError("Inconsistent map size in CompareNewPerm!");
-    bool whether_find_better_react = false;
-    bool whether_find_worse_react = false;  // TODO: use it
-    for (uint i = 0; i < chain_size; i++) {
-        const std::unordered_map<JobCEC, JobCEC>& curr_map =
-            curr_first_job_maps[i];
-        const std::unordered_map<JobCEC, JobCEC>& best_map =
-            curr_best_first_job_maps[i];
-        for (auto itr = best_map.begin(); itr != best_map.end(); itr++) {
-            const JobCEC& start_job = itr->first;
-            const JobCEC& best_react_job = itr->second;
-            if (curr_map.find(start_job) == curr_map.end()) {
-                CoutError("Job not found in CompareNewPerm!");
-            } else {
-                if (best_react_job.jobId > curr_map.at(start_job).jobId) {
-                    whether_find_better_react = true;
-                    return true;
-                } else if (best_react_job.jobId < curr_map.at(start_job).jobId)
-                    whether_find_worse_react = true;
-            }
-        }
+  if (curr_best_first_job_maps.size() == 0) return true;
+  uint chain_size = curr_first_job_maps.size();
+  if (chain_size != curr_best_first_job_maps.size())
+    CoutError("Inconsistent map size in CompareNewPerm!");
+  bool whether_find_better_react = false;
+  bool whether_find_worse_react = false;  // TODO: use it
+  for (uint i = 0; i < chain_size; i++) {
+    const std::unordered_map<JobCEC, JobCEC>& curr_map = curr_first_job_maps[i];
+    const std::unordered_map<JobCEC, JobCEC>& best_map =
+        curr_best_first_job_maps[i];
+    for (auto itr = best_map.begin(); itr != best_map.end(); itr++) {
+      const JobCEC& start_job = itr->first;
+      const JobCEC& best_react_job = itr->second;
+      if (curr_map.find(start_job) == curr_map.end()) {
+        CoutError("Job not found in CompareNewPerm!");
+      } else {
+        if (best_react_job.jobId > curr_map.at(start_job).jobId) {
+          whether_find_better_react = true;
+          return true;
+        } else if (best_react_job.jobId < curr_map.at(start_job).jobId)
+          whether_find_worse_react = true;
+      }
     }
-    if (GlobalVariablesDAGOpt::SearchDP_Friendly) {
-        if (!whether_find_worse_react) return true;
-    }
+  }
+  if (GlobalVariablesDAGOpt::SearchDP_Friendly) {
+    if (!whether_find_worse_react) return true;
+  }
 
-    return false;
+  return false;
 }
 
 TaskSetPermutation::TaskSetPermutation(
@@ -119,36 +126,35 @@ TaskSetPermutation::TaskSetPermutation(
           FindBestPossibleVariableOD(dag_tasks_, tasks_info_, rta_)),
       lp_optimizer_(dag_tasks_, tasks_info_, graph_of_all_ca_chains_, "",
                     rta_) {
-    adjacent_two_task_permutations_.reserve(
-        1e2);  // there are never more than 1e2 edges
-    // lp_optimizer_.AddVariablesOD();
-    // lp_optimizer_.AddSchedulabilityConstraints();
-    FindPairPermutations();
+  adjacent_two_task_permutations_.reserve(
+      1e2);  // there are never more than 1e2 edges
+  // lp_optimizer_.AddVariablesOD();
+  // lp_optimizer_.AddSchedulabilityConstraints();
+  FindPairPermutations();
 }
 
 void TaskSetPermutation::FindPairPermutations() {
-    for (const auto& edge_curr : graph_of_all_ca_chains_.edge_vec_ordered_) {
-        if (ifTimeout(start_time_)) break;
-        adjacent_two_task_permutations_.push_back(TwoTaskPermutations(
-            edge_curr.from_id, edge_curr.to_id, dag_tasks_, tasks_info_, rta_));
-        std::cout << "Pair permutation #: "
-                  << adjacent_two_task_permutations_.back().size() << "\n";
-    }
+  for (const auto& edge_curr : graph_of_all_ca_chains_.edge_vec_ordered_) {
+    if (ifTimeout(start_time_)) break;
+    adjacent_two_task_permutations_.push_back(TwoTaskPermutations(
+        edge_curr.from_id, edge_curr.to_id, dag_tasks_, tasks_info_, rta_));
+    std::cout << "Pair permutation #: "
+              << adjacent_two_task_permutations_.back().size() << "\n";
+  }
 }
 bool TaskSetPermutation::ExamSchedulabilityOptSol() const {
-    if (best_yet_variable_od_.size() == 0) return false;
-    for (int i = 0; i < tasks_info_.N; i++) {
-        int offset = best_yet_variable_od_.at(i).offset;
-        int deadline = best_yet_variable_od_.at(i).deadline;
-        int rta = GetResponseTime(dag_tasks_, i);
-        if (rta + offset > deadline ||
-            deadline > dag_tasks_.GetTask(i).deadline)
-            return false;
-    }
-    if (GlobalVariablesDAGOpt::debugMode == 1) {
-        best_yet_variable_od_.print();
-    }
-    return true;
+  if (best_yet_variable_od_.size() == 0) return false;
+  for (int i = 0; i < tasks_info_.N; i++) {
+    int offset = best_yet_variable_od_.at(i).offset;
+    int deadline = best_yet_variable_od_.at(i).deadline;
+    int rta = GetResponseTime(dag_tasks_, i);
+    if (rta + offset > deadline || deadline > dag_tasks_.GetTask(i).deadline)
+      return false;
+  }
+  if (GlobalVariablesDAGOpt::debugMode == 1) {
+    best_yet_variable_od_.print();
+  }
+  return true;
 }
 
 // set each variable's offset and deadline
@@ -220,38 +226,38 @@ bool ExamVariableFeasibility(const VariableOD& variable,
                              const DAG_Model& dag_task,
                              const std::vector<int>& chain) {
 #ifdef PROFILE_CODE
-    BeginTimer(__FUNCTION__);
+  BeginTimer(__FUNCTION__);
 #endif
-    for (uint i = 0; i < chain.size() - 1; i++) {
-        Edge edge(chain[i], chain[i + 1]);
-        const PermutationInequality& inequality = chains_perm[edge].inequality_;
-        int prev_id = inequality.task_prev_id_;
-        int next_id = inequality.task_next_id_;
-        if (inequality.lower_bound_valid_) {
-            if (variable.at(next_id).offset + inequality.lower_bound_ >=
-                    variable.at(prev_id).deadline ||
-                variable.at(prev_id).deadline >
-                    variable.at(next_id).offset + inequality.upper_bound_) {
-                if (GlobalVariablesDAGOpt::debugMode) inequality.print();
+  for (uint i = 0; i < chain.size() - 1; i++) {
+    Edge edge(chain[i], chain[i + 1]);
+    const PermutationInequality& inequality = chains_perm[edge].inequality_;
+    int prev_id = inequality.task_prev_id_;
+    int next_id = inequality.task_next_id_;
+    if (inequality.lower_bound_valid_) {
+      if (variable.at(next_id).offset + inequality.lower_bound_ >=
+              variable.at(prev_id).deadline ||
+          variable.at(prev_id).deadline >
+              variable.at(next_id).offset + inequality.upper_bound_) {
+        if (GlobalVariablesDAGOpt::debugMode) inequality.print();
 #ifdef PROFILE_CODE
-                EndTimer(__FUNCTION__);
+        EndTimer(__FUNCTION__);
 #endif
-                return false;
-            }
-        }
+        return false;
+      }
     }
-    for (uint i = 0; i < variable.size(); i++) {
-        if (variable.at(i).deadline > dag_task.GetTask(i).deadline) {
+  }
+  for (uint i = 0; i < variable.size(); i++) {
+    if (variable.at(i).deadline > dag_task.GetTask(i).deadline) {
 #ifdef PROFILE_CODE
-            EndTimer(__FUNCTION__);
+      EndTimer(__FUNCTION__);
 #endif
-            return false;
-        }
+      return false;
     }
+  }
 #ifdef PROFILE_CODE
-    EndTimer(__FUNCTION__);
+  EndTimer(__FUNCTION__);
 #endif
-    return true;
+  return true;
 }
 
 //      o_{task_next_id} + lower_bound < d_{task_prev_id} ;
@@ -262,30 +268,30 @@ void SetVariableHelperSingleEdge(const Edge& edge, VariableOD& variable,
                                  const DAG_Model& dag_tasks,
                                  const std::vector<int>& rta) {
 #ifdef PROFILE_CODE
-    BeginTimer(__FUNCTION__);
+  BeginTimer(__FUNCTION__);
 #endif
-    //  edge.from_id, edge_to_id
-    variable.SetMinDeadline(edge.from_id, dag_tasks, rta);
-    variable.SetOffset(edge.to_id,
-                       variable[edge.from_id].deadline - ineq.upper_bound_);
-    if (variable[edge.from_id].deadline - ineq.upper_bound_ < 0) {
-        variable[edge.to_id].offset = 0;
-        variable[edge.from_id].deadline =
-            std::max(variable[edge.from_id].deadline,
-                     variable[edge.to_id].offset + ineq.lower_bound_ + 1);
-        if (variable[edge.from_id].deadline >
-            dag_tasks.GetTask(edge.from_id).deadline) {
-            variable.valid_ = false;
-            // return;
-        }
+  //  edge.from_id, edge_to_id
+  variable.SetMinDeadline(edge.from_id, dag_tasks, rta);
+  variable.SetOffset(edge.to_id,
+                     variable[edge.from_id].deadline - ineq.upper_bound_);
+  if (variable[edge.from_id].deadline - ineq.upper_bound_ < 0) {
+    variable[edge.to_id].offset = 0;
+    variable[edge.from_id].deadline =
+        std::max(variable[edge.from_id].deadline,
+                 variable[edge.to_id].offset + ineq.lower_bound_ + 1);
+    if (variable[edge.from_id].deadline >
+        dag_tasks.GetTask(edge.from_id).deadline) {
+      variable.valid_ = false;
+      // return;
     }
-    if (variable[edge.to_id].offset + rta[edge.to_id] >
-        dag_tasks.GetTask(edge.to_id).deadline) {
-        variable.valid_ = false;
-        // return;
-    }
+  }
+  if (variable[edge.to_id].offset + rta[edge.to_id] >
+      dag_tasks.GetTask(edge.to_id).deadline) {
+    variable.valid_ = false;
+    // return;
+  }
 #ifdef PROFILE_CODE
-    EndTimer(__FUNCTION__);
+  EndTimer(__FUNCTION__);
 #endif
 }
 
@@ -294,25 +300,25 @@ VariableOD FindODFromSingleChainPermutation(
     const GraphOfChains& graph_of_all_ca_chains, const std::vector<int>& chain,
     const std::vector<int>& rta) {
 #ifdef PROFILE_CODE
-    BeginTimer(__FUNCTION__);
+  BeginTimer(__FUNCTION__);
 #endif
-    const TaskSet& tasks = dag_tasks.GetTaskSet();
-    VariableOD variable(tasks);
+  const TaskSet& tasks = dag_tasks.GetTaskSet();
+  VariableOD variable(tasks);
 
-    for (uint i = 0; i < chain.size() - 1; i++) {
-        Edge edge(chain[i], chain[i + 1]);
-        const SinglePairPermutation& single_perm = chains_perm[edge];
-        SetVariableHelperSingleEdge(edge, variable, single_perm.inequality_,
-                                    dag_tasks, rta);
-        if (!variable.valid_) break;
-    }
-    if (variable.valid_)
-        variable.valid_ = ExamVariableFeasibility(
-            variable, chains_perm, graph_of_all_ca_chains, dag_tasks, chain);
+  for (uint i = 0; i < chain.size() - 1; i++) {
+    Edge edge(chain[i], chain[i + 1]);
+    const SinglePairPermutation& single_perm = chains_perm[edge];
+    SetVariableHelperSingleEdge(edge, variable, single_perm.inequality_,
+                                dag_tasks, rta);
+    if (!variable.valid_) break;
+  }
+  if (variable.valid_)
+    variable.valid_ = ExamVariableFeasibility(
+        variable, chains_perm, graph_of_all_ca_chains, dag_tasks, chain);
 #ifdef PROFILE_CODE
-    EndTimer(__FUNCTION__);
+  EndTimer(__FUNCTION__);
 #endif
-    return variable;
+  return variable;
 }
 
 }  // namespace DAG_SPACE

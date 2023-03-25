@@ -30,6 +30,11 @@ std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
     const std::vector<std::vector<int>>& chains, const DAG_Model& dag_tasks,
     const TaskSetInfoDerived& tasks_info);
 
+std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
+    const ChainsPermutation& chains_perm,
+    const std::vector<std::vector<int>>& chains, const DAG_Model& dag_tasks,
+    const TaskSetInfoDerived& tasks_info);
+
 // return true if it's possible for curr_first_job_maps to achieve better
 // performance than curr_best_first_job_maps
 bool CompareNewPerm(
@@ -172,7 +177,7 @@ class TaskSetPermutation {
     }
 
     std::vector<std::unordered_map<JobCEC, JobCEC>> curr_best_first_job_maps;
-    int min_offset = 1e9;
+    int min_offset_tried = 1e9;
     double best_obj_this_level = 1e9;
 
     for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
@@ -186,11 +191,12 @@ class TaskSetPermutation {
             GetFirstReactMaps(
                 chains_perm, adjacent_two_task_permutations_[position][i],
                 graph_of_all_ca_chains_.chains_, dag_tasks_, tasks_info_);
-
-        if (CompareNewPerm(curr_first_job_maps, curr_best_first_job_maps) ||
-            CompareAndUpdateMinOffsetLB<ObjectiveFunction>(
-                min_offset, adjacent_two_task_permutations_[position][i],
-                chains_perm)) {  // TODO: clean and test
+        bool if_improve_react =
+            CompareNewPerm(curr_first_job_maps, curr_best_first_job_maps);
+        bool if_reduce_offset = CompareAndUpdateMinOffsetLB<ObjectiveFunction>(
+            min_offset_tried, adjacent_two_task_permutations_[position][i],
+            chains_perm);
+        if (if_improve_react || if_reduce_offset) {
           // add one type of permutation to chains_perm
           chains_perm.push_back(adjacent_two_task_permutations_[position][i]);
 
@@ -206,8 +212,6 @@ class TaskSetPermutation {
                   adjacent_two_task_permutations_[position][i]->GetNextTaskId(),
                   dag_tasks_, tasks_info_, chains_perm, graph_of_all_ca_chains_,
                   ObjectiveFunction::type_trait, rta_);
-              // curr_best_single_perm =
-              //     adjacent_two_task_permutations_[position][i];
             }
           }
           chains_perm.pop(*adjacent_two_task_permutations_[position][i]);
