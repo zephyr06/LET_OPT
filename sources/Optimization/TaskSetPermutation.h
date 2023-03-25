@@ -208,7 +208,7 @@ class TaskSetPermutation {
               best_obj_this_level =
                   curr_obj;  // TODO: inherit the failed offset
               curr_best_first_job_maps = curr_first_job_maps;
-              min_offset = GetMinOffSet(
+              min_offset_tried = GetMinOffSet(
                   adjacent_two_task_permutations_[position][i]->GetNextTaskId(),
                   dag_tasks_, tasks_info_, chains_perm, graph_of_all_ca_chains_,
                   ObjectiveFunction::type_trait, rta_);
