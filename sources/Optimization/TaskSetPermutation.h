@@ -180,11 +180,11 @@ class TaskSetPermutation {
     for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
          i++) {
       if (ifTimeout(start_time_)) break;
+      const auto& perm_sing_curr = adjacent_two_task_permutations_[position][i];
 
-      if (chains_perm.IsValid(variable_range_od_,
-                              *adjacent_two_task_permutations_[position][i],
+      if (chains_perm.IsValid(variable_range_od_, *perm_sing_curr,
                               graph_of_all_ca_chains_)) {
-        chains_perm.push_back(adjacent_two_task_permutations_[position][i]);
+        chains_perm.push_back(perm_sing_curr);
 
         if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {
           std::vector<std::unordered_map<JobCEC, JobCEC>> curr_first_job_maps =
@@ -195,8 +195,7 @@ class TaskSetPermutation {
           bool if_reduce_offset =
               CompareAndUpdateMinOffsetLB<ObjectiveFunction>(
                   min_offset_tried, chains_perm,
-                  adjacent_two_task_permutations_[position][i]
-                      ->GetNextTaskId());
+                  perm_sing_curr->GetNextTaskId());
           if (if_improve_react || if_reduce_offset) {
             double curr_obj = IterateAllChainsPermutationsDP<ObjectiveFunction>(
                 position + 1, chains_perm);
@@ -205,14 +204,14 @@ class TaskSetPermutation {
                   curr_obj;  // TODO: inherit the failed offset
               curr_best_first_job_maps = curr_first_job_maps;
               min_offset_tried = GetMinOffSet(
-                  adjacent_two_task_permutations_[position][i]->GetNextTaskId(),
-                  dag_tasks_, tasks_info_, chains_perm, graph_of_all_ca_chains_,
+                  perm_sing_curr->GetNextTaskId(), dag_tasks_, tasks_info_,
+                  chains_perm, graph_of_all_ca_chains_,
                   ObjectiveFunction::type_trait, rta_);
             }
           }
         }
 
-        chains_perm.pop(*adjacent_two_task_permutations_[position][i]);
+        chains_perm.pop(*perm_sing_curr);
       }
     }
     return best_obj_this_level;
