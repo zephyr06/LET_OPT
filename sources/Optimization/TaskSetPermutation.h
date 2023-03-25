@@ -62,6 +62,44 @@ class TaskSetPermutation {
         return best_yet_obj_;
     }
 
+    // chain_perm already pushed the new perm_single
+    template <typename ObjectiveFunction>
+    bool WhetherSkipToNextPerm(const ChainsPermutation& chain_perm) {
+#ifdef PROFILE_CODE
+        BeginTimer(__FUNCTION__);
+#endif
+
+        std::vector<std::vector<int>> sub_chains =
+            GetSubChains(dag_tasks_.chains_, chain_perm);
+        for (const auto& sub_chain : sub_chains) {
+            if (sub_chain.size() == 0) continue;
+            if (GlobalVariablesDAGOpt::SKIP_PERM >= 2 &&
+                !FindODFromSingleChainPermutation(dag_tasks_, chain_perm,
+                                                  graph_of_all_ca_chains_,
+                                                  sub_chain, rta_)
+                     .valid_) {
+#ifdef PROFILE_CODE
+                EndTimer(__FUNCTION__);
+#endif
+                return true;
+            }
+        }
+
+        VariableOD best_possible_variable_od = FindBestPossibleVariableOD(
+            dag_tasks_, tasks_info_, rta_, chain_perm);
+        double obj_curr =
+            ObjectiveFunction::Obj(dag_tasks_, tasks_info_, chain_perm,
+                                   best_possible_variable_od, sub_chains);
+#ifdef PROFILE_CODE
+        EndTimer(__FUNCTION__);
+#endif
+
+        if (obj_curr > best_yet_obj_) {
+            return true;
+        }
+        return false;
+    }
+
     // depth equals the number of edge pais
     template <typename ObjectiveFunction>
     void IterateAllChainsPermutations(uint position,
@@ -85,45 +123,47 @@ class TaskSetPermutation {
                     adjacent_two_task_permutations_[position][i]);
 
                 // try to skip some permutations
-                if (GlobalVariablesDAGOpt::SKIP_PERM) {
-                    BeginTimer("GlobalVariablesDAGOpt::SKIP_PERM");
-                    bool skip_to_next = false;
-                    std::vector<std::vector<int>> sub_chains =
-                        GetSubChains(dag_tasks_.chains_, chain_perm);
-                    for (const auto& sub_chain : sub_chains) {
-                        if (sub_chain.size() == 0) continue;
-                        if (GlobalVariablesDAGOpt::SKIP_PERM >= 2 &&
-                            !FindODFromSingleChainPermutation(
-                                 dag_tasks_, chain_perm,
-                                 graph_of_all_ca_chains_, sub_chain, rta_)
-                                 .valid_) {
-                            skip_to_next = true;
-                            break;
-                        }
-                    }
-                    if (!skip_to_next) {
-                        VariableOD best_possible_variable_od =
-                            FindBestPossibleVariableOD(dag_tasks_, tasks_info_,
-                                                       rta_, chain_perm);
-                        double obj_curr = ObjectiveFunction::Obj(
-                            dag_tasks_, tasks_info_, chain_perm,
-                            best_possible_variable_od, sub_chains);
-                        if (obj_curr > best_yet_obj_) {
-                            skip_to_next = true;
-                        }
-                    }
-                    if (skip_to_next) {
-                        chain_perm.pop(
-                            *adjacent_two_task_permutations_[position][i]);
-                        EndTimer("GlobalVariablesDAGOpt::SKIP_PERM");
-                        continue;
-                    }
-                    EndTimer("GlobalVariablesDAGOpt::SKIP_PERM");
+                if (!WhetherSkipToNextPerm<ObjectiveFunction>(chain_perm)) {
+                    IterateAllChainsPermutations<ObjectiveFunction>(
+                        position + 1, chain_perm);
                 }
-
-                IterateAllChainsPermutations<ObjectiveFunction>(position + 1,
-                                                                chain_perm);
                 chain_perm.pop(*adjacent_two_task_permutations_[position][i]);
+                // if (GlobalVariablesDAGOpt::SKIP_PERM) {
+                //     BeginTimer("GlobalVariablesDAGOpt::SKIP_PERM");
+                //     bool skip_to_next = false;
+                //     std::vector<std::vector<int>> sub_chains =
+                //         GetSubChains(dag_tasks_.chains_, chain_perm);
+                //     for (const auto& sub_chain : sub_chains) {
+                //         if (sub_chain.size() == 0) continue;
+                //         if (GlobalVariablesDAGOpt::SKIP_PERM >= 2 &&
+                //             !FindODFromSingleChainPermutation(
+                //                  dag_tasks_, chain_perm,
+                //                  graph_of_all_ca_chains_, sub_chain, rta_)
+                //                  .valid_) {
+                //             skip_to_next = true;
+                //             break;
+                //         }
+                //     }
+                //     if (!skip_to_next) {
+                //         VariableOD best_possible_variable_od =
+                //             FindBestPossibleVariableOD(dag_tasks_,
+                //             tasks_info_,
+                //                                        rta_, chain_perm);
+                //         double obj_curr = ObjectiveFunction::Obj(
+                //             dag_tasks_, tasks_info_, chain_perm,
+                //             best_possible_variable_od, sub_chains);
+                //         if (obj_curr > best_yet_obj_) {
+                //             skip_to_next = true;
+                //         }
+                //     }
+                //     if (skip_to_next) {
+                //         chain_perm.pop(
+                //             *adjacent_two_task_permutations_[position][i]);
+                //         EndTimer("GlobalVariablesDAGOpt::SKIP_PERM");
+                //         continue;
+                //     }
+                //     EndTimer("GlobalVariablesDAGOpt::SKIP_PERM");
+                // }
             }
         }
     }
@@ -202,23 +242,25 @@ class TaskSetPermutation {
                     chain_perm.push_back(
                         adjacent_two_task_permutations_[position][i]);
 
-                    double curr_obj =
-                        IterateAllChainsPermutationsDP<ObjectiveFunction>(
-                            position + 1, chain_perm);
-                    if (curr_obj < best_obj_this_level) {
-                        best_obj_this_level =
-                            curr_obj;  // TODO: inherit the failed offset
-                        curr_best_first_job_maps = curr_first_job_maps;
-                        min_offset = GetMinOffSet(
-                            adjacent_two_task_permutations_[position][i]
-                                ->GetNextTaskId(),
-                            dag_tasks_, tasks_info_, chain_perm,
-                            graph_of_all_ca_chains_,
-                            ObjectiveFunction::type_trait, rta_);
-                        // curr_best_single_perm =
-                        //     adjacent_two_task_permutations_[position][i];
+                    // try to skip some permutations
+                    if (!WhetherSkipToNextPerm<ObjectiveFunction>(chain_perm)) {
+                        double curr_obj =
+                            IterateAllChainsPermutationsDP<ObjectiveFunction>(
+                                position + 1, chain_perm);
+                        if (curr_obj < best_obj_this_level) {
+                            best_obj_this_level =
+                                curr_obj;  // TODO: inherit the failed offset
+                            curr_best_first_job_maps = curr_first_job_maps;
+                            min_offset = GetMinOffSet(
+                                adjacent_two_task_permutations_[position][i]
+                                    ->GetNextTaskId(),
+                                dag_tasks_, tasks_info_, chain_perm,
+                                graph_of_all_ca_chains_,
+                                ObjectiveFunction::type_trait, rta_);
+                            // curr_best_single_perm =
+                            //     adjacent_two_task_permutations_[position][i];
+                        }
                     }
-
                     chain_perm.pop(
                         *adjacent_two_task_permutations_[position][i]);
                 }
