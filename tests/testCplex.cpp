@@ -62,6 +62,27 @@ TEST_F(PermutationTest1, Incremental) {
     EXPECT_EQ(20, res.second);
 }
 
+TEST_F(PermutationTest1, FindOffsetRange) {
+    dag_tasks.chains_ = {{0, 1, 2}};
+    TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+    TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+
+    ChainsPermutation chain_perm;
+    chain_perm.push_back(perm01[0]);
+    chain_perm.push_back(perm12[0]);
+    chain_perm.print();
+
+    GraphOfChains graph_chains(dag_tasks.chains_);
+
+    std::vector<int> rta = {1, 3, 6};
+    LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains,
+                             "ReactionTime", rta);
+    auto range = lp_optimizer.FindOffsetRange(2, chain_perm);
+    EXPECT_EQ(14, range.start);
+    EXPECT_EQ(14, range.start + range.length);
+    lp_optimizer.ClearCplexMemory();
+}
+
 int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);
     ::testing::InitGoogleMock(&argc, argv);
