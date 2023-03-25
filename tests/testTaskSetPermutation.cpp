@@ -61,7 +61,7 @@ TEST_F(PermutationTest1, Iteration) {
     EXPECT_EQ(20, obj_find);
 }
 
-TEST_F(PermutationTest1, CompareOffsetLBChange) {
+TEST_F(PermutationTest1, CompareAndUpdateMinOffsetLB) {
     dag_tasks.chains_ = {{0, 1, 2}};
     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
@@ -74,28 +74,32 @@ TEST_F(PermutationTest1, CompareOffsetLBChange) {
     GraphOfChains graph_chains(dag_tasks.chains_);
 
     std::vector<int> rta = {1, 3, 6};
+    int min_offset_before = 2;
     std::cout << "Min offset: "
-              << GetMinOffSet(2, dag_tasks, tasks_info, chain_perm,
-                              graph_chains, "ReactionTime", rta)
+              << GetMinOffSet(min_offset_before, dag_tasks, tasks_info,
+                              chain_perm, graph_chains, "ReactionTime", rta)
               << "\n";
 
     ChainsPermutation chain_perm2;
     chain_perm2.push_back(perm01[0]);
     chain_perm2.push_back(perm12[1]);
     chain_perm.print();
+    min_offset_before = 2;
     std::cout << "Min offset: "
-              << GetMinOffSet(2, dag_tasks, tasks_info, chain_perm2,
-                              graph_chains, "ReactionTime", rta)
+              << GetMinOffSet(min_offset_before, dag_tasks, tasks_info,
+                              chain_perm2, graph_chains, "ReactionTime", rta)
               << "\n";
 
     TaskSetPermutation task_sets_perms =
         TaskSetPermutation(dag_tasks, {dag_tasks.chains_});
     ChainsPermutation chain_perm3;
     chain_perm3.push_back(perm01[0]);
-    EXPECT_TRUE(task_sets_perms.CompareOffsetLBChange<ObjReactionTime>(
-        GetMinOffSet(2, dag_tasks, tasks_info, chain_perm, graph_chains,
-                     "ReactionTime", rta),
-        perm12[1], chain_perm3));
+    min_offset_before =
+        GetMinOffSet(min_offset_before, dag_tasks, tasks_info, chain_perm,
+                     graph_chains, "ReactionTime", rta);
+
+    EXPECT_TRUE(task_sets_perms.CompareAndUpdateMinOffsetLB<ObjReactionTime>(
+        min_offset_before, perm12[1], chain_perm3));
 }
 
 TEST_F(PermutationTest1, GenerateBoxPermutationConstraints) {

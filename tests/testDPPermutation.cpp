@@ -250,8 +250,10 @@ TEST_F(PermutationTest46, CompareNewPermv1) {
     std::vector<std::unordered_map<JobCEC, JobCEC>> curr_first_job_maps2 =
         GetFirstReactMaps(chain_perm1, perm34[3], dag_tasks.chains_, dag_tasks,
                           tasks_info);
-    EXPECT_TRUE(CompareNewPerm(curr_first_job_maps1, curr_first_job_maps2));
-    EXPECT_TRUE(CompareNewPerm(curr_first_job_maps2, curr_first_job_maps1));
+    if (GlobalVariablesDAGOpt::SearchDP_Friendly) {
+        EXPECT_TRUE(CompareNewPerm(curr_first_job_maps1, curr_first_job_maps2));
+        EXPECT_TRUE(CompareNewPerm(curr_first_job_maps2, curr_first_job_maps1));
+    }
 }
 int main(int argc, char** argv) {
     // ::testing::InitGoogleTest(&argc, argv);

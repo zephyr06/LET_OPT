@@ -140,20 +140,26 @@ class TaskSetPermutation {
 
     // return true if the minimum possible offset becomes smaller
     template <typename ObjectiveFunction>
-    bool CompareOffsetLBChange(
+    bool CompareAndUpdateMinOffsetLB(
         int min_offset_best,
         const std::shared_ptr<const SinglePairPermutation>&
             curr_try_single_perm,
         ChainsPermutation& chain_perm) {
-        // TODO: fix the obj-trait issue there!!!
         int task_id = curr_try_single_perm->GetNextTaskId();
         chain_perm.push_back(curr_try_single_perm);
 
         int min_offset_curr = GetMinOffSet(task_id, dag_tasks_, tasks_info_,
                                            chain_perm, graph_of_all_ca_chains_,
                                            ObjectiveFunction::type_trait, rta_);
+        int min_offset_best_prev_record = min_offset_best;
+        if (min_offset_curr <
+            min_offset_best_prev_record) {  // the range of possible
+                                            // following cause-effect
+                                            // chain permutations improve
+            min_offset_best = min_offset_curr;
+        }
         chain_perm.pop(*curr_try_single_perm);
-        return min_offset_curr < min_offset_best;
+        return min_offset_curr < min_offset_best_prev_record;
     }
 
     template <typename ObjectiveFunction>
@@ -168,7 +174,7 @@ class TaskSetPermutation {
 
         std::vector<std::unordered_map<JobCEC, JobCEC>>
             curr_best_first_job_maps;
-        int min_offset = -1;
+        int min_offset = 1e9;
         double best_obj_this_level = 1e9;
 
         for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
@@ -185,8 +191,13 @@ class TaskSetPermutation {
                         adjacent_two_task_permutations_[position][i],
                         graph_of_all_ca_chains_.chains_, dag_tasks_,
                         tasks_info_);
+
                 if (CompareNewPerm(curr_first_job_maps,
-                                   curr_best_first_job_maps)) {
+                                   curr_best_first_job_maps) ||
+                    CompareAndUpdateMinOffsetLB<ObjectiveFunction>(
+                        min_offset,
+                        adjacent_two_task_permutations_[position][i],
+                        chain_perm)) {  // TODO: clean and test
                     // add one type of permutation to chain_perm
                     chain_perm.push_back(
                         adjacent_two_task_permutations_[position][i]);
@@ -195,11 +206,19 @@ class TaskSetPermutation {
                         IterateAllChainsPermutationsDP<ObjectiveFunction>(
                             position + 1, chain_perm);
                     if (curr_obj < best_obj_this_level) {
-                        best_obj_this_level = curr_obj;
+                        best_obj_this_level =
+                            curr_obj;  // TODO: inherit the failed offset
                         curr_best_first_job_maps = curr_first_job_maps;
+                        min_offset = GetMinOffSet(
+                            adjacent_two_task_permutations_[position][i]
+                                ->GetNextTaskId(),
+                            dag_tasks_, tasks_info_, chain_perm,
+                            graph_of_all_ca_chains_,
+                            ObjectiveFunction::type_trait, rta_);
                         // curr_best_single_perm =
                         //     adjacent_two_task_permutations_[position][i];
                     }
+
                     chain_perm.pop(
                         *adjacent_two_task_permutations_[position][i]);
                 }
