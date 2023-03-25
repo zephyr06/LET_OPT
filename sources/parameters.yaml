@@ -3,7 +3,7 @@ debugMode: 0
 printSchedule: 1
 TIME_LIMIT: 600 # seconds, -1 means unlimited time
 SKIP_PERM: 2
-SearchDP: 0
+SearchDP: 1
 SearchDP_Friendly: 1
 # the proportion of permutations to keep! 1 means no sampling
 SAMPLE_SMALL_TASKS: 1
