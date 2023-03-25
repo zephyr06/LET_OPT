@@ -53,7 +53,7 @@ class LPOptimizer {
         AddArtificialVariables();
     }
 
-    Interval FindOffsetRange(int task_id, const ChainsPermutation &chains_perm);
+    int FindMinOffset(int task_id, const ChainsPermutation &chains_perm);
 
     void AddVariablesOD(int number_of_tasks_to_opt);
     void AddArtificialVariables();
@@ -143,6 +143,16 @@ inline std::pair<VariableOD, int> FindODWithLP(
     return lp_optimizer.Optimize(chains_perm);
 }
 
+inline int GetMinOffSet(int task_id, const DAG_Model &dag_tasks,
+                        const TaskSetInfoDerived &tasks_info,
+                        const ChainsPermutation &chains_perm,
+                        const GraphOfChains &graph_of_all_ca_chains,
+                        const std::string &obj_trait,
+                        const std::vector<int> &rta) {
+    LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_of_all_ca_chains,
+                             obj_trait, rta);
+    return lp_optimizer.FindMinOffset(task_id, chains_perm);
+}
 // inline bool ExamFeasibility(
 //     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
 //     const ChainsPermutation &chains_perm,

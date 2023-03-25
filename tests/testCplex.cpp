@@ -62,7 +62,7 @@ TEST_F(PermutationTest1, Incremental) {
     EXPECT_EQ(20, res.second);
 }
 
-TEST_F(PermutationTest1, FindOffsetRange) {
+TEST_F(PermutationTest1, FindMinOffset) {
     dag_tasks.chains_ = {{0, 1, 2}};
     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
@@ -77,23 +77,23 @@ TEST_F(PermutationTest1, FindOffsetRange) {
     std::vector<int> rta = {1, 3, 6};
     LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains,
                              "ReactionTime", rta);
-    auto range = lp_optimizer.FindOffsetRange(2, chain_perm);
-    EXPECT_EQ(14, range.start);
-    EXPECT_EQ(14, range.start + range.length);
+    auto range = lp_optimizer.FindMinOffset(2, chain_perm);
+    EXPECT_EQ(14, range);
+    // EXPECT_EQ(14, range.start + range.length);
     lp_optimizer.ClearCplexMemory();
 
     LPOptimizer lp_optimizer1(dag_tasks, tasks_info, graph_chains,
                               "ReactionTime", rta);
-    range = lp_optimizer1.FindOffsetRange(1, chain_perm);
-    EXPECT_EQ(11, range.start);
-    EXPECT_EQ(11, range.start + range.length);
+    range = lp_optimizer1.FindMinOffset(1, chain_perm);
+    EXPECT_EQ(11, range);
+    // EXPECT_EQ(11, range.start + range.length);
     lp_optimizer1.ClearCplexMemory();
 
     LPOptimizer lp_optimizer0(dag_tasks, tasks_info, graph_chains,
                               "ReactionTime", rta);
-    range = lp_optimizer0.FindOffsetRange(0, chain_perm);
-    EXPECT_EQ(0, range.start);
-    EXPECT_EQ(0, range.start + range.length);
+    range = lp_optimizer0.FindMinOffset(0, chain_perm);
+    EXPECT_EQ(0, range);
+    // EXPECT_EQ(0, range.start + range.length);
     lp_optimizer0.ClearCplexMemory();
 }
 

@@ -494,9 +494,9 @@ VariableOD LPOptimizer::ExtratOptSolution(IloNumArray &values_optimized) {
 
 // TODO: consider whether it's necessary to improve efficiency there by reducing
 // problem size;
-Interval LPOptimizer::FindOffsetRange(int task_id,
-                                      const ChainsPermutation &chains_perm) {
-    Interval interval_res(1e8, -1e8);
+int LPOptimizer::FindMinOffset(int task_id,
+                               const ChainsPermutation &chains_perm) {
+    // Interval interval_res(1e8, -1e8);
     AddVariablesOD(tasks_info_.N);
     AddSchedulabilityConstraints();
     AddPermutationInequalityConstraints(chains_perm);
@@ -510,26 +510,26 @@ Interval LPOptimizer::FindOffsetRange(int task_id,
     if (found_feasible_solution) {
         IloNumArray values_optimized(env_, numVariables_);
         cplexSolver_.getValues(varArray_, values_optimized);
-        interval_res.start =
-            values_optimized[GetVariableIndexVirtualOffset(task_id)];
+        // interval_res.start =
+        return values_optimized[GetVariableIndexVirtualOffset(task_id)];
     } else
-        return interval_res;
+        return 1e8;
 
-    obj_ilo.setLinearCoef(varArray_[GetVariableIndexVirtualOffset(task_id)],
-                          -1);
-    cplexSolver_.extract(model_);
-    found_feasible_solution = cplexSolver_.solve();
-    if (found_feasible_solution) {
-        IloNumArray values_optimized(env_, numVariables_);
-        cplexSolver_.getValues(varArray_, values_optimized);
-        interval_res.length =
-            values_optimized[GetVariableIndexVirtualOffset(task_id)] -
-            interval_res.start;
-    } else
-        return interval_res;
-    // WriteModelToFile("test_lp2.lp");
-    // ClearCplexMemory();
-    return interval_res;
+    // obj_ilo.setLinearCoef(varArray_[GetVariableIndexVirtualOffset(task_id)],
+    //                       -1);
+    // cplexSolver_.extract(model_);
+    // found_feasible_solution = cplexSolver_.solve();
+    // if (found_feasible_solution) {
+    //     IloNumArray values_optimized(env_, numVariables_);
+    //     cplexSolver_.getValues(varArray_, values_optimized);
+    //     interval_res.length =
+    //         values_optimized[GetVariableIndexVirtualOffset(task_id)] -
+    //         interval_res.start;
+    // } else
+    //     return interval_res;
+    // // WriteModelToFile("test_lp2.lp");
+    // // ClearCplexMemory();
+    // return interval_res;
 }
 
 }  // namespace DAG_SPACE
