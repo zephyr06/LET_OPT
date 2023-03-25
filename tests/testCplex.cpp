@@ -81,6 +81,20 @@ TEST_F(PermutationTest1, FindOffsetRange) {
     EXPECT_EQ(14, range.start);
     EXPECT_EQ(14, range.start + range.length);
     lp_optimizer.ClearCplexMemory();
+
+    LPOptimizer lp_optimizer1(dag_tasks, tasks_info, graph_chains,
+                              "ReactionTime", rta);
+    range = lp_optimizer1.FindOffsetRange(1, chain_perm);
+    EXPECT_EQ(11, range.start);
+    EXPECT_EQ(11, range.start + range.length);
+    lp_optimizer1.ClearCplexMemory();
+
+    LPOptimizer lp_optimizer0(dag_tasks, tasks_info, graph_chains,
+                              "ReactionTime", rta);
+    range = lp_optimizer0.FindOffsetRange(0, chain_perm);
+    EXPECT_EQ(0, range.start);
+    EXPECT_EQ(0, range.start + range.length);
+    lp_optimizer0.ClearCplexMemory();
 }
 
 int main(int argc, char** argv) {

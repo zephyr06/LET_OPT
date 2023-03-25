@@ -492,6 +492,8 @@ VariableOD LPOptimizer::ExtratOptSolution(IloNumArray &values_optimized) {
     return variable_od_opt;
 }
 
+// TODO: consider whether it's necessary to improve efficiency there by reducing
+// problem size;
 Interval LPOptimizer::FindOffsetRange(int task_id,
                                       const ChainsPermutation &chains_perm) {
     Interval interval_res(1e8, -1e8);
