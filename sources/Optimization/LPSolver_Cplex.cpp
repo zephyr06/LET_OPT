@@ -119,12 +119,13 @@ void LPOptimizer::AddArtificialVariables() {
 }
 
 void LPOptimizer::AddPermutationInequalityConstraints(
-    const ChainsPermutation &chains_perm) {
+    const ChainsPermutation &chains_perm, bool allow_partial_edges) {
     BeginTimer("AddPermutationInequalityConstraints");
 
     for (uint i = 0; i < graph_of_all_ca_chains_.edge_vec_ordered_.size();
          i++) {
         const Edge &edge_curr = graph_of_all_ca_chains_.edge_vec_ordered_[i];
+        if (allow_partial_edges && !chains_perm.exist(edge_curr)) continue;
         const PermutationInequality &ineq = chains_perm[edge_curr].inequality_;
         // model_.add(
         //     varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] +
@@ -499,7 +500,7 @@ int LPOptimizer::FindMinOffset(int task_id,
     // Interval interval_res(1e8, -1e8);
     AddVariablesOD(tasks_info_.N);
     AddSchedulabilityConstraints();
-    AddPermutationInequalityConstraints(chains_perm);
+    AddPermutationInequalityConstraints(chains_perm, true);
 
     IloObjective obj_ilo =
         IloMinimize(env_, varArray_[GetVariableIndexVirtualOffset(task_id)]);

@@ -43,6 +43,12 @@ class ChainsPermutation {
 
     inline void reserve(size_t n) { permutation_chain_map_.reserve(n); }
 
+    // return true if the edge can be found in records
+    bool exist(const Edge &edge) const {
+        return permutation_chain_map_.find(edge) !=
+               permutation_chain_map_.end();
+    }
+
     const SinglePairPermutation &operator[](const Edge &edge) const {
         auto itr = permutation_chain_map_.find(edge);
         if (itr == permutation_chain_map_.end())

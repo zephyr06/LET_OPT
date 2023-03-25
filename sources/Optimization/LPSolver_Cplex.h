@@ -58,7 +58,7 @@ class LPOptimizer {
     void AddVariablesOD(int number_of_tasks_to_opt);
     void AddArtificialVariables();
     void AddPermutationInequalityConstraints(
-        const ChainsPermutation &chains_perm);
+        const ChainsPermutation &chains_perm, bool allow_partial_edges = false);
     void AddSchedulabilityConstraints();
 
     void AddConstantObjectiveFunctions(const ChainsPermutation &chains_perm);
