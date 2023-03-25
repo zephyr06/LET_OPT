@@ -25,7 +25,7 @@ std::vector<std::vector<int>> GetSubChains(
     const ChainsPermutation& chains_perm);
 // Note: this function doesn't change chain_perm
 std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
-     ChainsPermutation& chain_perm,
+    ChainsPermutation& chain_perm,
     const std::shared_ptr<const SinglePairPermutation> single_perm,
     const std::vector<std::vector<int>>& chains, const DAG_Model& dag_tasks,
     const TaskSetInfoDerived& tasks_info);
@@ -138,6 +138,24 @@ class TaskSetPermutation {
         return best_yet_obj_;
     }
 
+    // return true if the minimum possible offset becomes smaller
+    template <typename ObjectiveFunction>
+    bool CompareOffsetLBChange(
+        int min_offset_best,
+        const std::shared_ptr<const SinglePairPermutation>&
+            curr_try_single_perm,
+        ChainsPermutation& chain_perm) {
+        // TODO: fix the obj-trait issue there!!!
+        int task_id = curr_try_single_perm->GetNextTaskId();
+        chain_perm.push_back(curr_try_single_perm);
+
+        int min_offset_curr = GetMinOffSet(task_id, dag_tasks_, tasks_info_,
+                                           chain_perm, graph_of_all_ca_chains_,
+                                           ObjectiveFunction::type_trait, rta_);
+        chain_perm.pop(*curr_try_single_perm);
+        return min_offset_curr < min_offset_best;
+    }
+
     template <typename ObjectiveFunction>
     double IterateAllChainsPermutationsDP(uint position,
                                           ChainsPermutation& chain_perm) {
@@ -150,6 +168,7 @@ class TaskSetPermutation {
 
         std::vector<std::unordered_map<JobCEC, JobCEC>>
             curr_best_first_job_maps;
+        int min_offset = -1;
         double best_obj_this_level = 1e9;
 
         for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
@@ -178,6 +197,8 @@ class TaskSetPermutation {
                     if (curr_obj < best_obj_this_level) {
                         best_obj_this_level = curr_obj;
                         curr_best_first_job_maps = curr_first_job_maps;
+                        // curr_best_single_perm =
+                        //     adjacent_two_task_permutations_[position][i];
                     }
                     chain_perm.pop(
                         *adjacent_two_task_permutations_[position][i]);

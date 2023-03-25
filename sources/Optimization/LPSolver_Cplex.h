@@ -151,7 +151,9 @@ inline int GetMinOffSet(int task_id, const DAG_Model &dag_tasks,
                         const std::vector<int> &rta) {
     LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_of_all_ca_chains,
                              obj_trait, rta);
-    return lp_optimizer.FindMinOffset(task_id, chains_perm);
+    int res = lp_optimizer.FindMinOffset(task_id, chains_perm);
+    lp_optimizer.ClearCplexMemory();
+    return res;
 }
 // inline bool ExamFeasibility(
 //     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
