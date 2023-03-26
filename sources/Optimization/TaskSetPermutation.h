@@ -173,8 +173,9 @@ class TaskSetPermutation {
       return EvaluateChainsPermutation<ObjectiveFunction>(chains_perm);
     }
 
-    std::vector<std::unordered_map<JobCEC, JobCEC>> curr_best_first_job_maps;
     int min_offset_tried = 1e9;
+    std::vector<int> min_offset_initial_tasks(dag_tasks_.chains_.size(), 1e9);
+
     double best_obj_this_level = 1e9;
 
     for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
@@ -186,27 +187,21 @@ class TaskSetPermutation {
                               graph_of_all_ca_chains_)) {
         chains_perm.push_back(perm_sing_curr);
 
-        if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {
-          std::vector<std::unordered_map<JobCEC, JobCEC>> curr_first_job_maps =
-              GetFirstReactMaps(chains_perm, graph_of_all_ca_chains_.chains_,
-                                dag_tasks_, tasks_info_);
-          bool if_improve_react =
-              CompareNewPerm(curr_first_job_maps, curr_best_first_job_maps);
-          bool if_reduce_offset =
-              CompareAndUpdateMinOffsetLB<ObjectiveFunction>(
-                  min_offset_tried, chains_perm,
-                  perm_sing_curr->GetNextTaskId());  // TODO: merge GetMinOffSet
-          if (if_improve_react || if_reduce_offset) {
+        if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm) &&
+            min_offset_tried > 0) {
+          int min_offset_curr =
+              GetMinOffSet(perm_sing_curr->GetNextTaskId(), dag_tasks_,
+                           tasks_info_, chains_perm, graph_of_all_ca_chains_,
+                           ObjectiveFunction::type_trait, rta_);
+          if (min_offset_curr < min_offset_tried) {
+            // TODO: to skip permutations perfectly, we can run LP w.r.t. the
+            // first task's offset
             double curr_obj = IterateAllChainsPermutationsDP<ObjectiveFunction>(
                 position + 1, chains_perm);
             if (curr_obj < best_obj_this_level) {
               best_obj_this_level =
                   curr_obj;  // TODO: inherit the failed offset
-              curr_best_first_job_maps = curr_first_job_maps;
-              min_offset_tried = GetMinOffSet(
-                  perm_sing_curr->GetNextTaskId(), dag_tasks_, tasks_info_,
-                  chains_perm, graph_of_all_ca_chains_,
-                  ObjectiveFunction::type_trait, rta_);
+              min_offset_tried = min_offset_curr;
             }
           }
         }
