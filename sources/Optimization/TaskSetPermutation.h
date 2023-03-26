@@ -195,7 +195,7 @@ class TaskSetPermutation {
           bool if_reduce_offset =
               CompareAndUpdateMinOffsetLB<ObjectiveFunction>(
                   min_offset_tried, chains_perm,
-                  perm_sing_curr->GetNextTaskId());
+                  perm_sing_curr->GetNextTaskId());  // TODO: merge GetMinOffSet
           if (if_improve_react || if_reduce_offset) {
             double curr_obj = IterateAllChainsPermutationsDP<ObjectiveFunction>(
                 position + 1, chains_perm);
