@@ -12,7 +12,6 @@ int debugMode = (int)ConfigParameters["debugMode"];
 int SKIP_PERM = (int)ConfigParameters["SKIP_PERM"];
 int TIME_LIMIT = (int)ConfigParameters["TIME_LIMIT"];
 double SAMPLE_SMALL_TASKS = (double)ConfigParameters["SAMPLE_SMALL_TASKS"];
-int SearchDP = (int)ConfigParameters["SearchDP"];
 const double kCplexInequalityThreshold =
     (double)ConfigParameters["kCplexInequalityThreshold"];
 int SearchDP_Friendly = (int)ConfigParameters["SearchDP_Friendly"];
@@ -32,5 +31,4 @@ const int temperatureSA = (int)ConfigParameters["temperatureSA"];
 const int SA_iteration = (int)ConfigParameters["SA_iteration"];
 // *************************************************************
 
-// int printSchedule = (int)ConfigParameters["printSchedule"];
 }  // namespace GlobalVariablesDAGOpt

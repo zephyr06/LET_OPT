@@ -56,10 +56,7 @@ class TaskSetPermutation {
   template <typename ObjectiveFunction>
   int PerformOptimizationEnumerate() {
     ChainsPermutation chains_perm;
-    if (GlobalVariablesDAGOpt::SearchDP)
-      IterateAllChainsPermutationsDP<ObjectiveFunction>(0, chains_perm);
-    else
-      IterateAllChainsPermutations<ObjectiveFunction>(0, chains_perm);
+    IterateAllChainsPermutations<ObjectiveFunction>(0, chains_perm);
     lp_optimizer_
         .ClearCplexMemory();  // TODO: consider trying to optimize
                               // performance by directly set coefficient
