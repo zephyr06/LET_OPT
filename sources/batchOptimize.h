@@ -20,18 +20,17 @@ void ClearResultFiles(std::string dataSetFolder);
 
 template <typename ObjectiveFunctionBase>
 DAG_SPACE::ScheduleResult PerformSingleScheduling(
-    DAG_Model &dag_tasks, BaselineMethods batchTestMethod) {
+    DAG_Model &dag_tasks, BASELINEMETHODS batchTestMethod) {
   ScheduleResult res;
   switch (batchTestMethod) {
     case InitialMethod:
       res = PerformStandardLETAnalysis<ObjectiveFunctionBase>(dag_tasks);
       break;
     case TOM:
-      res = PerformTOM_OPT<ObjectiveFunctionBase>(dag_tasks);
+      res = PerformTOM_OPT<ObjectiveFunctionBase>(dag_tasks, "Enumerate");
       break;
-    case TOM_FAST:
-      // TO ADD
-      // SKIP_PERM=0;
+    case TOM_DP:
+      res = PerformTOM_OPT<ObjectiveFunctionBase>(dag_tasks, "DP");
       break;
     case SA:
       // TO ADD
@@ -45,7 +44,7 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
 
 template <typename ObjectiveFunctionBase>
 std::vector<BatchResult> BatchOptimizeOrder(
-    std::vector<DAG_SPACE::BaselineMethods> &baselineMethods, int N = -1,
+    std::vector<DAG_SPACE::BASELINEMETHODS> &baselineMethods, int N = -1,
     int chainNum = GlobalVariablesDAGOpt::CHAIN_NUMBER) {
   std::string dataSetFolder;
   if (N == -1)
@@ -102,7 +101,7 @@ std::vector<BatchResult> BatchOptimizeOrder(
 
   // result analysis
   results_man.PrintResultTable(baselineMethods);
-  results_man.PrintLongestCase(BaselineMethods::TOM);
+  results_man.PrintLongestCase(BASELINEMETHODS::TOM);
   results_man.PrintTimeOutCase();
 
   std::cout << "Average length of cause-effect chains: " << Average(chain_lenth)
@@ -114,13 +113,6 @@ std::vector<BatchResult> BatchOptimizeOrder(
   std::cout << "Error files:\n";
   for (auto file : errorFiles) std::cout << file << "\n";
 
-  //   std::vector<BatchResult> batchResVec;
-  //   for (uint i = 0; i < baselineMethods.size(); i++) {
-  //     BatchResult batchRes{Average(schedulableAll[i]),
-  //                          Average(objsAll[i], objsAll[0]),
-  //                          Average(runTimeAll[i])};
-  //     batchResVec.push_back(batchRes);
-  //   }
   return results_man.GetBatchResVec(baselineMethods);
 }
 }  // namespace DAG_SPACE

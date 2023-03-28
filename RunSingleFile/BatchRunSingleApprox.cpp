@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
   }
   int N = program.get<int>("--N");
 
-  std::vector<DAG_SPACE::BaselineMethods> baselineMethods = {
+  std::vector<DAG_SPACE::BASELINEMETHODS> baselineMethods = {
       DAG_SPACE::InitialMethod, DAG_SPACE::TOM};  // , DAG_SPACE::TOM_FAST
   // ObjReactionTime
   DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTimeApprox>(

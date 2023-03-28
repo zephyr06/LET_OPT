@@ -5,15 +5,15 @@
 #include "sources/Utils/VariadicTable.h"
 
 namespace DAG_SPACE {
-enum BaselineMethods {
+enum BASELINEMETHODS {
   InitialMethod,  // 0
   TOM,            // 1
-  TOM_FAST,       // 2
+  TOM_DP,         // 2
   SA              // 3
 };
 const std::vector<std::string> BaselineMethodNames = {"InitialMethod", "TOM",
-                                                      "TOM_FAST", "SA"};
-// if adding more methods, need to update WriteScheduleToFile() and
+                                                      "TOM_DP", "SA"};
+// if adding more methods, need to update GetResFileName() and
 // GlobalVariablesDAGOpt::TotalMethodUnderComparison
 
 struct ScheduleResult {
@@ -37,7 +37,7 @@ class ResultsManager {
  public:
   ResultsManager() {}
   ResultsManager(
-      const std::vector<DAG_SPACE::BaselineMethods>& baselineMethods) {
+      const std::vector<DAG_SPACE::BASELINEMETHODS>& baselineMethods) {
     results_map_.reserve(baselineMethods.size());
     for (const auto& method : baselineMethods) results_map_[method] = {};
     runTimeAll_.reserve(baselineMethods.size());
@@ -45,26 +45,26 @@ class ResultsManager {
     schedulableAll_.reserve(baselineMethods.size());
   }
 
-  void add(BaselineMethods method, const ScheduleResult& result);
+  void add(BASELINEMETHODS method, const ScheduleResult& result);
 
   std::vector<BatchResult> GetBatchResVec(
-      const std::vector<DAG_SPACE::BaselineMethods>& baselineMethods) const;
+      const std::vector<DAG_SPACE::BASELINEMETHODS>& baselineMethods) const;
 
-  void PrintLongestCase(BaselineMethods method) const;
+  void PrintLongestCase(BASELINEMETHODS method) const;
 
   // depend on global paramters: BaselineMethodNames
   void PrintResultTable(
-      const std::vector<DAG_SPACE::BaselineMethods>& baselineMethods) const;
+      const std::vector<DAG_SPACE::BASELINEMETHODS>& baselineMethods) const;
 
   void PrintTimeOutCase() const;
 
-  void PrintTimeOutCaseSingleMethod(BaselineMethods method) const;
+  void PrintTimeOutCaseSingleMethod(BASELINEMETHODS method) const;
 
   // data members
-  std::unordered_map<BaselineMethods, std::vector<ScheduleResult>> results_map_;
-  std::unordered_map<BaselineMethods, std::vector<double>> runTimeAll_;
-  std::unordered_map<BaselineMethods, std::vector<double>> objsAll_;
-  std::unordered_map<BaselineMethods, std::vector<int>>
+  std::unordered_map<BASELINEMETHODS, std::vector<ScheduleResult>> results_map_;
+  std::unordered_map<BASELINEMETHODS, std::vector<double>> runTimeAll_;
+  std::unordered_map<BASELINEMETHODS, std::vector<double>> objsAll_;
+  std::unordered_map<BASELINEMETHODS, std::vector<int>>
       schedulableAll_;  // values could
   // only be 0 / 1
 };

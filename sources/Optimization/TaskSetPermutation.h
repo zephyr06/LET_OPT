@@ -285,12 +285,19 @@ class TaskSetPermutation {
 };
 
 template <typename ObjectiveFunction>
-ScheduleResult PerformTOM_OPT(const DAG_Model& dag_tasks) {
+ScheduleResult PerformTOM_OPT(const DAG_Model& dag_tasks,
+                              std::string method = "Enumerate") {
   auto start = std::chrono::high_resolution_clock::now();
   ScheduleResult res;
   TaskSetPermutation task_sets_perms =
       TaskSetPermutation(dag_tasks, dag_tasks.chains_);
-  res.obj_ = task_sets_perms.PerformOptimizationEnumerate<ObjectiveFunction>();
+  if (method == "Enumerate")
+    res.obj_ =
+        task_sets_perms.PerformOptimizationEnumerate<ObjectiveFunction>();
+  else if (method == "DP")
+    res.obj_ = task_sets_perms.PerformOptimizationDP<ObjectiveFunction>();
+  else
+    CoutError("Unrecognized method in PerformTOM_OPT");
   if (res.obj_ >= 1e8) {
     res.obj_ = PerformStandardLETAnalysis<ObjectiveFunction>(dag_tasks).obj_;
   }
@@ -311,4 +318,5 @@ ScheduleResult PerformTOM_OPT(const DAG_Model& dag_tasks) {
     CoutError("Find an unschedulable case!");
   return res;
 }
+
 }  // namespace DAG_SPACE
