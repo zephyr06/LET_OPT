@@ -30,14 +30,6 @@ void WriteToResultFile(const std::string &pathDataset, const std::string &file,
   outfileWrite << res.obj_ << std::endl;
   outfileWrite << res.timeTaken_ << std::endl;
   outfileWrite.close();
-  if (method > 2) {
-    resFile = resFile.substr(0, resFile.length() - 4);
-    resFile += "_LoopCount.txt";
-    outfileWrite.open(
-        resFile,
-        std::ofstream::out | std::ofstream::trunc);  // std::ios_base::app
-    outfileWrite.close();
-  }
 }
 
 DAG_SPACE::ScheduleResult ReadFromResultFile(const std::string &pathDataset,

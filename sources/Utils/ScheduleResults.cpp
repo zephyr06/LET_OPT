@@ -79,8 +79,10 @@ void ResultsManager::PrintWorseCase(BASELINEMETHODS method_base,
             << " performs worse than " << BaselineMethodNames[method_base]
             << " are:\n";
   if (results_map_.find(method_base) == results_map_.end() ||
-      results_map_.find(method_compare) == results_map_.end())
-    CoutError("Method is not found in PrintWorseCase!");
+      results_map_.find(method_compare) == results_map_.end()) {
+    CoutWarning("Method is not found in PrintWorseCase!");
+    return;
+  }
   for (uint i = 0; i < objsAll_.at(method_base).size(); i++) {
     if (objsAll_.at(method_base)[i] < objsAll_.at(method_compare)[i])
       std::cout << file_name_[i] << "\n";
