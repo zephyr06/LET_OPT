@@ -1,4 +1,4 @@
-#include "sources/ObjectiveFunction/ObjDataAge.h"
+#include "sources/ObjectiveFunction/ObjDataAgeApprox.h"
 namespace DAG_SPACE {
 
 const std::string ObjDataAgeApprox::type_trait("DataAgeApprox");

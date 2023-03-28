@@ -80,6 +80,8 @@ class LPOptimizer {
 
     IloExpr GetStartTimeExpression(JobCEC &jobCEC);
     IloExpr GetFinishTimeExpression(JobCEC &jobCEC);
+    IloExpr GetStartTimeExpressionApprox(JobCEC &jobCEC);
+    IloExpr GetFinishTimeExpressionApprox(JobCEC &jobCEC);
     VariableOD ExtratOptSolution(IloNumArray &values_optimized);
 
     inline int GetVariableIndexVirtualOffset(int task_id) {
