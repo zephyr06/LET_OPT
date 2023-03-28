@@ -5,6 +5,7 @@
 #include "sources/Utils/VariadicTable.h"
 
 namespace DAG_SPACE {
+// !!!if adding more methods, need to update BaselineMethodNames below !!!
 enum BASELINEMETHODS {
   InitialMethod,  // 0
   TOM,            // 1
@@ -13,8 +14,6 @@ enum BASELINEMETHODS {
 };
 const std::vector<std::string> BaselineMethodNames = {"InitialMethod", "TOM",
                                                       "TOM_DP", "SA"};
-// if adding more methods, need to update GetResFileName() and
-// GlobalVariablesDAGOpt::TotalMethodUnderComparison
 
 struct ScheduleResult {
   bool schedulable_;
@@ -22,11 +21,6 @@ struct ScheduleResult {
   double timeTaken_;
 };
 
-// class ScheduleResultsOfMethod {
-//  public:
-//   // data members
-//   std::vector<ScheduleResult> results_;
-// };
 struct BatchResult {
   double schedulableRatio;
   double performance;
