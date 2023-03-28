@@ -5,35 +5,22 @@
 namespace DAG_SPACE {
 
 class ObjectiveFunctionBaseIntermediate {
-   public:
-    static const std::string type_trait;
+ public:
+  static const std::string type_trait;
 
-    virtual double ObjSingleChain(const DAG_Model &dag_tasks,
-                                  const TaskSetInfoDerived &tasks_info,
-                                  const ChainsPermutation &chains_perm,
-                                  const std::vector<int> &chain,
-                                  const VariableOD &variable_od) {
-        CoutError("Base function should not be called!");
-        return 0;
-    }
+  virtual double ObjSingleChain(const DAG_Model &dag_tasks,
+                                const TaskSetInfoDerived &tasks_info,
+                                const ChainsPermutation &chains_perm,
+                                const std::vector<int> &chain,
+                                const VariableOD &variable_od) {
+    CoutError("Base function should not be called!");
+    return 0;
+  }
 
-    double Obj(const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-               const ChainsPermutation &chains_perm,
-               const VariableOD &variable_od,
-               const std::vector<std::vector<int>> &chains_to_analyze);
-
-    virtual double ObjWithoutAllPermsSingleChain(
-        const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-        const ChainsPermutation &chains_perm, const std::vector<int> &chain,
-        const VariableOD &variable_od) {
-        CoutError("Base function should not be called!");
-        return 0;
-    }
-
-    double ObjWithoutAllPerms(
-        const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-        const ChainsPermutation &chains_perm, const VariableOD &variable_od,
-        const std::vector<std::vector<int>> &chains_to_analyze);
+  double Obj(const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+             const ChainsPermutation &chains_perm,
+             const VariableOD &variable_od,
+             const std::vector<std::vector<int>> &chains_to_analyze);
 };
 
 }  // namespace DAG_SPACE

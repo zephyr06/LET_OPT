@@ -67,11 +67,4 @@ double ObjDataAgeIntermediate::ObjSingleChain(
   return max_data_age;
 }
 
-double ObjDataAgeIntermediate::ObjWithoutAllPermsSingleChain(
-    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-    const ChainsPermutation &chains_perm, const std::vector<int> &chain,
-    const VariableOD &variable_od) {
-  return ObjSingleChain(dag_tasks, tasks_info, chains_perm, chain, variable_od);
-}
-
 }  // namespace DAG_SPACE
