@@ -32,6 +32,26 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
     case TOM_DP:
       res = PerformTOM_OPT<ObjectiveFunctionBase>(dag_tasks, "DP");
       break;
+    case TOM_Approx:
+      if (ObjectiveFunctionBase::type_trait == "ReactionTime" ||
+          ObjectiveFunctionBase::type_trait == "ReactionTimeApprox")
+        res = PerformTOM_OPT<ObjReactionTimeApprox>(dag_tasks, "Enumerate");
+      else if (ObjectiveFunctionBase::type_trait == "DataAge" ||
+               ObjectiveFunctionBase::type_trait == "DataAgeApprox")
+        res = PerformTOM_OPT<ObjDataAgeApprox>(dag_tasks, "Enumerate");
+      else
+        CoutError("Unknown type trait in BatchOptimize!");
+      break;
+    case TOM_DP_Approx:
+      if (ObjectiveFunctionBase::type_trait == "ReactionTime" ||
+          ObjectiveFunctionBase::type_trait == "ReactionTimeApprox")
+        res = PerformTOM_OPT<ObjReactionTimeApprox>(dag_tasks, "DP");
+      else if (ObjectiveFunctionBase::type_trait == "DataAge" ||
+               ObjectiveFunctionBase::type_trait == "DataAgeApprox")
+        res = PerformTOM_OPT<ObjDataAgeApprox>(dag_tasks, "DP");
+      else
+        CoutError("Unknown type trait in BatchOptimize!");
+      break;
     case SA:
       // TO ADD
       break;

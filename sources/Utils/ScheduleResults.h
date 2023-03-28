@@ -10,10 +10,12 @@ enum BASELINEMETHODS {
   InitialMethod,  // 0
   TOM,            // 1
   TOM_DP,         // 2
-  SA              // 3
+  TOM_Approx,     // 3
+  TOM_DP_Approx,  // 4
+  SA              // 5
 };
-const std::vector<std::string> BaselineMethodNames = {"InitialMethod", "TOM",
-                                                      "TOM_DP", "SA"};
+const std::vector<std::string> BaselineMethodNames = {
+    "InitialMethod", "TOM", "TOM_DP", "TOM_Approx", "TOM_DP_Approx", "SA"};
 
 struct ScheduleResult {
   bool schedulable_;
@@ -58,7 +60,7 @@ class ResultsManager {
 
   // print case where method_compare perform worse than method_base
   void PrintWorseCase(BASELINEMETHODS method_base,
-                      BASELINEMETHODS method_compare) const ;
+                      BASELINEMETHODS method_compare) const;
 
   // data members
   std::unordered_map<BASELINEMETHODS, std::vector<ScheduleResult>> results_map_;
