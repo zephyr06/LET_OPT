@@ -77,7 +77,7 @@ TEST_F(PermutationTest2, OptimizeApprox) {
 
   GraphOfChains graph_chains(dag_tasks.chains_);
 
-  std::vector<int> rta = {1, 3, 6};
+  std::vector<int> rta = {1, 2, 3};
   LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains,
                            "ReactionTimeApprox", rta);
   auto res = lp_optimizer.Optimize(chains_perm);
