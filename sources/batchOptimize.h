@@ -120,6 +120,8 @@ std::vector<BatchResult> BatchOptimizeOrder(
   }
 
   // result analysis
+  results_man.PrintWorseCase(BASELINEMETHODS::TOM_Approx,
+                             BASELINEMETHODS::TOM_DP_Approx);
   results_man.PrintResultTable(baselineMethods);
   results_man.PrintLongestCase(BASELINEMETHODS::TOM);
   results_man.PrintTimeOutCase();
@@ -129,8 +131,6 @@ std::vector<BatchResult> BatchOptimizeOrder(
   std::cout << "Maximum length of cause-effect chains: "
             << *std::max_element(chain_lenth.begin(), chain_lenth.end())
             << std::endl;
-
-  results_man.PrintWorseCase(BASELINEMETHODS::TOM, BASELINEMETHODS::TOM_DP);
 
   std::cout << "Error files:\n";
   for (auto file : errorFiles) std::cout << file << "\n";
