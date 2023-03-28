@@ -37,4 +37,5 @@ class ObjReactionTime {
                    chains_to_analyze);
   }
 };
+
 }  // namespace DAG_SPACE

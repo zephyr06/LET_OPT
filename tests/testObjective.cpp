@@ -220,6 +220,35 @@ TEST_F(PermutationTest_Non_Har, ChainsPermutation_v1) {
   EXPECT_EQ(35, ObjReactionTime::Obj(dag_tasks, tasks_info, chains_perm,
                                      variable_od, dag_tasks.chains_));
 }
+TEST_F(PermutationTest_Non_Har, ObjReactionTimeApprox) {
+  // chain is 0 -> 1 -> 2
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[0]);
+  chains_perm.push_back(perm12[0]);
+  perm01[0]->print();
+  perm12[0]->print();
+  EXPECT_EQ(15, ObjReactionTimeApprox::Obj(dag_tasks, tasks_info, chains_perm,
+                                           variable_od, dag_tasks.chains_));
+
+  chains_perm.clear();
+  chains_perm.push_back(perm01[0]);
+  chains_perm.push_back(perm12[1]);
+  perm01[0]->print();
+  perm12[1]->print();
+  EXPECT_EQ(30, ObjReactionTimeApprox::Obj(dag_tasks, tasks_info, chains_perm,
+                                           variable_od, dag_tasks.chains_));
+
+  chains_perm.clear();
+  chains_perm.push_back(perm01[1]);
+  chains_perm.push_back(perm12[1]);
+  perm01[1]->print();
+  perm12[1]->print();
+  EXPECT_EQ(35, ObjReactionTimeApprox::Obj(dag_tasks, tasks_info, chains_perm,
+                                           variable_od, dag_tasks.chains_));
+}
 TEST_F(PermutationTest_Non_Har, data_age) {
   // chain is 0 -> 1 -> 2
   std::vector<int> chain = {0, 1, 2};
@@ -394,6 +423,27 @@ TEST_F(PermutationTest_2chain_v1, Obj_RT) {
   EXPECT_EQ(200 + 200 + 200,
             ObjReactionTime::Obj(dag_tasks, tasks_info, chains_perm,
                                  variable_od, dag_tasks.chains_));
+}
+TEST_F(PermutationTest_2chain_v1, Obj_RTApprox) {
+  // chain is 0 -> 3 -> 4
+  // chain is 1 -> 3 -> 4
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm03[0]);
+  chains_perm.push_back(perm34[0]);
+  chains_perm.push_back(perm13[0]);
+  variable_od[0].offset = 1;
+  variable_od[4].deadline = 199;
+  variable_od[1].offset = 1;
+  variable_od[1].deadline = 199;
+
+  EXPECT_EQ(200 + 200,
+            ObjReactionTimeApprox::Obj(dag_tasks, tasks_info, chains_perm,
+                                       variable_od, dag_tasks.chains_));
+  dag_tasks.chains_.push_back({0, 1, 3});
+  chains_perm.push_back(perm01[0]);
+  EXPECT_EQ(200 + 200 + 200,
+            ObjReactionTimeApprox::Obj(dag_tasks, tasks_info, chains_perm,
+                                       variable_od, dag_tasks.chains_));
 }
 TEST_F(PermutationTest_2chain_v1, data_age) {
   // chain is 0 -> 3 -> 4
