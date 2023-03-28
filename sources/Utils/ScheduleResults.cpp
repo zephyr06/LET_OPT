@@ -2,11 +2,14 @@
 #include "sources/Utils/ScheduleResults.h"
 namespace DAG_SPACE {
 
-void ResultsManager::add(BASELINEMETHODS method, const ScheduleResult& result) {
+void ResultsManager::add(BASELINEMETHODS method, const ScheduleResult& result,
+                         std::string file) {
   results_map_[method].push_back(result);
   runTimeAll_[method].push_back(result.timeTaken_);
   objsAll_[method].push_back(result.obj_);
   schedulableAll_[method].push_back(result.schedulable_);
+  if (file_name_.size() == 0 || file_name_.back() != file)
+    file_name_.push_back(file);
 }
 
 std::vector<BatchResult> ResultsManager::GetBatchResVec(
@@ -66,6 +69,21 @@ void ResultsManager::PrintTimeOutCaseSingleMethod(
     if (runTimeAll_.at(method)[i] >= GlobalVariablesDAGOpt::TIME_LIMIT - 5) {
       std::cout << i << "\n";
     }
+  }
+}
+
+// print case where method_compare perform worse than method_base
+void ResultsManager::PrintWorseCase(BASELINEMETHODS method_base,
+                                    BASELINEMETHODS method_compare) const {
+  std::cout << "files that " << BaselineMethodNames[method_compare]
+            << " performs worse than " << BaselineMethodNames[method_base]
+            << " are:\n";
+  if (results_map_.find(method_base) == results_map_.end() ||
+      results_map_.find(method_compare) == results_map_.end())
+    CoutError("Method is not found in PrintWorseCase!");
+  for (uint i = 0; i < objsAll_.at(method_base).size(); i++) {
+    if (objsAll_.at(method_base)[i] < objsAll_.at(method_compare)[i])
+      std::cout << file_name_[i] << "\n";
   }
 }
 

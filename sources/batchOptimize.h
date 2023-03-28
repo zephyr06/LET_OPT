@@ -93,7 +93,7 @@ std::vector<BatchResult> BatchOptimizeOrder(
         if (!res.schedulable_ || res.obj_ >= 1e8) errorFiles.push_back(file);
 
         WriteToResultFile(pathDataset, file, res, batchTestMethod);
-        results_man.add(batchTestMethod, res);
+        results_man.add(batchTestMethod, res, file);
       }
       fileIndex++;
     }
@@ -109,6 +109,8 @@ std::vector<BatchResult> BatchOptimizeOrder(
   std::cout << "Maximum length of cause-effect chains: "
             << *std::max_element(chain_lenth.begin(), chain_lenth.end())
             << std::endl;
+
+  results_man.PrintWorseCase(BASELINEMETHODS::TOM, BASELINEMETHODS::TOM_DP);
 
   std::cout << "Error files:\n";
   for (auto file : errorFiles) std::cout << file << "\n";
