@@ -4,13 +4,9 @@
 
 #include "sources/TaskModel/DAG_Model.h"
 #include "sources/Utils/Parameters.h"
+#include "sources/Utils/ScheduleResults.h"
 
 namespace DAG_SPACE {
-struct ScheduleResult {
-    bool schedulable_;
-    double obj_;
-    double timeTaken_;
-};
 
 std::string GetResFileName(const std::string &pathDataset,
                            const std::string &file, int batchTestMethod_);
