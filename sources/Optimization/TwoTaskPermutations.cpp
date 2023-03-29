@@ -47,49 +47,6 @@ bool ifTimeout(TimerType start_time) {
   return false;
 }
 
-void SinglePairPermutation::print() const {
-  inequality_.print();
-  for (const auto& [key, value] : job_first_react_matches_) {
-    std::cout << key.ToString() << "'s following jobs are ";
-    for (auto job_next : value) std::cout << job_next.ToString() << ", ";
-    std::cout << "\n";
-  }
-  std::cout << "\n";
-}
-
-bool SinglePairPermutation::AddMatchJobPair(const JobCEC& job_curr,
-                                            const JobCEC& job_match) {
-  auto itr = job_first_react_matches_.find(job_curr);
-  if (itr == job_first_react_matches_.end())
-    job_first_react_matches_[job_curr] = {job_match};
-  else {
-    JobCEC last_matched_job = itr->second.back();
-    if (job_match.jobId < last_matched_job.jobId) return false;
-    if (job_first_react_matches_[job_curr].size() > 0 &&
-        job_first_react_matches_[job_curr].back().jobId > job_match.jobId)
-      CoutError("Wrong order in AddMatchJobPair!");
-    job_first_react_matches_[job_curr].push_back(job_match);
-  }
-
-  return true;
-}
-
-void SinglePairPermutation::PopMatchJobPair(const JobCEC& job_curr,
-                                            const JobCEC& job_match) {
-  auto itr = job_first_react_matches_.find(job_curr);
-  if (itr == job_first_react_matches_.end())
-    return;
-  else {
-    if (itr->second.size() > 0) {
-      JobCEC last_matched_job = itr->second.back();
-      if (job_match.jobId == last_matched_job.jobId) {
-        itr->second.pop_back();
-        if (itr->second.size() == 0) job_first_react_matches_.erase(job_curr);
-      }
-    }
-  }
-}
-
 bool TwoTaskPermutations::AppendJobs(
     const JobCEC& job_curr, const JobCEC& job_match,
     SinglePairPermutation& permutation_current) {
