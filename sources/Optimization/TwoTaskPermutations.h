@@ -142,6 +142,8 @@ class TwoTaskPermutations {
 
   void SortPermutations();
 
+  void print() const;
+
   // data members
   TimerType start_time_;
   int task_prev_id_;
