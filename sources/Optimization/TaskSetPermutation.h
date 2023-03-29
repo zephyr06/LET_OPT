@@ -3,9 +3,10 @@
 
 #include "sources/Baseline/StandardLET.h"
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
-#include "sources/Permutations/ChainsPermutation.h"
 #include "sources/Optimization/GraphOfChains.h"
 #include "sources/Optimization/LPSolver_Cplex.h"
+#include "sources/Permutations/ChainsPermutation.h"
+#include "sources/Permutations/TwoTaskPermutationsIterator.h"
 #include "sources/Utils/BatchUtils.h"
 #include "sources/Utils/profilier.h"
 namespace DAG_SPACE {
@@ -142,26 +143,6 @@ class TaskSetPermutation {
     return best_yet_obj_;
   }
 
-  // return true if the minimum possible offset becomes smaller
-  template <typename ObjectiveFunction>
-  bool CompareAndUpdateMinOffsetLB(int min_offset_best,
-                                   ChainsPermutation& chains_perm,
-                                   int task_id) {
-    // int task_id = chains_perm.back()->GetNextTaskId();
-
-    int min_offset_curr = GetMinOffSet(task_id, dag_tasks_, tasks_info_,
-                                       chains_perm, graph_of_all_ca_chains_,
-                                       ObjectiveFunction::type_trait, rta_);
-    int min_offset_best_prev_record = min_offset_best;
-    if (min_offset_curr <
-        min_offset_best_prev_record) {  // the range of possible
-                                        // following cause-effect
-                                        // chain permutations improve
-      min_offset_best = min_offset_curr;
-    }
-    return min_offset_curr < min_offset_best_prev_record;
-  }
-
   template <typename ObjectiveFunction>
   double IterateAllChainsPermutationsDP(uint position,
                                         ChainsPermutation& chains_perm) {
@@ -171,11 +152,7 @@ class TaskSetPermutation {
       return EvaluateChainsPermutation<ObjectiveFunction>(chains_perm);
     }
 
-    int min_offset_tried = 1e9;
-    std::vector<int> min_offset_initial_tasks(dag_tasks_.chains_.size(), 1e9);
-
     double best_obj_this_level = 1e9;
-
     for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
          i++) {
       if (ifTimeout(start_time_)) break;
@@ -185,22 +162,11 @@ class TaskSetPermutation {
                               graph_of_all_ca_chains_)) {
         chains_perm.push_back(perm_sing_curr);
 
-        if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm) &&
-            min_offset_tried > 0) {
-          int min_offset_curr =
-              GetMinOffSet(perm_sing_curr->GetNextTaskId(), dag_tasks_,
-                           tasks_info_, chains_perm, graph_of_all_ca_chains_,
-                           ObjectiveFunction::type_trait, rta_);
-          if (min_offset_curr < min_offset_tried) {
-            // TODO: to skip permutations perfectly, we can run LP w.r.t. the
-            // first task's offset
-            double curr_obj = IterateAllChainsPermutationsDP<ObjectiveFunction>(
-                position + 1, chains_perm);
-            if (curr_obj < best_obj_this_level) {
-              best_obj_this_level =
-                  curr_obj;  // TODO: inherit the failed offset
-              min_offset_tried = min_offset_curr;
-            }
+        if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {
+          double curr_obj = IterateAllChainsPermutationsDP<ObjectiveFunction>(
+              position + 1, chains_perm);
+          if (curr_obj < best_obj_this_level) {
+            best_obj_this_level = curr_obj;
           }
         }
 
