@@ -537,7 +537,7 @@ int LPOptimizer::FindMinOffset(int task_id,
     // interval_res.start =
     return values_optimized[GetVariableIndexVirtualOffset(task_id)];
   } else
-    return 1e8;
+    return INFEASIBLE_OBJ;
 
   // obj_ilo.setLinearCoef(varArray_[GetVariableIndexVirtualOffset(task_id)],
   //                       -1);

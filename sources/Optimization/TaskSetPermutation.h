@@ -144,35 +144,43 @@ class TaskSetPermutation {
   }
 
   template <typename ObjectiveFunction>
-  double IterateSortedPerms(uint position, ChainsPermutation& chains_perm) {
+  bool IterateSortedPerms(uint position, ChainsPermutation& chains_perm) {
     if (position == graph_of_all_ca_chains_.edge_records_
                         .size()) {  // finish iterate all the pair permutations
       iteration_count_++;
-      return EvaluateChainsPermutation<ObjectiveFunction>(chains_perm);
+      return EvaluateChainsPermutation<ObjectiveFunction>(chains_perm) !=
+             INFEASIBLE_OBJ;
     }
 
-    double best_obj_this_level = 1e9;
-    for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
-         i++) {
-      if (ifTimeout(start_time_)) break;
-      const auto& perm_sing_curr = adjacent_two_task_permutations_[position][i];
+    TwoTaskPermutationsIterator iterator(
+        adjacent_two_task_permutations_[position]);
+    bool feasible_prev_chain = false;
 
+    int count = iterator.size();
+    while (!iterator.empty()) {
+      if (ifTimeout(start_time_)) break;
+      const auto& perm_sing_curr = iterator.front();
       if (chains_perm.IsValid(variable_range_od_, *perm_sing_curr,
                               graph_of_all_ca_chains_)) {
         chains_perm.push_back(perm_sing_curr);
 
         if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {
-          double curr_obj =
+          bool feasible_next_perms =
               IterateSortedPerms<ObjectiveFunction>(position + 1, chains_perm);
-          if (curr_obj < best_obj_this_level) {
-            best_obj_this_level = curr_obj;
-          }
-        }
-
+          if (feasible_next_perms)
+            iterator.Update_FeasibleFront<ObjectiveFunction>();
+          else
+            iterator.Update_InFeasibleFront();
+          feasible_prev_chain = feasible_prev_chain || feasible_next_perms;
+        } else
+          iterator.Update_InFeasibleFront();
         chains_perm.pop(*perm_sing_curr);
-      }
+      } else
+        iterator.Update_InFeasibleFront();
+      count--;
+      if (count < -10) CoutError("deadlock found during IterateSortedPerms");
     }
-    return best_obj_this_level;
+    return feasible_prev_chain;
   }
 
   template <typename ObjectiveFunction>
@@ -184,18 +192,6 @@ class TaskSetPermutation {
     std::pair<VariableOD, int> res = FindODWithLP(
         dag_tasks_, tasks_info_, chains_perm, graph_of_all_ca_chains_,
         ObjectiveFunction::type_trait, rta_);
-    // LPOptimizer lp_optimizer(dag_tasks_, tasks_info_,
-    //                          graph_of_all_ca_chains_,
-    //                          ObjectiveFunction::type_trait, rta_);
-    // std::pair<VariableOD, int> res;
-    // if (lp_optimizer_.name2ilo_const_.size() != 0) {
-    //     res = lp_optimizer_.IncrementOptimize(chains_perm);
-    // } else {
-    //     lp_optimizer_.obj_trait_ = ObjectiveFunction::type_trait;
-    //     res = lp_optimizer_.OptimizeWithoutClear(chains_perm);
-    // }
-    // if (GlobalVariablesDAGOpt::debugMode == 1)
-    //     lp_optimizer_.WriteModelToFile();
 
     if (res.first.valid_)  // if valid, we'll exam obj; otherwise, we'll
                            // just move forward
@@ -204,9 +200,7 @@ class TaskSetPermutation {
         best_yet_obj_ = res.second;
         best_yet_chain_ = chains_perm;
         best_yet_variable_od_ = res.first;
-        // if (res.second == 1459) {
-        //     int a = 1;
-        // }
+        // TODO: remove the following check code!!
         std::vector<std::vector<int>> sub_chains =
             GetSubChains(dag_tasks_.chains_, chains_perm);
         double obj_curr =
@@ -214,11 +208,6 @@ class TaskSetPermutation {
                                    best_possible_variable_od_, sub_chains);
         if (obj_curr > best_yet_obj_)
           CoutError("Something's wrong with sub-chain obj evaluation");
-
-#ifdef PROFILE_CODE
-        EndTimer(__FUNCTION__);
-#endif
-        return res.second;
       }
     } else {
       infeasible_iteration_++;
@@ -227,7 +216,7 @@ class TaskSetPermutation {
 #ifdef PROFILE_CODE
     EndTimer(__FUNCTION__);
 #endif
-    return 1e9;
+    return res.second;
   }
 
   // data members
