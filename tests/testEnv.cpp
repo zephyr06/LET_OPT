@@ -1,10 +1,10 @@
 #include "gmock/gmock.h"  // Brings in gMock.
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
-#include "sources/Optimization/ChainsPermutation.h"
-#include "sources/Optimization/PermutationInequality.h"
 #include "sources/Optimization/TaskSetPermutation.h"
-#include "sources/Optimization/TwoTaskPermutations.h"
 #include "sources/Optimization/Variable.h"
+#include "sources/Permutations/ChainsPermutation.h"
+#include "sources/Permutations/PermutationInequality.h"
+#include "sources/Permutations/TwoTaskPermutations.h"
 #include "sources/RTA/RTA_LL.h"
 #include "sources/TaskModel/DAG_Model.h"
 #include "sources/Utils/Interval.h"

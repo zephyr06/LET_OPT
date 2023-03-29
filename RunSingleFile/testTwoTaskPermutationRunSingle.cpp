@@ -1,6 +1,6 @@
 
 #include "gmock/gmock.h"
-#include "sources/Optimization/TwoTaskPermutations.h"
+#include "sources/Permutations/TwoTaskPermutations.h"
 
 using namespace DAG_SPACE;
 TEST(RunSingle, v1) {

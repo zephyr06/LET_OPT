@@ -1,5 +1,5 @@
 
-#include "sources/Optimization/SinglePairPermutation.h"
+#include "sources/Permutations/SinglePairPermutation.h"
 
 namespace DAG_SPACE {
 

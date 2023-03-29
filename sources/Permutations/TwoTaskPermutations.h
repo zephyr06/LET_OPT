@@ -2,9 +2,9 @@
 
 #include <memory>
 
-#include "sources/Optimization/PermutationInequality.h"
-#include "sources/Optimization/SinglePairPermutation.h"
 #include "sources/Optimization/Variable.h"
+#include "sources/Permutations/PermutationInequality.h"
+#include "sources/Permutations/SinglePairPermutation.h"
 #include "sources/Utils/profilier.h"
 namespace DAG_SPACE {
 

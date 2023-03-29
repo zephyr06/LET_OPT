@@ -1,7 +1,7 @@
 #include "gmock/gmock.h"  // Brings in gMock.
-#include "sources/Optimization/PermutationInequality.h"
 #include "sources/Optimization/TaskSetPermutation.h"
-#include "sources/Optimization/TwoTaskPermutations.h"
+#include "sources/Permutations/PermutationInequality.h"
+#include "sources/Permutations/TwoTaskPermutations.h"
 #include "sources/TaskModel/DAG_Model.h"
 #include "sources/Utils/Interval.h"
 #include "sources/Utils/JobCEC.h"

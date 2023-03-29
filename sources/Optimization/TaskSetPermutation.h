@@ -3,7 +3,7 @@
 
 #include "sources/Baseline/StandardLET.h"
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
-#include "sources/Optimization/ChainsPermutation.h"
+#include "sources/Permutations/ChainsPermutation.h"
 #include "sources/Optimization/GraphOfChains.h"
 #include "sources/Optimization/LPSolver_Cplex.h"
 #include "sources/Utils/BatchUtils.h"

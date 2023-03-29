@@ -1,6 +1,6 @@
 
 
-#include "sources/Optimization/ChainsPermutation.h"
+#include "sources/Permutations/ChainsPermutation.h"
 
 #include "sources/Utils/Interval.h"
 

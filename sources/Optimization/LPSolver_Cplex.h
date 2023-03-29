@@ -3,7 +3,7 @@
 #include "ilcplex/cplex.h"
 #include "ilcplex/ilocplex.h"
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
-#include "sources/Optimization/ChainsPermutation.h"
+#include "sources/Permutations/ChainsPermutation.h"
 #include "sources/Optimization/GraphOfChains.h"
 #include "sources/TaskModel/DAG_Model.h"
 

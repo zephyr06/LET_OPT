@@ -1,5 +1,5 @@
 #pragma once
-#include "sources/Optimization/ChainsPermutation.h"
+#include "sources/Permutations/ChainsPermutation.h"
 #include "sources/Optimization/Variable.h"
 #include "sources/Utils/profilier.h"
 namespace DAG_SPACE {

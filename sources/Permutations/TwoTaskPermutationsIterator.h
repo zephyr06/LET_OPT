@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "sources/Optimization/TwoTaskPermutations.h"
+#include "sources/Permutations/TwoTaskPermutations.h"
 namespace DAG_SPACE {
 
 class TwoTaskPermutationsIterator : public TwoTaskPermutations {

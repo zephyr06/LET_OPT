@@ -3,7 +3,7 @@
 
 #include "sources/Optimization/Edge.h"
 #include "sources/Optimization/GraphOfChains.h"
-#include "sources/Optimization/TwoTaskPermutations.h"
+#include "sources/Permutations/TwoTaskPermutations.h"
 #include "sources/Utils/profilier.h"
 namespace DAG_SPACE {
 

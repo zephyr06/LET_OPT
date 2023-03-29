@@ -1,5 +1,5 @@
 
-#include "sources/Optimization/TwoTaskPermutations.h"
+#include "sources/Permutations/TwoTaskPermutations.h"
 
 namespace DAG_SPACE {
 std::vector<JobCEC> GetPossibleReactingJobs(

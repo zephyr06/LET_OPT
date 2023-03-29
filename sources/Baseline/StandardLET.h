@@ -1,7 +1,7 @@
 #pragma once
 
-#include "sources/Optimization/ChainsPermutation.h"
-#include "sources/Optimization/TwoTaskPermutations.h"
+#include "sources/Permutations/ChainsPermutation.h"
+#include "sources/Permutations/TwoTaskPermutations.h"
 #include "sources/Utils/BatchUtils.h"
 namespace DAG_SPACE {
 
