@@ -1,4 +1,4 @@
-gtsamAddTestsGlob(LET_OPT "test*.cpp" "" "${CONVENIENCE_LIB_NAME}")
+gtsamAddTestsGlob(LET_OPT "test*.cpp" "testEnv.cpp" "${CONVENIENCE_LIB_NAME}")
 
 
 ADD_EXECUTABLE(GenerateTaskSet GenerateTaskSet.cpp)
