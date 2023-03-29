@@ -2,6 +2,26 @@
 #include "sources/Optimization/SinglePairPermutation.h"
 
 namespace DAG_SPACE {
+
+SinglePairPermutation::SinglePairPermutation(
+    int task_prev_id, int task_next_id,
+    std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches,
+    const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
+    : inequality_(PermutationInequality(task_prev_id, task_next_id)),
+      job_first_react_matches_(job_first_react_matches) {
+  for (const auto& [job_source, job_matches] : job_first_react_matches_) {
+    PermutationInequality perm_new(job_source, job_matches[0], tasks_info);
+    PermutationInequality perm_merged =
+        MergeTwoSinglePermutations(perm_new, inequality_);
+    if (perm_merged.IsValid())
+      inequality_ = perm_merged;
+    else
+      CoutError(
+          "Conflicted matched jobs in SinglePairPermutation "
+          "constructor!");
+  }
+}
+
 // constructors for the convenience of iteration in TwoTaskPermutations
 SinglePairPermutation::SinglePairPermutation(
     PermutationInequality inequality,
@@ -72,5 +92,30 @@ void SinglePairPermutation::PopMatchJobPair(const JobCEC& job_curr,
     }
   }
 }
+// if perm1 is feasible, return true if perm2 can be safely skipped
+bool CompareSinglePerms(const SinglePairPermutation& perm1,
+                        const SinglePairPermutation& perm2,
+                        const std::string& obj_trait) {
+  if (obj_trait == "ReactionTime" || obj_trait == "ReactionTimeApprox")
+    return CompareSinglePerMRT(perm1, perm2);
+  else
+    CoutError("Not implemented for obj_trait: " + obj_trait);
+  return false;
+}
 
+bool CompareSinglePerMRT(const SinglePairPermutation& perm1,
+                         const SinglePairPermutation& perm2) {
+  ASSERT(perm1.GetPrevTaskId() == perm2.GetPrevTaskId() &&
+             perm1.GetNextTaskId() == perm2.GetNextTaskId(),
+         "perm1 and perm2 should be about the same tasks");
+  for (auto itr = perm1.job_first_react_matches_.begin();
+       itr != perm1.job_first_react_matches_.end(); itr++) {
+    const JobCEC& job_curr = itr->first;
+    auto itr2 = perm2.job_first_react_matches_.find(job_curr);
+    ASSERT(itr2 != perm2.job_first_react_matches_.end(),
+           "perm1 and perm2 should have the same jobs");
+    if (itr->second[0].jobId > itr2->second[0].jobId) return false;
+  }
+  return true;
+}
 }  // namespace DAG_SPACE

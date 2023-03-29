@@ -11,6 +11,21 @@
 
 #include "sources/Utils/colormod.h"
 
+#ifndef NDEBUG
+#   define ASSERT(condition, message) \
+    do { \
+        if (! (condition)) { \
+             std::cout << Color::red; \
+            std::cerr << "Assertion `" #condition "` failed in " << __FILE__ \
+                      << " line " << __LINE__ << ": " << message << std::endl; \
+                       std::cout << Color::def << std::endl; \
+            std::terminate(); \
+        } \
+    } while (false)
+#else
+#   define ASSERT(condition, message) do { } while (false)
+#endif
+
 inline void CoutWarning(std::string message) {
   std::cout << Color::red << message << Color::def << std::endl;
 }
@@ -18,6 +33,7 @@ inline void CoutError(std::string message) {
   CoutWarning(message);
   throw;
 }
+
 
 /**
  * @brief This function always trigger throw, it just prints information

@@ -4,6 +4,7 @@
 #include "sources/Optimization/PermutationInequality.h"
 #include "sources/Optimization/TaskSetPermutation.h"
 #include "sources/Optimization/TwoTaskPermutations.h"
+#include "sources/Optimization/TwoTaskPermutationsIterator.h"
 #include "sources/Optimization/Variable.h"
 #include "sources/RTA/RTA_LL.h"
 #include "sources/TaskModel/DAG_Model.h"
@@ -91,48 +92,6 @@ TEST_F(PermutationTest18, CompareNewPerm) {
   EXPECT_FALSE(CompareNewPerm(curr_first_job_maps2, curr_first_job_maps1));
 }
 
-class TwoTaskPermutationsIterator : public TwoTaskPermutations {
- public:
-  TwoTaskPermutationsIterator() {}
-  TwoTaskPermutationsIterator(const TwoTaskPermutations& two_task_perms)
-      : TwoTaskPermutations(two_task_perms) {
-    for (const auto& ptr : single_permutations_)
-      single_perms_ite_record_.push_back(ptr);
-    if_harmonic = ifHarmonic();
-  }
-
-  inline void Update_InFeasibleFront() {
-    single_perms_ite_record_.erase(single_perms_ite_record_.begin());
-  }
-
-  void Update_FeasibleFront() {
-    if (if_harmonic)
-      single_perms_ite_record_.clear();
-    else
-      CoutError("Implement it!");
-  }
-
-  inline const std::shared_ptr<const SinglePairPermutation> front() const {
-    if (single_perms_ite_record_.size() == 0)
-      CoutError("No elements left in TwoTaskPermutationsIterator!");
-    return single_perms_ite_record_.front();
-  }
-
-  inline bool empty() const { return single_perms_ite_record_.empty(); }
-
-  inline size_t size() const { return single_perms_ite_record_.size(); }
-
-  inline bool ifHarmonic() const {
-    int period_prev = tasks_info_.GetTask(task_prev_id_).period;
-    int period_next = tasks_info_.GetTask(task_next_id_).period;
-    return period_prev % period_next == 0 || period_next % period_prev == 0;
-  }
-
-  // data members
-  std::list<std::shared_ptr<const SinglePairPermutation>>
-      single_perms_ite_record_;
-  bool if_harmonic;
-};
 TEST_F(PermutationTest18, Iterator_Infeasible) {
   TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
   TwoTaskPermutationsIterator iterator(perm01);
@@ -152,23 +111,8 @@ TEST_F(PermutationTest18, Iterator_Feasible) {
   TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
   TwoTaskPermutationsIterator iterator(perm01);
   EXPECT_EQ(perm01[0], iterator.front());
-  iterator.Update_FeasibleFront();
+  iterator.Update_FeasibleFront<ObjReactionTime>();
   EXPECT_TRUE(iterator.empty());
-}
-
-class PermutationTest22 : public PermutationTestBase {
-  void SetUp() override { SetUpBase("test_n3_v22"); }
-};
-
-// TODO: add non-harmonic case!
-TEST_F(PermutationTest22, Iterator_Feasible) {
-  TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info);
-  perm10.print();
-  TwoTaskPermutationsIterator iterator(perm10);
-  EXPECT_EQ(5, iterator.size());
-  // EXPECT_EQ(perm10[0], iterator.front());
-  // iterator.Update_FeasibleFront();
-  // EXPECT_TRUE(iterator.empty());
 }
 
 class PermutationTest_2chain_v1 : public ::testing::Test {
@@ -333,6 +277,76 @@ TEST_F(PermutationTest46, CompareNewPermv1) {
     EXPECT_TRUE(CompareNewPerm(curr_first_job_maps1, curr_first_job_maps2));
     EXPECT_TRUE(CompareNewPerm(curr_first_job_maps2, curr_first_job_maps1));
   }
+}
+
+class PermutationTest22 : public PermutationTestBase {
+  void SetUp() override { SetUpBase("test_n3_v22"); }
+};
+
+TEST_F(PermutationTest22, CompareSinglePerMRT) {
+  TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info);
+  perm10.print();
+  EXPECT_TRUE(CompareSinglePerMRT(*perm10[0], *perm10[1]));
+  EXPECT_TRUE(CompareSinglePerMRT(*perm10[0], *perm10[2]));
+  EXPECT_TRUE(CompareSinglePerMRT(*perm10[0], *perm10[3]));
+  EXPECT_TRUE(CompareSinglePerMRT(*perm10[0], *perm10[4]));
+
+  EXPECT_FALSE(CompareSinglePerMRT(*perm10[1], *perm10[0]));
+  EXPECT_FALSE(CompareSinglePerMRT(*perm10[2], *perm10[1]));
+  EXPECT_FALSE(CompareSinglePerMRT(*perm10[3], *perm10[2]));
+  EXPECT_FALSE(CompareSinglePerMRT(*perm10[4], *perm10[3]));
+}
+
+TEST_F(PermutationTest22, Iterator_Feasible) {
+  TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info);
+  perm10.print();
+  TwoTaskPermutationsIterator iterator(perm10);
+  EXPECT_EQ(5, iterator.size());
+  EXPECT_EQ(perm10[0], iterator.front());
+  iterator.Update_FeasibleFront<ObjReactionTime>();
+  EXPECT_TRUE(iterator.empty());
+}
+
+class PermutationTest23 : public PermutationTestBase {
+  void SetUp() override { SetUpBase("test_n3_v23"); }
+};
+TEST_F(PermutationTest23, Iterator_Feasible_v1) {
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  perm12.print();
+  TwoTaskPermutationsIterator iterator(perm12);
+  EXPECT_EQ(7, iterator.size());
+  EXPECT_EQ(perm12[0], iterator.front());
+  iterator.Update_FeasibleFront<ObjReactionTime>();
+  EXPECT_EQ(7 - 7, iterator.size());
+}
+TEST_F(PermutationTest23, Iterator_Feasible_v2) {
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  perm12.print();
+  TwoTaskPermutationsIterator iterator(perm12);
+  EXPECT_EQ(7, iterator.size());
+  EXPECT_EQ(perm12[0], iterator.front());
+  iterator.Update_InFeasibleFront();
+  EXPECT_EQ(7 - 1, iterator.size());
+  iterator.Update_InFeasibleFront();
+  EXPECT_EQ(7 - 2, iterator.size());
+  iterator.Update_InFeasibleFront();
+  EXPECT_EQ(7 - 3, iterator.size());
+  iterator.Update_InFeasibleFront();
+  EXPECT_EQ(7 - 4, iterator.size());
+  iterator.Update_FeasibleFront<ObjReactionTime>();
+  EXPECT_EQ(0, iterator.size());
+}
+TEST_F(PermutationTest23, Iterator_Feasible_v3) {
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  perm12.print();
+  TwoTaskPermutationsIterator iterator(perm12);
+  EXPECT_EQ(7, iterator.size());
+  auto itr4 = iterator.single_perms_ite_record_.begin();
+  std::advance(itr4, 4);
+  itr4 = iterator.single_perms_ite_record_.erase(itr4);
+  iterator.single_perms_ite_record_.push_front(*itr4);
+  iterator.Update_FeasibleFront<ObjReactionTime>();
+  EXPECT_EQ(4, iterator.size());
 }
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
