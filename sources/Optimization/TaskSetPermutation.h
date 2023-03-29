@@ -136,16 +136,15 @@ class TaskSetPermutation {
   // optimize with Dynamic Programming
   // *********************************************
   template <typename ObjectiveFunction>
-  int PerformOptimizationDP() {
+  int PerformOptimizationSort() {
     ChainsPermutation chains_perm;
-    IterateAllChainsPermutationsDP<ObjectiveFunction>(0, chains_perm);
+    IterateSortedPerms<ObjectiveFunction>(0, chains_perm);
     lp_optimizer_.ClearCplexMemory();
     return best_yet_obj_;
   }
 
   template <typename ObjectiveFunction>
-  double IterateAllChainsPermutationsDP(uint position,
-                                        ChainsPermutation& chains_perm) {
+  double IterateSortedPerms(uint position, ChainsPermutation& chains_perm) {
     if (position == graph_of_all_ca_chains_.edge_records_
                         .size()) {  // finish iterate all the pair permutations
       iteration_count_++;
@@ -163,8 +162,8 @@ class TaskSetPermutation {
         chains_perm.push_back(perm_sing_curr);
 
         if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {
-          double curr_obj = IterateAllChainsPermutationsDP<ObjectiveFunction>(
-              position + 1, chains_perm);
+          double curr_obj =
+              IterateSortedPerms<ObjectiveFunction>(position + 1, chains_perm);
           if (curr_obj < best_obj_this_level) {
             best_obj_this_level = curr_obj;
           }
@@ -258,8 +257,8 @@ ScheduleResult PerformTOM_OPT(const DAG_Model& dag_tasks,
   if (method == "Enumerate")
     res.obj_ =
         task_sets_perms.PerformOptimizationEnumerate<ObjectiveFunction>();
-  else if (method == "DP")
-    res.obj_ = task_sets_perms.PerformOptimizationDP<ObjectiveFunction>();
+  else if (method == "Sort")
+    res.obj_ = task_sets_perms.PerformOptimizationSort<ObjectiveFunction>();
   else
     CoutError("Unrecognized method in PerformTOM_OPT");
   if (res.obj_ >= 1e8) {

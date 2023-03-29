@@ -7,15 +7,15 @@
 namespace DAG_SPACE {
 // !!!if adding more methods, need to update BaselineMethodNames below !!!
 enum BASELINEMETHODS {
-  InitialMethod,  // 0
-  TOM,            // 1
-  TOM_DP,         // 2
-  TOM_Approx,     // 3
-  TOM_DP_Approx,  // 4
-  SA              // 5
+  InitialMethod,    // 0
+  TOM,              // 1
+  TOM_Sort,         // 2
+  TOM_Approx,       // 3
+  TOM_Sort_Approx,  // 4
+  SA                // 5
 };
 const std::vector<std::string> BaselineMethodNames = {
-    "InitialMethod", "TOM", "TOM_DP", "TOM_Approx", "TOM_DP_Approx", "SA"};
+    "InitialMethod", "TOM", "TOM_Sort", "TOM_Approx", "TOM_Sort_Approx", "SA"};
 
 struct ScheduleResult {
   bool schedulable_;

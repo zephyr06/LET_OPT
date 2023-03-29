@@ -29,8 +29,8 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
     case TOM:
       res = PerformTOM_OPT<ObjectiveFunctionBase>(dag_tasks, "Enumerate");
       break;
-    case TOM_DP:
-      res = PerformTOM_OPT<ObjectiveFunctionBase>(dag_tasks, "DP");
+    case TOM_Sort:
+      res = PerformTOM_OPT<ObjectiveFunctionBase>(dag_tasks, "Sort");
       break;
     case TOM_Approx:
       if (ObjectiveFunctionBase::type_trait == "ReactionTime" ||
@@ -42,13 +42,13 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
       else
         CoutError("Unknown type trait in BatchOptimize!");
       break;
-    case TOM_DP_Approx:
+    case TOM_Sort_Approx:
       if (ObjectiveFunctionBase::type_trait == "ReactionTime" ||
           ObjectiveFunctionBase::type_trait == "ReactionTimeApprox")
-        res = PerformTOM_OPT<ObjReactionTimeApprox>(dag_tasks, "DP");
+        res = PerformTOM_OPT<ObjReactionTimeApprox>(dag_tasks, "Sort");
       else if (ObjectiveFunctionBase::type_trait == "DataAge" ||
                ObjectiveFunctionBase::type_trait == "DataAgeApprox")
-        res = PerformTOM_OPT<ObjDataAgeApprox>(dag_tasks, "DP");
+        res = PerformTOM_OPT<ObjDataAgeApprox>(dag_tasks, "Sort");
       else
         CoutError("Unknown type trait in BatchOptimize!");
       break;
@@ -121,7 +121,7 @@ std::vector<BatchResult> BatchOptimizeOrder(
 
   // result analysis
   results_man.PrintWorseCase(BASELINEMETHODS::TOM_Approx,
-                             BASELINEMETHODS::TOM_DP_Approx);
+                             BASELINEMETHODS::TOM_Sort_Approx);
   results_man.PrintResultTable(baselineMethods);
   results_man.PrintLongestCase(BASELINEMETHODS::TOM);
   results_man.PrintTimeOutCase();
