@@ -9,6 +9,7 @@
 #include "sources/TaskModel/DAG_Model.h"
 #include "sources/Utils/Interval.h"
 #include "sources/Utils/JobCEC.h"
+#include "tests/testEnv.cpp"
 
 using namespace DAG_SPACE;
 
@@ -119,6 +120,8 @@ class TwoTaskPermutationsIterator : public TwoTaskPermutations {
 
   inline bool empty() const { return single_perms_ite_record_.empty(); }
 
+  inline size_t size() const { return single_perms_ite_record_.size(); }
+
   inline bool ifHarmonic() const {
     int period_prev = tasks_info_.GetTask(task_prev_id_).period;
     int period_next = tasks_info_.GetTask(task_next_id_).period;
@@ -130,7 +133,7 @@ class TwoTaskPermutationsIterator : public TwoTaskPermutations {
       single_perms_ite_record_;
   bool if_harmonic;
 };
-TEST_F(PermutationTest18, GetFirstReactMaps_Infeasible) {
+TEST_F(PermutationTest18, Iterator_Infeasible) {
   TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
   TwoTaskPermutationsIterator iterator(perm01);
   EXPECT_EQ(perm01[0], iterator.front());
@@ -145,13 +148,27 @@ TEST_F(PermutationTest18, GetFirstReactMaps_Infeasible) {
   EXPECT_EQ(0, iterator.single_perms_ite_record_.size());
 }
 
-// TODO: add non-harmonic case!
-TEST_F(PermutationTest18, GetFirstReactMaps_Feasible) {
+TEST_F(PermutationTest18, Iterator_Feasible) {
   TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
   TwoTaskPermutationsIterator iterator(perm01);
   EXPECT_EQ(perm01[0], iterator.front());
   iterator.Update_FeasibleFront();
   EXPECT_TRUE(iterator.empty());
+}
+
+class PermutationTest22 : public PermutationTestBase {
+  void SetUp() override { SetUpBase("test_n3_v22"); }
+};
+
+// TODO: add non-harmonic case!
+TEST_F(PermutationTest22, Iterator_Feasible) {
+  TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info);
+  perm10.print();
+  TwoTaskPermutationsIterator iterator(perm10);
+  EXPECT_EQ(5, iterator.size());
+  // EXPECT_EQ(perm10[0], iterator.front());
+  // iterator.Update_FeasibleFront();
+  // EXPECT_TRUE(iterator.empty());
 }
 
 class PermutationTest_2chain_v1 : public ::testing::Test {
