@@ -96,22 +96,23 @@ TEST_F(PermutationTest18, Iterator_Infeasible) {
   TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
   TwoTaskPermutationsIterator iterator(perm01);
   EXPECT_EQ(perm01[0], iterator.front());
-  iterator.Update_InFeasibleFront();
+  iterator.UpdateWithInFeasibleElement();
   EXPECT_EQ(2, iterator.single_perms_ite_record_.size());
 
   EXPECT_EQ(perm01[1], iterator.front());
-  iterator.Update_InFeasibleFront();
+  iterator.UpdateWithInFeasibleElement();
   EXPECT_EQ(1, iterator.single_perms_ite_record_.size());
   EXPECT_EQ(perm01[2], iterator.front());
-  iterator.Update_InFeasibleFront();
+  iterator.UpdateWithInFeasibleElement();
   EXPECT_EQ(0, iterator.single_perms_ite_record_.size());
 }
 
 TEST_F(PermutationTest18, Iterator_Feasible) {
   TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+  perm01.print();
   TwoTaskPermutationsIterator iterator(perm01);
   EXPECT_EQ(perm01[0], iterator.front());
-  iterator.Update_FeasibleFront<ObjReactionTime>();
+  iterator.UpdateWithFeasibleElement<ObjReactionTime>(iterator.front());
   EXPECT_TRUE(iterator.empty());
 }
 
@@ -303,7 +304,7 @@ TEST_F(PermutationTest22, Iterator_Feasible) {
   TwoTaskPermutationsIterator iterator(perm10);
   EXPECT_EQ(5, iterator.size());
   EXPECT_EQ(perm10[0], iterator.front());
-  iterator.Update_FeasibleFront<ObjReactionTime>();
+  iterator.UpdateWithFeasibleElement<ObjReactionTime>(iterator.front());
   EXPECT_TRUE(iterator.empty());
 }
 
@@ -316,7 +317,7 @@ TEST_F(PermutationTest23, Iterator_Feasible_v1) {
   TwoTaskPermutationsIterator iterator(perm12);
   EXPECT_EQ(7, iterator.size());
   EXPECT_EQ(perm12[0], iterator.front());
-  iterator.Update_FeasibleFront<ObjReactionTime>();
+  iterator.UpdateWithFeasibleElement<ObjReactionTime>(iterator.front());
   EXPECT_EQ(7 - 7, iterator.size());
 }
 TEST_F(PermutationTest23, Iterator_Feasible_v2) {
@@ -325,15 +326,15 @@ TEST_F(PermutationTest23, Iterator_Feasible_v2) {
   TwoTaskPermutationsIterator iterator(perm12);
   EXPECT_EQ(7, iterator.size());
   EXPECT_EQ(perm12[0], iterator.front());
-  iterator.Update_InFeasibleFront();
+  iterator.UpdateWithInFeasibleElement();
   EXPECT_EQ(7 - 1, iterator.size());
-  iterator.Update_InFeasibleFront();
+  iterator.UpdateWithInFeasibleElement();
   EXPECT_EQ(7 - 2, iterator.size());
-  iterator.Update_InFeasibleFront();
+  iterator.UpdateWithInFeasibleElement();
   EXPECT_EQ(7 - 3, iterator.size());
-  iterator.Update_InFeasibleFront();
+  iterator.UpdateWithInFeasibleElement();
   EXPECT_EQ(7 - 4, iterator.size());
-  iterator.Update_FeasibleFront<ObjReactionTime>();
+  iterator.UpdateWithFeasibleElement<ObjReactionTime>(iterator.front());
   EXPECT_EQ(0, iterator.size());
 }
 TEST_F(PermutationTest23, Iterator_Feasible_v3) {
@@ -345,7 +346,7 @@ TEST_F(PermutationTest23, Iterator_Feasible_v3) {
   std::advance(itr4, 4);
   itr4 = iterator.single_perms_ite_record_.erase(itr4);
   iterator.single_perms_ite_record_.push_front(*itr4);
-  iterator.Update_FeasibleFront<ObjReactionTime>();
+  iterator.UpdateWithFeasibleElement<ObjReactionTime>(iterator.front());
   EXPECT_EQ(4, iterator.size());
 }
 int main(int argc, char** argv) {

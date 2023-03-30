@@ -17,25 +17,27 @@ class TwoTaskPermutationsIterator : public TwoTaskPermutations {
     if_harmonic = ifHarmonic();
   }
 
-  inline void Update_InFeasibleFront() {
+  inline void UpdateWithInFeasibleElement() {
     single_perms_ite_record_.erase(single_perms_ite_record_.begin());
   }
 
   template <typename ObjectiveFunctionBase>
-  void Update_FeasibleFront() {
-    if (if_harmonic)
-      single_perms_ite_record_.clear();
-    else {
-      const auto& perm_ptr_front = single_perms_ite_record_.front();
-      for (auto itr = single_perms_ite_record_.begin();
-           itr != single_perms_ite_record_.end();) {
-        if (CompareSinglePerms(*perm_ptr_front, *(*itr),
-                               ObjectiveFunctionBase::type_trait))
-          itr = single_perms_ite_record_.erase(itr);
-        else
-          ++itr;
-      }
+  void UpdateWithFeasibleElement(
+      const std::shared_ptr<const SinglePairPermutation>& perm_ptr_front) {
+    // if (if_harmonic)
+    //   single_perms_ite_record_.clear();
+    // else
+    // {
+    // const auto& perm_ptr_front = single_perms_ite_record_.front();
+    for (auto itr = single_perms_ite_record_.begin();
+         itr != single_perms_ite_record_.end();) {
+      if (CompareSinglePerms(*perm_ptr_front, *(*itr),
+                             ObjectiveFunctionBase::type_trait))
+        itr = single_perms_ite_record_.erase(itr);
+      else
+        ++itr;
     }
+    // }
   }
 
   inline const std::shared_ptr<const SinglePairPermutation> front() const {
@@ -47,6 +49,10 @@ class TwoTaskPermutationsIterator : public TwoTaskPermutations {
   inline bool empty() const { return single_perms_ite_record_.empty(); }
 
   inline size_t size() const { return single_perms_ite_record_.size(); }
+
+  inline void eraseFront() {
+    single_perms_ite_record_.erase(single_perms_ite_record_.begin());
+  }
 
   inline bool ifHarmonic() const {
     int period_prev = tasks_info_.GetTask(task_prev_id_).period;

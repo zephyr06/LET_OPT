@@ -59,10 +59,12 @@ class TaskSetPermutation {
   int PerformOptimizationEnumerate() {
     ChainsPermutation chains_perm;
     IterateAllChainsPermutations<ObjectiveFunction>(0, chains_perm);
-    lp_optimizer_
-        .ClearCplexMemory();  // TODO: consider trying to optimize
-                              // performance by directly set coefficient
-                              // rather than remove/add constraints
+    lp_optimizer_.ClearCplexMemory();  // TODO: consider trying to optimize
+    // performance by directly set coefficient
+    // rather than remove/add constraints
+    if (infeasible_iteration_ > 0)
+      CoutError("find a case where infeasible_iteration is " +
+                std::to_string(infeasible_iteration_));
     return best_yet_obj_;
   }
 
@@ -167,18 +169,29 @@ class TaskSetPermutation {
         if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {
           bool feasible_next_perms =
               IterateSortedPerms<ObjectiveFunction>(position + 1, chains_perm);
-          if (feasible_next_perms)
-            iterator.Update_FeasibleFront<ObjectiveFunction>();
-          else
-            iterator.Update_InFeasibleFront();
-          feasible_prev_chain = feasible_prev_chain || feasible_next_perms;
+          if (feasible_next_perms) {
+            iterator.UpdateWithFeasibleElement<ObjectiveFunction>(
+                perm_sing_curr);
+            feasible_prev_chain = feasible_prev_chain || feasible_next_perms;
+          }
         } else
-          iterator.Update_InFeasibleFront();
+          std::cout << "Early break at level " << position
+                    << " due to being skipped while exploring the "
+                    << adjacent_two_task_permutations_[position].size() -
+                           iterator.size()
+                    << " permutations\n";
         chains_perm.pop(*perm_sing_curr);
       } else
-        iterator.Update_InFeasibleFront();
+        std::cout << "Early break at level " << position
+                  << " due to being infeasible while exploring the "
+                  << adjacent_two_task_permutations_[position].size() -
+                         iterator.size()
+                  << " permutations\n";
+      iterator.eraseFront();
       count--;
-      if (count < -10) CoutError("deadlock found during IterateSortedPerms");
+      if (count < -10) {
+        CoutWarning("deadlock found during IterateSortedPerms");
+      }
     }
     return feasible_prev_chain;
   }
