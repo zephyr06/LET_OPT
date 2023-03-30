@@ -169,24 +169,29 @@ class TaskSetPermutation {
         if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {
           bool feasible_next_perms =
               IterateSortedPerms<ObjectiveFunction>(position + 1, chains_perm);
-          if (feasible_next_perms) {
-            iterator.UpdateWithFeasibleElement<ObjectiveFunction>(
-                perm_sing_curr);
-            feasible_prev_chain = feasible_prev_chain || feasible_next_perms;
-          }
-        } else
+          // if (feasible_next_perms) {
+          //   iterator.UpdateWithFeasibleElement<ObjectiveFunction>(
+          //       perm_sing_curr);
+          //   feasible_prev_chain = feasible_prev_chain ||
+          feasible_next_perms;
+          // }
+        } else {
+          if (GlobalVariablesDAGOpt::debugMode)
+            std::cout << "Early break at level " << position
+                      << " due to being skipped while exploring the "
+                      << adjacent_two_task_permutations_[position].size() -
+                             iterator.size()
+                      << " permutations\n";
+        }
+        chains_perm.pop(*perm_sing_curr);
+      } else {
+        if (GlobalVariablesDAGOpt::debugMode)
           std::cout << "Early break at level " << position
-                    << " due to being skipped while exploring the "
+                    << " due to being infeasible while exploring the "
                     << adjacent_two_task_permutations_[position].size() -
                            iterator.size()
                     << " permutations\n";
-        chains_perm.pop(*perm_sing_curr);
-      } else
-        std::cout << "Early break at level " << position
-                  << " due to being infeasible while exploring the "
-                  << adjacent_two_task_permutations_[position].size() -
-                         iterator.size()
-                  << " permutations\n";
+      }
       iterator.eraseFront();
       count--;
       if (count < -10) {
