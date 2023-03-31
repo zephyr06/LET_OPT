@@ -230,7 +230,7 @@ bool ExamVariableFeasibility(const VariableOD& variable,
 #endif
   for (uint i = 0; i < chain.size() - 1; i++) {
     Edge edge(chain[i], chain[i + 1]);
-    const PermutationInequality& inequality = chains_perm[edge].inequality_;
+    const PermutationInequality& inequality = chains_perm[edge]->inequality_;
     int prev_id = inequality.task_prev_id_;
     int next_id = inequality.task_next_id_;
     if (inequality.lower_bound_valid_) {
@@ -307,7 +307,7 @@ VariableOD FindODFromSingleChainPermutation(
 
   for (uint i = 0; i < chain.size() - 1; i++) {
     Edge edge(chain[i], chain[i + 1]);
-    const SinglePairPermutation& single_perm = chains_perm[edge];
+    const SinglePairPermutation& single_perm = *chains_perm[edge];
     SetVariableHelperSingleEdge(edge, variable, single_perm.inequality_,
                                 dag_tasks, rta);
     if (!variable.valid_) break;

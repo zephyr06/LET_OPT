@@ -23,7 +23,7 @@ JobCEC GetFirstReactJob(const JobCEC &job_curr,
                         const ChainsPermutation &chains_perm,
                         const Edge &edge_curr,
                         const TaskSetInfoDerived &tasks_info) {
-  const SinglePairPermutation &pair_perm_curr = chains_perm[edge_curr];
+  const SinglePairPermutation &pair_perm_curr = *chains_perm[edge_curr];
   int task_id_prev = job_curr.taskId;
   if (task_id_prev != pair_perm_curr.inequality_.task_prev_id_)
     CoutError("Wrong task_index_in_chain index in GetFirstReactJob!");

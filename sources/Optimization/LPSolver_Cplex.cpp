@@ -124,7 +124,7 @@ void LPOptimizer::AddPermutationInequalityConstraints(
   for (uint i = 0; i < graph_of_all_ca_chains_.edge_vec_ordered_.size(); i++) {
     const Edge &edge_curr = graph_of_all_ca_chains_.edge_vec_ordered_[i];
     if (allow_partial_edges && !chains_perm.exist(edge_curr)) continue;
-    const PermutationInequality &ineq = chains_perm[edge_curr].inequality_;
+    const PermutationInequality &ineq = chains_perm[edge_curr]->inequality_;
     // model_.add(
     //     varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] +
     //         ineq.lower_bound_ <=
@@ -166,7 +166,7 @@ void LPOptimizer::UpdatePermutationInequalityConstraints(
   BeginTimer("UpdatePermutationInequalityConstraints");
   for (uint i = 0; i < graph_of_all_ca_chains_.edge_vec_ordered_.size(); i++) {
     const Edge &edge_curr = graph_of_all_ca_chains_.edge_vec_ordered_[i];
-    const PermutationInequality &ineq = chains_perm[edge_curr].inequality_;
+    const PermutationInequality &ineq = chains_perm[edge_curr]->inequality_;
     // model_.add(
     //     varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] +
     //         ineq.lower_bound_ <=

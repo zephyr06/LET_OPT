@@ -8,61 +8,59 @@
 namespace DAG_SPACE {
 
 class TwoTaskPermutationsIterator : public TwoTaskPermutations {
-   public:
-    TwoTaskPermutationsIterator() {}
-    // TODO: there is a copy consturctor call, consider adjust it
-    TwoTaskPermutationsIterator(const TwoTaskPermutations& two_task_perms)
-        : TwoTaskPermutations(two_task_perms) {
-        for (const auto& ptr : single_permutations_)
-            single_perms_ite_record_.push_back(ptr);
-    }
+ public:
+  TwoTaskPermutationsIterator() {}
+  // TODO: there is a copy consturctor call, consider adjust it
+  TwoTaskPermutationsIterator(const TwoTaskPermutations& two_task_perms)
+      : TwoTaskPermutations(two_task_perms) {
+    for (const auto& ptr : single_permutations_)
+      single_perms_ite_record_.push_back(ptr);
+  }
 
-    // template <typename ObjectiveFunctionBase>
-    // void UpdateWithFeasibleElement(
-    //     const std::shared_ptr<const SinglePairPermutation>& perm_ptr_front) {
-    //   for (auto itr = single_perms_ite_record_.begin();
-    //        itr != single_perms_ite_record_.end();) {
-    //     if (IfSkipAnotherPerm(*perm_ptr_front, *(*itr),
-    //                            ObjectiveFunctionBase::type_trait))
-    //       itr = single_perms_ite_record_.erase(itr);
-    //     else
-    //       ++itr;
-    //   }
-    //   // }
-    // }
+  // template <typename ObjectiveFunctionBase>
+  // void UpdateWithFeasibleElement(
+  //     const std::shared_ptr<const SinglePairPermutation>& perm_ptr_front) {
+  //   for (auto itr = single_perms_ite_record_.begin();
+  //        itr != single_perms_ite_record_.end();) {
+  //     if (IfSkipAnotherPerm(*perm_ptr_front, *(*itr),
+  //                            ObjectiveFunctionBase::type_trait))
+  //       itr = single_perms_ite_record_.erase(itr);
+  //     else
+  //       ++itr;
+  //   }
+  //   // }
+  // }
 
-    // void UpdateCandidates(const FeasiblieChainsManagerVec&
-    // feasible_ref_chains,
-    //                       const ChainsPermutation& chains_perm);
+  // void UpdateCandidates(const FeasiblieChainsManagerVec&
+  // feasible_ref_chains,
+  //                       const ChainsPermutation& chains_perm);
 
-    // void RemoveCandidate(const ChainsPermutation& chains_perm,
-    //                      const FeasibleChainManager& feasible_ref_chains);
+  void RemoveCandidate(const ChainsPermutation& chains_perm_partial,
+                       const FeasibleChainManager& feasible_chain_man);
 
-    void TakeCommonElements(
-        std::list<std::shared_ptr<const SinglePairPermutation>>
-            single_perms_ite_record);
+  void TakeCommonElements(const PermRefSet& per_ptr_set);
 
-    inline const std::shared_ptr<const SinglePairPermutation> pop_front() {
-        if (single_perms_ite_record_.size() == 0)
-            CoutError("No elements left in TwoTaskPermutationsIterator!");
-        auto itr = single_perms_ite_record_.front();
-        single_perms_ite_record_.pop_front();
-        return itr;
-    }
+  inline const std::shared_ptr<const SinglePairPermutation> pop_front() {
+    if (single_perms_ite_record_.size() == 0)
+      CoutError("No elements left in TwoTaskPermutationsIterator!");
+    auto itr = single_perms_ite_record_.front();
+    single_perms_ite_record_.pop_front();
+    return itr;
+  }
 
-    inline bool empty() const { return single_perms_ite_record_.empty(); }
+  inline bool empty() const { return single_perms_ite_record_.empty(); }
 
-    inline size_t size() const { return single_perms_ite_record_.size(); }
+  inline size_t size() const { return single_perms_ite_record_.size(); }
 
-    inline bool ifHarmonic() const {
-        int period_prev = tasks_info_.GetTask(task_prev_id_).period;
-        int period_next = tasks_info_.GetTask(task_next_id_).period;
-        return period_prev % period_next == 0 || period_next % period_prev == 0;
-    }
+  inline bool ifHarmonic() const {
+    int period_prev = tasks_info_.GetTask(task_prev_id_).period;
+    int period_next = tasks_info_.GetTask(task_next_id_).period;
+    return period_prev % period_next == 0 || period_next % period_prev == 0;
+  }
 
-    // data members
-    std::list<std::shared_ptr<const SinglePairPermutation>>
-        single_perms_ite_record_;
-    bool if_harmonic;
+  // data members
+  std::list<std::shared_ptr<const SinglePairPermutation>>
+      single_perms_ite_record_;
+  bool if_harmonic;
 };
 }  // namespace DAG_SPACE

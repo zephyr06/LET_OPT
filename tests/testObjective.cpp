@@ -59,11 +59,11 @@ TEST_F(PermutationTest1, GetFirstReactJob) {
 
   // with the same super-period
   EXPECT_EQ(JobCEC(1, 0), GetFirstReactJobWithSuperPeriod(
-                              JobCEC(0, 0), chains_perm[Edge(0, 1)]));
+                              JobCEC(0, 0), *chains_perm[Edge(0, 1)]));
   EXPECT_EQ(JobCEC(1, 0), GetFirstReactJobWithSuperPeriod(
-                              JobCEC(0, 1), chains_perm[Edge(0, 1)]));
+                              JobCEC(0, 1), *chains_perm[Edge(0, 1)]));
   EXPECT_EQ(JobCEC(2, 0), GetFirstReactJobWithSuperPeriod(
-                              JobCEC(1, 0), chains_perm[Edge(1, 2)]));
+                              JobCEC(1, 0), *chains_perm[Edge(1, 2)]));
 
   // span super-periods
   EXPECT_EQ(JobCEC(1, 1), GetFirstReactJob(JobCEC(0, 2), chains_perm,

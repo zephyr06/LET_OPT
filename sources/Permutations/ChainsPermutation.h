@@ -47,12 +47,13 @@ class ChainsPermutation {
   bool exist(const Edge &edge) const {
     return permutation_chain_map_.find(edge) != permutation_chain_map_.end();
   }
-  // TODO: return pointer?
-  const SinglePairPermutation &operator[](const Edge &edge) const {
+
+  const std::shared_ptr<const SinglePairPermutation> &operator[](
+      const Edge &edge) const {
     auto itr = permutation_chain_map_.find(edge);
     if (itr == permutation_chain_map_.end())
       CoutError("Didn't find the given edge in SinglePairPermutation!");
-    return *permutation_chain_map_.at(edge);
+    return permutation_chain_map_.at(edge);
   }
 
   // several IsValid()-related functions

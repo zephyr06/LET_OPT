@@ -69,3 +69,16 @@ bool IfSkipAnotherPerm(const SinglePairPermutation& perm_base,
                        const std::string& obj_trait);
 
 }  // namespace DAG_SPACE
+
+template <>
+struct std::hash<DAG_SPACE::SinglePairPermutation> {
+  std::size_t operator()(
+      const DAG_SPACE::SinglePairPermutation& perm_single) const {
+    std::hash<std::string> hasher;
+    const DAG_SPACE::PermutationInequality& ineq = perm_single.inequality_;
+    return hasher(std::to_string(ineq.task_prev_id_) + "," +
+                  std::to_string(ineq.task_next_id_) + "," +
+                  std::to_string(ineq.lower_bound_) + "," +
+                  std::to_string(ineq.upper_bound_));
+  }
+};

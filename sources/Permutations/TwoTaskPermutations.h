@@ -19,8 +19,9 @@ PermutationInequality GenerateBoxPermutationConstraints(
 bool ifTimeout(TimerType start_time);
 
 typedef std::vector<std::shared_ptr<const SinglePairPermutation>> PermPtrVec;
-typedef std::unordered_set<std::shared_ptr<const SinglePairPermutation>>
-    PermPtrSet;
+// typedef std::unordered_set<std::shared_ptr<const SinglePairPermutation>>
+//     PermPtrSet;
+typedef std::unordered_set<SinglePairPermutation> PermRefSet;
 class TwoTaskPermutations {
  public:
   TwoTaskPermutations() {}
@@ -54,7 +55,7 @@ class TwoTaskPermutations {
 
   inline size_t size() const { return single_permutations_.size(); }
 
-  inline const std::shared_ptr<const SinglePairPermutation> operator[](
+  inline const std::shared_ptr<const SinglePairPermutation>& operator[](
       size_t i) const {
     if (i >= size()) CoutError("Out-of-range error in TwoTaskPermutations");
     return single_permutations_[i];

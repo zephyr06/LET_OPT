@@ -18,7 +18,7 @@ class FeasibleChainManager {
   ChainsPermutation feasible_chain_;
   // for each edge of each feasible_chain, it stores the set of
   // SinglePermutations that could possible improve
-  std::unordered_map<Edge, PermPtrSet> better_perm_per_chain_per_edge_;
+  std::unordered_map<Edge, PermRefSet> better_perm_per_chain_per_edge_;
   const std::vector<TwoTaskPermutations>& adjacent_two_task_permutations_;
 };
 
