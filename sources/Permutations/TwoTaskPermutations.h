@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "sources/Optimization/Edge.h"
 #include "sources/Optimization/Variable.h"
 #include "sources/Permutations/PermutationInequality.h"
 #include "sources/Permutations/SinglePairPermutation.h"
@@ -17,6 +18,9 @@ PermutationInequality GenerateBoxPermutationConstraints(
 
 bool ifTimeout(TimerType start_time);
 
+typedef std::vector<std::shared_ptr<const SinglePairPermutation>> PermPtrVec;
+typedef std::unordered_set<std::shared_ptr<const SinglePairPermutation>>
+    PermPtrSet;
 class TwoTaskPermutations {
  public:
   TwoTaskPermutations() {}
@@ -66,7 +70,7 @@ class TwoTaskPermutations {
 
   void FindAllPermutations();
 
-  void SortPermutations();
+  inline Edge GetEdge() const { return Edge(task_prev_id_, task_next_id_); }
 
   void print() const;
 
@@ -77,8 +81,7 @@ class TwoTaskPermutations {
   RegularTaskSystem::TaskSetInfoDerived tasks_info_;
   int superperiod_;
   VariableRange variable_od_range_;
-  std::vector<std::shared_ptr<const SinglePairPermutation>>
-      single_permutations_;
+  PermPtrVec single_permutations_;
 };
 
 }  // namespace DAG_SPACE

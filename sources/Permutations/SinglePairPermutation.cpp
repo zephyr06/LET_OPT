@@ -92,28 +92,28 @@ void SinglePairPermutation::PopMatchJobPair(const JobCEC& job_curr,
     }
   }
 }
-// if perm1 is feasible, return true if perm2 can be safely skipped
-bool CompareSinglePerms(const SinglePairPermutation& perm1,
-                        const SinglePairPermutation& perm2,
-                        const std::string& obj_trait) {
+// return true if perm_another can be safely skipped
+bool IfSkipAnotherPerm(const SinglePairPermutation& perm_base,
+                       const SinglePairPermutation& perm_another,
+                       const std::string& obj_trait) {
   if (obj_trait == "ReactionTime" || obj_trait == "ReactionTimeApprox")
-    return CompareSinglePerMRT(perm1, perm2);
+    return IfSkipAnotherPermRT(perm_base, perm_another);
   else
     CoutError("Not implemented for obj_trait: " + obj_trait);
   return false;
 }
 
-bool CompareSinglePerMRT(const SinglePairPermutation& perm1,
-                         const SinglePairPermutation& perm2) {
-  ASSERT(perm1.GetPrevTaskId() == perm2.GetPrevTaskId() &&
-             perm1.GetNextTaskId() == perm2.GetNextTaskId(),
-         "perm1 and perm2 should be about the same tasks");
-  for (auto itr = perm1.job_first_react_matches_.begin();
-       itr != perm1.job_first_react_matches_.end(); itr++) {
+bool IfSkipAnotherPermRT(const SinglePairPermutation& perm_base,
+                         const SinglePairPermutation& perm_another) {
+  ASSERT(perm_base.GetPrevTaskId() == perm_another.GetPrevTaskId() &&
+             perm_base.GetNextTaskId() == perm_another.GetNextTaskId(),
+         "perm_base and perm_another should be about the same tasks");
+  for (auto itr = perm_base.job_first_react_matches_.begin();
+       itr != perm_base.job_first_react_matches_.end(); itr++) {
     const JobCEC& job_curr = itr->first;
-    auto itr2 = perm2.job_first_react_matches_.find(job_curr);
-    ASSERT(itr2 != perm2.job_first_react_matches_.end(),
-           "perm1 and perm2 should have the same jobs");
+    auto itr2 = perm_another.job_first_react_matches_.find(job_curr);
+    ASSERT(itr2 != perm_another.job_first_react_matches_.end(),
+           "perm_base and perm_another should have the same jobs");
     if (itr->second[0].jobId > itr2->second[0].jobId) return false;
   }
   return true;

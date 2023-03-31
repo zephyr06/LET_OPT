@@ -47,246 +47,253 @@ bool CompareNewPerm(
 // currently, as asusme there is only one chain
 // TODO: what's the usage of chains in arguments
 class TaskSetPermutation {
- public:
-  // TaskSetPermutation() {}
-  TaskSetPermutation(const DAG_Model& dag_tasks,
-                     const std::vector<std::vector<int>>& chains);
+   public:
+    // TaskSetPermutation() {}
+    TaskSetPermutation(const DAG_Model& dag_tasks,
+                       const std::vector<std::vector<int>>& chains);
 
-  void FindPairPermutations();
-  bool ExamSchedulabilityOptSol() const;
+    void FindPairPermutations();
+    bool ExamSchedulabilityOptSol() const;
 
-  template <typename ObjectiveFunction>
-  int PerformOptimizationEnumerate() {
-    ChainsPermutation chains_perm;
-    IterateAllChainsPermutations<ObjectiveFunction>(0, chains_perm);
-    lp_optimizer_.ClearCplexMemory();  // TODO: consider trying to optimize
-    // performance by directly set coefficient
-    // rather than remove/add constraints
-    if (infeasible_iteration_ > 0)
-      CoutError("find a case where infeasible_iteration is " +
-                std::to_string(infeasible_iteration_));
-    return best_yet_obj_;
-  }
+    template <typename ObjectiveFunction>
+    int PerformOptimizationEnumerate() {
+        ChainsPermutation chains_perm;
+        IterateAllChainsPermutations<ObjectiveFunction>(0, chains_perm);
+        lp_optimizer_.ClearCplexMemory();  // TODO: consider trying to optimize
+        // performance by directly set coefficient
+        // rather than remove/add constraints
+        if (infeasible_iteration_ > 0)
+            CoutError("find a case where infeasible_iteration is " +
+                      std::to_string(infeasible_iteration_));
+        return best_yet_obj_;
+    }
 
-  // chains_perm already pushed the new perm_single
-  template <typename ObjectiveFunction>
-  bool WhetherSkipToNextPerm(const ChainsPermutation& chains_perm) {
+    // chains_perm already pushed the new perm_single
+    template <typename ObjectiveFunction>
+    bool WhetherSkipToNextPerm(const ChainsPermutation& chains_perm) {
 #ifdef PROFILE_CODE
-    BeginTimer(__FUNCTION__);
+        BeginTimer(__FUNCTION__);
 #endif
 
-    std::vector<std::vector<int>> sub_chains =
-        GetSubChains(dag_tasks_.chains_, chains_perm);
-    for (const auto& sub_chain : sub_chains) {
-      if (sub_chain.size() == 0) continue;
-      if (GlobalVariablesDAGOpt::SKIP_PERM >= 2 &&
-          !FindODFromSingleChainPermutation(dag_tasks_, chains_perm,
-                                            graph_of_all_ca_chains_, sub_chain,
-                                            rta_)
-               .valid_) {
+        std::vector<std::vector<int>> sub_chains =
+            GetSubChains(dag_tasks_.chains_, chains_perm);
+        for (const auto& sub_chain : sub_chains) {
+            if (sub_chain.size() == 0)
+                continue;
+            if (GlobalVariablesDAGOpt::SKIP_PERM >= 2 &&
+                !FindODFromSingleChainPermutation(dag_tasks_, chains_perm,
+                                                  graph_of_all_ca_chains_,
+                                                  sub_chain, rta_)
+                     .valid_) {
+#ifdef PROFILE_CODE
+                EndTimer(__FUNCTION__);
+#endif
+                if (GlobalVariablesDAGOpt::debugMode)
+                    std::cout << "Early break at level " << chains_perm.size()
+                              << " due to being unschedulable at the per-chain "
+                                 "test\n";
+                return true;
+            }
+        }
+
+        VariableOD best_possible_variable_od = FindBestPossibleVariableOD(
+            dag_tasks_, tasks_info_, rta_, chains_perm);
+        double obj_curr =
+            ObjectiveFunction::Obj(dag_tasks_, tasks_info_, chains_perm,
+                                   best_possible_variable_od, sub_chains);
 #ifdef PROFILE_CODE
         EndTimer(__FUNCTION__);
 #endif
-        return true;
-      }
+
+        if (obj_curr > best_yet_obj_) {
+            if (GlobalVariablesDAGOpt::debugMode)
+                std::cout << "Early break at level " << chains_perm.size()
+                          << " due to guarantee to perform worse at the "
+                             "per-chain test\n";
+            return true;
+        }
+        return false;
     }
 
-    VariableOD best_possible_variable_od =
-        FindBestPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm);
-    double obj_curr =
-        ObjectiveFunction::Obj(dag_tasks_, tasks_info_, chains_perm,
-                               best_possible_variable_od, sub_chains);
-#ifdef PROFILE_CODE
-    EndTimer(__FUNCTION__);
-#endif
+    // depth equals the number of edge pais
+    template <typename ObjectiveFunction>
+    void IterateAllChainsPermutations(uint position,
+                                      ChainsPermutation& chains_perm) {
+        if (position ==
+            graph_of_all_ca_chains_.edge_records_
+                .size()) {  // finish iterate all the pair permutations
+            iteration_count_++;
+            EvaluateChainsPermutation<ObjectiveFunction>(chains_perm);
+            return;
+        }
 
-    if (obj_curr > best_yet_obj_) {
-      return true;
+        for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
+             i++) {
+            if (ifTimeout(start_time_))
+                break;
+            if (chains_perm.IsValid(
+                    variable_range_od_,
+                    *adjacent_two_task_permutations_[position][i],
+                    graph_of_all_ca_chains_)) {
+                chains_perm.push_back(
+                    adjacent_two_task_permutations_[position][i]);
+
+                // try to skip some permutations
+                if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {
+                    IterateAllChainsPermutations<ObjectiveFunction>(
+                        position + 1, chains_perm);
+                }
+                chains_perm.pop(*adjacent_two_task_permutations_[position][i]);
+            }
+        }
     }
-    return false;
-  }
 
-  // depth equals the number of edge pais
-  template <typename ObjectiveFunction>
-  void IterateAllChainsPermutations(uint position,
-                                    ChainsPermutation& chains_perm) {
-    if (position == graph_of_all_ca_chains_.edge_records_
-                        .size()) {  // finish iterate all the pair permutations
-      iteration_count_++;
-      EvaluateChainsPermutation<ObjectiveFunction>(chains_perm);
-      return;
+    // optimize with Dynamic Programming
+    // *********************************************
+    template <typename ObjectiveFunction>
+    int PerformOptimizationSort() {
+        ChainsPermutation chains_perm;
+        IterateSortedPerms<ObjectiveFunction>(0, chains_perm);
+        lp_optimizer_.ClearCplexMemory();
+        return best_yet_obj_;
     }
 
-    for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
-         i++) {
-      if (ifTimeout(start_time_)) break;
-      if (chains_perm.IsValid(variable_range_od_,
-                              *adjacent_two_task_permutations_[position][i],
-                              graph_of_all_ca_chains_)) {
-        chains_perm.push_back(adjacent_two_task_permutations_[position][i]);
+    template <typename ObjectiveFunction>
+    bool IterateSortedPerms(uint position, ChainsPermutation& chains_perm) {
+        if (position ==
+            graph_of_all_ca_chains_.edge_records_
+                .size()) {  // finish iterate all the pair permutations
+            iteration_count_++;
+            return EvaluateChainsPermutation<ObjectiveFunction>(chains_perm) !=
+                   INFEASIBLE_OBJ;
+        }
 
-        // try to skip some permutations
-        if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {
-          IterateAllChainsPermutations<ObjectiveFunction>(position + 1,
+        TwoTaskPermutationsIterator iterator(
+            adjacent_two_task_permutations_[position]);
+        bool feasible_prev_chain = false;
+
+        int count = iterator.size();
+        while (!iterator.empty()) {
+            if (ifTimeout(start_time_))
+                break;
+            const auto& perm_sing_curr = iterator.pop_front();
+            if (chains_perm.IsValid(variable_range_od_, *perm_sing_curr,
+                                    graph_of_all_ca_chains_)) {
+                chains_perm.push_back(perm_sing_curr);
+
+                if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {
+                    // bool feasible_next_perms =
+                    IterateSortedPerms<ObjectiveFunction>(position + 1,
                                                           chains_perm);
+                }
+                chains_perm.pop(*perm_sing_curr);
+            } else {
+                if (GlobalVariablesDAGOpt::debugMode)
+                    std::cout
+                        << "Early break at level " << position
+                        << " due to being conflicted permutations while "
+                           "exploring the "
+                        << adjacent_two_task_permutations_[position].size() -
+                               iterator.size()
+                        << " permutations\n";
+            }
+            count--;
+            if (count < -10) {
+                CoutWarning("deadlock found during IterateSortedPerms");
+            }
+            // iterator.UpdateCandidates();
         }
-        chains_perm.pop(*adjacent_two_task_permutations_[position][i]);
-      }
-    }
-  }
-
-  // optimize with Dynamic Programming
-  // *********************************************
-  template <typename ObjectiveFunction>
-  int PerformOptimizationSort() {
-    ChainsPermutation chains_perm;
-    IterateSortedPerms<ObjectiveFunction>(0, chains_perm);
-    lp_optimizer_.ClearCplexMemory();
-    return best_yet_obj_;
-  }
-
-  template <typename ObjectiveFunction>
-  bool IterateSortedPerms(uint position, ChainsPermutation& chains_perm) {
-    if (position == graph_of_all_ca_chains_.edge_records_
-                        .size()) {  // finish iterate all the pair permutations
-      iteration_count_++;
-      return EvaluateChainsPermutation<ObjectiveFunction>(chains_perm) !=
-             INFEASIBLE_OBJ;
+        return feasible_prev_chain;
     }
 
-    TwoTaskPermutationsIterator iterator(
-        adjacent_two_task_permutations_[position]);
-    bool feasible_prev_chain = false;
+    template <typename ObjectiveFunction>
+    double EvaluateChainsPermutation(const ChainsPermutation& chains_perm) {
+#ifdef PROFILE_CODE
+        BeginTimer(__FUNCTION__);
+#endif
 
-    int count = iterator.size();
-    while (!iterator.empty()) {
-      if (ifTimeout(start_time_)) break;
-      const auto& perm_sing_curr = iterator.front();
-      if (chains_perm.IsValid(variable_range_od_, *perm_sing_curr,
-                              graph_of_all_ca_chains_)) {
-        chains_perm.push_back(perm_sing_curr);
+        std::pair<VariableOD, int> res = FindODWithLP(
+            dag_tasks_, tasks_info_, chains_perm, graph_of_all_ca_chains_,
+            ObjectiveFunction::type_trait, rta_);
 
-        if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {
-          bool feasible_next_perms =
-              IterateSortedPerms<ObjectiveFunction>(position + 1, chains_perm);
-          // if (feasible_next_perms) {
-          //   iterator.UpdateWithFeasibleElement<ObjectiveFunction>(
-          //       perm_sing_curr);
-          //   feasible_prev_chain = feasible_prev_chain ||
-          feasible_next_perms;
-          // }
+        if (res.first.valid_)  // if valid, we'll exam obj; otherwise, we'll
+                               // just move forward
+        {
+            if (res.second < best_yet_obj_) {
+                best_yet_obj_ = res.second;
+                best_yet_chain_ = chains_perm;
+                best_yet_variable_od_ = res.first;
+                // TODO: remove the following check code!!
+                std::vector<std::vector<int>> sub_chains =
+                    GetSubChains(dag_tasks_.chains_, chains_perm);
+                double obj_curr = ObjectiveFunction::Obj(
+                    dag_tasks_, tasks_info_, chains_perm,
+                    best_possible_variable_od_, sub_chains);
+                if (obj_curr > best_yet_obj_)
+                    CoutError(
+                        "Something's wrong with sub-chain obj evaluation");
+            }
         } else {
-          if (GlobalVariablesDAGOpt::debugMode)
-            std::cout << "Early break at level " << position
-                      << " due to being skipped while exploring the "
-                      << adjacent_two_task_permutations_[position].size() -
-                             iterator.size()
-                      << " permutations\n";
+            infeasible_iteration_++;
         }
-        chains_perm.pop(*perm_sing_curr);
-      } else {
-        if (GlobalVariablesDAGOpt::debugMode)
-          std::cout << "Early break at level " << position
-                    << " due to being infeasible while exploring the "
-                    << adjacent_two_task_permutations_[position].size() -
-                           iterator.size()
-                    << " permutations\n";
-      }
-      iterator.eraseFront();
-      count--;
-      if (count < -10) {
-        CoutWarning("deadlock found during IterateSortedPerms");
-      }
-    }
-    return feasible_prev_chain;
-  }
-
-  template <typename ObjectiveFunction>
-  double EvaluateChainsPermutation(const ChainsPermutation& chains_perm) {
-#ifdef PROFILE_CODE
-    BeginTimer(__FUNCTION__);
-#endif
-
-    std::pair<VariableOD, int> res = FindODWithLP(
-        dag_tasks_, tasks_info_, chains_perm, graph_of_all_ca_chains_,
-        ObjectiveFunction::type_trait, rta_);
-
-    if (res.first.valid_)  // if valid, we'll exam obj; otherwise, we'll
-                           // just move forward
-    {
-      if (res.second < best_yet_obj_) {
-        best_yet_obj_ = res.second;
-        best_yet_chain_ = chains_perm;
-        best_yet_variable_od_ = res.first;
-        // TODO: remove the following check code!!
-        std::vector<std::vector<int>> sub_chains =
-            GetSubChains(dag_tasks_.chains_, chains_perm);
-        double obj_curr =
-            ObjectiveFunction::Obj(dag_tasks_, tasks_info_, chains_perm,
-                                   best_possible_variable_od_, sub_chains);
-        if (obj_curr > best_yet_obj_)
-          CoutError("Something's wrong with sub-chain obj evaluation");
-      }
-    } else {
-      infeasible_iteration_++;
-    }
 
 #ifdef PROFILE_CODE
-    EndTimer(__FUNCTION__);
+        EndTimer(__FUNCTION__);
 #endif
-    return res.second;
-  }
+        return res.second;
+    }
 
-  // data members
-  TimerType start_time_;
-  DAG_Model dag_tasks_;
-  RegularTaskSystem::TaskSetInfoDerived tasks_info_;
-  GraphOfChains graph_of_all_ca_chains_;
-  std::vector<TwoTaskPermutations> adjacent_two_task_permutations_;
-  ChainsPermutation best_yet_chain_;
-  int best_yet_obj_;
-  int iteration_count_;
-  VariableOD best_yet_variable_od_;
-  std::vector<int> rta_;
-  VariableOD best_possible_variable_od_;
-  VariableRange variable_range_od_;
-  int infeasible_iteration_ = 0;
-  LPOptimizer lp_optimizer_;
+    // data members
+    TimerType start_time_;
+    DAG_Model dag_tasks_;
+    RegularTaskSystem::TaskSetInfoDerived tasks_info_;
+    GraphOfChains graph_of_all_ca_chains_;
+    std::vector<TwoTaskPermutations> adjacent_two_task_permutations_;
+    ChainsPermutation best_yet_chain_;
+    int best_yet_obj_;
+    int iteration_count_;
+    VariableOD best_yet_variable_od_;
+    std::vector<int> rta_;
+    VariableOD best_possible_variable_od_;
+    VariableRange variable_range_od_;
+    int infeasible_iteration_ = 0;
+    LPOptimizer lp_optimizer_;
 };
 
 template <typename ObjectiveFunction>
 ScheduleResult PerformTOM_OPT(const DAG_Model& dag_tasks,
                               std::string method = "Enumerate") {
-  auto start = std::chrono::high_resolution_clock::now();
-  ScheduleResult res;
-  TaskSetPermutation task_sets_perms =
-      TaskSetPermutation(dag_tasks, dag_tasks.chains_);
-  if (method == "Enumerate")
-    res.obj_ =
-        task_sets_perms.PerformOptimizationEnumerate<ObjectiveFunction>();
-  else if (method == "Sort")
-    res.obj_ = task_sets_perms.PerformOptimizationSort<ObjectiveFunction>();
-  else
-    CoutError("Unrecognized method in PerformTOM_OPT");
-  if (res.obj_ >= 1e8) {
-    res.obj_ = PerformStandardLETAnalysis<ObjectiveFunction>(dag_tasks).obj_;
-  }
-  res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
+    auto start = std::chrono::high_resolution_clock::now();
+    ScheduleResult res;
+    TaskSetPermutation task_sets_perms =
+        TaskSetPermutation(dag_tasks, dag_tasks.chains_);
+    if (method == "Enumerate")
+        res.obj_ =
+            task_sets_perms.PerformOptimizationEnumerate<ObjectiveFunction>();
+    else if (method == "Sort")
+        res.obj_ = task_sets_perms.PerformOptimizationSort<ObjectiveFunction>();
+    else
+        CoutError("Unrecognized method in PerformTOM_OPT");
+    if (res.obj_ >= 1e8) {
+        res.obj_ =
+            PerformStandardLETAnalysis<ObjectiveFunction>(dag_tasks).obj_;
+    }
+    res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
 
-  auto stop = std::chrono::high_resolution_clock::now();
-  auto duration =
-      std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-  res.timeTaken_ = double(duration.count()) / 1e6;
-  std::cout << "The total number of permutation iterations is: "
-            << task_sets_perms.iteration_count_ << "\n";
-  if (GlobalVariablesDAGOpt::debugMode == 1) {
-    std::cout << "The best permutation is: \n";
-    task_sets_perms.best_yet_chain_.print();
-  }
-  if (!res.schedulable_ &&
-      res.timeTaken_ < GlobalVariablesDAGOpt::TIME_LIMIT - 5)
-    CoutError("Find an unschedulable case!");
-  return res;
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration =
+        std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    res.timeTaken_ = double(duration.count()) / 1e6;
+    std::cout << "The total number of permutation iterations is: "
+              << task_sets_perms.iteration_count_ << "\n";
+    if (GlobalVariablesDAGOpt::debugMode == 1) {
+        std::cout << "The best permutation is: \n";
+        task_sets_perms.best_yet_chain_.print();
+    }
+    if (!res.schedulable_ &&
+        res.timeTaken_ < GlobalVariablesDAGOpt::TIME_LIMIT - 5)
+        CoutError("Find an unschedulable case!");
+    return res;
 }
 
 }  // namespace DAG_SPACE

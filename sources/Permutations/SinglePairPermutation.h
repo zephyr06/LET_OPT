@@ -58,12 +58,14 @@ struct SinglePairPermutation {
                                  // vector, make it happen
 };
 
-// if perm1 is feasible, return true if perm2 can be safely skipped
-bool CompareSinglePerMRT(const SinglePairPermutation& perm1,
-                         const SinglePairPermutation& perm2);
+typedef std::shared_ptr<const SinglePairPermutation> PermPtr;
 
-bool CompareSinglePerms(const SinglePairPermutation& perm1,
-                        const SinglePairPermutation& perm2,
-                        const std::string& obj_trait);
+// return true if perm_another performs worse than perm_base
+bool IfSkipAnotherPermRT(const SinglePairPermutation& perm_base,
+                         const SinglePairPermutation& perm_another);
+
+bool IfSkipAnotherPerm(const SinglePairPermutation& perm_base,
+                       const SinglePairPermutation& perm_another,
+                       const std::string& obj_trait);
 
 }  // namespace DAG_SPACE
