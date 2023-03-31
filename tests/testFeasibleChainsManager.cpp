@@ -23,56 +23,6 @@ TEST_F(PermutationTest22, IfSkipAnotherPermRT) {
   EXPECT_FALSE(IfSkipAnotherPermRT(*perm10[4], *perm10[3]));
 }
 
-void TwoTaskPermutationsIterator::TakeCommonElements(
-    const PermRefSet& per_ptr_set) {
-  ;
-}
-
-bool IfChainsContainBetterPerm(const ChainsPermutation& chains_perm_partial,
-                               const FeasibleChainManager& feasible_chain_man) {
-  const std::vector<Edge>& edges_inserted = chains_perm_partial.GetEdges();
-  for (const auto& edge : edges_inserted) {
-    const auto& ptr_curr = chains_perm_partial[edge];
-    const PermRefSet& perms_better_set =
-        feasible_chain_man.better_perm_per_chain_per_edge_.at(edge);
-
-    if (perms_better_set.find(*ptr_curr) != perms_better_set.end()) return true;
-  }
-  return false;
-}
-
-bool IfFutureEdgesContainBetterPerm(
-    const std::vector<Edge>& unvisited_edges,
-    const FeasibleChainManager& feasible_chain_man) {
-  for (const auto& edge_curr : unvisited_edges) {
-    if (feasible_chain_man.better_perm_per_chain_per_edge_.at(edge_curr)
-            .size() > 0)
-      return true;
-  }
-  return false;
-}
-
-// first generate candidates to select at this level, then take intersection
-// with current available candidates;
-void TwoTaskPermutationsIterator::RemoveCandidate(
-    const ChainsPermutation& chains_perm_partial,
-    const FeasibleChainManager& feasible_chain_man,
-    const std::vector<Edge>& unvisited_edges) {
-  // exam whether inserted perms contain better perms than chains_perm, if so,
-  // return without removing;
-
-  // exam whether un-inserted perms contain better perms than chains_perm, if
-  // so, return;
-  if (IfChainsContainBetterPerm(chains_perm_partial, feasible_chain_man) ||
-      IfFutureEdgesContainBetterPerm(unvisited_edges, feasible_chain_man))
-    return;
-
-  // in this case, the possible elements to iterate must include only those
-  // possibly better perms
-  TakeCommonElements(
-      feasible_chain_man.better_perm_per_chain_per_edge_.at(GetEdge()));
-}
-
 class PermutationTest18 : public PermutationTestBase {
   void SetUp() override {
     SetUpBase("test_n3_v18");
@@ -165,6 +115,20 @@ TEST_F(PermutationTest18, IfFutureEdgesContainBetterPerm) {
   EXPECT_FALSE(IfFutureEdgesContainBetterPerm({}, fea_chain_man2));
 }
 
+TEST_F(PermutationTest18, TakeCommonElements) {
+  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutationsIterator iterator01(perm01);
+  PermRefSet perm_set;
+  perm_set.insert(*perm01[0]);
+  iterator01.TakeCommonElements(perm_set);
+  EXPECT_EQ(1, iterator01.size());
+  perm_set.clear();
+  iterator01.TakeCommonElements(perm_set);
+  EXPECT_EQ(0, iterator01.size());
+}
+
 class PermutationTest23 : public PermutationTestBase {
   void SetUp() override {
     SetUpBase("test_n3_v23");
@@ -227,6 +191,19 @@ TEST_F(PermutationTest23, IfChainsContainBetterPerm) {
   EXPECT_TRUE(IfChainsContainBetterPerm(chains_perm_partial, fea_chain_man));
 }
 
+TEST_F(PermutationTest23, TakeCommonElements) {
+  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutationsIterator iterator12(perm12);
+  PermRefSet perm_set;
+  perm_set.insert(*perm12[3]);
+  perm_set.insert(*perm12[4]);
+  iterator12.TakeCommonElements(perm_set);
+  EXPECT_EQ(2, iterator12.size());
+  perm_set.clear();
+  iterator12.TakeCommonElements(perm_set);
+  EXPECT_EQ(0, iterator12.size());
+}
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);

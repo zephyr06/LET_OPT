@@ -7,6 +7,13 @@
 #include "sources/Permutations/TwoTaskPermutations.h"
 namespace DAG_SPACE {
 
+bool IfChainsContainBetterPerm(const ChainsPermutation& chains_perm_partial,
+                               const FeasibleChainManager& feasible_chain_man);
+
+bool IfFutureEdgesContainBetterPerm(
+    const std::vector<Edge>& unvisited_edges,
+    const FeasibleChainManager& feasible_chain_man);
+
 class TwoTaskPermutationsIterator : public TwoTaskPermutations {
    public:
     TwoTaskPermutationsIterator() {}
@@ -16,24 +23,6 @@ class TwoTaskPermutationsIterator : public TwoTaskPermutations {
         for (const auto& ptr : single_permutations_)
             single_perms_ite_record_.push_back(ptr);
     }
-
-    // template <typename ObjectiveFunctionBase>
-    // void UpdateWithFeasibleElement(
-    //     const std::shared_ptr<const SinglePairPermutation>& perm_ptr_front) {
-    //   for (auto itr = single_perms_ite_record_.begin();
-    //        itr != single_perms_ite_record_.end();) {
-    //     if (IfSkipAnotherPerm(*perm_ptr_front, *(*itr),
-    //                            ObjectiveFunctionBase::type_trait))
-    //       itr = single_perms_ite_record_.erase(itr);
-    //     else
-    //       ++itr;
-    //   }
-    //   // }
-    // }
-
-    // void UpdateCandidates(const FeasiblieChainsManagerVec&
-    // feasible_ref_chains,
-    //                       const ChainsPermutation& chains_perm);
 
     void RemoveCandidate(const ChainsPermutation& chains_perm_partial,
                          const FeasibleChainManager& feasible_chain_man,
