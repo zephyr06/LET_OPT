@@ -42,8 +42,13 @@ bool IfChainsContainBetterPerm(const ChainsPermutation& chains_perm_partial,
 }
 
 bool IfFutureEdgesContainBetterPerm(
-    const ChainsPermutation& chains_perm_partial,
+    const std::vector<Edge>& unvisited_edges,
     const FeasibleChainManager& feasible_chain_man) {
+  for (const auto& edge_curr : unvisited_edges) {
+    if (feasible_chain_man.better_perm_per_chain_per_edge_.at(edge_curr)
+            .size() > 0)
+      return true;
+  }
   return false;
 }
 
@@ -51,14 +56,15 @@ bool IfFutureEdgesContainBetterPerm(
 // with current available candidates;
 void TwoTaskPermutationsIterator::RemoveCandidate(
     const ChainsPermutation& chains_perm_partial,
-    const FeasibleChainManager& feasible_chain_man) {
+    const FeasibleChainManager& feasible_chain_man,
+    const std::vector<Edge>& unvisited_edges) {
   // exam whether inserted perms contain better perms than chains_perm, if so,
   // return without removing;
 
   // exam whether un-inserted perms contain better perms than chains_perm, if
   // so, return;
   if (IfChainsContainBetterPerm(chains_perm_partial, feasible_chain_man) ||
-      IfFutureEdgesContainBetterPerm(chains_perm_partial, feasible_chain_man))
+      IfFutureEdgesContainBetterPerm(unvisited_edges, feasible_chain_man))
     return;
 
   // in this case, the possible elements to iterate must include only those
@@ -130,6 +136,35 @@ TEST_F(PermutationTest18, IfChainsContainBetterPerm) {
   chains_perm_partial.push_back(perm12[0]);
   EXPECT_TRUE(IfChainsContainBetterPerm(chains_perm_partial, fea_chain_man2));
 }
+
+TEST_F(PermutationTest18, IfFutureEdgesContainBetterPerm) {
+  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  perm01.print();
+  perm12.print();
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[0]);
+  chains_perm.push_back(perm12[0]);
+  FeasibleChainManager fea_chain_man(
+      chains_perm, task_set_perms.adjacent_two_task_permutations_,
+      "ReactionTime");
+  std::vector<Edge> unvisited_edges = {Edge(1, 2)};
+  EXPECT_FALSE(IfFutureEdgesContainBetterPerm(unvisited_edges, fea_chain_man));
+  // unvisited_edges.clear();
+  EXPECT_FALSE(IfFutureEdgesContainBetterPerm({}, fea_chain_man));
+
+  ChainsPermutation chains_perm2;
+  chains_perm2.push_back(perm01[0]);
+  chains_perm2.push_back(perm12[1]);
+  FeasibleChainManager fea_chain_man2(
+      chains_perm2, task_set_perms.adjacent_two_task_permutations_,
+      "ReactionTime");
+
+  EXPECT_TRUE(IfFutureEdgesContainBetterPerm(unvisited_edges, fea_chain_man2));
+  EXPECT_FALSE(IfFutureEdgesContainBetterPerm({}, fea_chain_man2));
+}
+
 class PermutationTest23 : public PermutationTestBase {
   void SetUp() override {
     SetUpBase("test_n3_v23");
