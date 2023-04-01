@@ -56,6 +56,7 @@ struct SinglePairPermutation {
   std::unordered_map<JobCEC, std::vector<JobCEC>>
       job_first_react_matches_;  // TODO: there should be only one job in the
                                  // vector, make it happen
+  int index_global_;
 };
 
 typedef std::shared_ptr<const SinglePairPermutation> PermPtr;
@@ -74,6 +75,7 @@ template <>
 struct std::hash<DAG_SPACE::SinglePairPermutation> {
   std::size_t operator()(
       const DAG_SPACE::SinglePairPermutation& perm_single) const {
+    if (perm_single.index_global_ >= 0) return perm_single.index_global_;
     std::hash<std::string> hasher;
     const DAG_SPACE::PermutationInequality& ineq = perm_single.inequality_;
     return hasher(std::to_string(ineq.task_prev_id_) + "," +

@@ -85,6 +85,7 @@ void TwoTaskPermutations::AppendAllPermutations(
             RandRange(0, 1) > GlobalVariablesDAGOpt::SAMPLE_SMALL_TASKS) {
           continue;
         } else {
+          permutation_current_copy.index_global_ = perm_count_++;
           single_permutations_.push_back(
               std::make_shared<const SinglePairPermutation>(
                   permutation_current_copy));

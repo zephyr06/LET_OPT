@@ -8,7 +8,8 @@ SinglePairPermutation::SinglePairPermutation(
     std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches,
     const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
     : inequality_(PermutationInequality(task_prev_id, task_next_id)),
-      job_first_react_matches_(job_first_react_matches) {
+      job_first_react_matches_(job_first_react_matches),
+      index_global_(-1) {
   for (const auto& [job_source, job_matches] : job_first_react_matches_) {
     PermutationInequality perm_new(job_source, job_matches[0], tasks_info);
     PermutationInequality perm_merged =
@@ -47,10 +48,14 @@ SinglePairPermutation::SinglePairPermutation(
   BeginTimer("SinglePairPermutation_copy");
   inequality_ = other.inequality_;
   job_first_react_matches_ = other.job_first_react_matches_;
+  index_global_ = other.index_global_;
   EndTimer("SinglePairPermutation_copy");
 }
 
 void SinglePairPermutation::print() const {
+  if (index_global_ >= 0)
+    std::cout << "Global index of the SinglePairPermutation is "
+              << index_global_ << "\n";
   inequality_.print();
   for (const auto& [key, value] : job_first_react_matches_) {
     std::cout << key.ToString() << "'s following jobs are ";

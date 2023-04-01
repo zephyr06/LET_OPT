@@ -92,6 +92,15 @@ TEST_F(PermutationTest18, CompareNewPerm) {
   EXPECT_FALSE(CompareNewPerm(curr_first_job_maps2, curr_first_job_maps1));
 }
 
+TEST_F(PermutationTest18, perm_count_) {
+  TaskSetPermutation task_sets_perms =
+      TaskSetPermutation(dag_tasks, dag_tasks.chains_);
+  task_sets_perms.adjacent_two_task_permutations_[0].print();
+  EXPECT_EQ(3, task_sets_perms.adjacent_two_task_permutations_[0].perm_count_);
+  task_sets_perms.adjacent_two_task_permutations_[1].print();
+  EXPECT_EQ(5, task_sets_perms.adjacent_two_task_permutations_[1].perm_count_);
+}
+
 class PermutationTest_2chain_v1 : public ::testing::Test {
  protected:
   void SetUp() override {
@@ -254,6 +263,14 @@ TEST_F(PermutationTest46, CompareNewPermv1) {
     EXPECT_TRUE(CompareNewPerm(curr_first_job_maps1, curr_first_job_maps2));
     EXPECT_TRUE(CompareNewPerm(curr_first_job_maps2, curr_first_job_maps1));
   }
+}
+TEST_F(PermutationTest46, perm_count_) {
+  TaskSetPermutation task_sets_perms =
+      TaskSetPermutation(dag_tasks, dag_tasks.chains_);
+  task_sets_perms.adjacent_two_task_permutations_[0].print();
+  EXPECT_EQ(6, task_sets_perms.adjacent_two_task_permutations_[0].perm_count_);
+  task_sets_perms.adjacent_two_task_permutations_[1].print();
+  EXPECT_EQ(16, task_sets_perms.adjacent_two_task_permutations_[1].perm_count_);
 }
 
 int main(int argc, char** argv) {
