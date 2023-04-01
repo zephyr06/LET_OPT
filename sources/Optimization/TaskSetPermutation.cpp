@@ -142,7 +142,8 @@ void TaskSetPermutation::FindPairPermutations() {
     adjacent_two_task_permutations_.push_back(
         TwoTaskPermutations(edge_curr.from_id, edge_curr.to_id, dag_tasks_,
                             tasks_info_, rta_, single_perm_count));
-    single_perm_count += adjacent_two_task_permutations_.back().perm_count_;
+    single_perm_count +=
+        adjacent_two_task_permutations_.back().single_permutations_.size();
     std::cout << "Pair permutation #: "
               << adjacent_two_task_permutations_.back().size() << "\n";
   }

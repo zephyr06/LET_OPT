@@ -86,6 +86,9 @@ void TwoTaskPermutations::AppendAllPermutations(
         //   continue;
         // } else {
         permutation_current_copy.index_global_ = perm_count_++;
+        if (perm_count_ > 1e4) {
+          CoutError("Too large perm_count!");
+        }
         single_permutations_.push_back(
             std::make_shared<const SinglePairPermutation>(
                 permutation_current_copy));

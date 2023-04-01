@@ -31,7 +31,8 @@ class TwoTaskPermutations {
       : start_time_((std::chrono::high_resolution_clock::now())),
         task_prev_id_(task_prev_id),
         task_next_id_(task_next_id),
-        tasks_info_(tasks_info) {
+        tasks_info_(tasks_info),
+        perm_count_(0) {
     superperiod_ = GetSuperPeriod(tasks_info.GetTask(task_prev_id),
                                   tasks_info.GetTask(task_next_id));
     variable_od_range_ = FindVariableRange(dag_tasks);
