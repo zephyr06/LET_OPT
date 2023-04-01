@@ -60,6 +60,10 @@ TEST_F(PermutationTest1, Iteration) {
   EXPECT_THAT(task_sets_perms.iteration_count_, testing::Le(6));
   EXPECT_EQ(20, obj_find);
 }
+TEST_F(PermutationTest1, GetUnvisitedFutureEdges) {
+  TaskSetPermutation task_sets_perms(dag_tasks, {task_chain});
+  EXPECT_EQ(1, task_sets_perms.GetUnvisitedFutureEdges(0).size());
+}
 
 // TEST_F(PermutationTest1, CompareAndUpdateMinOffsetLB) {
 //   dag_tasks.chains_ = {{0, 1, 2}};
@@ -460,6 +464,11 @@ class PermutationTest_2chain_v1 : public ::testing::Test {
   VariableOD variable_od;
 };
 
+TEST_F(PermutationTest_2chain_v1, GetUnvisitedFutureEdges) {
+  TaskSetPermutation task_sets_perms(dag_tasks, dag_tasks.chains_);
+  EXPECT_EQ(2, task_sets_perms.GetUnvisitedFutureEdges(0).size());
+  EXPECT_EQ(Edge(3, 4), task_sets_perms.GetUnvisitedFutureEdges(0)[1]);
+}
 TEST_F(PermutationTest_2chain_v1, TaskSetPermutation) {
   // dag_tasks.chains_[0] = {0, 3, 4};
   // dag_tasks.chains_.push_back({1, 3, 4});

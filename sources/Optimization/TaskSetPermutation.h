@@ -155,7 +155,7 @@ class TaskSetPermutation {
     return best_yet_obj_;
   }
 
-  std::vector<Edge> GetUnvisitedEdges(uint position) const {
+  std::vector<Edge> GetUnvisitedFutureEdges(uint position) const {
     std::vector<Edge> edges;
     edges.reserve(adjacent_two_task_permutations_.size());
     for (uint i = position + 1; i < adjacent_two_task_permutations_.size();
@@ -174,7 +174,8 @@ class TaskSetPermutation {
              INFEASIBLE_OBJ;
     }
 
-    std::vector<Edge> unvisited_edges = GetUnvisitedEdges(position);
+    std::vector<Edge> unvisited_future_edges =
+        GetUnvisitedFutureEdges(position);
     TwoTaskPermutationsIterator iterator(
         adjacent_two_task_permutations_[position]);
     bool feasible_prev_chain = false;
@@ -204,7 +205,8 @@ class TaskSetPermutation {
       if (count < -10) {
         CoutWarning("deadlock found during IterateSortedPerms");
       }
-      iterator.RemoveCandidates(chains_perm, feasible_chains_, unvisited_edges);
+      iterator.RemoveCandidates(chains_perm, feasible_chains_,
+                                unvisited_future_edges);
     }
     return feasible_prev_chain;
   }
