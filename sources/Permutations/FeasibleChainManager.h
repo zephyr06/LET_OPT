@@ -22,5 +22,48 @@ class FeasibleChainManager {
   const std::vector<TwoTaskPermutations>& adjacent_two_task_permutations_;
 };
 
-typedef std::vector<FeasibleChainManager> FeasiblieChainsManagerVec;
+// typedef std::vector<FeasibleChainManager> FeasiblieChainsManagerVec;
+
+class FeasiblieChainsManagerVec {
+ public:
+  FeasiblieChainsManagerVec() {}
+
+  FeasiblieChainsManagerVec(uint n) : length(n) {
+    feasible_chains_modify_record.reserve(n);
+    for (uint i = 0; i < n; i++) feasible_chains_modify_record.push_back(false);
+  }
+
+  inline size_t size() const { return chain_man_vec_.size(); }
+
+  void SetModify() {
+    for (uint i = 0; i < length; i++) feasible_chains_modify_record[i] = true;
+  }
+
+  void UnSetModify(uint level) {
+    if (level >= length)
+      CoutError("invalid level in FeasiblieChainsManagerVec");
+    feasible_chains_modify_record[level] = false;
+  }
+
+  bool IfModified(uint level) {
+    if (level >= length)
+      CoutError("invalid level in FeasiblieChainsManagerVec");
+    return feasible_chains_modify_record[level];
+  }
+
+  void push_back(const FeasibleChainManager& feasible_chain_man) {
+    chain_man_vec_.push_back(feasible_chain_man);
+    SetModify();
+  }
+
+  void pop_back() {
+    chain_man_vec_.pop_back();
+    SetModify();
+  }
+
+  // data member
+  std::vector<FeasibleChainManager> chain_man_vec_;
+  std::vector<bool> feasible_chains_modify_record;
+  uint length;
+};
 }  // namespace DAG_SPACE

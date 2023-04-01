@@ -142,6 +142,7 @@ class TaskSetPermutation {
 
   // optimize with Dynamic Programming
   // *********************************************
+
   template <typename ObjectiveFunction>
   int PerformOptimizationSort() {
     ChainsPermutation chains_perm;
@@ -205,8 +206,13 @@ class TaskSetPermutation {
         CoutWarning("deadlock found during IterateSortedPerms");
       }
       // if (RandRange(0, 1) > GlobalVariablesDAGOpt::SAMPLE_SMALL_TASKS)
-      iterator.RemoveCandidates(chains_perm, feasible_chains_,
-                                unvisited_future_edges);
+      BeginTimer("RemoveCandidates_related");
+      if (feasible_chains_.IfModified(position)) {
+        iterator.RemoveCandidates(chains_perm, feasible_chains_.chain_man_vec_,
+                                  unvisited_future_edges);
+        feasible_chains_.UnSetModify(position);
+      }
+      EndTimer("RemoveCandidates_related");
     }
     return feasible_prev_chain;
   }
@@ -225,7 +231,8 @@ class TaskSetPermutation {
                            // just move forward
     {
       // TODO: NOTICE THE COST THERE
-      if (feasible_chains_.size() > 1e0) {
+      if (feasible_chains_.size() > 1e1) {
+        // CoutError("too many feasible_chains!");
         feasible_chains_.pop_back();
       }
       feasible_chains_.push_back(
@@ -270,7 +277,7 @@ class TaskSetPermutation {
   VariableRange variable_range_od_;
   int infeasible_iteration_ = 0;
   LPOptimizer lp_optimizer_;
-  std::vector<FeasibleChainManager> feasible_chains_;
+  FeasiblieChainsManagerVec feasible_chains_;
 };
 
 template <typename ObjectiveFunction>
