@@ -51,8 +51,10 @@ TEST_F(PermutationTest18, FeasibleChainManager) {
 
 TEST_F(PermutationTest18, IfChainsContainBetterPerm) {
   TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01 =
+      task_set_perms.adjacent_two_task_permutations_[0];
+  TwoTaskPermutations perm12 =
+      task_set_perms.adjacent_two_task_permutations_[1];
   perm01.print();
   perm12.print();
   ChainsPermutation chains_perm;
@@ -169,8 +171,10 @@ TEST_F(PermutationTest23, FeasibleChainManager) {
 
 TEST_F(PermutationTest23, IfChainsContainBetterPerm) {
   TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01 =
+      task_set_perms.adjacent_two_task_permutations_[0];
+  TwoTaskPermutations perm12 =
+      task_set_perms.adjacent_two_task_permutations_[1];
   perm01.print();
   std::cout << "***********************************\n";
   perm12.print();

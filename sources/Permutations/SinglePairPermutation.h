@@ -75,7 +75,12 @@ template <>
 struct std::hash<DAG_SPACE::SinglePairPermutation> {
   std::size_t operator()(
       const DAG_SPACE::SinglePairPermutation& perm_single) const {
-    if (perm_single.index_global_ >= 0) return perm_single.index_global_;
+    if (perm_single.index_global_ >= 0)
+      return perm_single.index_global_;
+    else
+      CoutError(
+          "Please initialize the index_global_ in SinglePairPermutation for "
+          "the usage of hash!");
     std::hash<std::string> hasher;
     const DAG_SPACE::PermutationInequality& ineq = perm_single.inequality_;
     return hasher(std::to_string(ineq.task_prev_id_) + "," +
