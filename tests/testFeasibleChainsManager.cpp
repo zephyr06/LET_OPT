@@ -119,8 +119,10 @@ TEST_F(PermutationTest18, IfFutureEdgesContainBetterPerm) {
 
 TEST_F(PermutationTest18, TakeCommonElements) {
   TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01 =
+      task_set_perms.adjacent_two_task_permutations_[0];
+  TwoTaskPermutations perm12 =
+      task_set_perms.adjacent_two_task_permutations_[1];
   TwoTaskPermutationsIterator iterator01(perm01);
   PermRefSet perm_set;
   perm_set.insert(*perm01[0]);
