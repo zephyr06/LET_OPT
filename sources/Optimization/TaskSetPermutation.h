@@ -97,17 +97,19 @@ class TaskSetPermutation {
     double obj_curr =
         ObjectiveFunction::Obj(dag_tasks_, tasks_info_, chains_perm,
                                best_possible_variable_od, sub_chains);
-#ifdef PROFILE_CODE
-    EndTimer(__FUNCTION__);
-#endif
-
     if (obj_curr > best_yet_obj_) {
       if (GlobalVariablesDAGOpt::debugMode)
         std::cout << "Early break at level " << chains_perm.size()
                   << " due to guarantee to perform worse at the "
                      "per-chain test\n";
+#ifdef PROFILE_CODE
+      EndTimer(__FUNCTION__);
+#endif
       return true;
     }
+#ifdef PROFILE_CODE
+    EndTimer(__FUNCTION__);
+#endif
     return false;
   }
 
