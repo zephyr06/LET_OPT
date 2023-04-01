@@ -26,6 +26,7 @@ std::vector<BatchResult> ResultsManager::GetBatchResVec(
 }
 
 void ResultsManager::PrintLongestCase(BASELINEMETHODS method) const {
+  if (runTimeAll_.find(method) == runTimeAll_.end()) return;
   if (runTimeAll_.at(method).size() > 0) {
     std::cout << "The case that takes the longest time in " +
                      BaselineMethodNames[method] + " is: "
@@ -63,6 +64,7 @@ void ResultsManager::PrintTimeOutCase() const {
 
 void ResultsManager::PrintTimeOutCaseSingleMethod(
     BASELINEMETHODS method) const {
+  if (runTimeAll_.find(method) == runTimeAll_.end()) return;
   std::cout << "Time-out files of method " + BaselineMethodNames[method] +
                    ":\n";
   for (uint i = 0; i < runTimeAll_.at(method).size(); i++) {

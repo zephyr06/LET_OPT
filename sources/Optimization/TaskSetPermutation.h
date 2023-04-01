@@ -222,9 +222,13 @@ class TaskSetPermutation {
                            // just move forward
     {
       // TODO: NOTICE THE COST THERE
+      if (feasible_chains_.size() > 1e3) {
+        feasible_chains_.pop_back();
+      }
       feasible_chains_.push_back(
           FeasibleChainManager(chains_perm, adjacent_two_task_permutations_,
                                ObjectiveFunction::type_trait));
+
       if (res.second < best_yet_obj_) {
         best_yet_obj_ = res.second;
         best_yet_chain_ = chains_perm;
