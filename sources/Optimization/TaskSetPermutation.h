@@ -173,8 +173,10 @@ class TaskSetPermutation {
 
     std::vector<Edge> unvisited_future_edges =
         GetUnvisitedFutureEdges(position);
+    BeginTimer("TwoTaskPermutationsIterator_constructor");
     TwoTaskPermutationsIterator iterator(
         adjacent_two_task_permutations_[position]);
+    EndTimer("TwoTaskPermutationsIterator_constructor");
     bool feasible_prev_chain = false;
 
     int count = iterator.size();
@@ -222,7 +224,7 @@ class TaskSetPermutation {
                            // just move forward
     {
       // TODO: NOTICE THE COST THERE
-      if (feasible_chains_.size() > 1e3) {
+      if (feasible_chains_.size() > 1e0) {
         feasible_chains_.pop_back();
       }
       feasible_chains_.push_back(

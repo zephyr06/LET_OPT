@@ -44,6 +44,10 @@ void TwoTaskPermutationsIterator::RemoveCandidate(
     const ChainsPermutation& chains_perm_partial,
     const FeasibleChainManager& feasible_chain_man,
     const std::vector<Edge>& unvisited_future_edges) {
+#ifdef PROFILE_CODE
+  BeginTimer(__FUNCTION__);
+#endif
+
   if (IfChainsContainBetterPerm(chains_perm_partial, feasible_chain_man) ||
       IfFutureEdgesContainBetterPerm(unvisited_future_edges,
                                      feasible_chain_man))
@@ -53,6 +57,9 @@ void TwoTaskPermutationsIterator::RemoveCandidate(
   // possibly better perms
   TakeCommonElements(
       feasible_chain_man.better_perm_per_chain_per_edge_.at(GetEdge()));
+#ifdef PROFILE_CODE
+  EndTimer(__FUNCTION__);
+#endif
 }
 
 }  // namespace DAG_SPACE

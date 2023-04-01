@@ -5,6 +5,7 @@
 
 #include "sources/Permutations/FeasibleChainManager.h"
 #include "sources/Permutations/TwoTaskPermutations.h"
+#include "sources/Utils/profilier.h"
 namespace DAG_SPACE {
 
 bool IfChainsContainBetterPerm(const ChainsPermutation& chains_perm_partial,
