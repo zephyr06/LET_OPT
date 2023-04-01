@@ -62,9 +62,6 @@ class TaskSetPermutation {
     lp_optimizer_.ClearCplexMemory();  // TODO: consider trying to optimize
     // performance by directly set coefficient
     // rather than remove/add constraints
-    if (infeasible_iteration_ > 0)
-      CoutError("find a case where infeasible_iteration is " +
-                std::to_string(infeasible_iteration_));
     return best_yet_obj_;
   }
 
