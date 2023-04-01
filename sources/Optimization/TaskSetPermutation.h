@@ -243,14 +243,6 @@ class TaskSetPermutation {
         best_yet_obj_ = res.second;
         best_yet_chain_ = chains_perm;
         best_yet_variable_od_ = res.first;
-        // TODO: remove the following check code!!
-        std::vector<std::vector<int>> sub_chains =
-            GetSubChains(dag_tasks_.chains_, chains_perm);
-        double obj_curr =
-            ObjectiveFunction::Obj(dag_tasks_, tasks_info_, chains_perm,
-                                   best_possible_variable_od_, sub_chains);
-        if (obj_curr > best_yet_obj_)
-          CoutError("Something's wrong with sub-chain obj evaluation");
       }
     } else {
       infeasible_iteration_++;
