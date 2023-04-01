@@ -212,7 +212,7 @@ class TaskSetPermutation {
       if (feasible_chains_.IfModified(position)) {
         iterator.RemoveCandidates(chains_perm, feasible_chains_.chain_man_vec_,
                                   unvisited_future_edges);
-        feasible_chains_.UnSetModify(position);
+        // feasible_chains_.UnSetModify(position);
       }
       EndTimer("RemoveCandidates_related");
     }
@@ -233,7 +233,7 @@ class TaskSetPermutation {
                            // just move forward
     {
       // TODO: NOTICE THE COST THERE
-      if (feasible_chains_.size() > 1e1) {
+      if (feasible_chains_.size() > 1e2) {
         // CoutError("too many feasible_chains!");
         feasible_chains_.pop_back();
       }
