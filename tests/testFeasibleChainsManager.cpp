@@ -204,6 +204,7 @@ TEST_F(PermutationTest23, TakeCommonElements) {
   iterator12.TakeCommonElements(perm_set);
   EXPECT_EQ(0, iterator12.size());
 }
+
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);

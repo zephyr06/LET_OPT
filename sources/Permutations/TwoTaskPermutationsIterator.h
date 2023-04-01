@@ -28,6 +28,16 @@ class TwoTaskPermutationsIterator : public TwoTaskPermutations {
                          const FeasibleChainManager& feasible_chain_man,
                          const std::vector<Edge>& unvisited_edges);
 
+    void RemoveCandidates(
+        const ChainsPermutation& chains_perm_partial,
+        const std::vector<FeasibleChainManager>& feasible_chain_man_vec,
+        const std::vector<Edge>& unvisited_edges) {
+        for (const auto& feasible_chain_man : feasible_chain_man_vec) {
+            RemoveCandidate(chains_perm_partial, feasible_chain_man,
+                            unvisited_edges);
+        }
+    }
+
     void TakeCommonElements(const PermRefSet& per_ptr_set);
 
     inline const std::shared_ptr<const SinglePairPermutation> pop_front() {

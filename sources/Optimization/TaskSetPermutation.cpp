@@ -131,6 +131,7 @@ TaskSetPermutation::TaskSetPermutation(
   // lp_optimizer_.AddVariablesOD();
   // lp_optimizer_.AddSchedulabilityConstraints();
   FindPairPermutations();
+  feasible_chains_.reserve(1e4);
 }
 
 void TaskSetPermutation::FindPairPermutations() {
