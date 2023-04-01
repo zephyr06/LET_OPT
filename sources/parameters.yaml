@@ -1,6 +1,6 @@
 %YAML:1.0
 debugMode: 0
-TIME_LIMIT: 1000 # seconds, -1 means unlimited time
+TIME_LIMIT: 15 # seconds, -1 means unlimited time
 SKIP_PERM: 2
 SearchDP_Friendly: 1
 # the proportion of permutations to keep! 1 means no sampling

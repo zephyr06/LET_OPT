@@ -81,15 +81,15 @@ void TwoTaskPermutations::AppendAllPermutations(
           superperiod_ / GetPeriod(job_curr, tasks_info_) -
               1) {  // reach end, record the current permutations
 
-        if (single_permutations_.size() > 20 &&
-            RandRange(0, 1) > GlobalVariablesDAGOpt::SAMPLE_SMALL_TASKS) {
-          continue;
-        } else {
-          permutation_current_copy.index_global_ = perm_count_++;
-          single_permutations_.push_back(
-              std::make_shared<const SinglePairPermutation>(
-                  permutation_current_copy));
-        }
+        // if (single_permutations_.size() > 20 &&
+        //     RandRange(0, 1) > GlobalVariablesDAGOpt::SAMPLE_SMALL_TASKS) {
+        //   continue;
+        // } else {
+        permutation_current_copy.index_global_ = perm_count_++;
+        single_permutations_.push_back(
+            std::make_shared<const SinglePairPermutation>(
+                permutation_current_copy));
+        // }
 
         if (single_permutations_.size() > 1e5)
           CoutError("Possibly too many permutations!");

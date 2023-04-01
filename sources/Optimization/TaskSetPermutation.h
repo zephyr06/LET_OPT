@@ -204,6 +204,7 @@ class TaskSetPermutation {
       if (count < -10) {
         CoutWarning("deadlock found during IterateSortedPerms");
       }
+      // if (RandRange(0, 1) > GlobalVariablesDAGOpt::SAMPLE_SMALL_TASKS)
       iterator.RemoveCandidates(chains_perm, feasible_chains_,
                                 unvisited_future_edges);
     }
