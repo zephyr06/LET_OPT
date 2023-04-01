@@ -20,6 +20,11 @@ class ChainsPermutation {
 
   ChainsPermutation(uint n) { permutation_chain_map_.reserve(n); }
 
+  // copy constructor
+  ChainsPermutation(const ChainsPermutation &other) {
+    permutation_chain_map_ = other.permutation_chain_map_;
+  }
+
   inline size_t size() const { return permutation_chain_map_.size(); }
 
   void push_back(const std::shared_ptr<const SinglePairPermutation> perm) {
