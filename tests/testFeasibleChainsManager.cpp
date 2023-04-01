@@ -199,7 +199,8 @@ TEST_F(PermutationTest23, IfChainsContainBetterPerm) {
 
 TEST_F(PermutationTest23, TakeCommonElements) {
   TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm12 =
+      task_set_perms.adjacent_two_task_permutations_[1];
   TwoTaskPermutationsIterator iterator12(perm12);
   PermRefSet perm_set;
   perm_set.insert(*perm12[3]);
