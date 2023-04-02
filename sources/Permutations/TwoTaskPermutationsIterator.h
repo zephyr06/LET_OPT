@@ -3,6 +3,7 @@
 
 #include <memory>
 
+#include "sources/Optimization/Variable.h"
 #include "sources/Permutations/FeasibleChainManager.h"
 #include "sources/Permutations/TwoTaskPermutations.h"
 #include "sources/Utils/profilier.h"
@@ -15,6 +16,23 @@ bool IfFutureEdgesContainBetterPerm(
     const std::vector<Edge>& unvisited_edges,
     const FeasibleChainManager& feasible_chain_man);
 
+// this struct saves the possible range for a valid perm_ineq;
+struct PermIneqBound_Range {
+  // the upper bound of the member 'lower_bound_' in class PermutationInequality
+  int lower_bound_s_upper_bound;
+  // the lower bound of the member 'lower_bound_' in class PermutationInequality
+  int upper_bound_s_lower_bound;
+};
+
+inline PermIneqBound_Range GetEdgeIneqRange(
+    const Edge& edge, const VariableRange& variable_range) {
+  int low = variable_range.lower_bound.at(edge.from_id).deadline -
+            variable_range.upper_bound.at(edge.to_id).offset;
+  int upp = variable_range.upper_bound.at(edge.from_id).deadline -
+            variable_range.lower_bound.at(edge.to_id).offset;
+  return PermIneqBound_Range{low, upp};
+}
+
 class TwoTaskPermutationsIterator : public TwoTaskPermutations {
  public:
   TwoTaskPermutationsIterator() {}
@@ -23,6 +41,17 @@ class TwoTaskPermutationsIterator : public TwoTaskPermutations {
       : TwoTaskPermutations(two_task_perms) {
     for (const auto& ptr : single_permutations_)
       single_perms_ite_record_.push_back(ptr);
+  }
+
+  TwoTaskPermutationsIterator(const TwoTaskPermutations& two_task_perms,
+                              const PermIneqBound_Range& perm_range)
+      : TwoTaskPermutations(two_task_perms) {
+    for (const auto& ptr : single_permutations_) {
+      if (ptr->inequality_.lower_bound_ <=
+              perm_range.lower_bound_s_upper_bound &&
+          ptr->inequality_.upper_bound_ >= perm_range.upper_bound_s_lower_bound)
+        single_perms_ite_record_.push_back(ptr);
+    }
   }
 
   // unvisited_future_edges don't include the edge to iterate in the current

@@ -12,15 +12,6 @@
 #include "sources/Utils/profilier.h"
 namespace DAG_SPACE {
 
-inline Interval GetEdgeIneqRange(const Edge& edge,
-                                 const VariableRange& variable_range) {
-  int start = variable_range.lower_bound.at(edge.from_id).deadline -
-              variable_range.upper_bound.at(edge.to_id).offset;
-  int finish = variable_range.upper_bound.at(edge.from_id).deadline -
-               variable_range.lower_bound.at(edge.to_id).offset;
-  return Interval(start, finish - start);
-}
-
 // currently, as asusme there is only one chain
 // TODO: what's the usage of chains in arguments
 class TaskSetPermutation {
@@ -163,6 +154,10 @@ class TaskSetPermutation {
 
     std::vector<Edge> unvisited_future_edges =
         GetUnvisitedFutureEdges(position);
+
+    // Interval perm_ineq_bound_range = GetEdgeIneqRange(
+    //     adjacent_two_task_permutations_[position].GetEdge(),
+    //     FindPossibleVariableOD(dag_Tasks_, tasks_info_, rta_, chains_perm));
     BeginTimer("TwoTaskPermutationsIterator_constructor");
     TwoTaskPermutationsIterator iterator(
         adjacent_two_task_permutations_[position]);

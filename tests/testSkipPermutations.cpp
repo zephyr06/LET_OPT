@@ -186,20 +186,29 @@ TEST_F(PermutationTest24_n3, select_feasible_perm) {
   perm12.print();
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
-  TwoTaskPermutationsIterator iterator(
-      task_sets_perms.adjacent_two_task_permutations_[1]);
-  // iterator.RemoveCandidatesBasedOnAvailableChains(chains_perm);
   std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
   VariableRange variable_range =
       FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
   variable_range.lower_bound.print();
   variable_range.upper_bound.print();
   Edge edge_ite(1, 2);
-  Interval edge_range = GetEdgeIneqRange(edge_ite, variable_range);
-  EXPECT_EQ(18 - 10, edge_range.start);
-  EXPECT_EQ(20 - 0, edge_range.getFinish());
-  std::cout << "Valid range for edge(1,2): " << edge_range.start << ", "
-            << edge_range.getFinish() << "\n";
+  PermIneqBound_Range edge_range = GetEdgeIneqRange(edge_ite, variable_range);
+  EXPECT_EQ(18 - 10, edge_range.lower_bound_s_upper_bound);
+  EXPECT_EQ(20 - 0, edge_range.upper_bound_s_lower_bound);
+  std::cout << "Valid range for edge(1,2): "
+            << edge_range.lower_bound_s_upper_bound << ", "
+            << edge_range.upper_bound_s_lower_bound << "\n";
+
+  EXPECT_FALSE(chains_perm.IsValid(task_sets_perms.variable_range_od_,
+                                   *perm12[0],
+                                   task_sets_perms.graph_of_all_ca_chains_));
+
+  EXPECT_TRUE(chains_perm.IsValid(task_sets_perms.variable_range_od_,
+                                  *perm12[1],
+                                  task_sets_perms.graph_of_all_ca_chains_));
+  TwoTaskPermutationsIterator iterator(
+      task_sets_perms.adjacent_two_task_permutations_[1], edge_range);
+  EXPECT_EQ(1, iterator.size());
 }
 
 int main(int argc, char** argv) {
