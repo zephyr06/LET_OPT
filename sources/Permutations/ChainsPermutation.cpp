@@ -173,17 +173,16 @@ bool ChainsPermutation::IsValid(
     const GraphOfChains& graph_of_all_ca_chains) const {
   int perm_single_chain_size = permutation_chain_map_.size();
   if (perm_single_chain_size > 0) {
+    // TODO: this function has not been fully tested
+    if (!IsPermConflicted_CheckAllSerialConnect(variable_od_range, perm_curr,
+                                                graph_of_all_ca_chains))
+      return false;
     if (!IsPermConflicted_CheckAllWithSameSource(variable_od_range, perm_curr,
                                                  graph_of_all_ca_chains))
       return false;
 
     if (!IsPermConflicted_CheckAllWithSameSink(variable_od_range, perm_curr,
                                                graph_of_all_ca_chains))
-      return false;
-
-    // TODO: this function has not been fully tested
-    if (!IsPermConflicted_CheckAllSerialConnect(variable_od_range, perm_curr,
-                                                graph_of_all_ca_chains))
       return false;
   }
   return true;
@@ -195,7 +194,7 @@ VariableRange FindPossibleVariableOD(const DAG_Model& dag_tasks,
                                      const ChainsPermutation& chains_perm) {
   VariableRange variable_range = FindVariableRange(dag_tasks, rta);
   std::vector<Edge> edges = chains_perm.GetEdges();
-  for (int i = 0; i < chains_perm.size() + 1;
+  for (int i = 0; i <= chains_perm.size() + 1;
        i++) {  // TODO: improve efficiency there
     for (const auto& edge_curr : edges) {
       const PermutationInequality& ineq = chains_perm[edge_curr]->inequality_;
@@ -218,6 +217,21 @@ VariableRange FindPossibleVariableOD(const DAG_Model& dag_tasks,
       variable_range.lower_bound[next_id].offset = std::max(
           variable_range.lower_bound[next_id].offset,
           variable_range.lower_bound[prev_id].deadline - ineq.upper_bound_);
+
+      // offset + rta <= deadline
+      variable_range.lower_bound[prev_id].deadline =
+          std::max(variable_range.lower_bound[prev_id].deadline,
+                   variable_range.lower_bound[prev_id].offset + rta[prev_id]);
+      variable_range.upper_bound[prev_id].offset =
+          std::min(variable_range.upper_bound[prev_id].offset,
+                   variable_range.upper_bound[prev_id].deadline - rta[prev_id]);
+
+      variable_range.lower_bound[next_id].deadline =
+          std::max(variable_range.lower_bound[next_id].deadline,
+                   variable_range.lower_bound[next_id].offset + rta[next_id]);
+      variable_range.upper_bound[next_id].offset =
+          std::min(variable_range.upper_bound[next_id].offset,
+                   variable_range.upper_bound[next_id].deadline - rta[next_id]);
     }
   }
   return variable_range;
