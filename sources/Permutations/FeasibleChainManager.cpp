@@ -11,6 +11,7 @@ FeasibleChainManager::FeasibleChainManager(
     : feasible_chain_(chains_perm),
       adjacent_two_task_permutations_(adjacent_two_task_permutations) {
   FindBetterPermsPerEdge(obj_trait);
+  // std::cout << "Size of FeasibleChainManager: " << sizeof(*this) << "\n";
 }
 
 void FeasibleChainManager::FindBetterPermsPerEdge(
