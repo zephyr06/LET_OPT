@@ -145,6 +145,22 @@ class TaskSetPermutation {
   // optimize with Dynamic Programming
   // *********************************************
 
+  void PrintFeasibleChainsRecord() {
+    std::vector<Edge> edges;
+    for (uint i = 0; i < adjacent_two_task_permutations_.size(); i++)
+      edges.push_back(adjacent_two_task_permutations_[i].GetEdge());
+    int count = 0;
+    for (const auto& feasible_chain_man : feasible_chains_.chain_man_vec_) {
+      std::cout << "\n****************************\n";
+      std::cout << "Feasible chain index: " << count++ << "\n";
+      const ChainsPermutation& chains_perm = feasible_chain_man.feasible_chain_;
+      for (auto edge : edges)
+        std::cout << chains_perm[edge]->index_local_ << ", ";
+    }
+
+    std::cout << "\n****************************\n";
+  }
+
   template <typename ObjectiveFunction>
   int PerformOptimizationSort() {
     ChainsPermutation chains_perm;
@@ -154,6 +170,7 @@ class TaskSetPermutation {
               << feasible_chains_.size() << "\n";
     std::cout << "Decrease succes: " << decrease_success
               << ", Decrease Fail: " << decrease_fail << std::endl;
+    PrintFeasibleChainsRecord();
     return best_yet_obj_;
   }
 
