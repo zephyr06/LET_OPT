@@ -188,51 +188,104 @@ bool ChainsPermutation::IsValid(
   return true;
 }
 
+inline void UpdateVariableSafeMin(int& variable, int val,
+                                  bool& whether_changed) {
+  if (val > variable) whether_changed = true;
+  variable = std::max(variable, val);
+}
+inline void UpdateVariableSafeMax(int& variable, int val,
+                                  bool& whether_changed) {
+  if (val < variable) whether_changed = true;
+  variable = std::min(variable, val);
+}
+
 VariableRange FindPossibleVariableOD(const DAG_Model& dag_tasks,
                                      const TaskSetInfoDerived& tasks_info,
                                      const std::vector<int>& rta,
                                      const ChainsPermutation& chains_perm) {
   VariableRange variable_range = FindVariableRange(dag_tasks, rta);
   std::vector<Edge> edges = chains_perm.GetEdges();
-  for (int i = 0; i <= chains_perm.size() + 1;
+  for (int i = 0; i <= chains_perm.size() + 1 + tasks_info.N;
        i++) {  // TODO: improve efficiency there
+    bool whether_changed = false;
     for (const auto& edge_curr : edges) {
       const PermutationInequality& ineq = chains_perm[edge_curr]->inequality_;
       int prev_id = ineq.task_prev_id_;
       int next_id = ineq.task_next_id_;
       //      o_{task_next_id} + lower_bound < d_{task_prev_id} ;
-      variable_range.lower_bound[prev_id].deadline = std::max(
+      // variable_range.lower_bound[prev_id].deadline = std::max(
+      //     variable_range.lower_bound[prev_id].deadline,
+      //     variable_range.lower_bound[next_id].offset + ineq.lower_bound_ +
+      //     1);
+      UpdateVariableSafeMin(
           variable_range.lower_bound[prev_id].deadline,
-          variable_range.lower_bound[next_id].offset + ineq.lower_bound_ + 1);
+          variable_range.lower_bound[next_id].offset + ineq.lower_bound_ + 1,
+          whether_changed);
 
-      variable_range.upper_bound[next_id].offset = std::min(
+      // variable_range.upper_bound[next_id].offset = std::min(
+      //     variable_range.upper_bound[next_id].offset,
+      //     variable_range.upper_bound[prev_id].deadline - ineq.lower_bound_ -
+      //     1);
+      UpdateVariableSafeMax(
           variable_range.upper_bound[next_id].offset,
-          variable_range.upper_bound[prev_id].deadline - ineq.lower_bound_ - 1);
+          variable_range.upper_bound[prev_id].deadline - ineq.lower_bound_ - 1,
+          whether_changed);
 
       //      d_{task_prev_id} <= o_{task_next_id} + upper_bound ;
-      variable_range.upper_bound[prev_id].deadline = std::min(
-          variable_range.upper_bound[prev_id].deadline,
-          variable_range.upper_bound[next_id].offset + ineq.upper_bound_);
-
-      variable_range.lower_bound[next_id].offset = std::max(
+      // variable_range.lower_bound[next_id].offset = std::max(
+      //     variable_range.lower_bound[next_id].offset,
+      //     variable_range.lower_bound[prev_id].deadline - ineq.upper_bound_);
+      UpdateVariableSafeMin(
           variable_range.lower_bound[next_id].offset,
-          variable_range.lower_bound[prev_id].deadline - ineq.upper_bound_);
+          variable_range.lower_bound[prev_id].deadline - ineq.upper_bound_,
+          whether_changed);
+
+      // variable_range.upper_bound[prev_id].deadline = std::min(
+      //     variable_range.upper_bound[prev_id].deadline,
+      //     variable_range.upper_bound[next_id].offset + ineq.upper_bound_);
+      UpdateVariableSafeMax(
+          variable_range.upper_bound[prev_id].deadline,
+          variable_range.upper_bound[next_id].offset + ineq.upper_bound_,
+          whether_changed);
 
       // offset + rta <= deadline
-      variable_range.lower_bound[prev_id].deadline =
-          std::max(variable_range.lower_bound[prev_id].deadline,
-                   variable_range.lower_bound[prev_id].offset + rta[prev_id]);
-      variable_range.upper_bound[prev_id].offset =
-          std::min(variable_range.upper_bound[prev_id].offset,
-                   variable_range.upper_bound[prev_id].deadline - rta[prev_id]);
+      // variable_range.lower_bound[prev_id].deadline =
+      //     std::max(variable_range.lower_bound[prev_id].deadline,
+      //              variable_range.lower_bound[prev_id].offset +
+      //              rta[prev_id]);
+      UpdateVariableSafeMin(
+          variable_range.lower_bound[prev_id].deadline,
+          variable_range.lower_bound[prev_id].offset + rta[prev_id],
+          whether_changed);
 
-      variable_range.lower_bound[next_id].deadline =
-          std::max(variable_range.lower_bound[next_id].deadline,
-                   variable_range.lower_bound[next_id].offset + rta[next_id]);
-      variable_range.upper_bound[next_id].offset =
-          std::min(variable_range.upper_bound[next_id].offset,
-                   variable_range.upper_bound[next_id].deadline - rta[next_id]);
+      // variable_range.upper_bound[prev_id].offset =
+      //     std::min(variable_range.upper_bound[prev_id].offset,
+      //              variable_range.upper_bound[prev_id].deadline -
+      //              rta[prev_id]);
+      UpdateVariableSafeMax(
+          variable_range.upper_bound[prev_id].offset,
+          variable_range.upper_bound[prev_id].deadline - rta[prev_id],
+          whether_changed);
+
+      // variable_range.lower_bound[next_id].deadline =
+      //     std::max(variable_range.lower_bound[next_id].deadline,
+      //              variable_range.lower_bound[next_id].offset +
+      //              rta[next_id]);
+      UpdateVariableSafeMin(
+          variable_range.lower_bound[next_id].deadline,
+          variable_range.lower_bound[next_id].offset + rta[next_id],
+          whether_changed);
+
+      // variable_range.upper_bound[next_id].offset =
+      //     std::min(variable_range.upper_bound[next_id].offset,
+      //              variable_range.upper_bound[next_id].deadline -
+      //              rta[next_id]);
+      UpdateVariableSafeMax(
+          variable_range.upper_bound[next_id].offset,
+          variable_range.upper_bound[next_id].deadline - rta[next_id],
+          whether_changed);
     }
+    if (!whether_changed) break;
   }
   return variable_range;
 }
