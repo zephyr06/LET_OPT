@@ -145,17 +145,35 @@ class TaskSetPermutation {
   // optimize with Dynamic Programming
   // *********************************************
 
-  void PrintFeasibleChainsRecord() {
+  std::vector<Edge> GetAllEdges() const {
     std::vector<Edge> edges;
+    edges.reserve(adjacent_two_task_permutations_.size());
     for (uint i = 0; i < adjacent_two_task_permutations_.size(); i++)
       edges.push_back(adjacent_two_task_permutations_[i].GetEdge());
+    return edges;
+  }
+
+  void PrintSinglePermIndex(const ChainsPermutation& chains_perm,
+                            const std::vector<Edge>& edges) {
+    for (auto edge : edges)
+      if (chains_perm.exist(edge))
+        std::cout << chains_perm[edge]->index_local_ << ", ";
+  }
+  void PrintSinglePermIndex(const ChainsPermutation& chains_perm) {
+    auto edges = GetAllEdges();
+    for (auto edge : edges)
+      if (chains_perm.exist(edge))
+        std::cout << chains_perm[edge]->index_local_ << ", ";
+  }
+
+  void PrintFeasibleChainsRecord() {
+    std::vector<Edge> edges = GetAllEdges();
     int count = 0;
     for (const auto& feasible_chain_man : feasible_chains_.chain_man_vec_) {
       std::cout << "\n****************************\n";
       std::cout << "Feasible chain index: " << count++ << "\n";
       const ChainsPermutation& chains_perm = feasible_chain_man.feasible_chain_;
-      for (auto edge : edges)
-        std::cout << chains_perm[edge]->index_local_ << ", ";
+      PrintSinglePermIndex(chains_perm, edges);
     }
 
     std::cout << "\n****************************\n";
@@ -214,13 +232,22 @@ class TaskSetPermutation {
         }
         chains_perm.pop(*perm_sing_curr);
       } else {
-        if (GlobalVariablesDAGOpt::debugMode)
-          std::cout << "Early break at level " << position
-                    << " due to being conflicted permutations while "
+        if (GlobalVariablesDAGOpt::debugMode) {
+          std::cout << "Early break at level " << position << ": ";
+          PrintSinglePermIndex(chains_perm);
+          std::cout << " due to being conflicted permutations while "
                        "exploring the "
                     << adjacent_two_task_permutations_[position].size() -
                            iterator.size()
                     << " permutations\n";
+          std::cout << "\n";
+        }
+        // std::cout << "Early break at level " << position
+        //           << " due to being conflicted permutations while "
+        //              "exploring the "
+        //           << adjacent_two_task_permutations_[position].size() -
+        //                  iterator.size()
+        //           << " permutations\n";
       }
       count--;
       if (count < -10) {
