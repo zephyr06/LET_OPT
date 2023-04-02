@@ -152,6 +152,8 @@ class TaskSetPermutation {
     lp_optimizer_.ClearCplexMemory();
     std::cout << "The number of feasibile chains found: "
               << feasible_chains_.size() << "\n";
+    std::cout << "Decrease succes: " << decrease_success
+              << ", Decrease Fail: " << decrease_fail << std::endl;
     return best_yet_obj_;
   }
 
@@ -209,9 +211,16 @@ class TaskSetPermutation {
       }
       // if (RandRange(0, 1) > GlobalVariablesDAGOpt::SAMPLE_SMALL_TASKS)
       BeginTimer("RemoveCandidates_related");
+      // TODO: predict decrease_fail?
       if (feasible_chains_.IfModified(position)) {
+        uint size_before = iterator.size();
         iterator.RemoveCandidates(chains_perm, feasible_chains_.chain_man_vec_,
                                   unvisited_future_edges);
+        uint size_after = iterator.size();
+        if (size_after < size_before)
+          decrease_success++;
+        else
+          decrease_fail++;
         // feasible_chains_.UnSetModify(position);
       }
       EndTimer("RemoveCandidates_related");
@@ -272,6 +281,8 @@ class TaskSetPermutation {
   int infeasible_iteration_ = 0;
   LPOptimizer lp_optimizer_;
   FeasiblieChainsManagerVec feasible_chains_;
+  int decrease_success = 0;
+  int decrease_fail = 0;
 };
 
 template <typename ObjectiveFunction>
