@@ -52,6 +52,11 @@ class FeasiblieChainsManagerVec {
   }
 
   void push_back(const FeasibleChainManager& feasible_chain_man) {
+    if (chain_man_vec_.size() >
+        uint(GlobalVariablesDAGOpt::FEASIBLE_CHAINS_MAX)) {
+      // CoutError("too many feasible_chains!");
+      chain_man_vec_.pop_back();
+    }
     chain_man_vec_.push_back(feasible_chain_man);
     SetModify();
   }
