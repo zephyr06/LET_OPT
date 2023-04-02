@@ -163,15 +163,6 @@ class PermutationTest24_n3 : public PermutationTestBase {
   void SetUp() override { SetUpBase("test_n3_v24"); }
 };
 
-Interval GetEdgeIneqRange(const Edge& edge,
-                          const VariableRange& variable_range) {
-  int start = variable_range.lower_bound.at(edge.from_id).deadline -
-              variable_range.upper_bound.at(edge.to_id).offset;
-  int finish = variable_range.upper_bound.at(edge.from_id).deadline -
-               variable_range.lower_bound.at(edge.to_id).offset;
-  return Interval(start, finish - start);
-}
-
 TEST_F(PermutationTest24_n3, FindPossibleVariableOD) {
   TaskSetPermutation task_sets_perms(dag_tasks, dag_tasks.chains_);
   auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];

@@ -5,44 +5,21 @@
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
 #include "sources/Optimization/GraphOfChains.h"
 #include "sources/Optimization/LPSolver_Cplex.h"
+#include "sources/Optimization/TaskSetPermutationHelper.h"
 #include "sources/Permutations/ChainsPermutation.h"
 #include "sources/Permutations/TwoTaskPermutationsIterator.h"
 #include "sources/Utils/BatchUtils.h"
 #include "sources/Utils/profilier.h"
 namespace DAG_SPACE {
 
-bool ExamVariableFeasibility(const VariableOD& variable,
-                             const ChainsPermutation& chains_perm,
-                             const GraphOfChains& graph_of_all_ca_chains,
-                             const DAG_Model& dag_task,
-                             const std::vector<int>& chain);
-
-VariableOD FindODFromSingleChainPermutation(
-    const DAG_Model& dag_tasks, const ChainsPermutation& chains_perm,
-    const GraphOfChains& graph_of_all_ca_chains, const std::vector<int>& chain,
-    const std::vector<int>& rta);
-
-std::vector<std::vector<int>> GetSubChains(
-    const std::vector<std::vector<int>>& chains_full_length,
-    const ChainsPermutation& chains_perm);
-// Note: this function doesn't change chains_perm
-std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
-    ChainsPermutation& chains_perm,
-    const std::shared_ptr<const SinglePairPermutation> single_perm,
-    const std::vector<std::vector<int>>& chains, const DAG_Model& dag_tasks,
-    const TaskSetInfoDerived& tasks_info);
-
-std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
-    const ChainsPermutation& chains_perm,
-    const std::vector<std::vector<int>>& chains, const DAG_Model& dag_tasks,
-    const TaskSetInfoDerived& tasks_info);
-
-// return true if it's possible for curr_first_job_maps to achieve better
-// performance than curr_best_first_job_maps
-bool CompareNewPerm(
-    const std::vector<std::unordered_map<JobCEC, JobCEC>>& curr_first_job_maps,
-    const std::vector<std::unordered_map<JobCEC, JobCEC>>&
-        curr_best_first_job_maps);
+inline Interval GetEdgeIneqRange(const Edge& edge,
+                                 const VariableRange& variable_range) {
+  int start = variable_range.lower_bound.at(edge.from_id).deadline -
+              variable_range.upper_bound.at(edge.to_id).offset;
+  int finish = variable_range.upper_bound.at(edge.from_id).deadline -
+               variable_range.lower_bound.at(edge.to_id).offset;
+  return Interval(start, finish - start);
+}
 
 // currently, as asusme there is only one chain
 // TODO: what's the usage of chains in arguments
@@ -105,6 +82,7 @@ class TaskSetPermutation {
 #ifdef PROFILE_CODE
       EndTimer(__FUNCTION__);
 #endif
+      // TODO: push to feasible_chains_vec
       return true;
     }
 #ifdef PROFILE_CODE
