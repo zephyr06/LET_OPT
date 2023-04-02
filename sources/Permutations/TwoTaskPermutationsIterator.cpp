@@ -31,6 +31,9 @@ bool IfFutureEdgesContainBetterPerm(
 
 void TwoTaskPermutationsIterator::TakeCommonElements(
     const PermRefSet& per_ptr_set) {
+#ifdef PROFILE_CODE
+  BeginTimer(__FUNCTION__);
+#endif
   for (auto itr = single_perms_ite_record_.begin();
        itr != single_perms_ite_record_.end();) {
     if (per_ptr_set.find(**itr) == per_ptr_set.end())
@@ -38,6 +41,9 @@ void TwoTaskPermutationsIterator::TakeCommonElements(
     else
       ++itr;
   }
+#ifdef PROFILE_CODE
+  EndTimer(__FUNCTION__);
+#endif
 }
 
 // first generate candidates to select at this level, then take intersection
@@ -46,9 +52,15 @@ void TwoTaskPermutationsIterator::RemoveCandidate(
     const ChainsPermutation& chains_perm_partial,
     const FeasibleChainManager& feasible_chain_man,
     const std::vector<Edge>& unvisited_future_edges) {
+#ifdef PROFILE_CODE
+  BeginTimer(__FUNCTION__);
+#endif
   if (IfChainsContainBetterPerm(chains_perm_partial, feasible_chain_man) ||
       IfFutureEdgesContainBetterPerm(unvisited_future_edges,
                                      feasible_chain_man)) {
+#ifdef PROFILE_CODE
+    EndTimer(__FUNCTION__);
+#endif
     return;
   }
 
@@ -56,6 +68,9 @@ void TwoTaskPermutationsIterator::RemoveCandidate(
   // possibly better perms
   TakeCommonElements(
       feasible_chain_man.better_perm_per_chain_per_edge_.at(GetEdge()));
+#ifdef PROFILE_CODE
+  EndTimer(__FUNCTION__);
+#endif
 }
 
 }  // namespace DAG_SPACE
