@@ -242,7 +242,8 @@ class TaskSetPermutation {
                            // just move forward
     {
       // TODO: NOTICE THE COST THERE
-      if (feasible_chains_.size() > 1e2) {
+      if (feasible_chains_.size() >
+          uint(GlobalVariablesDAGOpt::FEASIBLE_CHAINS_MAX)) {
         // CoutError("too many feasible_chains!");
         feasible_chains_.pop_back();
       }
