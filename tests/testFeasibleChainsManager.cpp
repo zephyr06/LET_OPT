@@ -212,6 +212,37 @@ TEST_F(PermutationTest23, TakeCommonElements) {
   EXPECT_EQ(0, iterator12.size());
 }
 
+class PermutationTest22_n5 : public PermutationTestBase {
+  void SetUp() override { SetUpBase("test_n5_v22"); }
+};
+
+TEST_F(PermutationTest22_n5, Feasible_Chain_should_skip_perms) {
+  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  auto perm41 = task_set_perms.adjacent_two_task_permutations_[0];
+  auto perm32 = task_set_perms.adjacent_two_task_permutations_[1];
+  auto perm10 = task_set_perms.adjacent_two_task_permutations_[2];
+  auto perm21 = task_set_perms.adjacent_two_task_permutations_[3];
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm41[0]);
+  chains_perm.push_back(perm32[0]);
+  chains_perm.push_back(perm10[1]);
+  ChainsPermutation chains_perm2 = chains_perm;
+  chains_perm.push_back(perm21[80]);
+  task_set_perms.feasible_chains_.push_back(FeasibleChainManager(
+      chains_perm, task_set_perms.adjacent_two_task_permutations_,
+      "ReactionTimeApprox"));
+  task_set_perms.PrintFeasibleChainsRecord();
+  uint position = 3;
+  TwoTaskPermutationsIterator iterator21(
+      task_set_perms.adjacent_two_task_permutations_[position]);
+  std::vector<Edge> unvisited_future_edges =
+      task_set_perms.GetUnvisitedFutureEdges(position);
+  iterator21.RemoveCandidates(chains_perm2,
+                              task_set_perms.feasible_chains_.chain_man_vec_,
+                              unvisited_future_edges);
+  EXPECT_EQ(80, iterator21.size());
+}
+
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
