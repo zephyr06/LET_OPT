@@ -86,6 +86,7 @@ void TwoTaskPermutations::AppendAllPermutations(
         //   continue;
         // } else {
         permutation_current_copy.index_global_ = perm_count_++;
+        permutation_current_copy.index_local_ = perm_count_base_++;
         if (perm_count_ > 1e4) {
           CoutError("Too large perm_count!");
         }

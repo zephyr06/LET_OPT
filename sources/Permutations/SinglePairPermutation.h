@@ -57,6 +57,7 @@ struct SinglePairPermutation {
       job_first_react_matches_;  // TODO: there should be only one job in the
                                  // vector, make it happen
   int index_global_;
+  int index_local_;
 };
 
 typedef std::shared_ptr<const SinglePairPermutation> PermPtr;

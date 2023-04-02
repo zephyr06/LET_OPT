@@ -47,7 +47,8 @@ class TwoTaskPermutations {
         task_prev_id_(task_prev_id),
         task_next_id_(task_next_id),
         tasks_info_(tasks_info),
-        perm_count_(perm_count_global) {
+        perm_count_(perm_count_global),
+        perm_count_base_(0) {
     superperiod_ = GetSuperPeriod(tasks_info.GetTask(task_prev_id),
                                   tasks_info.GetTask(task_next_id));
     variable_od_range_ = FindVariableRange(dag_tasks, rta);
@@ -85,7 +86,8 @@ class TwoTaskPermutations {
   int superperiod_;
   VariableRange variable_od_range_;
   PermPtrVec single_permutations_;
-  int perm_count_;
+  int perm_count_;       // to count the perm of the whole task set
+  int perm_count_base_;  // start from 0, to count the perms of this edge
 };
 
 }  // namespace DAG_SPACE

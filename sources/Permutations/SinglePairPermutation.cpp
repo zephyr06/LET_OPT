@@ -49,6 +49,7 @@ SinglePairPermutation::SinglePairPermutation(
   inequality_ = other.inequality_;
   job_first_react_matches_ = other.job_first_react_matches_;
   index_global_ = other.index_global_;
+  index_local_ = other.index_local_;
   EndTimer("SinglePairPermutation_copy");
 }
 
@@ -56,6 +57,9 @@ void SinglePairPermutation::print() const {
   if (index_global_ >= 0)
     std::cout << "Global index of the SinglePairPermutation is "
               << index_global_ << "\n";
+  if (index_local_ >= 0)
+    std::cout << "Local index of the SinglePairPermutation is " << index_local_
+              << "\n";
   inequality_.print();
   for (const auto& [key, value] : job_first_react_matches_) {
     std::cout << key.ToString() << "'s following jobs are ";
