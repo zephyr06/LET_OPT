@@ -19,13 +19,15 @@ void FeasibleChainManager::FindBetterPermsPerEdge(
   for (uint i = 0; i < adjacent_two_task_permutations_.size(); i++) {
     const TwoTaskPermutations& perms_all = adjacent_two_task_permutations_[i];
     const Edge& edge_curr = perms_all.GetEdge();
-    const SinglePairPermutation& perm_curr = *feasible_chain_[edge_curr];
     PermRefSet perm_ref_set;
     perm_ref_set.reserve(perms_all.size());
-    for (uint j = 0; j < perms_all.size(); j++) {
-      const auto& perm_ptr = perms_all[j];
-      if (!IfSkipAnotherPerm(perm_curr, *perm_ptr, obj_trait)) {
-        perm_ref_set.insert(*perm_ptr);
+    if (feasible_chain_.exist(edge_curr)) {
+      const SinglePairPermutation& perm_curr = *feasible_chain_[edge_curr];
+      for (uint j = 0; j < perms_all.size(); j++) {
+        const auto& perm_ptr = perms_all[j];
+        if (!IfSkipAnotherPerm(perm_curr, *perm_ptr, obj_trait)) {
+          perm_ref_set.insert(*perm_ptr);
+        }
       }
     }
     better_perm_per_chain_per_edge_[edge_curr] = perm_ref_set;

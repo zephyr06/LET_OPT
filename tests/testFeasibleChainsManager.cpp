@@ -171,6 +171,25 @@ TEST_F(PermutationTest23, FeasibleChainManager) {
   }
 }
 
+TEST_F(PermutationTest23, FeasibleChainManager_incomplete) {
+  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  perm01.print();
+  std::cout << "***********************************\n";
+  perm12.print();
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[1]);
+  FeasibleChainManager fea_chain_man(
+      chains_perm, task_set_perms.adjacent_two_task_permutations_,
+      "ReactionTime");
+  EXPECT_EQ(2, fea_chain_man.better_perm_per_chain_per_edge_.size());
+  EXPECT_EQ(1,
+            fea_chain_man.better_perm_per_chain_per_edge_[Edge(0, 1)].size());
+  EXPECT_EQ(0,
+            fea_chain_man.better_perm_per_chain_per_edge_[Edge(1, 2)].size());
+}
+
 TEST_F(PermutationTest23, IfChainsContainBetterPerm) {
   TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
   TwoTaskPermutations perm01 =
