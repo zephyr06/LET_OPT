@@ -58,10 +58,18 @@ class TaskSetPermutation {
 #ifdef PROFILE_CODE
         EndTimer(__FUNCTION__);
 #endif
-        if (GlobalVariablesDAGOpt::debugMode)
-          std::cout << "Early break at level " << chains_perm.size()
-                    << " due to being unschedulable at the per-chain "
-                       "test\n";
+        if (GlobalVariablesDAGOpt::debugMode) {
+          std::cout << "Early break at level " << chains_perm.size() << ": ";
+          PrintSinglePermIndex(chains_perm);
+          std::cout
+              << " due to being conflicted permutations from sub-chains while "
+                 "exploring the "
+              // << adjacent_two_task_permutations_[position].size() -
+              //        iterator.size()
+              << " permutations\n";
+          std::cout << "\n";
+        }
+
         return true;
       }
     }
@@ -73,9 +81,10 @@ class TaskSetPermutation {
                                best_possible_variable_od, sub_chains);
     if (obj_curr > best_yet_obj_) {
       if (GlobalVariablesDAGOpt::debugMode)
-        std::cout << "Early break at level " << chains_perm.size()
-                  << " due to guarantee to perform worse at the "
-                     "per-chain test\n";
+        std::cout << "Early break at level " << chains_perm.size() << ": ";
+      PrintSinglePermIndex(chains_perm);
+      std::cout << " due to guarantee to perform worse at the "
+                   "per-chain test\n";
 #ifdef PROFILE_CODE
       EndTimer(__FUNCTION__);
 #endif
