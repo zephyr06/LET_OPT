@@ -31,9 +31,9 @@ bool IfFutureEdgesContainBetterPerm(
 
 void TwoTaskPermutationsIterator::TakeCommonElements(
     const PermRefSet& per_ptr_set) {
-  #ifdef PROFILE_CODE
-    BeginTimer(__FUNCTION__);
-  #endif
+  // #ifdef PROFILE_CODE
+  //   BeginTimer(__FUNCTION__);
+  // #endif
   for (auto itr = single_perms_ite_record_.begin();
        itr != single_perms_ite_record_.end();) {
     if (per_ptr_set.find(**itr) == per_ptr_set.end())
@@ -41,9 +41,9 @@ void TwoTaskPermutationsIterator::TakeCommonElements(
     else
       ++itr;
   }
-  #ifdef PROFILE_CODE
-    EndTimer(__FUNCTION__);
-  #endif
+  // #ifdef PROFILE_CODE
+  //   EndTimer(__FUNCTION__);
+  // #endif
 }
 
 // first generate candidates to select at this level, then take intersection

@@ -12,6 +12,7 @@ int debugMode = (int)ConfigParameters["debugMode"];
 int SKIP_PERM = (int)ConfigParameters["SKIP_PERM"];
 int TIME_LIMIT = (int)ConfigParameters["TIME_LIMIT"];
 double SAMPLE_SMALL_TASKS = (double)ConfigParameters["SAMPLE_SMALL_TASKS"];
+double SAMPLE_FEASIBLE_CHAINS = (double)ConfigParameters["SAMPLE_FEASIBLE_CHAINS"];
 const double kCplexInequalityThreshold =
     (double)ConfigParameters["kCplexInequalityThreshold"];
 int SearchDP_Friendly = (int)ConfigParameters["SearchDP_Friendly"];

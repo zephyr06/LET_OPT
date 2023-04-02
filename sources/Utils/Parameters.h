@@ -19,6 +19,7 @@ extern int debugMode;
 extern int SKIP_PERM;
 extern int TIME_LIMIT;
 extern double SAMPLE_SMALL_TASKS;
+extern double SAMPLE_FEASIBLE_CHAINS;
 extern int SearchDP_Friendly;
 extern const double kCplexInequalityThreshold;
 
