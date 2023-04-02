@@ -60,6 +60,14 @@ TEST_F(PermutationTest1, Iteration) {
   EXPECT_THAT(task_sets_perms.iteration_count_, testing::Le(6));
   EXPECT_EQ(20, obj_find);
 }
+TEST_F(PermutationTest1, Iteration_Sorted) {
+  TaskSetPermutation task_sets_perms(dag_tasks, {task_chain});
+  int obj_find = task_sets_perms.PerformOptimizationSort<ObjReactionTime>();
+  // task_sets_perms.best_yet_chain_[0]->print();
+  // task_sets_perms.best_yet_chain_[1]->print();
+  EXPECT_THAT(task_sets_perms.iteration_count_, testing::Le(6));
+  EXPECT_EQ(20, obj_find);
+}
 TEST_F(PermutationTest1, GetUnvisitedFutureEdges) {
   TaskSetPermutation task_sets_perms(dag_tasks, {task_chain});
   EXPECT_EQ(1, task_sets_perms.GetUnvisitedFutureEdges(0).size());

@@ -193,8 +193,8 @@ TEST_F(PermutationTest24_n3, select_feasible_perm) {
   variable_range.upper_bound.print();
   Edge edge_ite(1, 2);
   PermIneqBound_Range edge_range = GetEdgeIneqRange(edge_ite, variable_range);
-  EXPECT_EQ(18 - 10, edge_range.lower_bound_s_upper_bound);
-  EXPECT_EQ(20 - 0, edge_range.upper_bound_s_lower_bound);
+  EXPECT_EQ(20 - 0, edge_range.lower_bound_s_upper_bound);
+  EXPECT_EQ(18 - 10, edge_range.upper_bound_s_lower_bound);
   std::cout << "Valid range for edge(1,2): "
             << edge_range.lower_bound_s_upper_bound << ", "
             << edge_range.upper_bound_s_lower_bound << "\n";
@@ -209,6 +209,34 @@ TEST_F(PermutationTest24_n3, select_feasible_perm) {
   TwoTaskPermutationsIterator iterator(
       task_sets_perms.adjacent_two_task_permutations_[1], edge_range);
   EXPECT_EQ(1, iterator.size());
+}
+
+class PermutationTest18_n3 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n3_v18");
+    dag_tasks.chains_ = {{0, 1, 2}};
+  }
+};
+
+TEST_F(PermutationTest18_n3, select_feasible_perm) {
+  TaskSetPermutation task_sets_perms(dag_tasks, dag_tasks.chains_);
+  auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];
+  auto perm12 = task_sets_perms.adjacent_two_task_permutations_[1];
+  perm01.print();
+  perm12.print();
+  ChainsPermutation chains_perm;
+  std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+  VariableRange variable_range =
+      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
+  variable_range.lower_bound.print();
+  variable_range.upper_bound.print();
+  Edge edge_ite(0, 1);
+  PermIneqBound_Range edge_range = GetEdgeIneqRange(edge_ite, variable_range);
+  EXPECT_EQ(10 - 0, edge_range.lower_bound_s_upper_bound);
+  EXPECT_EQ(1 - 17, edge_range.upper_bound_s_lower_bound);
+  TwoTaskPermutationsIterator iterator(
+      task_sets_perms.adjacent_two_task_permutations_[0], edge_range);
+  EXPECT_EQ(3, iterator.size());
 }
 
 int main(int argc, char** argv) {

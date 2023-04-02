@@ -26,10 +26,10 @@ struct PermIneqBound_Range {
 
 inline PermIneqBound_Range GetEdgeIneqRange(
     const Edge& edge, const VariableRange& variable_range) {
-  int low = variable_range.lower_bound.at(edge.from_id).deadline -
-            variable_range.upper_bound.at(edge.to_id).offset;
-  int upp = variable_range.upper_bound.at(edge.from_id).deadline -
+  int low = variable_range.upper_bound.at(edge.from_id).deadline -
             variable_range.lower_bound.at(edge.to_id).offset;
+  int upp = variable_range.lower_bound.at(edge.from_id).deadline -
+            variable_range.upper_bound.at(edge.to_id).offset;
   return PermIneqBound_Range{low, upp};
 }
 

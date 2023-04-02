@@ -155,12 +155,12 @@ class TaskSetPermutation {
     std::vector<Edge> unvisited_future_edges =
         GetUnvisitedFutureEdges(position);
 
-    // Interval perm_ineq_bound_range = GetEdgeIneqRange(
-    //     adjacent_two_task_permutations_[position].GetEdge(),
-    //     FindPossibleVariableOD(dag_Tasks_, tasks_info_, rta_, chains_perm));
     BeginTimer("TwoTaskPermutationsIterator_constructor");
+    PermIneqBound_Range perm_ineq_bound_range = GetEdgeIneqRange(
+        adjacent_two_task_permutations_[position].GetEdge(),
+        FindPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm));
     TwoTaskPermutationsIterator iterator(
-        adjacent_two_task_permutations_[position]);
+        adjacent_two_task_permutations_[position], perm_ineq_bound_range);
     EndTimer("TwoTaskPermutationsIterator_constructor");
     bool feasible_prev_chain = false;
 
