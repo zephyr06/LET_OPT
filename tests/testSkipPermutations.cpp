@@ -1,5 +1,6 @@
 #include "gmock/gmock.h"  // Brings in gMock.
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
+#include "sources/Optimization/LPSolver_Cplex.h"
 #include "sources/Optimization/TaskSetPermutation.h"
 #include "sources/Optimization/Variable.h"
 #include "sources/Permutations/ChainsPermutation.h"
@@ -9,6 +10,7 @@
 #include "sources/TaskModel/DAG_Model.h"
 #include "sources/Utils/Interval.h"
 #include "sources/Utils/JobCEC.h"
+#include "testEnv.cpp"
 
 using namespace DAG_SPACE;
 
@@ -76,10 +78,11 @@ TEST_F(PermutationTest1, FindBestPossibleVariableOD) {
   TaskSetPermutation task_sets_perms(dag_tasks, dag_tasks.chains_);
   VariableRange variable_range = FindPossibleVariableOD(
       dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm);
+  auto rta = GetResponseTimeTaskSet(dag_tasks);
 
   EXPECT_EQ(0, variable_range.lower_bound[1].offset);
   EXPECT_EQ(341, variable_range.lower_bound[1].deadline);  // modified
-  EXPECT_EQ(723, variable_range.upper_bound[1].offset);
+  EXPECT_EQ(82, variable_range.upper_bound[1].offset);     // true max is 82
   EXPECT_EQ(359, variable_range.upper_bound[1].deadline);
 
   EXPECT_EQ(0, variable_range.lower_bound[2].offset);
@@ -87,8 +90,8 @@ TEST_F(PermutationTest1, FindBestPossibleVariableOD) {
   EXPECT_EQ(9, variable_range.upper_bound[2].offset);
   EXPECT_EQ(10, variable_range.upper_bound[2].deadline);
 
-  EXPECT_EQ(151, variable_range.lower_bound[3].offset);  // modified
-  EXPECT_EQ(14, variable_range.lower_bound[3].deadline);
+  EXPECT_EQ(151, variable_range.lower_bound[3].offset);       // modified
+  EXPECT_EQ(165, variable_range.lower_bound[3].deadline);     // true min is 165
   EXPECT_EQ(159 + 10, variable_range.upper_bound[3].offset);  // modified
   EXPECT_EQ(200, variable_range.upper_bound[3].deadline);
 
@@ -100,12 +103,12 @@ TEST_F(PermutationTest1, FindBestPossibleVariableOD) {
   VariableOD variable_od = FindBestPossibleVariableOD(
       dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm);
 
-  EXPECT_EQ(723, variable_od[1].offset);
+  EXPECT_EQ(82, variable_od[1].offset);
   EXPECT_EQ(341, variable_od[1].deadline);
   EXPECT_EQ(9, variable_od[2].offset);
   EXPECT_EQ(1, variable_od[2].deadline);
   EXPECT_EQ(169, variable_od[3].offset);
-  EXPECT_EQ(14, variable_od[3].deadline);
+  EXPECT_EQ(165, variable_od[3].deadline);
   EXPECT_EQ(9, variable_od[4].offset);
   EXPECT_EQ(889, variable_od[4].deadline);
 }
@@ -136,6 +139,7 @@ TEST_F(PermutationTest2, FindBestPossibleVariableOD) {
   // chains_perm.push_back(perm24[11]);
   // chains_perm.push_back(perm23[3]);
   chains_perm.print();
+  auto rta = GetResponseTimeTaskSet(dag_tasks);
 
   TaskSetPermutation task_sets_perms(dag_tasks, dag_tasks.chains_);
   VariableRange variable_range = FindPossibleVariableOD(
@@ -147,30 +151,65 @@ TEST_F(PermutationTest2, FindBestPossibleVariableOD) {
 
   EXPECT_EQ(0, variable_range.lower_bound[1].offset);
   EXPECT_EQ(3, variable_range.lower_bound[1].deadline);
-  EXPECT_EQ(17, variable_range.upper_bound[1].offset);
+  EXPECT_EQ(10, variable_range.upper_bound[1].offset);
   EXPECT_EQ(13, variable_range.upper_bound[1].deadline);  // modified
 
   EXPECT_EQ(3, variable_range.lower_bound[2].offset);  // modified
-  EXPECT_EQ(7, variable_range.lower_bound[2].deadline);
+  EXPECT_EQ(10, variable_range.lower_bound[2].deadline);
   EXPECT_EQ(13, variable_range.upper_bound[2].offset);
   EXPECT_EQ(20, variable_range.upper_bound[2].deadline);
 }
-// TEST_F(PermutationTest1, SKIP_perm1) {
-//     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
-//     TwoTaskPermutations perm24(2, 4, dag_tasks, tasks_info);
-//     TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info);
-//     ChainsPermutation chains_perm;
-//     chains_perm.push_back(perm12[73]);
-//     chains_perm.push_back(perm24[11]);
-//     chains_perm.push_back(perm23[19]);
+class PermutationTest24_n3 : public PermutationTestBase {
+  void SetUp() override { SetUpBase("test_n3_v24"); }
+};
 
-//     std::unordered_map<JobCEC, JobCEC> react_chain_map;
-//     std::pair<VariableOD, int> res =
-//         FindODWithLP(task_sets_perms.dag_tasks_, task_sets_perms.tasks_info_,
-//                      chains_perm, task_sets_perms.graph_of_all_ca_chains_,
-//                      "ReactionTime", react_chain_map, task_sets_perms.rta_);
-//     EXPECT_EQ(1459, res.second);
-// }
+Interval GetEdgeIneqRange(const Edge& edge,
+                          const VariableRange& variable_range) {
+  int start = variable_range.lower_bound.at(edge.from_id).deadline -
+              variable_range.upper_bound.at(edge.to_id).offset;
+  int finish = variable_range.upper_bound.at(edge.from_id).deadline -
+               variable_range.lower_bound.at(edge.to_id).offset;
+  return Interval(start, finish - start);
+}
+
+TEST_F(PermutationTest24_n3, FindPossibleVariableOD) {
+  TaskSetPermutation task_sets_perms(dag_tasks, dag_tasks.chains_);
+  auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];
+  auto perm12 = task_sets_perms.adjacent_two_task_permutations_[1];
+  perm01.print();
+  perm12.print();
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[0]);
+  std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+  VariableRange variable_range =
+      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
+  EXPECT_EQ(0, variable_range.lower_bound[0].offset);
+  EXPECT_EQ(11 + 7, variable_range.lower_bound[1].deadline);
+}
+
+TEST_F(PermutationTest24_n3, select_feasible_perm) {
+  TaskSetPermutation task_sets_perms(dag_tasks, dag_tasks.chains_);
+  auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];
+  auto perm12 = task_sets_perms.adjacent_two_task_permutations_[1];
+  perm01.print();
+  perm12.print();
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[0]);
+  TwoTaskPermutationsIterator iterator(
+      task_sets_perms.adjacent_two_task_permutations_[1]);
+  // iterator.RemoveCandidatesBasedOnAvailableChains(chains_perm);
+  std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+  VariableRange variable_range =
+      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
+  variable_range.lower_bound.print();
+  variable_range.upper_bound.print();
+  Edge edge_ite(1, 2);
+  Interval edge_range = GetEdgeIneqRange(edge_ite, variable_range);
+  EXPECT_EQ(18 - 10, edge_range.start);
+  EXPECT_EQ(20 - 0, edge_range.getFinish());
+  std::cout << "Valid range for edge(1,2): " << edge_range.start << ", "
+            << edge_range.getFinish() << "\n";
+}
 
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
