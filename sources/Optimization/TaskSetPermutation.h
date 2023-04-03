@@ -79,11 +79,12 @@ class TaskSetPermutation {
         ObjectiveFunction::Obj(dag_tasks_, tasks_info_, chains_perm,
                                best_possible_variable_od, sub_chains);
     if (obj_curr > best_yet_obj_) {
-      if (GlobalVariablesDAGOpt::debugMode)
+      if (GlobalVariablesDAGOpt::debugMode) {
         std::cout << "Early break at level " << chains_perm.size() << ": ";
-      PrintSinglePermIndex(chains_perm);
-      std::cout << " due to guarantee to perform worse at the "
-                   "per-chain test\n";
+        PrintSinglePermIndex(chains_perm);
+        std::cout << " due to guarantee to perform worse at the "
+                     "per-chain test\n";
+      }
       // TODO: push to feasible_chains_vec, probbaly use a separate queue
       feasible_chains_.push_back_incomplete(
           FeasibleChainManager(chains_perm, adjacent_two_task_permutations_,
