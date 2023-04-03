@@ -90,10 +90,6 @@ class TwoTaskPermutationsIterator : public TwoTaskPermutations {
       // #ifdef PROFILE_CODE
       //       BeginTimer("RemoveCandidates_innerloop");
       // #endif
-      if (feasible_chain_man_vec.size() > 5 &&
-          double(rand()) / RAND_MAX <
-              GlobalVariablesDAGOpt::SAMPLE_FEASIBLE_CHAINS)
-        continue;
       RemoveCandidate(chains_perm_partial, feasible_chain_man,
                       unvisited_future_edges);
 

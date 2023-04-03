@@ -239,6 +239,81 @@ TEST_F(PermutationTest18_n3, select_feasible_perm) {
   EXPECT_EQ(3, iterator.size());
 }
 
+TEST_F(PermutationTest18_n3, skip_worse_perm1) {
+  TaskSetPermutation task_sets_perms(dag_tasks, dag_tasks.chains_);
+  auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];
+  auto perm12 = task_sets_perms.adjacent_two_task_permutations_[1];
+  perm01.print();
+  perm12.print();
+  std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+  ChainsPermutation chains_perm;
+  VariableRange variable_range =
+      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
+  Edge edge_ite01(0, 1);
+  PermIneqBound_Range edge_range = GetEdgeIneqRange(edge_ite01, variable_range);
+  TwoTaskPermutationsIterator iterator01(
+      task_sets_perms.adjacent_two_task_permutations_[0], edge_range);
+  EXPECT_EQ(3, iterator01.size());
+
+  std::vector<Edge> unvisited_future_edges =
+      task_sets_perms.GetUnvisitedFutureEdges(0);
+  chains_perm.push_back(perm01[1]);
+  task_sets_perms.feasible_chains_.push_back_incomplete(FeasibleChainManager(
+      chains_perm, task_sets_perms.adjacent_two_task_permutations_,
+      "ReactionTime"));
+  iterator01.RemoveCandidates(
+      chains_perm, task_sets_perms.feasible_chains_.chain_man_vec_incomplete_,
+      unvisited_future_edges);
+  EXPECT_EQ(1, iterator01.size());
+}
+TEST_F(PermutationTest18_n3, skip_worse_perm2) {
+  TaskSetPermutation task_sets_perms(dag_tasks, dag_tasks.chains_);
+  auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];
+  auto perm12 = task_sets_perms.adjacent_two_task_permutations_[1];
+  perm01.print();
+  perm12.print();
+  std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+  ChainsPermutation chains_perm;
+  VariableRange variable_range =
+      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
+  Edge edge_ite01(0, 1);
+  PermIneqBound_Range edge_range = GetEdgeIneqRange(edge_ite01, variable_range);
+  TwoTaskPermutationsIterator iterator01(
+      task_sets_perms.adjacent_two_task_permutations_[0], edge_range);
+  EXPECT_EQ(3, iterator01.size());
+
+  std::vector<Edge> unvisited_future_edges =
+      task_sets_perms.GetUnvisitedFutureEdges(0);
+  chains_perm.push_back(perm01[1]);
+  chains_perm.push_back(perm12[1]);
+  task_sets_perms.feasible_chains_.push_back_incomplete(FeasibleChainManager(
+      chains_perm, task_sets_perms.adjacent_two_task_permutations_,
+      "ReactionTime"));
+  iterator01.RemoveCandidates(
+      chains_perm, task_sets_perms.feasible_chains_.chain_man_vec_incomplete_,
+      unvisited_future_edges);
+  EXPECT_EQ(3, iterator01.size());
+
+  // **************************************************Next-level  iteration
+  ChainsPermutation chains_perm_next_lv;
+  chains_perm_next_lv.push_back(perm01[2]);
+  Edge edge_ite12(1, 2);
+  VariableRange variable_range12 =
+      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm_next_lv);
+  PermIneqBound_Range edge_range12 =
+      GetEdgeIneqRange(edge_ite12, variable_range12);
+  TwoTaskPermutationsIterator iterator12(
+      task_sets_perms.adjacent_two_task_permutations_[1], edge_range12);
+  EXPECT_EQ(2, iterator12.size());
+
+  auto unvisited_future_edges12 = task_sets_perms.GetUnvisitedFutureEdges(1);
+  iterator12.RemoveCandidates(
+      chains_perm_next_lv,
+      task_sets_perms.feasible_chains_.chain_man_vec_incomplete_,
+      unvisited_future_edges12);
+  EXPECT_EQ(1, iterator12.size());
+}
+
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
