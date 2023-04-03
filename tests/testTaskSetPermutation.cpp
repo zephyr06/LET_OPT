@@ -618,6 +618,10 @@ TEST_F(PermutationTest7_n30, GraphOfChains) {
   EXPECT_EQ(12, graph_of_all_ca_chains_.edge_records_.size());
 }
 
+TEST(ReadGlobalVariable, v1) {
+  EXPECT_EQ("RM", GlobalVariablesDAGOpt::priorityMode);
+}
+
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
