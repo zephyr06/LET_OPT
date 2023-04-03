@@ -69,7 +69,6 @@ class TaskSetPermutation {
               << " permutations\n";
           std::cout << "\n";
         }
-
         return true;
       }
     }
@@ -88,7 +87,10 @@ class TaskSetPermutation {
 #ifdef PROFILE_CODE
       EndTimer(__FUNCTION__);
 #endif
-      // TODO: push to feasible_chains_vec
+      // TODO: push to feasible_chains_vec, probbaly use a separate queue
+      feasible_chains_.push_back(
+          FeasibleChainManager(chains_perm, adjacent_two_task_permutations_,
+                               ObjectiveFunction::type_trait));
       return true;
     }
 #ifdef PROFILE_CODE
@@ -210,17 +212,17 @@ class TaskSetPermutation {
       // if (RandRange(0, 1) > GlobalVariablesDAGOpt::SAMPLE_SMALL_TASKS)
       BeginTimer("RemoveCandidates_related");
       // TODO: predict decrease_fail?
-      if (feasible_chains_.IfModified(position)) {
-        uint size_before = iterator.size();
-        iterator.RemoveCandidates(chains_perm, feasible_chains_.chain_man_vec_,
-                                  unvisited_future_edges);
-        uint size_after = iterator.size();
-        if (size_after < size_before)
-          decrease_success++;
-        else
-          decrease_fail++;
-        // feasible_chains_.UnSetModify(position);
-      }
+      // if (feasible_chains_.IfModified(position)) {
+      uint size_before = iterator.size();
+      iterator.RemoveCandidates(chains_perm, feasible_chains_.chain_man_vec_,
+                                unvisited_future_edges);
+      uint size_after = iterator.size();
+      if (size_after < size_before)
+        decrease_success++;
+      else
+        decrease_fail++;
+      // feasible_chains_.UnSetModify(position);
+      // }
       EndTimer("RemoveCandidates_related");
     }
     return feasible_prev_chain;
@@ -239,12 +241,6 @@ class TaskSetPermutation {
     if (res.first.valid_)  // if valid, we'll exam obj; otherwise, we'll
                            // just move forward
     {
-      // TODO: NOTICE THE COST THERE
-      if (feasible_chains_.size() >
-          uint(GlobalVariablesDAGOpt::FEASIBLE_CHAINS_MAX)) {
-        // CoutError("too many feasible_chains!");
-        feasible_chains_.pop_back();
-      }
       feasible_chains_.push_back(
           FeasibleChainManager(chains_perm, adjacent_two_task_permutations_,
                                ObjectiveFunction::type_trait));

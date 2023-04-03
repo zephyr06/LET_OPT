@@ -28,28 +28,9 @@ class FeasiblieChainsManagerVec {
  public:
   FeasiblieChainsManagerVec() {}
 
-  FeasiblieChainsManagerVec(uint n) : length(n) {
-    feasible_chains_modify_record.reserve(n);
-    for (uint i = 0; i < n; i++) feasible_chains_modify_record.push_back(false);
-  }
+  FeasiblieChainsManagerVec(uint n) : length(n) {}
 
   inline size_t size() const { return chain_man_vec_.size(); }
-
-  void SetModify() {
-    for (uint i = 0; i < length; i++) feasible_chains_modify_record[i] = true;
-  }
-
-  void UnSetModify(uint level) {
-    if (level >= length)
-      CoutError("invalid level in FeasiblieChainsManagerVec");
-    feasible_chains_modify_record[level] = false;
-  }
-
-  bool IfModified(uint level) {
-    if (level >= length)
-      CoutError("invalid level in FeasiblieChainsManagerVec");
-    return feasible_chains_modify_record[level];
-  }
 
   void push_back(const FeasibleChainManager& feasible_chain_man) {
     if (chain_man_vec_.size() >
@@ -58,17 +39,21 @@ class FeasiblieChainsManagerVec {
       chain_man_vec_.pop_back();
     }
     chain_man_vec_.push_back(feasible_chain_man);
-    SetModify();
   }
 
-  void pop_back() {
-    chain_man_vec_.pop_back();
-    SetModify();
+  void pop_back() { chain_man_vec_.pop_back(); }
+
+  void push_back_incomplete(const FeasibleChainManager& feasible_chain_man) {
+    if (chain_man_vec_.size() >
+        uint(GlobalVariablesDAGOpt::FEASIBLE_CHAINS_MAX)) {
+      chain_man_vec_.pop_back();
+    }
+    chain_man_vec_.push_back(feasible_chain_man);
   }
 
   // data member
   std::vector<FeasibleChainManager> chain_man_vec_;
-  std::vector<bool> feasible_chains_modify_record;
+  std::vector<FeasibleChainManager> chain_man_vec_incomplete_;
   uint length;
 };
 }  // namespace DAG_SPACE
