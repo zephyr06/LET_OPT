@@ -44,15 +44,7 @@ class TwoTaskPermutationsIterator : public TwoTaskPermutations {
   }
 
   TwoTaskPermutationsIterator(const TwoTaskPermutations& two_task_perms,
-                              const PermIneqBound_Range& perm_range)
-      : TwoTaskPermutations(two_task_perms) {
-    for (const auto& ptr : single_permutations_) {
-      if (ptr->inequality_.lower_bound_ <=
-              perm_range.lower_bound_s_upper_bound &&
-          ptr->inequality_.upper_bound_ >= perm_range.upper_bound_s_lower_bound)
-        single_perms_ite_record_.push_back(ptr);
-    }
-  }
+                              const PermIneqBound_Range& perm_range);
 
   // unvisited_future_edges don't include the edge to iterate in the current
   // loop
@@ -65,39 +57,12 @@ class TwoTaskPermutationsIterator : public TwoTaskPermutations {
   void RemoveCandidates(
       const ChainsPermutation& chains_perm_partial,
       const std::vector<FeasibleChainManager>& feasible_chain_man_vec,
-      const std::vector<Edge>& unvisited_future_edges) {
-    for (const auto& feasible_chain_man : feasible_chain_man_vec) {
-      // #ifdef PROFILE_CODE
-      //       BeginTimer("RemoveCandidates_innerloop");
-      // #endif
-      if (feasible_chain_man_vec.size() > 5 &&
-          double(rand()) / RAND_MAX <
-              GlobalVariablesDAGOpt::SAMPLE_FEASIBLE_CHAINS)
-        continue;
-      RemoveCandidate(chains_perm_partial, feasible_chain_man,
-                      unvisited_future_edges);
+      const std::vector<Edge>& unvisited_future_edges);
 
-      // #ifdef PROFILE_CODE
-      //       EndTimer("RemoveCandidates_innerloop");
-      // #endif
-    }
-  }
   void RemoveCandidates(
       const ChainsPermutation& chains_perm_partial,
       const std::deque<FeasibleChainManager>& feasible_chain_man_vec,
-      const std::vector<Edge>& unvisited_future_edges) {
-    for (const auto& feasible_chain_man : feasible_chain_man_vec) {
-      // #ifdef PROFILE_CODE
-      //       BeginTimer("RemoveCandidates_innerloop");
-      // #endif
-      RemoveCandidate(chains_perm_partial, feasible_chain_man,
-                      unvisited_future_edges);
-
-      // #ifdef PROFILE_CODE
-      //       EndTimer("RemoveCandidates_innerloop");
-      // #endif
-    }
-  }
+      const std::vector<Edge>& unvisited_future_edges);
 
   void TakeCommonElements(const PermRefSet& per_ptr_set);
 
