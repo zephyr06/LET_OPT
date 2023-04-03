@@ -21,6 +21,7 @@ extern int TIME_LIMIT;
 extern double SAMPLE_SMALL_TASKS;
 extern double SAMPLE_FEASIBLE_CHAINS;
 extern int FEASIBLE_CHAINS_MAX;
+extern int FEASIBLE_INCOMPLETE_CHAINS_MAX;
 extern int SearchDP_Friendly;
 extern const double kCplexInequalityThreshold;
 

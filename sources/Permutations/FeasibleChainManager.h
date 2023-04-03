@@ -28,7 +28,10 @@ class FeasiblieChainsManagerVec {
  public:
   FeasiblieChainsManagerVec() {}
 
-  FeasiblieChainsManagerVec(uint n) : length(n) {}
+  FeasiblieChainsManagerVec(uint n) : length(n) {
+    chain_man_vec_.reserve(n);
+    chain_man_vec_incomplete_.reserve(n);
+  }
 
   inline size_t size() const { return chain_man_vec_.size(); }
 
@@ -41,15 +44,16 @@ class FeasiblieChainsManagerVec {
     chain_man_vec_.push_back(feasible_chain_man);
   }
 
-  void pop_back() { chain_man_vec_.pop_back(); }
+  inline void pop_back() { chain_man_vec_.pop_back(); }
 
   void push_back_incomplete(const FeasibleChainManager& feasible_chain_man) {
-    if (chain_man_vec_.size() >
-        uint(GlobalVariablesDAGOpt::FEASIBLE_CHAINS_MAX)) {
-      chain_man_vec_.pop_back();
+    if (chain_man_vec_incomplete_.size() >
+        uint(GlobalVariablesDAGOpt::FEASIBLE_INCOMPLETE_CHAINS_MAX)) {
+      chain_man_vec_incomplete_.pop_back();
     }
-    chain_man_vec_.push_back(feasible_chain_man);
+    chain_man_vec_incomplete_.push_back(feasible_chain_man);
   }
+  inline void pop_back_incomplete() { chain_man_vec_incomplete_.pop_back(); }
 
   // data member
   std::vector<FeasibleChainManager> chain_man_vec_;

@@ -88,7 +88,7 @@ class TaskSetPermutation {
       EndTimer(__FUNCTION__);
 #endif
       // TODO: push to feasible_chains_vec, probbaly use a separate queue
-      feasible_chains_.push_back(
+      feasible_chains_.push_back_incomplete(
           FeasibleChainManager(chains_perm, adjacent_two_task_permutations_,
                                ObjectiveFunction::type_trait));
       return true;
@@ -215,6 +215,9 @@ class TaskSetPermutation {
       // if (feasible_chains_.IfModified(position)) {
       uint size_before = iterator.size();
       iterator.RemoveCandidates(chains_perm, feasible_chains_.chain_man_vec_,
+                                unvisited_future_edges);
+      iterator.RemoveCandidates(chains_perm,
+                                feasible_chains_.chain_man_vec_incomplete_,
                                 unvisited_future_edges);
       uint size_after = iterator.size();
       if (size_after < size_before)
