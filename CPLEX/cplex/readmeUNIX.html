@@ -1,0 +1,99 @@
+<HTML>
+<HEAD>
+<TITLE>IBM ILOG CPLEX 22.1.0 README</TITLE>
+	<STYLE>
+	<!--
+		H1 { font-family: "arial", "sans-serif"; color: #406ec1 }
+		H2 { font-family: "arial", "sans-serif"; color: #406ec1 }
+		H3 { font-family: "arial", "sans-serif"; color: #406ec1 }
+		H4 { font-family: "arial", "sans-serif"; color: #406ec1 }
+		HR { color: #406ec1}
+		CODE { font-family: "courier", "courier-new", "serif"; font-size: 12pt}
+		BODY { font-family: "arial", "sans-serif" }
+		TH { background-color: #CCCCFF; font-family: "arial" }
+		TD { font-family: "arial", "sans-serif" }
+		P { font-family: "arial", "sans-serif" }
+		A { font-family: "arial", "sans-serif" }
+		PRE { font-family: "arial", "sans-serif" }
+	-->
+	</STYLE>
+</HEAD>
+<BODY>
+<H1>IBM ILOG CPLEX Optimizers 22.1.0</H1>
+<P>
+This directory includes the CPLEX Optimizers of IBM&reg; ILOG&reg; CPLEX&reg;
+Optimization Studio 22.1.0, including Concert Technology
+for C++ and Java users. Please read the CPLEX Optimization Studio 22.1.0 Release Notes in
+order to take full advantage of the new features in this release and
+to ensure a smooth transition from prior versions of CPLEX.
+<HR>
+<H2>Directory Structure</H2>
+The following subdirectories are contained in the directory where you installed
+CPLEX Optimization Studio 22.1.0.</P>
+<H4>In the <CODE>cplex</CODE> directory:</H4>
+<PRE>
+  <CODE>bin/&lt;machine&gt;</CODE>:
+	Executable files and shared libraries, including those listed here.  <code>&lt;ext&gt;</code> varies
+	with the operating system. 
+	  <code>cplex</code> - CPLEX Interactive Optimizer
+	  <code>libcplex2210.&lt;ext&gt;</code> - CPLEX shared library for JNI.
+	  <code>cplexamp</code> - Solver driver to use with AMPL
+  <CODE>examples/src/&lt;language&gt;</CODE>:
+	Source files for the examples (<CODE>lpex1.c</CODE> is in <CODE>examples/src/c</CODE>, et cetera).<BR>
+  <CODE>examples/&lt;machine&gt;/&lt;libformat&gt;</CODE>:
+	Makefile for examples to support your particular platform.<BR>
+  <CODE>include/ilcplex</CODE>:
+	Files, such as <CODE>cplex.h</CODE> and <CODE>ilocplex.h</CODE>, that are needed to compile applications
+	that use the Callable Library or the C++ version of Concert Technology.<BR>
+  <CODE>lib</CODE>:
+	The <CODE>cplex.jar</CODE> file containing the Java classes needed to use the Java version
+	of Concert Technology.<BR>
+  <CODE>lib/&lt;machine&gt;/&lt;libformat&gt;</CODE>:
+	Library files that contain CPLEX (<CODE>libcplex.a</CODE>) and CPLEX extensions to Concert
+	Technology (<CODE>libilocplex.a</CODE>).<BR>
+  <code>python/&lt;version&gt;/&lt;machine&gt;</code>:
+	Files comprising the Python interfaces for CPLEX.  Several versions may be provided.
+	Some <code>setup.py</code> scripts which run <code>distutils</code> are included.
+</PRE>
+<H4>
+In the <CODE>concert</CODE> directory:</H4>
+<PRE>
+  <CODE>include/ilconcert</CODE>:
+	Files, such as <CODE>ilomodel.h</CODE>, that are needed to compile applications that use the
+	C++ version of Concert Technology.<BR>
+  <CODE>lib/&lt;machine&gt;/&lt;libformat&gt;</CODE>:
+	Concert Technology libraries for C++ users (<CODE>libconcert.a</CODE>).
+</PRE>
+<H4>
+In the <CODE>doc</CODE> directory:</H4>
+<PRE>
+      Documentation for the CPLEX Optimizers as well as the other components of CPLEX Optimization Studio.
+</PRE>
+<HR>
+<H2>Compiling and Executing</H2>
+<PRE>
+To compile and execute examples, do the following:
+	<CODE>% cd examples/&lt;machine&gt;/&lt;libformat&gt;</CODE>
+	<CODE>% make lpex1</CODE>     #  to compile and execute the first CPLEX example
+</PRE>
+
+<P>A list of all the examples that you can run this way is to be found in the file <CODE>Makefile </CODE>by looking for <CODE>C_EX </CODE>(C examples), <CODE>CPP_EX </CODE>(C++ examples), <CODE>JAVA_EX </CODE>(Java examples), or you can view the files
+listed in <CODE>examples/src</CODE>.<BR>
+<PRE>
+You can also do
+	<CODE>% make all</CODE>		#  to compile all examples
+	<CODE>% make execute</CODE>		#  to compile and execute all examples
+	<CODE>% make execute_c</CODE>	#  to compile and execute only the C examples
+	<CODE>% make execute_cpp</CODE>	#  to compile and execute only the C++ examples
+	<CODE>% make execute_java</CODE>	#  to compile and execute only the Java examples
+	<CODE>% make clean</CODE>		#  to remove executable files when you are done
+</PRE>
+<P>Many of the examples can be run in more than one way; the <CODE>make execute</CODE> command runs each in a representative way.
+<P>
+The file <CODE>Makefile</CODE> contains recommended compiler flags and other settings for building applications on your particular computer. You can find these settings in the sections of <CODE>Makefile</CODE> marked by the comments "Compiler
+options" and "Link options". The <CODE>Makefile</CODE> also shows how to set the location of the CPLEX shared library and </CODE>cplex.jar</CODE> file used from Java.
+</P>
+<HR>
+
+</BODY>
+</HTML>

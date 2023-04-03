@@ -1,0 +1,2435 @@
+<!--Schema using 'intermediate' elements-->
+<!--Schema for C++ Common modeling Objects.-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<xsd:annotation>
+		<xsd:documentation xml:lang="en">Schema for Concert XML C++.</xsd:documentation>
+	</xsd:annotation>
+	<!-- root -->
+	<xsd:element name="Root">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Modeler" type="T-modeler" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<!-- base types -->
+	<xsd:simpleType name="T-intWithInfinity">
+		<xsd:union memberTypes="xsd:int">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Infinity"/>
+					<xsd:enumeration value="-Infinity"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<xsd:simpleType name="T-floatWithInfinity">
+		<xsd:union memberTypes="xsd:double">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Infinity"/>
+					<xsd:enumeration value="-Infinity"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+	<!-- attribute groups -->
+	<xsd:attributeGroup name="AG-notref">
+		<xsd:attribute name="Id" type="xsd:int" use="prohibited"/>
+	</xsd:attributeGroup>
+	<xsd:attributeGroup name="AG-onlyref">
+		<xsd:attribute name="Id" type="xsd:int" use="required"/>
+	</xsd:attributeGroup>
+	<xsd:attributeGroup name="AG-copyable">
+		<xsd:attribute name="Id" type="xsd:int" use="optional"/>
+		<xsd:attribute name="RefId" type="xsd:int" use="optional"/>
+	</xsd:attributeGroup>
+	<xsd:attributeGroup name="AG-addable">
+		<xsd:attributeGroup ref="AG-copyable"/>
+		<xsd:attribute name="name" type="xsd:string" use="optional"/>
+	</xsd:attributeGroup>
+	<!-- elements -->
+	<xsd:element name="intDomain" type="T-intDomain"/>
+	<xsd:element name="boolDomain" type="T-boolDomain"/>
+	<xsd:element name="floatDomain" type="T-floatDomain"/>
+	<xsd:element name="intSet" type="xsd:string"/>
+	<xsd:element name="numSet" type="xsd:string"/>
+	<xsd:element name="intEnumDomain" type="xsd:string"/>
+	<xsd:element name="floatEnumDomain" type="xsd:string"/>
+	<xsd:element name="intArray" type="xsd:string"/>
+	<xsd:element name="numArray" type="xsd:string"/>
+	<xsd:element name="boolArray" type="xsd:string"/>
+	<xsd:element name="intSetVar" type="T-intSetVar" substitutionGroup="T-intExpr"/>
+	<xsd:element name="objective" type="T-objective"/>
+	<xsd:element name="cos" type="T-cos" substitutionGroup="T-numExpr"/>
+	<xsd:element name="sin" type="T-sin" substitutionGroup="T-numExpr"/>
+	<xsd:element name="tan" type="T-tan" substitutionGroup="T-numExpr"/>
+	<xsd:element name="arcCos" type="T-arcCos" substitutionGroup="T-numExpr"/>
+	<xsd:element name="arcSin" type="T-arcSin" substitutionGroup="T-numExpr"/>
+	<xsd:element name="arcTan" type="T-arcTan" substitutionGroup="T-numExpr"/>
+	<xsd:element name="numRecPowerCst" type="T-numRecPowerCst" substitutionGroup="T-numExpr"/>
+	<xsd:element name="allMinDistance" type="T-allMinDistance" substitutionGroup="T-constraint"/>
+	<xsd:element name="box" type="T-box" substitutionGroup="T-constraint"/>
+	<xsd:element name="constraintArray" type="T-constraintArray" substitutionGroup="T-arrayConstraint"/>
+	<xsd:element name="rangeArray" type="T-rangeArray" substitutionGroup="T-arrayConstraint"/>
+	<xsd:element name="notOverlapConstraint" type="T-notOverlapConstraint" substitutionGroup="T-constraint"/>
+	<xsd:element name="containmentConstraint" type="T-containmentConstraint" substitutionGroup="T-constraint"/>
+	<xsd:element name="notOverlapInDimensionConstraint" type="T-notOverlapInDimensionConstraint" substitutionGroup="T-constraint"/>
+	<xsd:element name="overlapInDimensionConstraint" type="T-overlapInDimensionConstraint" substitutionGroup="T-constraint"/>
+	<xsd:element name="precedenceInDimensionConstraint" type="T-precedenceInDimensionConstraint" substitutionGroup="T-constraint"/>
+	<xsd:element name="partition1" type="T-partition1" substitutionGroup="T-constraint"/>
+	<xsd:element name="partition2" type="T-partition2" substitutionGroup="T-constraint"/>
+	<xsd:element name="intEqPartition" type="T-intEqPartition" substitutionGroup="T-constraint"/>
+	<xsd:element name="numArrayMember" type="T-numArrayMember" substitutionGroup="T-constraint"/>
+	<xsd:element name="intArrayMember" type="T-intArrayMember" substitutionGroup="T-constraint"/>
+	<xsd:element name="numArrayNotMember" type="T-numArrayNotMember" substitutionGroup="T-constraint"/>
+	<xsd:element name="intArrayNotMember" type="T-intArrayNotMember" substitutionGroup="T-constraint"/>
+	<xsd:element name="intTupleSet" type="T-intTupleSet"/>
+	<xsd:element name="numTupleSet" type="T-numTupleSet"/>
+	<xsd:element name="intSubset" type="T-intSubset" substitutionGroup="T-constraint"/>
+	<xsd:element name="intSubsetCst" type="T-intSubsetCst" substitutionGroup="T-constraint"/>
+	<xsd:element name="intSubsetEqCst" type="T-intSubsetEqCst" substitutionGroup="T-constraint"/>
+	<xsd:element name="intSetCardVar" type="T-intSetCardVar" substitutionGroup="T-constraint"/>
+	<xsd:element name="numTableElementConstraint2" type="T-numTableElementConstraint2" substitutionGroup="T-constraint"/>
+	<xsd:element name="intTableElementConstraint2" type="T-intTableElementConstraint2" substitutionGroup="T-constraint"/>
+	<xsd:element name="intTableSetConstraint" type="T-intTableSetConstraint" substitutionGroup="T-constraint"/>
+	<xsd:element name="numTableSetConstraint" type="T-numTableSetConstraint" substitutionGroup="T-constraint"/>
+	<xsd:element name="sos1Array" type="T-sos1Array" substitutionGroup="T-arrayConstraint"/>
+	<xsd:element name="sos2Array" type="T-sos2Array" substitutionGroup="T-arrayConstraint"/>
+	<xsd:element name="boolIntAbstraction" type="T-boolIntAbstraction" substitutionGroup="T-constraint"/>
+	<xsd:element name="constraintIndVar" type="T-constraintIndVar" substitutionGroup="T-varNum"/>
+	<xsd:element name="numNeq" type="T-numNeq" substitutionGroup="T-constraint"/>
+	<xsd:element name="intNeq" type="T-intNeq" substitutionGroup="T-constraint"/>
+	<xsd:element name="numNeqCst" type="T-numNeqCst" substitutionGroup="T-constraint"/>
+	<xsd:element name="intNeqCst" type="T-intNeqCst" substitutionGroup="T-constraint"/>
+	<xsd:element name="notSubsetEq" type="T-notSubsetEq" substitutionGroup="T-constraint"/>
+	<xsd:element name="conversion" type="T-conversion" substitutionGroup="T-constraint"/>
+	<xsd:element name="sos1" type="T-sos1" substitutionGroup="T-constraint"/>
+	<xsd:element name="sos2" type="T-sos2" substitutionGroup="T-constraint"/>
+	<xsd:element name="intAbstraction" type="T-intAbstraction" substitutionGroup="T-constraint"/>
+	<xsd:element name="intArrayEqUnion" type="T-intArrayEqUnion" substitutionGroup="T-constraint"/>
+	<xsd:element name="numExprArrayIndex" type="T-numExprArrayIndex" substitutionGroup="T-constraint"/>
+	<xsd:element name="semiContVar" type="T-semiContVar" substitutionGroup="T-varInt"/>
+	<xsd:element name="semiContVarArray" type="T-semiContVarArray" substitutionGroup="T-arrayNumVar"/>
+	<xsd:element name="sequence" type="T-sequence" substitutionGroup="T-constraint"/>
+	<xsd:element name="intEnumeratedVar" type="T-intEnumeratedVar" substitutionGroup="T-varInt"/>
+	<xsd:element name="numEnumeratedVar" type="T-numEnumeratedVar" substitutionGroup="T-varNum"/>
+	<xsd:element name="intVar" type="T-intVar" substitutionGroup="T-varInt"/>
+	<xsd:element name="boolVar" type="T-boolVar" substitutionGroup="T-varBool"/>
+	<xsd:element name="numVar" type="T-numVar" substitutionGroup="T-varNum"/>
+	<xsd:element name="distribute" type="T-distribute" substitutionGroup="T-constraint"/>
+	<xsd:element name="distributeV" type="T-distributeV" substitutionGroup="T-constraint"/>
+	<xsd:element name="intExprArray" type="T-intExprArray" substitutionGroup="T-arrayIntExpr"/>
+	<xsd:element name="numExprArray" type="T-numExprArray" substitutionGroup="T-arrayNumExpr"/>
+	<xsd:element name="numVarArray" type="T-numVarArray" substitutionGroup="T-arrayNumVar"/>
+	<xsd:element name="intVarArray" type="T-intVarArray" substitutionGroup="T-arrayIntVar"/>
+	<xsd:element name="boolVarArray" type="T-boolVarArray" substitutionGroup="T-arrayBoolVar"/>
+	<xsd:element name="intSetVarArray" type="T-intSetVarArray"/>
+	<xsd:element name="allDiff" type="T-allDiff" substitutionGroup="T-constraint"/>
+	<xsd:element name="inverse" type="T-inverse" substitutionGroup="T-constraint"/>
+	<xsd:element name="intEqIntersection" type="T-intEqIntersection" substitutionGroup="T-constraint"/>
+	<xsd:element name="intEqUnion" type="T-intEqUnion" substitutionGroup="T-constraint"/>
+	<xsd:element name="intNullIntersect" type="T-intNullIntersect" substitutionGroup="T-constraint"/>
+	<xsd:element name="intMinArray" type="T-intMinArray" substitutionGroup="T-intExpr"/>
+	<xsd:element name="numMinArray" type="T-numMinArray" substitutionGroup="T-numExpr"/>
+	<xsd:element name="intMaxArray" type="T-intMaxArray" substitutionGroup="T-intExpr"/>
+	<xsd:element name="numMaxArray" type="T-numMaxArray" substitutionGroup="T-numExpr"/>
+	<xsd:element name="and" type="T-and" substitutionGroup="T-constraint"/>
+	<xsd:element name="or" type="T-or" substitutionGroup="T-constraint"/>
+	<xsd:element name="imply" type="T-imply" substitutionGroup="T-constraint"/>
+	<xsd:element name="member" type="T-member" substitutionGroup="T-constraint"/>
+	<xsd:element name="memberCst" type="T-memberCst" substitutionGroup="T-constraint"/>
+	<xsd:element name="notMember" type="T-notMember" substitutionGroup="T-constraint"/>
+	<xsd:element name="notMemberCst" type="T-notMemberCst" substitutionGroup="T-constraint"/>
+	<xsd:element name="intSetNeq" type="T-setNeq" substitutionGroup="T-constraint"/>
+	<xsd:element name="intSetNeqCst" type="T-setSetVarNeq" substitutionGroup="T-constraint"/>
+	<xsd:element name="intSetEq" type="T-intSetEq" substitutionGroup="T-constraint"/>
+	<xsd:element name="intSetEqCst" type="T-intSetEqCst" substitutionGroup="T-constraint"/>
+	<xsd:element name="ifThen" type="T-ifThen" substitutionGroup="T-constraint"/>
+	<xsd:element name="intAbs" type="T-intExprAbs" substitutionGroup="T-intExpr"/>
+	<xsd:element name="numAbs" type="T-numExprAbs" substitutionGroup="T-numExpr"/>
+	<xsd:element name="intDiv" type="T-intDiv" substitutionGroup="T-intExpr"/>
+	<xsd:element name="intDivCst" type="T-intDivCst" substitutionGroup="T-intExpr"/>
+	<xsd:element name="intRecDivCst" type="T-intRecDivCst" substitutionGroup="T-intExpr"/>
+	<xsd:element name="exponent" type="T-exponent" substitutionGroup="T-numExpr"/>
+	<xsd:element name="log" type="T-log" substitutionGroup="T-numExpr"/>
+	<xsd:element name="numPowerCst" type="T-numPowerCst" substitutionGroup="T-numExpr"/>
+	<xsd:element name="numPower" type="T-numPower" substitutionGroup="T-numExpr"/>
+	<xsd:element name="numSquare" type="T-numSquare" substitutionGroup="T-numExpr"/>
+	<xsd:element name="intSquare" type="T-intSquare" substitutionGroup="T-intExpr"/>
+	<xsd:element name="intGt" type="T-intGt" substitutionGroup="T-constraint"/>
+	<xsd:element name="intLt" type="T-intLt" substitutionGroup="T-constraint"/>
+	<xsd:element name="numEq" type="T-numEq" substitutionGroup="T-constraint"/>
+	<xsd:element name="numGe" type="T-numGe" substitutionGroup="T-constraint"/>
+	<xsd:element name="numLe" type="T-numLe" substitutionGroup="T-constraint"/>
+	<xsd:element name="intEq" type="T-intEq" substitutionGroup="T-constraint"/>
+	<xsd:element name="intGe" type="T-intGe" substitutionGroup="T-constraint"/>
+	<xsd:element name="intLe" type="T-intLe" substitutionGroup="T-constraint"/>
+	<xsd:element name="numGeCst" type="T-numGeCst" substitutionGroup="T-constraint"/>
+	<xsd:element name="numLeCst" type="T-numLeCst" substitutionGroup="T-constraint"/>
+	<xsd:element name="intGtCst" type="T-intGtCst" substitutionGroup="T-constraint"/>
+	<xsd:element name="intLtCst" type="T-intLtCst" substitutionGroup="T-constraint"/>
+	<xsd:element name="numEqCst" type="T-numEqCst" substitutionGroup="T-constraint"/>
+	<xsd:element name="intEqCst" type="T-intEqCst" substitutionGroup="T-constraint"/>
+	<xsd:element name="intLeCst" type="T-intLeCst" substitutionGroup="T-constraint"/>
+	<xsd:element name="intGeCst" type="T-intGeCst" substitutionGroup="T-constraint"/>
+	<xsd:element name="numDiv" type="T-numQuot" substitutionGroup="T-numExpr"/>
+	<xsd:element name="numDivCst" type="T-numQuotCst" substitutionGroup="T-numExpr"/>
+	<xsd:element name="numRecDivCst" type="T-numRecQuotCst" substitutionGroup="T-numExpr"/>
+	<xsd:element name="numMin" type="T-numMin" substitutionGroup="T-numExpr"/>
+	<xsd:element name="numMinCst" type="T-numMinCst" substitutionGroup="T-numExpr"/>
+	<xsd:element name="numMax" type="T-numMax" substitutionGroup="T-numExpr"/>
+	<xsd:element name="numMaxCst" type="T-numMaxCst" substitutionGroup="T-numExpr"/>
+	<xsd:element name="intAllNullIntersect" type="T-allNullIntersect" substitutionGroup="T-constraint"/>
+	<xsd:element name="intMin" type="T-intMin" substitutionGroup="T-intExpr"/>
+	<xsd:element name="intMinCst" type="T-intMinCst" substitutionGroup="T-intExpr"/>
+	<xsd:element name="intMax" type="T-intMax" substitutionGroup="T-intExpr"/>
+	<xsd:element name="intMaxCst" type="T-intMaxCst" substitutionGroup="T-intExpr"/>
+	<xsd:element name="intTimesCst" type="T-intProdCst" substitutionGroup="T-intExpr"/>
+	<xsd:element name="intTimes" type="T-intProd" substitutionGroup="T-intExpr"/>
+	<xsd:element name="numTimesCst" type="T-numProdCst" substitutionGroup="T-numExpr"/>
+	<xsd:element name="numTimes" type="T-numProd" substitutionGroup="T-numExpr"/>
+	<xsd:element name="range" type="T-range" substitutionGroup="T-constraint"/>
+	<xsd:element name="intLinearVar" type="T-intLinearVar" substitutionGroup="T-intExpr"/>
+	<xsd:element name="intExpr" type="T-intNodeTerm" substitutionGroup="T-intExpr"/>
+	<xsd:element name="intLinTerm" type="T-linearIntExpr" substitutionGroup="T-intExpr"/>
+	<xsd:element name="intScalProd" type="T-intScalProd" substitutionGroup="T-intExpr"/>
+	<xsd:element name="numLinearVar" type="T-numLinearVar" substitutionGroup="T-numExpr"/>
+	<xsd:element name="numExpr" type="T-numNodeTerm" substitutionGroup="T-numExpr"/>
+	<xsd:element name="numLinTerm" type="T-linearNumExpr" substitutionGroup="T-numExpr"/>
+	<xsd:element name="numScalProd" type="T-numScalProd" substitutionGroup="T-numExpr"/>
+	<xsd:element name="intSubsetEq" type="T-subsetEq" substitutionGroup="T-constraint"/>
+	<xsd:element name="intExprArrayIndex" type="T-intExprArrayIndex" substitutionGroup="T-intExpr"/>
+	<xsd:element name="intArrayIndexExpr" type="T-intArrayIndexExpr" substitutionGroup="T-constraint"/>
+	<xsd:element name="not" type="T-not" substitutionGroup="T-constraint"/>
+	<xsd:element name="numOpposite" type="T-numOpposite" substitutionGroup="T-numExpr"/>
+	<xsd:element name="intOpposite" type="T-intOpposite" substitutionGroup="T-intExpr"/>
+	<xsd:element name="intArrayIndex" type="T-intArrayIndex" substitutionGroup="T-constraint"/>
+	<xsd:element name="numArrayIndex" type="T-numArrayIndex" substitutionGroup="T-constraint"/>
+	
+	<!-- complex types -->
+	<xsd:complexType name="T-modeler">
+		<xsd:group ref="T-addables" minOccurs="0" maxOccurs="unbounded"/>
+		<xsd:attribute name="version" type="xsd:string" fixed="1.0a"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:group name="T-addables">
+		<xsd:choice>
+			<xsd:element name="Modeler" type="T-modeler" minOccurs="0"/>
+			<xsd:element ref="T-constraint"/>
+			<xsd:element ref="T-numExpr"/>
+			<xsd:element ref="T-intExpr"/>
+			<xsd:element ref="T-varInt"/>
+			<xsd:element ref="T-varBool"/>
+			<xsd:element ref="T-varNum"/>
+			<xsd:element ref="objective"/>
+			<xsd:element ref="intTupleSet"/>
+			<xsd:element ref="numTupleSet"/>
+		</xsd:choice>
+	</xsd:group>
+	<xsd:element name="T-constraint" abstract="true" substitutionGroup="T-intExpr"/>
+	<xsd:element name="T-numExpr" abstract="true"/>
+	<xsd:element name="T-intExpr" abstract="true" substitutionGroup="T-numExpr"/>
+	<xsd:element name="T-varInt" abstract="true" substitutionGroup="T-varNum"/>
+	<xsd:element name="T-varBool" abstract="true" substitutionGroup="T-varInt"/>
+	<xsd:element name="T-varNum" abstract="true" substitutionGroup="T-intExpr"/>
+	<xsd:element name="T-arrayIntExpr" abstract="true"/>
+	<xsd:element name="T-arrayNumVar" abstract="true" substitutionGroup="T-arrayNumExpr"/>
+	<xsd:element name="T-arrayNumExpr" abstract="true"/>
+	<xsd:element name="T-arrayIntVar" abstract="true" substitutionGroup="T-arrayIntExpr"/>
+	<xsd:element name="T-arrayBoolVar" abstract="true" substitutionGroup="T-arrayIntVar"/>
+	<xsd:element name="T-arrayConstraint" abstract="true"/>
+	<xsd:element name="T-arrayRange" abstract="true" substitutionGroup="T-arrayConstraint"/>
+	<xsd:complexType name="T-intDomain">
+		<xsd:complexContent>
+			<xsd:restriction base="xsd:anyType">
+				<xsd:attribute name="lowerbound" type="T-intWithInfinity" use="required"/>
+				<xsd:attribute name="upperbound" type="T-intWithInfinity" use="required"/>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="T-floatDomain">
+		<xsd:complexContent>
+			<xsd:restriction base="xsd:anyType">
+				<xsd:attribute name="lowerbound" type="T-floatWithInfinity" use="required"/>
+				<xsd:attribute name="upperbound" type="T-floatWithInfinity" use="required"/>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="T-trueConstraint">
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-falseConstraint">
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intSetVar">
+		<xsd:all minOccurs="0">
+			<xsd:element name="possibleset" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSet"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="requiredset" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSet"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intEnumeratedVar">
+		<xsd:sequence minOccurs="0">
+			<xsd:element ref="intEnumDomain"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numEnumeratedVar">
+		<xsd:sequence minOccurs="0">
+			<xsd:element ref="floatEnumDomain"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intVar">
+		<xsd:sequence minOccurs="0">
+			<xsd:element ref="intDomain"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-boolVar">
+		<xsd:sequence minOccurs="0">
+			<xsd:element ref="boolDomain"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numVar">
+		<xsd:sequence minOccurs="0">
+			<xsd:element ref="floatDomain" minOccurs="0"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-distribute">
+		<xsd:all minOccurs="0">
+			<xsd:element name="cards">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayIntExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="array">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intArray"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="vars">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayIntExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-distributeV">
+		<xsd:all minOccurs="0">
+			<xsd:element name="cards">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayIntExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="vars">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayIntExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intExprArray">
+		<xsd:sequence maxOccurs="unbounded">
+			<xsd:element ref="T-intExpr" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-onlyref"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numExprArray">
+		<xsd:sequence maxOccurs="unbounded">
+			<xsd:element ref="T-numExpr" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-onlyref"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numVarArray">
+		<xsd:sequence maxOccurs="unbounded">
+			<xsd:element ref="T-varNum" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-onlyref"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intVarArray">
+		<xsd:sequence maxOccurs="unbounded">
+			<xsd:element ref="T-varInt" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-onlyref"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-boolVarArray">
+		<xsd:sequence maxOccurs="unbounded">
+			<xsd:element ref="T-varInt" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-onlyref"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intSetVarArray">
+		<xsd:sequence maxOccurs="unbounded">
+			<xsd:element ref="intSetVar" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-onlyref"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-semiContVarArray">
+		<xsd:sequence maxOccurs="unbounded">
+			<xsd:element ref="semiContVar" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-onlyref"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-allDiff">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="exprarray">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayIntExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-inverse">
+		<xsd:all minOccurs="0">
+			<xsd:element name="array1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayIntExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="array2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayIntExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intEqIntersection">
+		<xsd:all minOccurs="0">
+			<xsd:element name="var1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="var2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="var3">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intEqUnion">
+		<xsd:all minOccurs="0">
+			<xsd:element name="var1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="var2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="var3">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intNullIntersect">
+		<xsd:all minOccurs="0">
+			<xsd:element name="var1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="var2" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element ref="intSet" minOccurs="0"/>
+		</xsd:all>
+		<xsd:attribute name="sense" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intMinArray">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="exprarray">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayIntExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numMinArray">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="exprarray">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayNumExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intMaxArray">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="exprarray">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayIntExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numMaxArray">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="exprarray">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayNumExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numSum">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="exprarray">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayNumExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intSum">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="exprarray">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayIntExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intOpposite">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numOpposite">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-and">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="array">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayConstraint"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-or">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="array">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayConstraint"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-imply">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="array">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayConstraint"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-not">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="constraint">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-constraint"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-member">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="var">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-memberCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="var">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-notMember">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="var">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-notMemberCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="var">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-setNeq">
+		<xsd:all minOccurs="0">
+			<xsd:element name="var1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="var2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-setSetVarNeq">
+		<xsd:all minOccurs="0">
+			<xsd:element ref="intSet"/>
+			<xsd:element name="var1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intSetEq">
+		<xsd:all minOccurs="0">
+			<xsd:element name="var1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="var2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intSetEqCst">
+		<xsd:all minOccurs="0">
+			<xsd:element name="set">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSet"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="var1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intExprAbs">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numExprAbs">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intDiv">
+		<xsd:all minOccurs="0">
+			<xsd:element name="leftexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="rightexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intDivCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:int" use="optional"/>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intRecDivCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:int" use="optional"/>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-exponent">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-log">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-constraintArray">
+		<xsd:sequence maxOccurs="unbounded">
+			<xsd:element ref="T-constraint" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-onlyref"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-rangeArray">
+		<xsd:sequence maxOccurs="unbounded">
+			<xsd:element ref="range" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-onlyref"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-sos1Array">
+		<xsd:sequence maxOccurs="unbounded">
+			<xsd:element ref="sos1" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-onlyref"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-sos2Array">
+		<xsd:sequence maxOccurs="unbounded">
+			<xsd:element ref="sos2" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-onlyref"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-sos1">
+		<xsd:all minOccurs="0">
+			<xsd:element name="vararray">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayNumVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element ref="numArray"/>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-sos2">
+		<xsd:all minOccurs="0">
+			<xsd:element name="vararray">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayNumVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element ref="numArray"/>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-boolIntAbstraction">
+		<xsd:all minOccurs="0">
+			<xsd:element name="avars">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayIntVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="vars">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayIntVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="values">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intArray"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-constraintIndVar">
+		<xsd:sequence minOccurs="0">
+			<xsd:element ref="T-constraint"/>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numNeq">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="expr2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intNeq">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="expr2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numNeqCst">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attribute name="cst" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intNeqCst">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attribute name="cst" type="xsd:int" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-conversion">
+		<xsd:sequence minOccurs="0">
+			<xsd:element ref="T-arrayNumVar"/>
+		</xsd:sequence>
+		<xsd:attribute name="type" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intAbstraction">
+		<xsd:all minOccurs="0">
+			<xsd:element name="avars">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayIntVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="vars">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayIntVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="values">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intArray"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attribute name="abstractvalue" type="xsd:int" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intArrayEqUnion">
+		<xsd:all minOccurs="0">
+			<xsd:element name="var">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="vararray">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVarArray"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intArrayIndex">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element ref="intArray"/>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numArrayIndex">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element ref="numArray"/>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numExprArrayIndex">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="exprarray">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayNumExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intTupleSet">
+		<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+			<xsd:element ref="intArray" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="arity" type="xsd:int" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numTupleSet">
+		<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+			<xsd:element ref="numArray" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="arity" type="xsd:int" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intSubset">
+		<xsd:all minOccurs="0">
+			<xsd:element name="var1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="var2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element ref="intSet"/>
+		</xsd:all>
+		<xsd:attribute name="sense" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-notSubsetEq">
+		<xsd:all minOccurs="0">
+			<xsd:element name="var1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="var2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element ref="intSet"/>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intSubsetCst">
+		<xsd:all minOccurs="0">
+			<xsd:element name="var1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="var2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attribute name="sense" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intSubsetEqCst">
+		<xsd:all minOccurs="0">
+			<xsd:element name="var1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element ref="intSet"/>
+		</xsd:all>
+		<xsd:attribute name="sense" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intSetCardVar">
+		<xsd:all minOccurs="0">
+			<xsd:element name="var">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numTableElementConstraint2">
+		<xsd:all minOccurs="0">
+			<xsd:element name="yvar">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-varNum"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="xvar">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-varNum"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element ref="numArray"/>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intTableElementConstraint2">
+		<xsd:all minOccurs="0">
+			<xsd:element name="yvar">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-varInt"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="xvar">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-varNum"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element ref="intArray"/>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numTableSetConstraint">
+		<xsd:all minOccurs="0">
+			<xsd:element name="vars">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayNumVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="set">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="numTupleSet"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attribute name="compatible" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intTableSetConstraint">
+		<xsd:all minOccurs="0">
+			<xsd:element name="vars">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayIntVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="set">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intTupleSet"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attribute name="compatible" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-sequence">
+		<xsd:all minOccurs="0">
+			<xsd:element name="vars">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="box"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="cards">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="box"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element ref="intArray"/>
+		</xsd:all>
+		<xsd:attribute name="nbmin" type="xsd:string" use="optional"/>
+		<xsd:attribute name="nbmax" type="xsd:string" use="optional"/>
+		<xsd:attribute name="seqwidth" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-box">
+		<xsd:all minOccurs="0">
+			<xsd:element name="origin" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayIntVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element ref="intArray" minOccurs="0"/>
+		</xsd:all>
+		<xsd:attribute name="dimension" type="xsd:int" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-notOverlapConstraint">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="box1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="box"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-containmentConstraint">
+		<xsd:all minOccurs="0">
+			<xsd:element name="containingbox">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="box"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="containedbox">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="box"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-precedenceInDimensionConstraint">
+		<xsd:all minOccurs="0">
+			<xsd:element name="containingbox">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="box"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="box1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="box"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="box2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="box"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attribute name="dimension" type="xsd:int" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-notOverlapInDimensionConstraint">
+		<xsd:all minOccurs="0">
+			<xsd:element name="containingbox">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="box"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="box1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="box"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="box2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="box"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attribute name="dimension" type="xsd:int" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-overlapInDimensionConstraint">
+		<xsd:all minOccurs="0">
+			<xsd:element name="containingbox">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="box"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="box1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="box"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="box2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="box"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attribute name="dimension" type="xsd:int" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-partition2">
+		<xsd:all minOccurs="0">
+			<xsd:element name="vars">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVarArray"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element ref="intArray"/>
+		</xsd:all>
+	</xsd:complexType>
+	<xsd:complexType name="T-partition1">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="vars">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVarArray"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intEqPartition">
+		<xsd:all minOccurs="0">
+			<xsd:element name="vars">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVarArray"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="var">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attribute name="dimension" type="xsd:int" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numArrayMember">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="elements">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="numArray"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intArrayMember">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="elements">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intArray"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numArrayNotMember">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="elements">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="numArray"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intArrayNotMember">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="elements">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intArray"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-semiContVar">
+		<xsd:attribute name="type" type="xsd:string" use="optional"/>
+		<xsd:attribute name="bd" type="xsd:string" use="optional"/>
+		<xsd:attribute name="sclb" type="xsd:string" use="optional"/>
+		<xsd:attribute name="upperbound" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-cos">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-sin">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-tan">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-arcCos">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-arcSin">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-arcTan">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-allMinDistance">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="exprarray">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayIntExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="k" type="xsd:int" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numRecPowerCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numPowerCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numPower">
+		<xsd:all minOccurs="0">
+			<xsd:element name="leftexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="rightexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numSquare">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intSquare">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intGt">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="expr2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intLt">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="expr2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numEq">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="expr2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numGe">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="expr2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numLe">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="expr2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intEq">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="expr2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intGe">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="expr2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intLe">
+		<xsd:all minOccurs="0">
+			<xsd:element name="expr1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="expr2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numGeCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numLeCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numEqCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intGtCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intLtCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intEqCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intLeCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intGeCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numQuot">
+		<xsd:all minOccurs="0">
+			<xsd:element name="leftexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="rightexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numQuotCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numRecQuotCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numMin">
+		<xsd:all minOccurs="0">
+			<xsd:element name="leftexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="rightexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numMinCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numMax">
+		<xsd:all minOccurs="0">
+			<xsd:element name="leftexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="rightexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numMaxCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-allNullIntersect">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="vararray">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVarArray"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intMin">
+		<xsd:all minOccurs="0">
+			<xsd:element name="leftexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="rightexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intMinCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intMax">
+		<xsd:all minOccurs="0">
+			<xsd:element name="leftexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="rightexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intMaxCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:int" use="optional"/>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intProdCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:int" use="optional"/>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intProd">
+		<xsd:all minOccurs="0">
+			<xsd:element name="leftexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="rightexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numProdCst">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="cst" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numProd">
+		<xsd:all minOccurs="0">
+			<xsd:element name="leftexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="rightexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-range">
+		<xsd:sequence minOccurs="0">
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-numExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="lowerbound" type="xsd:string" use="optional"/>
+		<xsd:attribute name="upperbound" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intLinearVar">
+		<xsd:sequence minOccurs="0">
+			<xsd:element ref="T-varInt"/>
+		</xsd:sequence>
+		<xsd:attribute name="coef" type="xsd:int" use="optional"/>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intNodeTerm">
+		<xsd:sequence minOccurs="0">
+			<xsd:element ref="T-intExpr"/>
+		</xsd:sequence>
+		<xsd:attribute name="coef" type="xsd:int" use="optional"/>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-linearIntExpr">
+		<xsd:all minOccurs="0">
+			<xsd:element name="linearpart" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element ref="intLinearVar" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="constantpart" type="xsd:string" minOccurs="0"/>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intScalProd">
+		<xsd:all minOccurs="0">
+			<xsd:element name="linearpart" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element ref="intLinearVar" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="nonlinearpart" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element ref="intExpr" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="constantpart" type="xsd:string" minOccurs="0"/>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numLinearVar">
+		<xsd:sequence minOccurs="0">
+			<xsd:element ref="T-varNum"/>
+		</xsd:sequence>
+		<xsd:attribute name="coef" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numNodeTerm">
+		<xsd:sequence minOccurs="0">
+			<xsd:element ref="T-numExpr"/>
+		</xsd:sequence>
+		<xsd:attribute name="coef" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-linearNumExpr">
+		<xsd:all minOccurs="0">
+			<xsd:element name="linearpart" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element ref="numLinearVar" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="constantpart" type="xsd:string" minOccurs="0"/>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-numScalProd">
+		<xsd:all minOccurs="0">
+			<xsd:element name="linearpart" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element ref="numLinearVar" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="nonlinearpart" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element ref="numExpr" maxOccurs="unbounded"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="constantpart" type="xsd:string" minOccurs="0"/>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-copyable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-boolDomain">
+		<xsd:complexContent>
+			<xsd:restriction base="xsd:anyType">
+				<xsd:attribute name="lowerbound" type="xsd:int" use="required"/>
+				<xsd:attribute name="upperbound" type="xsd:int" use="required"/>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="T-subsetEq">
+		<xsd:all minOccurs="0">
+			<xsd:element name="var1">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="var2">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intSetVar"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intArrayIndexExpr">
+		<xsd:all minOccurs="0">
+			<xsd:element name="array">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="intArray"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-intExprArrayIndex">
+		<xsd:all minOccurs="0">
+			<xsd:element name="exprarray">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-arrayIntExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="expr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-intExpr"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-objective">
+		<xsd:sequence minOccurs="0">
+			<xsd:element ref="T-numExpr"/>
+		</xsd:sequence>
+		<xsd:attribute name="sense" type="xsd:string" use="optional"/>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+	<xsd:complexType name="T-ifThen">
+		<xsd:all minOccurs="0">
+			<xsd:element name="leftexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-constraint"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="rightexpr">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="T-constraint"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:all>
+		<xsd:attributeGroup ref="AG-addable"/>
+	</xsd:complexType>
+</xsd:schema>

@@ -28,7 +28,7 @@ set(CONVENIENCE_LIB_NAME ${PROJECT_NAME})
 
 
 # Config Cplex
-# set(ENV{CPLEX_ROOT_DIR} "/opt/ibm/ILOG/CPLEX_Studio221")
+set(ENV{CPLEX_ROOT_DIR} ".")
 if (DEFINED ENV{CPLEX_ROOT_DIR})
   message("Find Cplex installed at " $ENV{CPLEX_ROOT_DIR})
   set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
