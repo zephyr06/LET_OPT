@@ -7,11 +7,11 @@ include_directories(${CMAKE_SOURCE_DIR})
 
 # for unittest scripts
 
-find_package(GTSAMCMakeTools)
-include(GtsamMakeConfigFile)
-include(GtsamBuildTypes)
-include(GtsamTesting)
-set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
+# find_package(GTSAMCMakeTools)
+# include(GtsamMakeConfigFile)
+# include(GtsamBuildTypes)
+# include(GtsamTesting)
+# set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
 
 set(CMAKE_WARN_DEPRECATED OFF)
 set(CMAKE_ERROR_DEPRECATED OFF)
