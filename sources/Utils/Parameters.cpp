@@ -1,39 +1,41 @@
 #include "Parameters.h"
 
+#include <yaml-cpp/yaml.h>
+
 namespace GlobalVariablesDAGOpt {
 const std::string PROJECT_PATH = "/home/zephyr/Programming/LET_OPT/";
 // const std::string PROJECT_PATH = "/home/dong/workspace/LET_OPT/";
-cv::FileStorage ConfigParameters(GlobalVariablesDAGOpt::PROJECT_PATH +
-                                     "sources/parameters.yaml",
-                                 cv::FileStorage::READ);
+YAML::Node loaded_doc = YAML::LoadFile(GlobalVariablesDAGOpt::PROJECT_PATH +
+                                       "sources/parameters.yaml");
 
 // optimization settings
-int debugMode = (int)ConfigParameters["debugMode"];
-int SKIP_PERM = (int)ConfigParameters["SKIP_PERM"];
-int TIME_LIMIT = (int)ConfigParameters["TIME_LIMIT"];
-double SAMPLE_SMALL_TASKS = (double)ConfigParameters["SAMPLE_SMALL_TASKS"];
+int debugMode = loaded_doc["debugMode"].as<int>();
+int SKIP_PERM = loaded_doc["SKIP_PERM"].as<int>();
+int TIME_LIMIT = loaded_doc["TIME_LIMIT"].as<int>();
+double SAMPLE_SMALL_TASKS = loaded_doc["SAMPLE_SMALL_TASKS"].as<double>();
 double SAMPLE_FEASIBLE_CHAINS =
-    (double)ConfigParameters["SAMPLE_FEASIBLE_CHAINS"];
-int FEASIBLE_CHAINS_MAX = (int)ConfigParameters["FEASIBLE_CHAINS_MAX"];
+    loaded_doc["SAMPLE_FEASIBLE_CHAINS"].as<double>();
+int FEASIBLE_CHAINS_MAX = loaded_doc["FEASIBLE_CHAINS_MAX"].as<int>();
 int FEASIBLE_INCOMPLETE_CHAINS_MAX =
-    (int)ConfigParameters["FEASIBLE_INCOMPLETE_CHAINS_MAX"];
+    loaded_doc["FEASIBLE_INCOMPLETE_CHAINS_MAX"].as<int>();
 const double kCplexInequalityThreshold =
-    (double)ConfigParameters["kCplexInequalityThreshold"];
-int SearchDP_Friendly = (int)ConfigParameters["SearchDP_Friendly"];
+    loaded_doc["kCplexInequalityThreshold"].as<double>();
+int SearchDP_Friendly = loaded_doc["SearchDP_Friendly"].as<int>();
 // Task set settings
 const std::string testDataSetName =
-    (std::string)ConfigParameters["testDataSetName"];
-const std::string priorityMode = (std::string)ConfigParameters["priorityMode"];
-const int TIME_SCALE_FACTOR = (int)ConfigParameters["TIME_SCALE_FACTOR"];
-const int CHAIN_NUMBER = (int)ConfigParameters["CHAIN_NUMBER"];
+    loaded_doc["testDataSetName"].as<std::string>();
+
+const std::string priorityMode = loaded_doc["priorityMode"].as<std::string>();
+const int TIME_SCALE_FACTOR = loaded_doc["TIME_SCALE_FACTOR"].as<int>();
+const int CHAIN_NUMBER = loaded_doc["CHAIN_NUMBER"].as<int>();
 
 // *************************************************************
 
 // SA
-const double coolingRateSA = (double)ConfigParameters["coolingRateSA"];
-const int randomInitialize = (int)ConfigParameters["randomInitialize"];
-const int temperatureSA = (int)ConfigParameters["temperatureSA"];
-const int SA_iteration = (int)ConfigParameters["SA_iteration"];
+const double coolingRateSA = loaded_doc["coolingRateSA"].as<double>();
+const int randomInitialize = loaded_doc["randomInitialize"].as<int>();
+const int temperatureSA = loaded_doc["temperatureSA"].as<int>();
+const int SA_iteration = loaded_doc["SA_iteration"].as<int>();
 // *************************************************************
 
 }  // namespace GlobalVariablesDAGOpt

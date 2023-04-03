@@ -20,7 +20,6 @@ unset(CMAKE_WARN_DEPRECATED)
 
 # Boost - same requirement as gtsam
 find_package(Boost 1.50 REQUIRED)
-find_package( OpenCV REQUIRED )
 find_package(yaml-cpp)
 include_directories(${Boost_INCLUDE_DIR})
 include_directories(/usr/local/lib)
@@ -59,7 +58,6 @@ add_library(${CONVENIENCE_LIB_NAME} SHARED ${sources})
 
 # linking with dependencies
 target_link_libraries(${CONVENIENCE_LIB_NAME} ${Boost_LIBRARIES})
-target_link_libraries(${CONVENIENCE_LIB_NAME} ${OpenCV_LIBS} )
 target_link_libraries(${CONVENIENCE_LIB_NAME} yaml-cpp)
 target_link_libraries(${CONVENIENCE_LIB_NAME} "stdc++fs")
 target_link_libraries(${CONVENIENCE_LIB_NAME} gtest_main)
