@@ -84,13 +84,13 @@ class TaskSetPermutation {
       PrintSinglePermIndex(chains_perm);
       std::cout << " due to guarantee to perform worse at the "
                    "per-chain test\n";
-#ifdef PROFILE_CODE
-      EndTimer(__FUNCTION__);
-#endif
       // TODO: push to feasible_chains_vec, probbaly use a separate queue
       feasible_chains_.push_back_incomplete(
           FeasibleChainManager(chains_perm, adjacent_two_task_permutations_,
                                ObjectiveFunction::type_trait));
+#ifdef PROFILE_CODE
+      EndTimer(__FUNCTION__);
+#endif
       return true;
     }
 #ifdef PROFILE_CODE
@@ -178,6 +178,22 @@ class TaskSetPermutation {
     int count = iterator.size();
     while (!iterator.empty()) {
       if (ifTimeout(start_time_)) break;
+      BeginTimer("RemoveCandidates_related");
+      // TODO: predict decrease_fail?
+      uint size_before = iterator.size();
+      iterator.RemoveCandidates(chains_perm, feasible_chains_.chain_man_vec_,
+                                unvisited_future_edges);
+      iterator.RemoveCandidates(chains_perm,
+                                feasible_chains_.chain_man_vec_incomplete_,
+                                unvisited_future_edges);
+      uint size_after = iterator.size();
+      if (size_after < size_before)
+        decrease_success++;
+      else
+        decrease_fail++;
+      EndTimer("RemoveCandidates_related");
+      if (iterator.empty()) break;
+
       const auto& perm_sing_curr = iterator.pop_front();
       if (chains_perm.IsValid(variable_range_od_, *perm_sing_curr,
                               graph_of_all_ca_chains_)) {
@@ -198,35 +214,13 @@ class TaskSetPermutation {
                     << " permutations\n";
           std::cout << "\n";
         }
-        // std::cout << "Early break at level " << position
-        //           << " due to being conflicted permutations while "
-        //              "exploring the "
-        //           << adjacent_two_task_permutations_[position].size() -
-        //                  iterator.size()
-        //           << " permutations\n";
       }
+      // TODO: consider where to put the code carefully
+
       count--;
       if (count < -10) {
         CoutWarning("deadlock found during IterateSortedPerms");
       }
-      // if (RandRange(0, 1) > GlobalVariablesDAGOpt::SAMPLE_SMALL_TASKS)
-      BeginTimer("RemoveCandidates_related");
-      // TODO: predict decrease_fail?
-      // if (feasible_chains_.IfModified(position)) {
-      uint size_before = iterator.size();
-      iterator.RemoveCandidates(chains_perm, feasible_chains_.chain_man_vec_,
-                                unvisited_future_edges);
-      iterator.RemoveCandidates(chains_perm,
-                                feasible_chains_.chain_man_vec_incomplete_,
-                                unvisited_future_edges);
-      uint size_after = iterator.size();
-      if (size_after < size_before)
-        decrease_success++;
-      else
-        decrease_fail++;
-      // feasible_chains_.UnSetModify(position);
-      // }
-      EndTimer("RemoveCandidates_related");
     }
     return feasible_prev_chain;
   }

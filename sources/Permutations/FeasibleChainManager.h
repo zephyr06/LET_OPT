@@ -1,4 +1,6 @@
 #pragma once
+#include <deque>
+
 #include "sources/Permutations/ChainsPermutation.h"
 
 namespace DAG_SPACE {
@@ -30,7 +32,7 @@ class FeasiblieChainsManagerVec {
 
   FeasiblieChainsManagerVec(uint n) : length(n) {
     chain_man_vec_.reserve(n);
-    chain_man_vec_incomplete_.reserve(n);
+    // chain_man_vec_incomplete_.reserve(n);
   }
 
   inline size_t size() const { return chain_man_vec_.size(); }
@@ -47,17 +49,17 @@ class FeasiblieChainsManagerVec {
   inline void pop_back() { chain_man_vec_.pop_back(); }
 
   void push_back_incomplete(const FeasibleChainManager& feasible_chain_man) {
-    if (chain_man_vec_incomplete_.size() >
+    if (chain_man_vec_incomplete_.size() >=
         uint(GlobalVariablesDAGOpt::FEASIBLE_INCOMPLETE_CHAINS_MAX)) {
-      chain_man_vec_incomplete_.pop_back();
+      pop_incomplete();
     }
     chain_man_vec_incomplete_.push_back(feasible_chain_man);
   }
-  inline void pop_back_incomplete() { chain_man_vec_incomplete_.pop_back(); }
+  inline void pop_incomplete() { chain_man_vec_incomplete_.pop_front(); }
 
   // data member
   std::vector<FeasibleChainManager> chain_man_vec_;
-  std::vector<FeasibleChainManager> chain_man_vec_incomplete_;
+  std::deque<FeasibleChainManager> chain_man_vec_incomplete_;
   uint length;
 };
 }  // namespace DAG_SPACE

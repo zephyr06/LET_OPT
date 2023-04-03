@@ -262,6 +262,29 @@ TEST_F(PermutationTest22_n5, Feasible_Chain_should_skip_perms) {
   EXPECT_EQ(80, iterator21.size());
 }
 
+TEST_F(PermutationTest22_n5, skip_with_incomplete_chain_perms) {
+  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  auto perm41 = task_set_perms.adjacent_two_task_permutations_[0];
+  auto perm32 = task_set_perms.adjacent_two_task_permutations_[1];
+  auto perm10 = task_set_perms.adjacent_two_task_permutations_[2];
+  auto perm21 = task_set_perms.adjacent_two_task_permutations_[3];
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm41[1]);
+  task_set_perms.feasible_chains_.push_back_incomplete(FeasibleChainManager(
+      chains_perm, task_set_perms.adjacent_two_task_permutations_,
+      "ReactionTimeApprox"));
+  task_set_perms.PrintFeasibleChainsRecord();
+  uint position = 1;
+  TwoTaskPermutationsIterator iterator32(
+      task_set_perms.adjacent_two_task_permutations_[position]);
+  std::vector<Edge> unvisited_future_edges =
+      task_set_perms.GetUnvisitedFutureEdges(position);
+  iterator32.RemoveCandidates(
+      chains_perm, task_set_perms.feasible_chains_.chain_man_vec_incomplete_,
+      unvisited_future_edges);
+  EXPECT_EQ(0, iterator32.size());
+}
+
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
