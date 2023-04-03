@@ -9,7 +9,7 @@
 #include "sources/TaskModel/DAG_Model.h"
 #include "sources/Utils/Interval.h"
 #include "sources/Utils/JobCEC.h"
-
+#include "testEnv.cpp"
 using namespace DAG_SPACE;
 
 class PermutationTest1 : public ::testing::Test {
@@ -607,6 +607,15 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSink_ret_false) {
   EXPECT_EQ(100, intv2.start + intv2.length);
   EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllWithSameSink(
       variable_od_range, *perm31[4], graph_of_all_ca_chains));
+}
+
+class PermutationTest7_n30 : public PermutationTestBase {
+  void SetUp() override { SetUpBase("test_n30_v7"); }
+};
+TEST_F(PermutationTest7_n30, GraphOfChains) {
+  // auto task_sets_perms = TaskSetPermutation(dag_tasks, dag_tasks.chains_);
+  GraphOfChains graph_of_all_ca_chains_(dag_tasks.chains_);
+  EXPECT_EQ(12, graph_of_all_ca_chains_.edge_records_.size());
 }
 
 int main(int argc, char** argv) {
