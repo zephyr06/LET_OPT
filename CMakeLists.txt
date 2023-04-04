@@ -60,12 +60,6 @@ add_library(${CONVENIENCE_LIB_NAME} SHARED ${sources})
 target_link_libraries(${CONVENIENCE_LIB_NAME} ${Boost_LIBRARIES})
 target_link_libraries(${CONVENIENCE_LIB_NAME} yaml-cpp)
 target_link_libraries(${CONVENIENCE_LIB_NAME} "stdc++fs")
-target_link_libraries(${CONVENIENCE_LIB_NAME} gtest_main)
-target_link_libraries(${CONVENIENCE_LIB_NAME}  gmock)
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-find_package(GTest REQUIRED)
-target_link_libraries(${CONVENIENCE_LIB_NAME}  GTest::GTest GTest::Main) # discover and run all the tests
-endif()
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 if (CPLEX_FOUND)
@@ -74,6 +68,10 @@ endif()
 
 add_subdirectory(sources)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+find_package(GTest REQUIRED)
+target_link_libraries(${CONVENIENCE_LIB_NAME}  GTest::GTest GTest::Main) # discover and run all the tests
+target_link_libraries(${CONVENIENCE_LIB_NAME} gtest_main)
+target_link_libraries(${CONVENIENCE_LIB_NAME}  gmock)
 enable_testing()
 endif()
 

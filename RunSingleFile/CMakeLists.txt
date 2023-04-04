@@ -2,8 +2,6 @@
 
 
 file( GLOB TEST_SOURCES "*RunSingle*.cpp" )
-# file(GLOB_RECURSE EXCLUDE_FILE "testEnv.cpp")
-# list(REMOVE_ITEM TEST_SOURCES "${EXCLUDE_FILE}")
 
 foreach( testsourcefile ${TEST_SOURCES} )
     # I used a simple string replace, to cut off .cpp.
