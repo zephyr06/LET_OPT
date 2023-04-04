@@ -10,7 +10,7 @@
 #SBATCH --mail-type=END    # send email when job ends
 #SBATCH --mail-type=FAIL   # send email when job aborts
 
-
+module reset
 module load CMake/3.15.3-GCCcore-8.3.0
 module load boost/1.79 
 module load Eigen/3.3.7
