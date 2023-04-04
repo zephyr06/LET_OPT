@@ -6,7 +6,6 @@
 #include <Eigen/Dense>
 #include <Eigen/SparseCore>
 #include <algorithm>
-#include <boost/function.hpp>
 #include <chrono>
 #include <unordered_map>
 
@@ -17,12 +16,6 @@
 #include "sources/Utils/testMy.h"
 
 // using namespace std;
-
-typedef boost::function<VectorDynamic(const VectorDynamic &)>
-    NormalErrorFunction1D;
-typedef boost::function<VectorDynamic(const VectorDynamic &,
-                                      const VectorDynamic &)>
-    NormalErrorFunction2D;
 
 typedef long long int LLint;
 
@@ -69,7 +62,6 @@ inline std::ostream &operator<<(std::ostream &os, MappingDataStruct const &m) {
 }
 
 typedef std::unordered_map<int, MappingDataStruct> MAP_Index2Data;
-typedef boost::function<VectorDynamic(const VectorDynamic &)> FuncV2V;
 
 // ************************************************************ SOME FUNCTIONS
 /**

@@ -1,6 +1,5 @@
 #include <time.h>
 
-#include <boost/program_options/options_description.hpp>
 #include <cmath>
 
 #include "sources/TaskModel/DAG_Model.h"
@@ -8,7 +7,6 @@
 #include "sources/Utils/Parameters.h"
 
 using namespace RegularTaskSystem;
-namespace po = boost::program_options;
 
 // std::vector<int> PeriodSetAM = {1, 2, 5, 10, 20, 50, 100, 200, 1000};
 // std::vector<int> PeriodSetAM = {2, 5, 10, 20, 50, 100, 200};
