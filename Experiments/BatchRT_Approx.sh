@@ -16,7 +16,7 @@ module load boost/1.79
 module load Eigen/3.3.7
 module load yaml-cpp/0.6.3-GCCcore-8.3.0
 
-cd ~/Programming/LET_OPT/Experiments
+cd ~/Programming/LET_OPT/release
 N=$1
 file_index=$2
 end_index=$3
