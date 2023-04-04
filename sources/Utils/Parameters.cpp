@@ -3,7 +3,8 @@
 #include <yaml-cpp/yaml.h>
 
 namespace GlobalVariablesDAGOpt {
-const std::string PROJECT_PATH = "/home/zephyr/Programming/LET_OPT/";
+// const std::string PROJECT_PATH = "/home/zephyr/Programming/LET_OPT/";
+const std::string PROJECT_PATH = std::string(PROJECT_ROOT_DIR) + "/";
 // const std::string PROJECT_PATH = "/home/swang666/Programming/LET_OPT/";
 // const std::string PROJECT_PATH = "/home/dong/workspace/LET_OPT/";
 YAML::Node loaded_doc = YAML::LoadFile(GlobalVariablesDAGOpt::PROJECT_PATH +

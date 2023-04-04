@@ -41,6 +41,12 @@ class PermutationTestBase : public ::testing::Test {
   JobCEC job10;
   JobCEC job20;
 };
+
+// TEST(root_dir, V1) {
+//   std::cout << "Project root directory: " << PROJECT_ROOT_DIR << std::endl;
+//   const std::string PROJECT_PATH = PROJECT_ROOT_DIR;
+// }
+
 // int main(int argc, char** argv) {
 //   // ::testing::InitGoogleTest(&argc, argv);
 //   ::testing::InitGoogleMock(&argc, argv);

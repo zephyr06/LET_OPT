@@ -5,7 +5,7 @@ set (CMAKE_CXX_STANDARD 17)
 
 include_directories(${CMAKE_SOURCE_DIR})
 
-# for unittest scripts
+add_definitions(-DPROJECT_ROOT_DIR="${PROJECT_SOURCE_DIR}")
 
 # find_package(GTSAMCMakeTools)
 # include(GtsamMakeConfigFile)
