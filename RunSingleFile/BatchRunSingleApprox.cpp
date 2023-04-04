@@ -1,5 +1,5 @@
+#include "sources/BatchOptimize/batchOptimize.h"
 #include "sources/Utils/argparse.hpp"
-#include "sources/batchOptimize.h"
 
 int main(int argc, char *argv[]) {
   argparse::ArgumentParser program("program name");
