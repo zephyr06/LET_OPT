@@ -11,6 +11,7 @@ FILES_PER_CPU=200
 cd ~/Programming/LET_OPT/release
 cmake -DCMAKE_BUILD_TYPE=RELEASE ..
 make BatchRunSingle.run -j8
+cd ~/Programming/LET_OPT/Experiments
 
 perform_optimization() {
 	# Optimize energy consumption
