@@ -62,14 +62,16 @@ target_link_libraries(${CONVENIENCE_LIB_NAME} yaml-cpp)
 target_link_libraries(${CONVENIENCE_LIB_NAME} "stdc++fs")
 target_link_libraries(${CONVENIENCE_LIB_NAME} gtest_main)
 target_link_libraries(${CONVENIENCE_LIB_NAME}  gmock)
+find_package(GTest REQUIRED)
+target_link_libraries(${CONVENIENCE_LIB_NAME}  GTest::GTest GTest::Main) # discover and run all the tests
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 if (CPLEX_FOUND)
   target_link_libraries(${CONVENIENCE_LIB_NAME} ${CPLEX_LIBRARIES} ${CMAKE_DL_LIBS})
 endif()
 
-
 add_subdirectory(sources)
+enable_testing()
 add_subdirectory(tests)
 # add_subdirectory(scripts)
 add_subdirectory(RunSingleFile)

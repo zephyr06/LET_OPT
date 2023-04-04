@@ -1,5 +1,5 @@
 #include "gmock/gmock.h"  // Brings in gMock.
-#include "sources/batchOptimize.h"
+#include "sources/BatchOptimize/batchOptimize.h"
 using namespace DAG_SPACE;
 
 TEST(average_performance, v1) {

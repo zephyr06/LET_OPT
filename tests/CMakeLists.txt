@@ -19,6 +19,8 @@ foreach( testsourcefile ${TEST_SOURCES} )
     add_executable( ${testname} ${RELATIVE_SOURCE_FILE} )
     # Make sure YourLib is linked to each app
     target_link_libraries( ${testname} ${CONVENIENCE_LIB_NAME} )
+    target_link_libraries(${testname}  GTest::GTest GTest::Main)
+    gtest_discover_tests(${testname})
 endforeach( testsourcefile ${TEST_SOURCES} )
 
 # enable_testing()
