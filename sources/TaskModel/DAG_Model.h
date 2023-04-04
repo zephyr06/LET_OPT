@@ -104,7 +104,7 @@ class DAG_Model {
     inline int GetTaskIndex(int task_id) const {
         return task_id2position_.at(task_id);
     }
-    inline const Task& GetTask(int task_id) const {
+    inline const Task &GetTask(int task_id) const {
         return tasks[GetTaskIndex(task_id)];
     }
 
@@ -128,5 +128,11 @@ DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType = "orig",
                         int chainNum = 1);
 
 bool WhetherDAGChainsShareNodes(const DAG_Model &dag_tasks);
+
+inline std::string GetTaskSetName(int file_index, int N) {
+    return "dag-set-N" + std::to_string(N) + "-" +
+           std::string(3 - std::to_string(file_index).size(), '0') +
+           std::to_string(file_index) + "-syntheticJobs" + ".csv";
+}
 
 }  // namespace DAG_SPACE

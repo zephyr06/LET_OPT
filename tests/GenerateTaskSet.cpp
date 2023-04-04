@@ -177,9 +177,10 @@ int main(int argc, char *argv[]) {
                     continue;  // re-generate a new task set
                 }
             }
-            string fileName = "dag-set-N" + to_string(task_number_in_tasksets) +
-                              "-" + string(3 - to_string(i).size(), '0') +
-                              to_string(i) + "-syntheticJobs" + ".csv";
+            string fileName = GetTaskSetName(i, task_number_in_tasksets);
+            //  "dag-set-N" + to_string(task_number_in_tasksets) +
+            //                   "-" + string(3 - to_string(i).size(), '0') +
+            //                   to_string(i) + "-syntheticJobs" + ".csv";
             std::ofstream myfile;
             myfile.open(outDirectory + fileName);
             WriteDAG(myfile, dag_tasks);
