@@ -27,28 +27,28 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
       res = PerformStandardLETAnalysis<ObjectiveFunctionBase>(dag_tasks);
       break;
     case TOM:
-      res = PerformTOM_OPT<ObjectiveFunctionBase>(dag_tasks, "Enumerate");
+      res = PerformTOM_OPT_EnumW_Skip<ObjectiveFunctionBase>(dag_tasks);
       break;
     case TOM_Sort:
-      res = PerformTOM_OPT<ObjectiveFunctionBase>(dag_tasks, "Sort");
+      res = PerformTOM_OPT_Sort<ObjectiveFunctionBase>(dag_tasks);
       break;
     case TOM_Approx:
       if (ObjectiveFunctionBase::type_trait == "ReactionTime" ||
           ObjectiveFunctionBase::type_trait == "ReactionTimeApprox")
-        res = PerformTOM_OPT<ObjReactionTimeApprox>(dag_tasks, "Enumerate");
+        res = PerformTOM_OPT_EnumW_Skip<ObjReactionTimeApprox>(dag_tasks);
       else if (ObjectiveFunctionBase::type_trait == "DataAge" ||
                ObjectiveFunctionBase::type_trait == "DataAgeApprox")
-        res = PerformTOM_OPT<ObjDataAgeApprox>(dag_tasks, "Enumerate");
+        res = PerformTOM_OPT_EnumW_Skip<ObjDataAgeApprox>(dag_tasks);
       else
         CoutError("Unknown type trait in BatchOptimize!");
       break;
     case TOM_Sort_Approx:
       if (ObjectiveFunctionBase::type_trait == "ReactionTime" ||
           ObjectiveFunctionBase::type_trait == "ReactionTimeApprox")
-        res = PerformTOM_OPT<ObjReactionTimeApprox>(dag_tasks, "Sort");
+        res = PerformTOM_OPT_Sort<ObjReactionTimeApprox>(dag_tasks);
       else if (ObjectiveFunctionBase::type_trait == "DataAge" ||
                ObjectiveFunctionBase::type_trait == "DataAgeApprox")
-        res = PerformTOM_OPT<ObjDataAgeApprox>(dag_tasks, "Sort");
+        res = PerformTOM_OPT_Sort<ObjDataAgeApprox>(dag_tasks);
       else
         CoutError("Unknown type trait in BatchOptimize!");
       break;

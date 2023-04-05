@@ -480,8 +480,13 @@ TEST_F(PermutationTest_2chain_v1, GetUnvisitedFutureEdges) {
 TEST_F(PermutationTest_2chain_v1, TaskSetPermutation) {
   // dag_tasks.chains_[0] = {0, 3, 4};
   // dag_tasks.chains_.push_back({1, 3, 4});
-  auto res = PerformTOM_OPT<ObjReactionTime>(dag_tasks);
-
+  auto res = PerformTOM_OPT_EnumW_Skip<ObjReactionTime>(dag_tasks);
+  EXPECT_THAT(res.obj_, testing::Le(128 + 28));
+}
+TEST_F(PermutationTest_2chain_v1, TaskSetPermutation_sort) {
+  // dag_tasks.chains_[0] = {0, 3, 4};
+  // dag_tasks.chains_.push_back({1, 3, 4});
+  auto res = PerformTOM_OPT_Sort<ObjReactionTime>(dag_tasks);
   EXPECT_THAT(res.obj_, testing::Le(128 + 28));
 }
 

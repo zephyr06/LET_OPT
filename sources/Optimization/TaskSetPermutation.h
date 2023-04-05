@@ -28,6 +28,20 @@ class TaskSetPermutation {
   void PrintSinglePermIndex(const ChainsPermutation& chains_perm) const;
   void PrintSinglePermIndex(const ChainsPermutation& chains_perm,
                             const std::vector<Edge>& edges) const;
+  // About optimization
+  bool WhetherContainInfeasibleSubChains(
+      const ChainsPermutation& chains_perm,
+      const std::vector<std::vector<int>>& sub_chains);
+
+  template <typename ObjectiveFunction>
+  inline double GetBestPossibleObj(
+      const ChainsPermutation& chains_perm,
+      const std::vector<std::vector<int>>& sub_chains) {
+    VariableOD best_possible_variable_od =
+        FindBestPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm);
+    return ObjectiveFunction::Obj(dag_tasks_, tasks_info_, chains_perm,
+                                  best_possible_variable_od, sub_chains);
+  }
 
   // data members
   TimerType start_time_;
