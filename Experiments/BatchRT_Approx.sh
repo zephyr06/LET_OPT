@@ -2,7 +2,7 @@
 #SBATCH -J hello-world
 #SBATCH --account=ev_charging
 #SBATCH --partition=normal_q
-#SBATCH --nodes=1 --ntasks-per-node=1 --cpus-per-task=1  
+#SBATCH --nodes=1 --ntasks-per-node=1 --cpus-per-task=2  
 #SBATCH --time=0-00:20:00 # 20 minutes
 
 #SBATCH --mail-user=swang666@vt.edu
