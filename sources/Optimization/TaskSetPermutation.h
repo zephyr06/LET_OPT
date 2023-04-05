@@ -44,7 +44,6 @@ class TaskSetPermutation {
   VariableOD best_possible_variable_od_;
   VariableRange variable_range_od_;
   int infeasible_iteration_ = 0;
-  LPOptimizer lp_optimizer_;
   FeasiblieChainsManagerVec feasible_chains_;
   int decrease_success = 0;
   int decrease_fail = 0;

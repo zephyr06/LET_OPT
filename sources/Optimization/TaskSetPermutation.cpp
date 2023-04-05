@@ -15,13 +15,9 @@ TaskSetPermutation::TaskSetPermutation(
       variable_range_od_(FindVariableRange(dag_tasks_)),
       rta_(GetResponseTimeTaskSet(dag_tasks_)),
       best_possible_variable_od_(
-          FindBestPossibleVariableOD(dag_tasks_, tasks_info_, rta_)),
-      lp_optimizer_(dag_tasks_, tasks_info_, graph_of_all_ca_chains_, "",
-                    rta_) {
+          FindBestPossibleVariableOD(dag_tasks_, tasks_info_, rta_)) {
   adjacent_two_task_permutations_.reserve(
       1e2);  // there are never more than 1e2 edges
-  // lp_optimizer_.AddVariablesOD();
-  // lp_optimizer_.AddSchedulabilityConstraints();
   FindPairPermutations();
   feasible_chains_ =
       FeasiblieChainsManagerVec(adjacent_two_task_permutations_.size());
@@ -91,13 +87,13 @@ void TaskSetPermutation::PrintSinglePermIndex(
       std::cout << chains_perm[edge]->index_local_ << ", ";
 }
 
- std::vector<Edge> TaskSetPermutation::GetUnvisitedFutureEdges(uint position) const {
-    std::vector<Edge> edges;
-    edges.reserve(adjacent_two_task_permutations_.size());
-    for (uint i = position + 1; i < adjacent_two_task_permutations_.size();
-         i++) {
-      edges.push_back(adjacent_two_task_permutations_.at(i).GetEdge());
-    }
-    return edges;
+std::vector<Edge> TaskSetPermutation::GetUnvisitedFutureEdges(
+    uint position) const {
+  std::vector<Edge> edges;
+  edges.reserve(adjacent_two_task_permutations_.size());
+  for (uint i = position + 1; i < adjacent_two_task_permutations_.size(); i++) {
+    edges.push_back(adjacent_two_task_permutations_.at(i).GetEdge());
   }
+  return edges;
+}
 }  // namespace DAG_SPACE

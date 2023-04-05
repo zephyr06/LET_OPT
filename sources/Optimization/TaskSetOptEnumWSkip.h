@@ -6,15 +6,12 @@ class TaskSetOptEnumWSkip : public TaskSetPermutation {
  public:
   TaskSetOptEnumWSkip(const DAG_Model& dag_tasks,
                       const std::vector<std::vector<int>>& chains)
-      : TaskSetPermutation(dag_tasks, chains){}
-      
+      : TaskSetPermutation(dag_tasks, chains) {}
+
   template <typename ObjectiveFunction>
   int PerformOptimizationEnumerate() {
     ChainsPermutation chains_perm;
     IterateAllChainsPermutations<ObjectiveFunction>(0, chains_perm);
-    lp_optimizer_.ClearCplexMemory();  // TODO: consider trying to optimize
-    // performance by directly set coefficient
-    // rather than remove/add constraints
     return best_yet_obj_;
   }
 

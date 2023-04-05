@@ -12,74 +12,12 @@ class TaskSetOptSorted : public TaskSetPermutation {
   int PerformOptimizationSort() {
     ChainsPermutation chains_perm;
     IterateSortedPerms<ObjectiveFunction>(0, chains_perm);
-    lp_optimizer_.ClearCplexMemory();
     std::cout << "The number of feasibile chains found: "
               << feasible_chains_.size() << "\n";
     std::cout << "Decrease succes: " << decrease_success
               << ", Decrease Fail: " << decrease_fail << std::endl;
     PrintFeasibleChainsRecord();
     return best_yet_obj_;
-  }
-
-  // chains_perm already pushed the new perm_single
-  template <typename ObjectiveFunction>
-  bool WhetherSkipToNextPerm(const ChainsPermutation& chains_perm) {
-#ifdef PROFILE_CODE
-    BeginTimer(__FUNCTION__);
-#endif
-
-    std::vector<std::vector<int>> sub_chains =
-        GetSubChains(dag_tasks_.chains_, chains_perm);
-    for (const auto& sub_chain : sub_chains) {
-      if (sub_chain.size() == 0) continue;
-      if (GlobalVariablesDAGOpt::SKIP_PERM >= 2 &&
-          !FindODFromSingleChainPermutation(dag_tasks_, chains_perm,
-                                            graph_of_all_ca_chains_, sub_chain,
-                                            rta_)
-               .valid_) {
-#ifdef PROFILE_CODE
-        EndTimer(__FUNCTION__);
-#endif
-        if (GlobalVariablesDAGOpt::debugMode) {
-          std::cout << "Early break at level " << chains_perm.size() << ": ";
-          PrintSinglePermIndex(chains_perm);
-          std::cout
-              << " due to being conflicted permutations from sub-chains while "
-                 "exploring the "
-              // << adjacent_two_task_permutations_[position].size() -
-              //        iterator.size()
-              << " permutations\n";
-          std::cout << "\n";
-        }
-        return true;
-      }
-    }
-
-    VariableOD best_possible_variable_od =
-        FindBestPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm);
-    double obj_curr =
-        ObjectiveFunction::Obj(dag_tasks_, tasks_info_, chains_perm,
-                               best_possible_variable_od, sub_chains);
-    if (obj_curr > best_yet_obj_) {
-      if (GlobalVariablesDAGOpt::debugMode) {
-        std::cout << "Early break at level " << chains_perm.size() << ": ";
-        PrintSinglePermIndex(chains_perm);
-        std::cout << " due to guarantee to perform worse at the "
-                     "per-chain test\n";
-      }
-      // TODO: push to feasible_chains_vec, probbaly use a separate queue
-      feasible_chains_.push_back_incomplete(
-          FeasibleChainManager(chains_perm, adjacent_two_task_permutations_,
-                               ObjectiveFunction::type_trait));
-#ifdef PROFILE_CODE
-      EndTimer(__FUNCTION__);
-#endif
-      return true;
-    }
-#ifdef PROFILE_CODE
-    EndTimer(__FUNCTION__);
-#endif
-    return false;
   }
 
   template <typename ObjectiveFunction>
@@ -151,6 +89,67 @@ class TaskSetOptSorted : public TaskSetPermutation {
       }
     }
     return feasible_prev_chain;
+  }
+
+  // chains_perm already pushed the new perm_single
+  template <typename ObjectiveFunction>
+  bool WhetherSkipToNextPerm(const ChainsPermutation& chains_perm) {
+#ifdef PROFILE_CODE
+    BeginTimer(__FUNCTION__);
+#endif
+
+    std::vector<std::vector<int>> sub_chains =
+        GetSubChains(dag_tasks_.chains_, chains_perm);
+    for (const auto& sub_chain : sub_chains) {
+      if (sub_chain.size() == 0) continue;
+      if (GlobalVariablesDAGOpt::SKIP_PERM >= 2 &&
+          !FindODFromSingleChainPermutation(dag_tasks_, chains_perm,
+                                            graph_of_all_ca_chains_, sub_chain,
+                                            rta_)
+               .valid_) {
+#ifdef PROFILE_CODE
+        EndTimer(__FUNCTION__);
+#endif
+        if (GlobalVariablesDAGOpt::debugMode) {
+          std::cout << "Early break at level " << chains_perm.size() << ": ";
+          PrintSinglePermIndex(chains_perm);
+          std::cout
+              << " due to being conflicted permutations from sub-chains while "
+                 "exploring the "
+              // << adjacent_two_task_permutations_[position].size() -
+              //        iterator.size()
+              << " permutations\n";
+          std::cout << "\n";
+        }
+        return true;
+      }
+    }
+
+    VariableOD best_possible_variable_od =
+        FindBestPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm);
+    double obj_curr =
+        ObjectiveFunction::Obj(dag_tasks_, tasks_info_, chains_perm,
+                               best_possible_variable_od, sub_chains);
+    if (obj_curr > best_yet_obj_) {
+      if (GlobalVariablesDAGOpt::debugMode) {
+        std::cout << "Early break at level " << chains_perm.size() << ": ";
+        PrintSinglePermIndex(chains_perm);
+        std::cout << " due to guarantee to perform worse at the "
+                     "per-chain test\n";
+      }
+      // TODO: push to feasible_chains_vec, probbaly use a separate queue
+      feasible_chains_.push_back_incomplete(
+          FeasibleChainManager(chains_perm, adjacent_two_task_permutations_,
+                               ObjectiveFunction::type_trait));
+#ifdef PROFILE_CODE
+      EndTimer(__FUNCTION__);
+#endif
+      return true;
+    }
+#ifdef PROFILE_CODE
+    EndTimer(__FUNCTION__);
+#endif
+    return false;
   }
 
   template <typename ObjectiveFunction>
