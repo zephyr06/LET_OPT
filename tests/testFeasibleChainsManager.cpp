@@ -31,7 +31,7 @@ class PermutationTest18 : public PermutationTestBase {
 };
 
 TEST_F(PermutationTest18, FeasibleChainManager) {
-  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
   TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
   TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
   perm01.print();
@@ -50,7 +50,7 @@ TEST_F(PermutationTest18, FeasibleChainManager) {
 }
 
 TEST_F(PermutationTest18, IfChainsContainBetterPerm) {
-  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
   TwoTaskPermutations perm01 =
       task_set_perms.adjacent_two_task_permutations_[0];
   TwoTaskPermutations perm12 =
@@ -90,7 +90,7 @@ TEST_F(PermutationTest18, IfChainsContainBetterPerm) {
 }
 
 TEST_F(PermutationTest18, IfFutureEdgesContainBetterPerm) {
-  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
   TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
   TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
   perm01.print();
@@ -118,7 +118,7 @@ TEST_F(PermutationTest18, IfFutureEdgesContainBetterPerm) {
 }
 
 TEST_F(PermutationTest18, TakeCommonElements) {
-  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
   TwoTaskPermutations perm01 =
       task_set_perms.adjacent_two_task_permutations_[0];
   TwoTaskPermutations perm12 =
@@ -140,7 +140,7 @@ class PermutationTest23 : public PermutationTestBase {
   }
 };
 TEST_F(PermutationTest23, FeasibleChainManager) {
-  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
   TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
   TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
   perm01.print();
@@ -172,7 +172,7 @@ TEST_F(PermutationTest23, FeasibleChainManager) {
 }
 
 TEST_F(PermutationTest23, FeasibleChainManager_incomplete) {
-  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
   TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
   TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
   perm01.print();
@@ -191,7 +191,7 @@ TEST_F(PermutationTest23, FeasibleChainManager_incomplete) {
 }
 
 TEST_F(PermutationTest23, IfChainsContainBetterPerm) {
-  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
   TwoTaskPermutations perm01 =
       task_set_perms.adjacent_two_task_permutations_[0];
   TwoTaskPermutations perm12 =
@@ -217,7 +217,7 @@ TEST_F(PermutationTest23, IfChainsContainBetterPerm) {
 }
 
 TEST_F(PermutationTest23, TakeCommonElements) {
-  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
   TwoTaskPermutations perm12 =
       task_set_perms.adjacent_two_task_permutations_[1];
   TwoTaskPermutationsIterator iterator12(perm12);
@@ -236,7 +236,7 @@ class PermutationTest22_n5 : public PermutationTestBase {
 };
 
 TEST_F(PermutationTest22_n5, Feasible_Chain_should_skip_perms) {
-  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
   auto perm41 = task_set_perms.adjacent_two_task_permutations_[0];
   auto perm32 = task_set_perms.adjacent_two_task_permutations_[1];
   auto perm10 = task_set_perms.adjacent_two_task_permutations_[2];
@@ -263,7 +263,7 @@ TEST_F(PermutationTest22_n5, Feasible_Chain_should_skip_perms) {
 }
 
 TEST_F(PermutationTest22_n5, skip_with_incomplete_chain_perms) {
-  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
   auto perm41 = task_set_perms.adjacent_two_task_permutations_[0];
   auto perm32 = task_set_perms.adjacent_two_task_permutations_[1];
   auto perm10 = task_set_perms.adjacent_two_task_permutations_[2];

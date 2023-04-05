@@ -20,8 +20,8 @@ TEST(RunSingle, v1) {
 
   std::cout << "Schedulable? " << CheckSchedulability(dag_tasks) << "\n";
 
-  TaskSetPermutation task_sets_perms =
-      TaskSetPermutation(dag_tasks, {dag_tasks.chains_});
+  TaskSetOptEnumWSkip task_sets_perms =
+      TaskSetOptEnumWSkip(dag_tasks, {dag_tasks.chains_});
   int obj_find =
       task_sets_perms.PerformOptimizationEnumerate<ObjReactionTimeApprox>();
 

@@ -93,8 +93,8 @@ TEST_F(PermutationTest18, CompareNewPerm) {
 }
 
 TEST_F(PermutationTest18, perm_count_) {
-  TaskSetPermutation task_sets_perms =
-      TaskSetPermutation(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_sets_perms =
+      TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_);
   task_sets_perms.adjacent_two_task_permutations_[0].print();
   EXPECT_EQ(3, task_sets_perms.adjacent_two_task_permutations_[0].perm_count_);
   task_sets_perms.adjacent_two_task_permutations_[1].print();
@@ -265,8 +265,8 @@ TEST_F(PermutationTest46, CompareNewPermv1) {
   }
 }
 TEST_F(PermutationTest46, perm_count_) {
-  TaskSetPermutation task_sets_perms =
-      TaskSetPermutation(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_sets_perms =
+      TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_);
   task_sets_perms.adjacent_two_task_permutations_[0].print();
   EXPECT_EQ(6, task_sets_perms.adjacent_two_task_permutations_[0].perm_count_);
   task_sets_perms.adjacent_two_task_permutations_[1].print();

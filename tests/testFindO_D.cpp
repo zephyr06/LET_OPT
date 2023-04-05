@@ -307,7 +307,7 @@ class PermutationTest3 : public ::testing::Test {
 };
 
 TEST_F(PermutationTest3, Find_OD) {
-  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
   ChainsPermutation chains_perm;
   chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[0][0]);
   chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[1][0]);
@@ -335,7 +335,7 @@ TEST_F(PermutationTest3, Find_OD) {
 }
 
 TEST_F(PermutationTest3, Find_OD_v2) {
-  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
   ChainsPermutation chains_perm;
   chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[0][1]);
   chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[1][0]);
@@ -380,7 +380,7 @@ class PermutationTest4 : public ::testing::Test {
   JobCEC job20;
 };
 TEST_F(PermutationTest4, Find_OD_v2) {
-  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
   ChainsPermutation chains_perm;
   chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[0][0]);
   chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[1][1]);
@@ -428,7 +428,7 @@ class PermutationTest5 : public ::testing::Test {
   JobCEC job20;
 };
 TEST_F(PermutationTest5, Find_OD) {
-  TaskSetPermutation task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
   ChainsPermutation chains_perm;
   chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[0][1]);
   chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[1][2]);

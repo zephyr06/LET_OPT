@@ -52,7 +52,7 @@ class PermutationTest1 : public ::testing::Test {
 };
 
 TEST_F(PermutationTest1, Iteration) {
-  TaskSetPermutation task_sets_perms(dag_tasks, {task_chain});
+  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, {task_chain});
   int obj_find =
       task_sets_perms.PerformOptimizationEnumerate<ObjReactionTime>();
   // task_sets_perms.best_yet_chain_[0]->print();
@@ -61,7 +61,7 @@ TEST_F(PermutationTest1, Iteration) {
   EXPECT_EQ(20, obj_find);
 }
 TEST_F(PermutationTest1, Iteration_Sorted) {
-  TaskSetPermutation task_sets_perms(dag_tasks, {task_chain});
+  TaskSetOptSorted task_sets_perms(dag_tasks, {task_chain});
   int obj_find = task_sets_perms.PerformOptimizationSort<ObjReactionTime>();
   // task_sets_perms.best_yet_chain_[0]->print();
   // task_sets_perms.best_yet_chain_[1]->print();
@@ -69,7 +69,7 @@ TEST_F(PermutationTest1, Iteration_Sorted) {
   EXPECT_EQ(20, obj_find);
 }
 TEST_F(PermutationTest1, GetUnvisitedFutureEdges) {
-  TaskSetPermutation task_sets_perms(dag_tasks, {task_chain});
+  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, {task_chain});
   EXPECT_EQ(1, task_sets_perms.GetUnvisitedFutureEdges(0).size());
 }
 
@@ -102,7 +102,7 @@ TEST_F(PermutationTest1, GetUnvisitedFutureEdges) {
 //                             chains_perm2, graph_chains, "ReactionTime", rta)
 //             << "\n";
 
-//   TaskSetPermutation task_sets_perms =
+//   TaskSetOptEnumWSkip task_sets_perms =
 //       TaskSetPermutation(dag_tasks, {dag_tasks.chains_});
 //   ChainsPermutation chains_perm3;
 //   chains_perm3.push_back(perm01[0]);
@@ -473,7 +473,7 @@ class PermutationTest_2chain_v1 : public ::testing::Test {
 };
 
 TEST_F(PermutationTest_2chain_v1, GetUnvisitedFutureEdges) {
-  TaskSetPermutation task_sets_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_);
   EXPECT_EQ(2, task_sets_perms.GetUnvisitedFutureEdges(0).size());
   EXPECT_EQ(Edge(3, 4), task_sets_perms.GetUnvisitedFutureEdges(0)[1]);
 }
