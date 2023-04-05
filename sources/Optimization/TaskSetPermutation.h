@@ -23,21 +23,12 @@ class TaskSetPermutation {
   void FindPairPermutations();
   bool ExamSchedulabilityOptSol() const;
   std::vector<Edge> GetAllEdges() const;
+  std::vector<Edge> GetUnvisitedFutureEdges(uint position) const;
   // print optimization trajectory
   void PrintFeasibleChainsRecord() const;
   void PrintSinglePermIndex(const ChainsPermutation& chains_perm) const;
   void PrintSinglePermIndex(const ChainsPermutation& chains_perm,
                             const std::vector<Edge>& edges) const;
-
-  std::vector<Edge> GetUnvisitedFutureEdges(uint position) const {
-    std::vector<Edge> edges;
-    edges.reserve(adjacent_two_task_permutations_.size());
-    for (uint i = position + 1; i < adjacent_two_task_permutations_.size();
-         i++) {
-      edges.push_back(adjacent_two_task_permutations_.at(i).GetEdge());
-    }
-    return edges;
-  }
 
   // data members
   TimerType start_time_;

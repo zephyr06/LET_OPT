@@ -90,4 +90,14 @@ void TaskSetPermutation::PrintSinglePermIndex(
     if (chains_perm.exist(edge))
       std::cout << chains_perm[edge]->index_local_ << ", ";
 }
+
+ std::vector<Edge> TaskSetPermutation::GetUnvisitedFutureEdges(uint position) const {
+    std::vector<Edge> edges;
+    edges.reserve(adjacent_two_task_permutations_.size());
+    for (uint i = position + 1; i < adjacent_two_task_permutations_.size();
+         i++) {
+      edges.push_back(adjacent_two_task_permutations_.at(i).GetEdge());
+    }
+    return edges;
+  }
 }  // namespace DAG_SPACE
