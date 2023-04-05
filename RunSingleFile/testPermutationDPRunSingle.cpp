@@ -1,7 +1,7 @@
 
 
 #include "gmock/gmock.h"
-#include "sources/Optimization/TaskSetPermutation.h"
+#include "sources/Optimization/OptimizeMain.h"
 
 using namespace DAG_SPACE;
 TEST(RunSingle, v1) {
