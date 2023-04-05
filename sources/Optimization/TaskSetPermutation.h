@@ -3,10 +3,10 @@
 
 #include "sources/Baseline/StandardLET.h"
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
-#include "sources/Optimization/GraphOfChains.h"
 #include "sources/Optimization/LPSolver_Cplex.h"
 #include "sources/Optimization/TaskSetPermutationHelper.h"
 #include "sources/Permutations/ChainsPermutation.h"
+#include "sources/Permutations/GraphOfChains.h"
 #include "sources/Permutations/TwoTaskPermutationsIterator.h"
 #include "sources/Utils/BatchUtils.h"
 #include "sources/Utils/profilier.h"

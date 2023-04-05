@@ -2,8 +2,8 @@
 
 #include <memory>
 
-#include "sources/Optimization/Edge.h"
 #include "sources/Optimization/Variable.h"
+#include "sources/Permutations/Edge.h"
 #include "sources/Permutations/PermutationInequality.h"
 #include "sources/Permutations/SinglePairPermutation.h"
 #include "sources/Utils/profilier.h"

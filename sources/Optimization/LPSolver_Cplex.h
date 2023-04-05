@@ -3,8 +3,8 @@
 #include "ilcplex/cplex.h"
 #include "ilcplex/ilocplex.h"
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
-#include "sources/Optimization/GraphOfChains.h"
 #include "sources/Permutations/ChainsPermutation.h"
+#include "sources/Permutations/GraphOfChains.h"
 #include "sources/TaskModel/DAG_Model.h"
 
 namespace DAG_SPACE {

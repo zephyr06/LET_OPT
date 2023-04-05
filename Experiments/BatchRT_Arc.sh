@@ -22,7 +22,7 @@ perform_optimization() {
 	for file_index in $(seq $MinFileIndex $FILES_PER_CPU $MaxFileIndex); do
 	end_index=$((file_index + FILES_PER_CPU))
 	echo "Processing N$1: file_index=$file_index:$end_index"
-	# ./RunSingleFile/BatchRunSingle.run --N "$1" --begin "$file_index" --end "$end_index" 
+	# ./RunSingleFile/BatchRunSingle.run --N "$1" --begin "$file_index" --end "$end_index" &
 	sbatch BatchRT_Approx.sh $1 $file_index $end_index
 	done
 	wait

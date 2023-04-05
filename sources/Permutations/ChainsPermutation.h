@@ -1,8 +1,8 @@
 #pragma once
 #include <memory>
 
-#include "sources/Optimization/Edge.h"
-#include "sources/Optimization/GraphOfChains.h"
+#include "sources/Permutations/GraphOfChains.h"
+#include "sources/Permutations/Edge.h"
 #include "sources/Permutations/TwoTaskPermutations.h"
 #include "sources/Utils/profilier.h"
 namespace DAG_SPACE {

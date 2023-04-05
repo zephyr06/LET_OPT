@@ -1,4 +1,4 @@
-#include "sources/Optimization/GraphOfChains.h"
+#include "sources/Permutations/GraphOfChains.h"
 namespace DAG_SPACE {
 
 int GetLongestChainLength(const std::vector<std::vector<int>>& chains) {

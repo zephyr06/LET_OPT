@@ -1,6 +1,6 @@
 #pragma once
 #include "hashtable.h"
-#include "sources/Optimization/Edge.h"
+#include "sources/Permutations/Edge.h"
 #include "sources/Utils/testMy.h"
 #include "unordered_map"
 #include "unordered_set"
