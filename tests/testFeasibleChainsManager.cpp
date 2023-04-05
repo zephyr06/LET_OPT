@@ -236,7 +236,7 @@ class PermutationTest22_n5 : public PermutationTestBase {
 };
 
 TEST_F(PermutationTest22_n5, Feasible_Chain_should_skip_perms) {
-  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptSorted task_set_perms(dag_tasks, dag_tasks.chains_);
   auto perm41 = task_set_perms.adjacent_two_task_permutations_[0];
   auto perm32 = task_set_perms.adjacent_two_task_permutations_[1];
   auto perm10 = task_set_perms.adjacent_two_task_permutations_[2];
@@ -263,7 +263,7 @@ TEST_F(PermutationTest22_n5, Feasible_Chain_should_skip_perms) {
 }
 
 TEST_F(PermutationTest22_n5, skip_with_incomplete_chain_perms) {
-  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptSorted task_set_perms(dag_tasks, dag_tasks.chains_);
   auto perm41 = task_set_perms.adjacent_two_task_permutations_[0];
   auto perm32 = task_set_perms.adjacent_two_task_permutations_[1];
   auto perm10 = task_set_perms.adjacent_two_task_permutations_[2];

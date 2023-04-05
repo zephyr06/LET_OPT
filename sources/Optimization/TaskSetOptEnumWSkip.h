@@ -15,15 +15,9 @@ class TaskSetOptEnumWSkip : public TaskSetPermutation {
     return best_yet_obj_;
   }
 
-  // chains_perm already pushed the new perm_single
-  template <typename ObjectiveFunction>
-  bool WhetherSkipToNextPerm(const ChainsPermutation& chains_perm) {
-#ifdef PROFILE_CODE
-    BeginTimer(__FUNCTION__);
-#endif
-
-    std::vector<std::vector<int>> sub_chains =
-        GetSubChains(dag_tasks_.chains_, chains_perm);
+  bool WhetherContainInfeasibleSubChains(
+      const ChainsPermutation& chains_perm,
+      const std::vector<std::vector<int>>& sub_chains) {
     for (const auto& sub_chain : sub_chains) {
       if (sub_chain.size() == 0) continue;
       if (GlobalVariablesDAGOpt::SKIP_PERM >= 2 &&
@@ -31,9 +25,6 @@ class TaskSetOptEnumWSkip : public TaskSetPermutation {
                                             graph_of_all_ca_chains_, sub_chain,
                                             rta_)
                .valid_) {
-#ifdef PROFILE_CODE
-        EndTimer(__FUNCTION__);
-#endif
         if (GlobalVariablesDAGOpt::debugMode) {
           std::cout << "Early break at level " << chains_perm.size() << ": ";
           PrintSinglePermIndex(chains_perm);
@@ -48,6 +39,15 @@ class TaskSetOptEnumWSkip : public TaskSetPermutation {
         return true;
       }
     }
+    return false;
+  }
+
+  // chains_perm already pushed the new perm_single
+  template <typename ObjectiveFunction>
+  bool WhetherSkipToNextPerm(const ChainsPermutation& chains_perm) {
+    std::vector<std::vector<int>> sub_chains =
+        GetSubChains(dag_tasks_.chains_, chains_perm);
+    if (WhetherContainInfeasibleSubChains(chains_perm, sub_chains)) return true;
 
     VariableOD best_possible_variable_od =
         FindBestPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm);
@@ -61,18 +61,8 @@ class TaskSetOptEnumWSkip : public TaskSetPermutation {
         std::cout << " due to guarantee to perform worse at the "
                      "per-chain test\n";
       }
-      // TODO: push to feasible_chains_vec, probbaly use a separate queue
-      feasible_chains_.push_back_incomplete(
-          FeasibleChainManager(chains_perm, adjacent_two_task_permutations_,
-                               ObjectiveFunction::type_trait));
-#ifdef PROFILE_CODE
-      EndTimer(__FUNCTION__);
-#endif
       return true;
     }
-#ifdef PROFILE_CODE
-    EndTimer(__FUNCTION__);
-#endif
     return false;
   }
 
@@ -107,10 +97,6 @@ class TaskSetOptEnumWSkip : public TaskSetPermutation {
 
   template <typename ObjectiveFunction>
   double EvaluateChainsPermutation(const ChainsPermutation& chains_perm) {
-#ifdef PROFILE_CODE
-    BeginTimer(__FUNCTION__);
-#endif
-
     std::pair<VariableOD, int> res = FindODWithLP(
         dag_tasks_, tasks_info_, chains_perm, graph_of_all_ca_chains_,
         ObjectiveFunction::type_trait, rta_);
@@ -118,10 +104,6 @@ class TaskSetOptEnumWSkip : public TaskSetPermutation {
     if (res.first.valid_)  // if valid, we'll exam obj; otherwise, we'll
                            // just move forward
     {
-      feasible_chains_.push_back(
-          FeasibleChainManager(chains_perm, adjacent_two_task_permutations_,
-                               ObjectiveFunction::type_trait));
-
       if (res.second < best_yet_obj_) {
         best_yet_obj_ = res.second;
         best_yet_chain_ = chains_perm;
@@ -130,10 +112,6 @@ class TaskSetOptEnumWSkip : public TaskSetPermutation {
     } else {
       infeasible_iteration_++;
     }
-
-#ifdef PROFILE_CODE
-    EndTimer(__FUNCTION__);
-#endif
     return res.second;
   }
 };

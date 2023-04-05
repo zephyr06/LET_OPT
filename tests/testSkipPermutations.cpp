@@ -240,7 +240,7 @@ TEST_F(PermutationTest18_n3, select_feasible_perm) {
 }
 
 TEST_F(PermutationTest18_n3, skip_worse_perm1) {
-  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptSorted task_sets_perms(dag_tasks, dag_tasks.chains_);
   auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];
   auto perm12 = task_sets_perms.adjacent_two_task_permutations_[1];
   perm01.print();
@@ -267,7 +267,7 @@ TEST_F(PermutationTest18_n3, skip_worse_perm1) {
   EXPECT_EQ(1, iterator01.size());
 }
 TEST_F(PermutationTest18_n3, skip_worse_perm2) {
-  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptSorted task_sets_perms(dag_tasks, dag_tasks.chains_);
   auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];
   auto perm12 = task_sets_perms.adjacent_two_task_permutations_[1];
   perm01.print();

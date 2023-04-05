@@ -25,7 +25,6 @@ class TaskSetPermutation {
   std::vector<Edge> GetAllEdges() const;
   std::vector<Edge> GetUnvisitedFutureEdges(uint position) const;
   // print optimization trajectory
-  void PrintFeasibleChainsRecord() const;
   void PrintSinglePermIndex(const ChainsPermutation& chains_perm) const;
   void PrintSinglePermIndex(const ChainsPermutation& chains_perm,
                             const std::vector<Edge>& edges) const;
@@ -44,7 +43,6 @@ class TaskSetPermutation {
   VariableOD best_possible_variable_od_;
   VariableRange variable_range_od_;
   int infeasible_iteration_ = 0;
-  FeasiblieChainsManagerVec feasible_chains_;
   int decrease_success = 0;
   int decrease_fail = 0;
 };

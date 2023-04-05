@@ -6,7 +6,12 @@ class TaskSetOptSorted : public TaskSetPermutation {
  public:
   TaskSetOptSorted(const DAG_Model& dag_tasks,
                    const std::vector<std::vector<int>>& chains)
-      : TaskSetPermutation(dag_tasks, chains) {}
+      : TaskSetPermutation(dag_tasks, chains) {
+    feasible_chains_ =
+        FeasiblieChainsManagerVec(adjacent_two_task_permutations_.size());
+  }
+
+  void PrintFeasibleChainsRecord() const;
 
   template <typename ObjectiveFunction>
   int PerformOptimizationSort() {
@@ -183,6 +188,9 @@ class TaskSetOptSorted : public TaskSetPermutation {
 #endif
     return res.second;
   }
+
+  // data members
+  FeasiblieChainsManagerVec feasible_chains_;
 };
 
 }  // namespace DAG_SPACE

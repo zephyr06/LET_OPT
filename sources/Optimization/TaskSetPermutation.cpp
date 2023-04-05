@@ -19,8 +19,6 @@ TaskSetPermutation::TaskSetPermutation(
   adjacent_two_task_permutations_.reserve(
       1e2);  // there are never more than 1e2 edges
   FindPairPermutations();
-  feasible_chains_ =
-      FeasiblieChainsManagerVec(adjacent_two_task_permutations_.size());
 }
 
 void TaskSetPermutation::FindPairPermutations() {
@@ -51,18 +49,6 @@ bool TaskSetPermutation::ExamSchedulabilityOptSol() const {
   return true;
 }
 
-void TaskSetPermutation::PrintFeasibleChainsRecord() const {
-  std::vector<Edge> edges = GetAllEdges();
-  int count = 0;
-  for (const auto& feasible_chain_man : feasible_chains_.chain_man_vec_) {
-    std::cout << "\n****************************\n";
-    std::cout << "Feasible chain index: " << count++ << "\n";
-    const ChainsPermutation& chains_perm = feasible_chain_man.feasible_chain_;
-    PrintSinglePermIndex(chains_perm, edges);
-  }
-
-  std::cout << "\n****************************\n";
-}
 std::vector<Edge> TaskSetPermutation::GetAllEdges() const {
   std::vector<Edge> edges;
   edges.reserve(adjacent_two_task_permutations_.size());
