@@ -57,8 +57,6 @@ class TaskSetPermutation {
   VariableOD best_possible_variable_od_;
   VariableRange variable_range_od_;
   int infeasible_iteration_ = 0;
-  int decrease_success = 0;
-  int decrease_fail = 0;
 };
 
 }  // namespace DAG_SPACE
