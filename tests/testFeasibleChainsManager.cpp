@@ -23,6 +23,28 @@ TEST_F(PermutationTest22, IfSkipAnotherPermRT) {
   EXPECT_FALSE(IfSkipAnotherPermRT(*perm10[4], *perm10[3]));
 }
 
+// return true if perm_another can be safely skipped
+bool IfSkipAnotherPermDA(const SinglePairPermutation& perm_base,
+                         const SinglePairPermutation& perm_another) {
+  if (!IfSkipAnotherPermRT(perm_base, perm_another)) return false;
+
+  return true;
+}
+
+TEST_F(PermutationTest22, IfSkipAnotherPermDA) {
+  TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info);
+  perm10.print();
+  EXPECT_TRUE(IfSkipAnotherPermDA(*perm10[0], *perm10[1]));
+  EXPECT_TRUE(IfSkipAnotherPermDA(*perm10[0], *perm10[2]));
+  EXPECT_TRUE(IfSkipAnotherPermDA(*perm10[0], *perm10[3]));
+  EXPECT_TRUE(IfSkipAnotherPermDA(*perm10[0], *perm10[4]));
+
+  EXPECT_FALSE(IfSkipAnotherPermDA(*perm10[1], *perm10[0]));
+  EXPECT_FALSE(IfSkipAnotherPermDA(*perm10[2], *perm10[1]));
+  EXPECT_FALSE(IfSkipAnotherPermDA(*perm10[3], *perm10[2]));
+  EXPECT_FALSE(IfSkipAnotherPermDA(*perm10[4], *perm10[3]));
+}
+
 class PermutationTest18 : public PermutationTestBase {
   void SetUp() override {
     SetUpBase("test_n3_v18");
