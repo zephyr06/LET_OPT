@@ -1,6 +1,7 @@
 
 #include "gmock/gmock.h"  // Brings in gMock.
 #include "sources/Optimization/LPSolver_Cplex.h"
+#include "testEnv.cpp"
 using namespace DAG_SPACE;
 
 class PermutationTest1 : public ::testing::Test {
@@ -52,6 +53,42 @@ TEST_F(PermutationTest1, OptimizeApprox) {
   auto res = lp_optimizer.Optimize(chains_perm);
   EXPECT_EQ(20, res.second);
 }
+TEST_F(PermutationTest1, OptimizeApproxDA_v1) {
+  dag_tasks.chains_ = {{0, 1, 2}};
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[0]);
+  chains_perm.push_back(perm12[0]);
+  chains_perm.print();
+
+  GraphOfChains graph_chains(dag_tasks.chains_);
+
+  std::vector<int> rta = {1, 3, 6};
+  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "DataAgeApprox",
+                           rta);
+  auto res = lp_optimizer.Optimize(chains_perm);
+  EXPECT_EQ(10, res.second);
+}
+TEST_F(PermutationTest1, OptimizeApproxDA_v2) {
+  dag_tasks.chains_ = {{0, 1, 2}};
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[0]);
+  chains_perm.push_back(perm12[0]);
+  chains_perm.print();
+
+  GraphOfChains graph_chains(dag_tasks.chains_);
+
+  std::vector<int> rta = {1, 3, 6};
+  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "DataAge", rta);
+  auto res = lp_optimizer.Optimize(chains_perm);
+  EXPECT_EQ(10, res.second);
+}
+
 class PermutationTest2 : public ::testing::Test {
  protected:
   void SetUp() override {
@@ -82,6 +119,24 @@ TEST_F(PermutationTest2, OptimizeApprox) {
                            "ReactionTimeApprox", rta);
   auto res = lp_optimizer.Optimize(chains_perm);
   EXPECT_EQ(20, res.second);
+}
+
+TEST_F(PermutationTest2, OptimizeApproxDA) {
+  dag_tasks.chains_ = {{0, 1, 2}};
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[0]);
+  chains_perm.push_back(perm12[0]);
+
+  GraphOfChains graph_chains(dag_tasks.chains_);
+
+  std::vector<int> rta = {1, 2, 3};
+  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "DataAgeApprox",
+                           rta);
+  auto res = lp_optimizer.Optimize(chains_perm);
+  EXPECT_EQ(10, res.second);
 }
 
 TEST_F(PermutationTest1, Incremental) {
@@ -144,6 +199,30 @@ TEST_F(PermutationTest1, FindMinOffset) {
   EXPECT_EQ(0, range);
   // EXPECT_EQ(0, range.start + range.length);
   lp_optimizer0.ClearCplexMemory();
+}
+
+class PermutationTest22 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n3_v22");
+    // dag_tasks.chains_ = {{0, 1, 2}};
+  }
+};
+TEST_F(PermutationTest22, OptimizeApproxDA) {
+  dag_tasks.chains_ = {{0, 1, 2}};
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[0]);
+  chains_perm.push_back(perm12[0]);
+  chains_perm.print();
+  GraphOfChains graph_chains(dag_tasks.chains_);
+
+  std::vector<int> rta = {1, 2, 3};
+  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "DataAgeApprox",
+                           rta);
+  auto res = lp_optimizer.Optimize(chains_perm);
+  EXPECT_EQ(150, res.second);
 }
 
 int main(int argc, char** argv) {

@@ -109,7 +109,7 @@ void LPOptimizer::AddVariablesOD(int number_of_tasks_to_opt) {
 
 void LPOptimizer::AddArtificialVariables() {
   if (obj_trait_ == "ReactionTime" || obj_trait_ == "ReactionTimeApprox" ||
-      obj_trait_ == "DataAge")
+      obj_trait_ == "DataAge" || obj_trait_ == "DataAgeApprox")
     varArray_art_ =
         IloNumVarArray(env_, static_cast<int>(dag_tasks_.chains_.size()), 0,
                        IloInfinity, IloNumVar::Float);
@@ -312,14 +312,30 @@ void LPOptimizer::AddObjectiveFunctions(const ChainsPermutation &chains_perm) {
             first_react_job.jobId > 0) {
           JobCEC last_react_job(first_react_job.taskId,
                                 first_react_job.jobId - 1);
-          //   TODO: make the constraint name trick work!
-          model_.add(varArray_art_[chain_count] >=
-                     (GetFinishTimeExpression(last_react_job) -
-                      GetStartTimeExpression(last_start_job)));
-        } else {
-          CoutError(
-              "Unrecognized obj_trait in LPSolver_AddObjectiveFunctions!");
+          IloRange myConstraint1(env_, 0,
+                                 varArray_art_[chain_count] -
+                                     (GetFinishTimeExpression(last_react_job) -
+                                      GetStartTimeExpression(last_start_job)),
+                                 IloInfinity, const_name.c_str());
+          model_.add(myConstraint1);
         }
+      } else if (obj_trait_ == "DataAgeApprox") {
+        JobCEC last_start_job = {chain[0], (start_instance_index - 1)};
+        if (start_instance_index > 0 &&
+            react_chain_map[last_start_job] != first_react_job &&
+            first_react_job.jobId > 0) {
+          JobCEC last_react_job(first_react_job.taskId,
+                                first_react_job.jobId - 1);
+          IloRange myConstraint1(
+              env_, 0,
+              varArray_art_[chain_count] -
+                  (GetFinishTimeExpressionApprox(last_react_job) -
+                   GetStartTimeExpressionApprox(last_start_job)),
+              IloInfinity, const_name.c_str());
+          model_.add(myConstraint1);
+        }
+      } else {
+        CoutError("Unrecognized obj_trait in LPSolver_AddObjectiveFunctions!");
       }
     }
     // Normal obj to optmize RTDA: obj = max_RTs + max_DAs
