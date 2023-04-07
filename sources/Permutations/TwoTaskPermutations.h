@@ -13,6 +13,10 @@ std::vector<JobCEC> GetPossibleReactingJobs(
     const JobCEC& job_curr, const Task& task_next, int superperiod,
     const RegularTaskSystem::TaskSetInfoDerived& tasksInfo);
 
+std::vector<JobCEC> GetPossibleReadingJobs(
+    const JobCEC& job_curr, const Task& task_prev, int superperiod,
+    const RegularTaskSystem::TaskSetInfoDerived& tasksInfo);
+
 PermutationInequality GenerateBoxPermutationConstraints(
     int task_prev_id, int task_next_id, const VariableRange& variable_range);
 

@@ -24,6 +24,28 @@ std::vector<JobCEC> GetPossibleReactingJobs(
   return reactingJobs;
 }
 
+std::vector<JobCEC> GetPossibleReadingJobs(
+    const JobCEC& job_curr, const Task& task_prev, int superperiod,
+    const RegularTaskSystem::TaskSetInfoDerived& tasksInfo) {
+  int job_min_start = GetActivationTime(job_curr, tasksInfo);
+  int job_max_start =
+      GetDeadline(job_curr, tasksInfo) - GetExecutionTime(job_curr, tasksInfo);
+
+  int period_prev = tasksInfo.GetTask(task_prev.id).period;
+  std::vector<JobCEC> readingJobs;
+  readingJobs.reserve(superperiod / tasksInfo.GetTask(job_curr.taskId).period);
+  for (int i = std::floor(float(job_min_start) / period_prev) - 1;
+       i <= std::ceil(float(job_max_start) / period_prev); i++) {
+    JobCEC job_prev_i(task_prev.id, i);
+    int min_finish_prev = GetActivationTime(job_prev_i, tasksInfo) +
+                          GetExecutionTime(job_prev_i, tasksInfo);
+    if (min_finish_prev > job_max_start) continue;
+    readingJobs.push_back(job_prev_i);
+  }
+
+  return readingJobs;
+}
+
 PermutationInequality GenerateBoxPermutationConstraints(
     int task_prev_id, int task_next_id, const VariableRange& variable_range) {
   return PermutationInequality(
