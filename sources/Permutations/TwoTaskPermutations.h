@@ -18,7 +18,8 @@ std::vector<JobCEC> GetPossibleReadingJobs(
     const RegularTaskSystem::TaskSetInfoDerived& tasksInfo);
 
 PermutationInequality GenerateBoxPermutationConstraints(
-    int task_prev_id, int task_next_id, const VariableRange& variable_range);
+    int task_prev_id, int task_next_id, const VariableRange& variable_range,
+    const std::string& type_trait);
 
 bool ifTimeout(TimerType start_time);
 

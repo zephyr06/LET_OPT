@@ -11,16 +11,16 @@ using namespace DAG_SPACE;
 class PermutationTest2 : public ::testing::Test {
  protected:
   void SetUp() override {
-    perm1 = PermutationInequality(0, 1, 0, true, 10, true);
-    perm2 = PermutationInequality(0, 1, 10, true, 30, true);
-    perm3 = PermutationInequality(0, 1, 0, true, 5, true);
-    perm4 = PermutationInequality(0, 1, 11, true, 20, true);
-    perm5 = PermutationInequality(0, 1, 5, true, 20, true);
+    perm1 = PermutationInequality(0, 1, 0, true, 10, true, "ReactionTime");
+    perm2 = PermutationInequality(0, 1, 10, true, 30, true, "ReactionTime");
+    perm3 = PermutationInequality(0, 1, 0, true, 5, true, "ReactionTime");
+    perm4 = PermutationInequality(0, 1, 11, true, 20, true, "ReactionTime");
+    perm5 = PermutationInequality(0, 1, 5, true, 20, true, "ReactionTime");
 
-    perm6 = PermutationInequality(0, 1, 11, false, 20, true);
-    perm7 = PermutationInequality(0, 1, 5, false, 20, true);
-    perm8 = PermutationInequality(0, 1, 30, true, 20, false);
-    perm9 = PermutationInequality(0, 1, 5, true, 15, false);
+    perm6 = PermutationInequality(0, 1, 11, false, 20, true, "ReactionTime");
+    perm7 = PermutationInequality(0, 1, 5, false, 20, true, "ReactionTime");
+    perm8 = PermutationInequality(0, 1, 30, true, 20, false, "ReactionTime");
+    perm9 = PermutationInequality(0, 1, 5, true, 15, false, "ReactionTime");
   };
 
   PermutationInequality perm1;
@@ -91,15 +91,15 @@ TEST_F(PermutationTest2, MergeTwoSinglePermutations) {
 TEST_F(PermutationTest2, isValid) {
   EXPECT_TRUE(perm1.IsValid());
 
-  PermutationInequality perm10(0, 1, 0, true, 0, true);
+  PermutationInequality perm10(0, 1, 0, true, 0, true, "ReactionTime");
   EXPECT_FALSE(perm10.IsValid());
-  perm10 = PermutationInequality(0, 1, 100, false, 20, true);
+  perm10 = PermutationInequality(0, 1, 100, false, 20, true, "ReactionTime");
   EXPECT_TRUE(perm10.IsValid());
-  perm10 = PermutationInequality(0, 1, 100, true, 20, false);
+  perm10 = PermutationInequality(0, 1, 100, true, 20, false, "ReactionTime");
   EXPECT_TRUE(perm10.IsValid());
-  perm10 = PermutationInequality(0, 1, 0, true, -5, true);
+  perm10 = PermutationInequality(0, 1, 0, true, -5, true, "ReactionTime");
   EXPECT_FALSE(perm10.IsValid());
-  perm10 = PermutationInequality(0, 1, 0, false, -5, false);
+  perm10 = PermutationInequality(0, 1, 0, false, -5, false, "ReactionTime");
   EXPECT_TRUE(perm10.IsValid());
 }
 
@@ -165,13 +165,13 @@ TEST_F(PermutationTest1, GetPossibleReactingJobs_harmonic_period) {
 }
 
 TEST_F(PermutationTest1, PermutationInequality_constructor) {
-  PermutationInequality perm1(job00, job10, tasks_info);
+  PermutationInequality perm1(job00, job10, tasks_info, "ReactionTime");
   EXPECT_EQ(0, perm1.upper_bound_);
   EXPECT_TRUE(perm1.upper_bound_valid_);
   EXPECT_EQ(-20, perm1.lower_bound_);
   EXPECT_TRUE(perm1.lower_bound_valid_);
 
-  perm1 = PermutationInequality(job01, job10, tasks_info);
+  perm1 = PermutationInequality(job01, job10, tasks_info, "ReactionTime");
   EXPECT_EQ(-10, perm1.upper_bound_);
   EXPECT_TRUE(perm1.upper_bound_valid_);
   EXPECT_EQ(-30, perm1.lower_bound_);
@@ -415,7 +415,7 @@ TEST_F(PermutationTest4, GenerateBoxPermutationConstraints) {
   TwoTaskPermutations two_task_permutation(23, 22, dag_tasks, tasks_info,
                                            "ReactionTime");
   PermutationInequality perm_bound = GenerateBoxPermutationConstraints(
-      23, 22, two_task_permutation.variable_od_range_);
+      23, 22, two_task_permutation.variable_od_range_, "ReactionTime");
   perm_bound.print();
   EXPECT_FALSE(perm_bound.IsValid());
 }

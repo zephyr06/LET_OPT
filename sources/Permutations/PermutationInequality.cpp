@@ -39,6 +39,8 @@ int MergeLargerThanValue(const PermutationInequality& perm1,
 
 PermutationInequality MergeTwoSinglePermutations(
     const PermutationInequality& perm1, const PermutationInequality& perm2) {
+  ASSERT(perm1.type_trait_ == perm2.type_trait_,
+         "perm type must be the same in MergeTwoSinglePermutations");
   PermutationInequality merged_perm;
 
   if (ExamConfliction(perm1, perm2) ||
@@ -53,7 +55,8 @@ PermutationInequality MergeTwoSinglePermutations(
         perm1.task_prev_id_, perm1.task_next_id_, smaller_value_merged,
         perm1.lower_bound_valid_ || perm2.lower_bound_valid_,
         larger_value_merged,
-        perm1.upper_bound_valid_ || perm2.upper_bound_valid_);
+        perm1.upper_bound_valid_ || perm2.upper_bound_valid_,
+        perm1.type_trait_);
   }
   return merged_perm;
 }

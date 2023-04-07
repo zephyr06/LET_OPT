@@ -119,11 +119,12 @@ TEST_F(PermutationTest1, GenerateBoxPermutationConstraints) {
   // RTA 1 3 6
   VariableRange variable_range = FindVariableRange(dag_tasks);
   PermutationInequality perm_ineq =
-      GenerateBoxPermutationConstraints(0, 1, variable_range);
+      GenerateBoxPermutationConstraints(0, 1, variable_range, "ReactionTime");
   EXPECT_EQ(1 - 17, perm_ineq.lower_bound_);
   EXPECT_EQ(10 - 0, perm_ineq.upper_bound_);
 
-  perm_ineq = GenerateBoxPermutationConstraints(1, 2, variable_range);
+  perm_ineq =
+      GenerateBoxPermutationConstraints(1, 2, variable_range, "ReactionTime");
   EXPECT_EQ(3 - 14, perm_ineq.lower_bound_);
   EXPECT_EQ(20 - 0, perm_ineq.upper_bound_);
 }
@@ -179,11 +180,12 @@ TEST_F(PermutationTest2, GenerateBoxPermutationConstraints) {
   // RTA 17 19 53
   VariableRange variable_range = FindVariableRange(dag_tasks);
   PermutationInequality perm_ineq =
-      GenerateBoxPermutationConstraints(4, 3, variable_range);
+      GenerateBoxPermutationConstraints(4, 3, variable_range, "ReactionTime");
   EXPECT_EQ(61 - (100 - 27), perm_ineq.lower_bound_);
   EXPECT_EQ(100 - 0, perm_ineq.upper_bound_);
 
-  perm_ineq = GenerateBoxPermutationConstraints(3, 0, variable_range);
+  perm_ineq =
+      GenerateBoxPermutationConstraints(3, 0, variable_range, "ReactionTime");
   EXPECT_EQ(27 - (100 - 17), perm_ineq.lower_bound_);
   EXPECT_EQ(100 - 0, perm_ineq.upper_bound_);
 }
@@ -225,7 +227,7 @@ TEST_F(PermutationTest1, SinglePairPermutation_constructor) {
     job_first_react_matches01[job_curr] = {JobCEC(1, 0)};
   }
   SinglePairPermutation single_perm01(0, 1, job_first_react_matches01,
-                                      tasks_info);
+                                      tasks_info, "ReactionTime");
   EXPECT_EQ(prev_id, single_perm01.inequality_.task_prev_id_);
   EXPECT_EQ(next_id, single_perm01.inequality_.task_next_id_);
   EXPECT_EQ(-20, single_perm01.inequality_.lower_bound_);
@@ -237,7 +239,7 @@ TEST_F(PermutationTest1, SinglePairPermutation_constructor) {
   std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches12;
   job_first_react_matches12[JobCEC(1, 0)] = {JobCEC(2, 0)};
   SinglePairPermutation single_perm12(1, 2, job_first_react_matches12,
-                                      tasks_info);
+                                      tasks_info, "ReactionTime");
   EXPECT_EQ(prev_id, single_perm12.inequality_.task_prev_id_);
   EXPECT_EQ(next_id, single_perm12.inequality_.task_next_id_);
   EXPECT_EQ(-20, single_perm12.inequality_.lower_bound_);
@@ -252,12 +254,12 @@ TEST_F(PermutationTest1, SinglePairPermutation_valid) {
     job_first_react_matches01[job_curr] = {JobCEC(next_id, 0)};
   }
   SinglePairPermutation single_perm01(0, 1, job_first_react_matches01,
-                                      tasks_info);
+                                      tasks_info, "ReactionTime");
 
   std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches12;
   job_first_react_matches12[JobCEC(1, 0)] = {JobCEC(2, 0)};
   SinglePairPermutation single_perm12(1, 2, job_first_react_matches12,
-                                      tasks_info);
+                                      tasks_info, "ReactionTime");
 
   VariableRange variable_range_od = FindVariableRange(dag_tasks);
   ChainsPermutation chains_perm;
@@ -283,7 +285,7 @@ TEST_F(PermutationTest3, SinglePairPermutation_constructor) {
   }
 
   SinglePairPermutation single_perm01(0, 1, job_first_react_matches01,
-                                      tasks_info);
+                                      tasks_info, "ReactionTime");
   EXPECT_EQ(prev_id, single_perm01.inequality_.task_prev_id_);
   EXPECT_EQ(next_id, single_perm01.inequality_.task_next_id_);
   EXPECT_EQ(-50, single_perm01.inequality_.lower_bound_);
@@ -294,7 +296,7 @@ TEST_F(PermutationTest3, SinglePairPermutation_constructor) {
   std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches12;
   job_first_react_matches12[JobCEC(1, 0)] = {JobCEC(2, 0)};
   SinglePairPermutation single_perm12(1, 2, job_first_react_matches12,
-                                      tasks_info);
+                                      tasks_info, "ReactionTime");
   EXPECT_EQ(prev_id, single_perm12.inequality_.task_prev_id_);
   EXPECT_EQ(next_id, single_perm12.inequality_.task_next_id_);
   EXPECT_EQ(-10, single_perm12.inequality_.lower_bound_);
@@ -312,15 +314,19 @@ TEST_F(PermutationTest3, ChainsPermutation_valid_v1) {
     JobCEC job_curr(prev_id, i);
     job_first_react_matches01[job_curr] = {JobCEC(1, 1)};
   }
-  PermutationInequality perm_ineq01(prev_id, next_id, -50, true, -40, true);
-  SinglePairPermutation single_perm01(perm_ineq01, job_first_react_matches01);
+  PermutationInequality perm_ineq01(prev_id, next_id, -50, true, -40, true,
+                                    "ReactionTime");
+  SinglePairPermutation single_perm01(perm_ineq01, job_first_react_matches01,
+                                      "ReactionTime");
 
   prev_id = 1;
   next_id = 2;
   std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches12;
   job_first_react_matches12[JobCEC(1, 0)] = {JobCEC(2, 1)};
-  PermutationInequality perm_ineq12(prev_id, next_id, 0, true, 10, true);
-  SinglePairPermutation single_perm12(perm_ineq12, job_first_react_matches12);
+  PermutationInequality perm_ineq12(prev_id, next_id, 0, true, 10, true,
+                                    "ReactionTime");
+  SinglePairPermutation single_perm12(perm_ineq12, job_first_react_matches12,
+                                      "ReactionTime");
 
   VariableRange variable_range_od = FindVariableRange(dag_tasks);
   ChainsPermutation chains_perm;

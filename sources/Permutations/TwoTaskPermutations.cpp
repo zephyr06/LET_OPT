@@ -47,7 +47,8 @@ std::vector<JobCEC> GetPossibleReadingJobs(
 }
 
 PermutationInequality GenerateBoxPermutationConstraints(
-    int task_prev_id, int task_next_id, const VariableRange& variable_range) {
+    int task_prev_id, int task_next_id, const VariableRange& variable_range,
+    const std::string& type_trait) {
   return PermutationInequality(
       task_prev_id, task_next_id,
       variable_range.lower_bound.at(task_prev_id).deadline -
@@ -55,7 +56,7 @@ PermutationInequality GenerateBoxPermutationConstraints(
       true,
       variable_range.upper_bound.at(task_prev_id).deadline -
           variable_range.lower_bound.at(task_next_id).offset,
-      true);
+      true, type_trait);
 }
 
 bool ifTimeout(TimerType start_time) {
@@ -72,13 +73,15 @@ bool ifTimeout(TimerType start_time) {
 bool TwoTaskPermutations::AppendJobs(
     const JobCEC& job_curr, const JobCEC& job_match,
     SinglePairPermutation& permutation_current) {
-  PermutationInequality perm_new(job_curr, job_match, tasks_info_);
+  PermutationInequality perm_new(job_curr, job_match, tasks_info_, type_trait_);
   PermutationInequality perm_merged =
       MergeTwoSinglePermutations(perm_new, permutation_current.inequality_);
-  // Add bound constraints
-  PermutationInequality perm_bound = GenerateBoxPermutationConstraints(
-      job_curr.taskId, job_match.taskId, variable_od_range_);
-  perm_merged = MergeTwoSinglePermutations(perm_merged, perm_bound);
+  if (perm_merged.IsValid()) {
+    // Add bound constraints
+    PermutationInequality perm_bound = GenerateBoxPermutationConstraints(
+        job_curr.taskId, job_match.taskId, variable_od_range_, type_trait_);
+    perm_merged = MergeTwoSinglePermutations(perm_merged, perm_bound);
+  }
 
   if (perm_merged.IsValid()) {
     permutation_current.inequality_ = perm_merged;
@@ -133,8 +136,9 @@ void TwoTaskPermutations::AppendAllPermutations(
 void TwoTaskPermutations::FindAllPermutations() {
   if (type_trait_ == "ReactionTime" || type_trait_ == "ReactionTimeApprox") {
     JobCEC job_curr(task_prev_id_, 0);
-    PermutationInequality perm_ineq(task_prev_id_, task_next_id_);
-    SinglePairPermutation single_permutation(perm_ineq, tasks_info_);
+    PermutationInequality perm_ineq(task_prev_id_, task_next_id_, type_trait_);
+    SinglePairPermutation single_permutation(perm_ineq, tasks_info_,
+                                             type_trait_);
     AppendAllPermutations(job_curr, single_permutation);
   } else
     CoutError("Unrecognized type_trait_!");

@@ -6,12 +6,16 @@ namespace DAG_SPACE {
 SinglePairPermutation::SinglePairPermutation(
     int task_prev_id, int task_next_id,
     std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches,
-    const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
-    : inequality_(PermutationInequality(task_prev_id, task_next_id)),
+    const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
+    const std::string& type_trait)
+    : inequality_(
+          PermutationInequality(task_prev_id, task_next_id, type_trait)),
       job_first_react_matches_(job_first_react_matches),
-      index_global_(-1) {
+      index_global_(-1),
+      type_trait_(type_trait) {
   for (const auto& [job_source, job_matches] : job_first_react_matches_) {
-    PermutationInequality perm_new(job_source, job_matches[0], tasks_info);
+    PermutationInequality perm_new(job_source, job_matches[0], tasks_info,
+                                   "ReactionTime");
     PermutationInequality perm_merged =
         MergeTwoSinglePermutations(perm_new, inequality_);
     if (perm_merged.IsValid())
@@ -26,8 +30,9 @@ SinglePairPermutation::SinglePairPermutation(
 // constructors for the convenience of iteration in TwoTaskPermutations
 SinglePairPermutation::SinglePairPermutation(
     PermutationInequality inequality,
-    const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
-    : inequality_(inequality) {
+    const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
+    const std::string& type_trait)
+    : inequality_(inequality), type_trait_(type_trait) {
   int superperiod =
       GetSuperPeriod(tasks_info.GetTask(inequality.task_prev_id_),
                      tasks_info.GetTask(inequality.task_next_id_));
@@ -38,9 +43,11 @@ SinglePairPermutation::SinglePairPermutation(
 // constructors for the convenience of iteration in TwoTaskPermutations
 SinglePairPermutation::SinglePairPermutation(
     PermutationInequality inequality,
-    std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches)
+    std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches,
+    const std::string& type_trait)
     : inequality_(inequality),
-      job_first_react_matches_(job_first_react_matches) {}
+      job_first_react_matches_(job_first_react_matches),
+      type_trait_(type_trait) {}
 
 // copy constructor
 SinglePairPermutation::SinglePairPermutation(
@@ -50,6 +57,7 @@ SinglePairPermutation::SinglePairPermutation(
   job_first_react_matches_ = other.job_first_react_matches_;
   index_global_ = other.index_global_;
   index_local_ = other.index_local_;
+  type_trait_ = other.type_trait_;
   EndTimer("SinglePairPermutation_copy");
 }
 

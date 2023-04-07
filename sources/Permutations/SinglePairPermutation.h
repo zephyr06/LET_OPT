@@ -18,17 +18,19 @@ struct SinglePairPermutation {
   SinglePairPermutation(
       int task_prev_id, int task_next_id,
       std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches,
-      const RegularTaskSystem::TaskSetInfoDerived& tasks_info);
+      const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
+      const std::string& type_trait);
+
+  // constructors for the convenience of iteration in TwoTaskPermutations
+  SinglePairPermutation(PermutationInequality inequality,
+                        const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
+                        const std::string& type_trait);
 
   // constructors for the convenience of iteration in TwoTaskPermutations
   SinglePairPermutation(
       PermutationInequality inequality,
-      const RegularTaskSystem::TaskSetInfoDerived& tasks_info);
-
-  // constructors for the convenience of iteration in TwoTaskPermutations
-  SinglePairPermutation(
-      PermutationInequality inequality,
-      std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches);
+      std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches,
+      const std::string& type_trait);
 
   // copy constructor
   SinglePairPermutation(const SinglePairPermutation& other);
@@ -58,6 +60,7 @@ struct SinglePairPermutation {
                                  // vector, make it happen
   int index_global_;
   int index_local_;
+  std::string type_trait_;
 };
 
 typedef std::shared_ptr<const SinglePairPermutation> PermPtr;
