@@ -10,7 +10,7 @@ class PermutationTest22 : public PermutationTestBase {
 };
 
 TEST_F(PermutationTest22, IfSkipAnotherPermRT) {
-  TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info);
+  TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info, "ReactionTime");
   perm10.print();
   EXPECT_TRUE(IfSkipAnotherPermRT(*perm10[0], *perm10[1]));
   EXPECT_TRUE(IfSkipAnotherPermRT(*perm10[0], *perm10[2]));
@@ -32,7 +32,7 @@ bool IfSkipAnotherPermDA(const SinglePairPermutation& perm_base,
 }
 
 TEST_F(PermutationTest22, IfSkipAnotherPermDA) {
-  TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info);
+  TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info, "ReactionTime");
   perm10.print();
   EXPECT_TRUE(IfSkipAnotherPermDA(*perm10[0], *perm10[1]));
   EXPECT_TRUE(IfSkipAnotherPermDA(*perm10[0], *perm10[2]));
@@ -53,9 +53,10 @@ class PermutationTest18 : public PermutationTestBase {
 };
 
 TEST_F(PermutationTest18, FeasibleChainManager) {
-  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_,
+                                     "ReactionTime");
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
   perm01.print();
   perm12.print();
   ChainsPermutation chains_perm;
@@ -72,7 +73,8 @@ TEST_F(PermutationTest18, FeasibleChainManager) {
 }
 
 TEST_F(PermutationTest18, IfChainsContainBetterPerm) {
-  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_,
+                                     "ReactionTime");
   TwoTaskPermutations perm01 =
       task_set_perms.adjacent_two_task_permutations_[0];
   TwoTaskPermutations perm12 =
@@ -112,9 +114,10 @@ TEST_F(PermutationTest18, IfChainsContainBetterPerm) {
 }
 
 TEST_F(PermutationTest18, IfFutureEdgesContainBetterPerm) {
-  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_,
+                                     "ReactionTime");
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
   perm01.print();
   perm12.print();
   ChainsPermutation chains_perm;
@@ -140,7 +143,8 @@ TEST_F(PermutationTest18, IfFutureEdgesContainBetterPerm) {
 }
 
 TEST_F(PermutationTest18, TakeCommonElements) {
-  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_,
+                                     "ReactionTime");
   TwoTaskPermutations perm01 =
       task_set_perms.adjacent_two_task_permutations_[0];
   TwoTaskPermutations perm12 =
@@ -162,9 +166,10 @@ class PermutationTest23 : public PermutationTestBase {
   }
 };
 TEST_F(PermutationTest23, FeasibleChainManager) {
-  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_,
+                                     "ReactionTime");
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
   perm01.print();
   std::cout << "***********************************\n";
   perm12.print();
@@ -194,9 +199,10 @@ TEST_F(PermutationTest23, FeasibleChainManager) {
 }
 
 TEST_F(PermutationTest23, FeasibleChainManager_incomplete) {
-  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_,
+                                     "ReactionTime");
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
   perm01.print();
   std::cout << "***********************************\n";
   perm12.print();
@@ -213,7 +219,8 @@ TEST_F(PermutationTest23, FeasibleChainManager_incomplete) {
 }
 
 TEST_F(PermutationTest23, IfChainsContainBetterPerm) {
-  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_,
+                                     "ReactionTime");
   TwoTaskPermutations perm01 =
       task_set_perms.adjacent_two_task_permutations_[0];
   TwoTaskPermutations perm12 =
@@ -239,7 +246,8 @@ TEST_F(PermutationTest23, IfChainsContainBetterPerm) {
 }
 
 TEST_F(PermutationTest23, TakeCommonElements) {
-  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_,
+                                     "ReactionTime");
   TwoTaskPermutations perm12 =
       task_set_perms.adjacent_two_task_permutations_[1];
   TwoTaskPermutationsIterator iterator12(perm12);
@@ -258,7 +266,7 @@ class PermutationTest22_n5 : public PermutationTestBase {
 };
 
 TEST_F(PermutationTest22_n5, Feasible_Chain_should_skip_perms) {
-  TaskSetOptSorted task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptSorted task_set_perms(dag_tasks, dag_tasks.chains_, "ReactionTime");
   auto perm41 = task_set_perms.adjacent_two_task_permutations_[0];
   auto perm32 = task_set_perms.adjacent_two_task_permutations_[1];
   auto perm10 = task_set_perms.adjacent_two_task_permutations_[2];
@@ -285,7 +293,7 @@ TEST_F(PermutationTest22_n5, Feasible_Chain_should_skip_perms) {
 }
 
 TEST_F(PermutationTest22_n5, skip_with_incomplete_chain_perms) {
-  TaskSetOptSorted task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptSorted task_set_perms(dag_tasks, dag_tasks.chains_, "ReactionTime");
   auto perm41 = task_set_perms.adjacent_two_task_permutations_[0];
   auto perm32 = task_set_perms.adjacent_two_task_permutations_[1];
   auto perm10 = task_set_perms.adjacent_two_task_permutations_[2];

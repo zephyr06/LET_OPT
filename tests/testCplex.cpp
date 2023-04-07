@@ -21,8 +21,8 @@ class PermutationTest1 : public ::testing::Test {
 
 TEST_F(PermutationTest1, Optimize) {
   dag_tasks.chains_ = {{0, 1, 2}};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
@@ -38,8 +38,8 @@ TEST_F(PermutationTest1, Optimize) {
 }
 TEST_F(PermutationTest1, OptimizeApprox) {
   dag_tasks.chains_ = {{0, 1, 2}};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
@@ -55,8 +55,8 @@ TEST_F(PermutationTest1, OptimizeApprox) {
 }
 TEST_F(PermutationTest1, OptimizeApproxDA_v1) {
   dag_tasks.chains_ = {{0, 1, 2}};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
@@ -73,8 +73,8 @@ TEST_F(PermutationTest1, OptimizeApproxDA_v1) {
 }
 TEST_F(PermutationTest1, OptimizeApproxDA_v2) {
   dag_tasks.chains_ = {{0, 1, 2}};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
@@ -105,8 +105,8 @@ class PermutationTest2 : public ::testing::Test {
 };
 TEST_F(PermutationTest2, OptimizeApprox) {
   dag_tasks.chains_ = {{0, 1, 2}};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
@@ -123,8 +123,8 @@ TEST_F(PermutationTest2, OptimizeApprox) {
 
 TEST_F(PermutationTest2, OptimizeApproxDA) {
   dag_tasks.chains_ = {{0, 1, 2}};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
@@ -143,8 +143,8 @@ TEST_F(PermutationTest1, Incremental) {
   dag_tasks.chains_ = {{0, 1, 2}};
   GraphOfChains graph_chains(dag_tasks.chains_);
   std::vector<int> rta = {1, 3, 6};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
 
   ChainsPermutation chains_perm1;
   chains_perm1.push_back(perm01[0]);
@@ -168,8 +168,8 @@ TEST_F(PermutationTest1, Incremental) {
 
 TEST_F(PermutationTest1, FindMinOffset) {
   dag_tasks.chains_ = {{0, 1, 2}};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
@@ -209,8 +209,8 @@ class PermutationTest22 : public PermutationTestBase {
 };
 TEST_F(PermutationTest22, OptimizeApproxDA) {
   dag_tasks.chains_ = {{0, 1, 2}};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);

@@ -27,11 +27,13 @@ class TwoTaskPermutations {
   TwoTaskPermutations() {}
   TwoTaskPermutations(int task_prev_id, int task_next_id,
                       const DAG_Model& dag_tasks,
-                      const RegularTaskSystem::TaskSetInfoDerived& tasks_info)
+                      const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
+                      const std::string& type_trait)
       : start_time_((std::chrono::high_resolution_clock::now())),
         task_prev_id_(task_prev_id),
         task_next_id_(task_next_id),
         tasks_info_(tasks_info),
+        type_trait_(type_trait),
         perm_count_(0) {
     superperiod_ = GetSuperPeriod(tasks_info.GetTask(task_prev_id),
                                   tasks_info.GetTask(task_next_id));
@@ -42,11 +44,13 @@ class TwoTaskPermutations {
   TwoTaskPermutations(int task_prev_id, int task_next_id,
                       const DAG_Model& dag_tasks,
                       const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
-                      const std::vector<int>& rta, int perm_count_global = 0)
+                      const std::vector<int>& rta,
+                      const std::string& type_trait, int perm_count_global = 0)
       : start_time_((std::chrono::high_resolution_clock::now())),
         task_prev_id_(task_prev_id),
         task_next_id_(task_next_id),
         tasks_info_(tasks_info),
+        type_trait_(type_trait),
         perm_count_(perm_count_global),
         perm_count_base_(0) {
     superperiod_ = GetSuperPeriod(tasks_info.GetTask(task_prev_id),
@@ -86,6 +90,7 @@ class TwoTaskPermutations {
   int superperiod_;
   VariableRange variable_od_range_;
   PermPtrVec single_permutations_;
+  std::string type_trait_;
   int perm_count_;       // to count the perm of the whole task set
   int perm_count_base_;  // start from 0, to count the perms of this edge
 };

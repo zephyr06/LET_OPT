@@ -5,112 +5,112 @@ using namespace DAG_SPACE;
 
 int REPEAT = 100;
 class PermutationTest_long_time23 : public ::testing::Test {
-   protected:
-    void SetUp() override {
-        dag_tasks = ReadDAG_Tasks(
-            GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v23.csv",
-            "RM", 1);
-        // dag_tasks = ReadDAG_Tasks(
-        //     GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v22.csv",
-        //     "RM", 1);
-        tasks = dag_tasks.GetTaskSet();
-        tasks_info = TaskSetInfoDerived(tasks);
-        task0 = tasks[0];
-        task1 = tasks[1];
-        task2 = tasks[2];
-        job00 = JobCEC(0, 0);
-        job01 = JobCEC(0, 1);
-        job10 = JobCEC(1, 0);
-        job20 = JobCEC(2, 0);
+ protected:
+  void SetUp() override {
+    dag_tasks = ReadDAG_Tasks(
+        GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v23.csv", "RM",
+        1);
+    // dag_tasks = ReadDAG_Tasks(
+    //     GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v22.csv",
+    //     "RM", 1);
+    tasks = dag_tasks.GetTaskSet();
+    tasks_info = TaskSetInfoDerived(tasks);
+    task0 = tasks[0];
+    task1 = tasks[1];
+    task2 = tasks[2];
+    job00 = JobCEC(0, 0);
+    job01 = JobCEC(0, 1);
+    job10 = JobCEC(1, 0);
+    job20 = JobCEC(2, 0);
 
-        variable_od = VariableOD(tasks);
-        dag_tasks.chains_[0] = {0, 1, 4};
-    };
+    variable_od = VariableOD(tasks);
+    dag_tasks.chains_[0] = {0, 1, 4};
+  };
 
-    DAG_Model dag_tasks;
-    TaskSet tasks;
-    TaskSetInfoDerived tasks_info;
-    Task task0;
-    Task task1;
-    Task task2;
-    JobCEC job00;
-    JobCEC job01;
-    JobCEC job10;
-    JobCEC job20;
+  DAG_Model dag_tasks;
+  TaskSet tasks;
+  TaskSetInfoDerived tasks_info;
+  Task task0;
+  Task task1;
+  Task task2;
+  JobCEC job00;
+  JobCEC job01;
+  JobCEC job10;
+  JobCEC job20;
 
-    VariableOD variable_od;
+  VariableOD variable_od;
 };
 
 TEST_F(PermutationTest_long_time23, Optimize_direct) {
-    // chain is 0 -> 1 -> 4
-    dag_tasks.chains_ = {{0, 1, 2, 3}};
-    TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-    TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
-    TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info);
-    ChainsPermutation chains_perm;
-    chains_perm.push_back(perm01[0]);
-    chains_perm.push_back(perm12[0]);
-    chains_perm.push_back(perm23[0]);
+  // chain is 0 -> 1 -> 4
+  dag_tasks.chains_ = {{0, 1, 2, 3}};
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info, "ReactionTime");
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[0]);
+  chains_perm.push_back(perm12[0]);
+  chains_perm.push_back(perm23[0]);
 
-    GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
+  GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
 
-    std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
-    auto start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < REPEAT; i++) {
-        FindODWithLP(dag_tasks, tasks_info, chains_perm, graph_of_all_ca_chains,
-                     "ReactionTime", rta);
-    }
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto duration =
-        std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    std::cout << "Time taken during Optimize_direct: "
-              << double(duration.count()) / 1e6 << "\n";
-    PrintTimer();
+  std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+  auto start = std::chrono::high_resolution_clock::now();
+  for (int i = 0; i < REPEAT; i++) {
+    FindODWithLP(dag_tasks, tasks_info, chains_perm, graph_of_all_ca_chains,
+                 "ReactionTime", rta);
+  }
+  auto stop = std::chrono::high_resolution_clock::now();
+  auto duration =
+      std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+  std::cout << "Time taken during Optimize_direct: "
+            << double(duration.count()) / 1e6 << "\n";
+  PrintTimer();
 }
 
 TEST_F(PermutationTest_long_time23, Optimize_Incre) {
-    // chain is 0 -> 1 -> 4
-    dag_tasks.chains_ = {{0, 1, 2, 3}};
-    TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-    TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
-    TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info);
-    ChainsPermutation chains_perm;
-    chains_perm.push_back(perm01[0]);
-    chains_perm.push_back(perm12[0]);
-    chains_perm.push_back(perm23[0]);
+  // chain is 0 -> 1 -> 4
+  dag_tasks.chains_ = {{0, 1, 2, 3}};
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info, "ReactionTime");
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[0]);
+  chains_perm.push_back(perm12[0]);
+  chains_perm.push_back(perm23[0]);
 
-    ChainsPermutation chains_perm2;
-    chains_perm2.push_back(perm01[1]);
-    chains_perm2.push_back(perm12[1]);
-    chains_perm2.push_back(perm23[1]);
+  ChainsPermutation chains_perm2;
+  chains_perm2.push_back(perm01[1]);
+  chains_perm2.push_back(perm12[1]);
+  chains_perm2.push_back(perm23[1]);
 
-    GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
+  GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
 
-    std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+  std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
 
-    LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_of_all_ca_chains,
-                             "ReactionTime", rta);
-    lp_optimizer.OptimizeWithoutClear(chains_perm2);
+  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_of_all_ca_chains,
+                           "ReactionTime", rta);
+  lp_optimizer.OptimizeWithoutClear(chains_perm2);
 
-    auto start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < REPEAT; i++) {
-        lp_optimizer.UpdateSystem(chains_perm);
-        lp_optimizer.OptimizeAfterUpdate(chains_perm);
-    }
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto duration =
-        std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    std::cout << "Time taken during Incre_Optimize: "
-              << double(duration.count()) / 1e6 << "\n";
-    PrintTimer();
+  auto start = std::chrono::high_resolution_clock::now();
+  for (int i = 0; i < REPEAT; i++) {
+    lp_optimizer.UpdateSystem(chains_perm);
+    lp_optimizer.OptimizeAfterUpdate(chains_perm);
+  }
+  auto stop = std::chrono::high_resolution_clock::now();
+  auto duration =
+      std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+  std::cout << "Time taken during Incre_Optimize: "
+            << double(duration.count()) / 1e6 << "\n";
+  PrintTimer();
 }
 
 // TEST_F(PermutationTest_long_time23, ExamObj) {
 //     // chain is 0 -> 1 -> 4
 //     dag_tasks.chains_ = {{0, 1, 2, 3}};
-//     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-//     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
-//     TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info);
+//     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info,"ReactionTime");
+//     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info,"ReactionTime");
+//     TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info,"ReactionTime");
 //     ChainsPermutation chains_perm;
 //     chains_perm.push_back(perm01[0]);
 //     chains_perm.push_back(perm12[0]);
@@ -138,9 +138,9 @@ TEST_F(PermutationTest_long_time23, Optimize_Incre) {
 // TEST_F(PermutationTest_long_time23, Optimize_constant) {
 //     // chain is 0 -> 1 -> 4
 //     dag_tasks.chains_ = {{0, 1, 2, 3}};
-//     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-//     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
-//     TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info);
+//     TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info,"ReactionTime");
+//     TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info,"ReactionTime");
+//     TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info,"ReactionTime");
 //     ChainsPermutation chains_perm;
 //     chains_perm.push_back(perm01[0]);
 //     chains_perm.push_back(perm12[0]);
@@ -167,7 +167,7 @@ TEST_F(PermutationTest_long_time23, Optimize_Incre) {
 //     PrintTimer();
 // }
 int main(int argc, char** argv) {
-    // ::testing::InitGoogleTest(&argc, argv);
-    ::testing::InitGoogleMock(&argc, argv);
-    return RUN_ALL_TESTS();
+  // ::testing::InitGoogleTest(&argc, argv);
+  ::testing::InitGoogleMock(&argc, argv);
+  return RUN_ALL_TESTS();
 }

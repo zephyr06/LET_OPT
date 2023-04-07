@@ -21,8 +21,8 @@ template <typename ObjectiveFunction>
 ScheduleResult PerformTOM_OPT_EnumW_Skip(const DAG_Model& dag_tasks) {
   auto start = std::chrono::high_resolution_clock::now();
   ScheduleResult res;
-  TaskSetOptEnumWSkip task_sets_perms =
-      TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_sets_perms = TaskSetOptEnumWSkip(
+      dag_tasks, dag_tasks.chains_, ObjectiveFunction::type_trait);
   res.obj_ = task_sets_perms.PerformOptimizationEnumerate<ObjectiveFunction>();
   if (res.obj_ >= 1e8) {
     res.obj_ = PerformStandardLETAnalysis<ObjectiveFunction>(dag_tasks).obj_;
@@ -41,8 +41,8 @@ template <typename ObjectiveFunction>
 ScheduleResult PerformTOM_OPT_Sort(const DAG_Model& dag_tasks) {
   auto start = std::chrono::high_resolution_clock::now();
   ScheduleResult res;
-  TaskSetOptSorted task_sets_perms =
-      TaskSetOptSorted(dag_tasks, dag_tasks.chains_);
+  TaskSetOptSorted task_sets_perms = TaskSetOptSorted(
+      dag_tasks, dag_tasks.chains_, ObjectiveFunction::type_trait);
   res.obj_ = task_sets_perms.PerformOptimizationSort<ObjectiveFunction>();
   if (res.obj_ >= 1e8) {
     res.obj_ = PerformStandardLETAnalysis<ObjectiveFunction>(dag_tasks).obj_;

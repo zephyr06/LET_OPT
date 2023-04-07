@@ -23,9 +23,9 @@ class PermutationTest1 : public ::testing::Test {
     job10 = JobCEC(1, 0);
     job20 = JobCEC(2, 0);
 
-    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
-    perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
-    perm02 = TwoTaskPermutations(0, 2, dag_tasks, tasks_info);
+    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info, "ReactionTime");
+    perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info, "ReactionTime");
+    perm02 = TwoTaskPermutations(0, 2, dag_tasks, tasks_info, "ReactionTime");
     rta = GetResponseTimeTaskSet(dag_tasks);
 
     // perm01[0]->print();
@@ -153,8 +153,8 @@ class PermutationTest2 : public ::testing::Test {
     job10 = JobCEC(1, 0);
     job20 = JobCEC(2, 0);
 
-    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
-    perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
+    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info, "ReactionTime");
+    perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info, "ReactionTime");
     rta = GetResponseTimeTaskSet(dag_tasks);
 
     // perm01[0]->print();
@@ -226,8 +226,8 @@ class PermutationTest_Non_Har : public ::testing::Test {
     task0 = tasks[0];
     task1 = tasks[1];
     task2 = tasks[2];
-    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
-    perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
+    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info, "ReactionTime");
+    perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info, "ReactionTime");
   };
 
   DAG_Model dag_tasks;
@@ -307,7 +307,8 @@ class PermutationTest3 : public ::testing::Test {
 };
 
 TEST_F(PermutationTest3, Find_OD) {
-  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_,
+                                     "ReactionTime");
   ChainsPermutation chains_perm;
   chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[0][0]);
   chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[1][0]);
@@ -335,7 +336,8 @@ TEST_F(PermutationTest3, Find_OD) {
 }
 
 TEST_F(PermutationTest3, Find_OD_v2) {
-  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_,
+                                     "ReactionTime");
   ChainsPermutation chains_perm;
   chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[0][1]);
   chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[1][0]);
@@ -380,7 +382,8 @@ class PermutationTest4 : public ::testing::Test {
   JobCEC job20;
 };
 TEST_F(PermutationTest4, Find_OD_v2) {
-  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_,
+                                     "ReactionTime");
   ChainsPermutation chains_perm;
   chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[0][0]);
   chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[1][1]);
@@ -428,7 +431,8 @@ class PermutationTest5 : public ::testing::Test {
   JobCEC job20;
 };
 TEST_F(PermutationTest5, Find_OD) {
-  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_,
+                                     "ReactionTime");
   ChainsPermutation chains_perm;
   chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[0][1]);
   chains_perm.push_back(task_set_perms.adjacent_two_task_permutations_[1][2]);
@@ -484,8 +488,8 @@ class PermutationTest6 : public ::testing::Test {
     job10 = JobCEC(1, 0);
     job20 = JobCEC(2, 0);
 
-    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
-    perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
+    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info, "ReactionTime");
+    perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info, "ReactionTime");
   };
 
   DAG_Model dag_tasks;

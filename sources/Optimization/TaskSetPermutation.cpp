@@ -4,7 +4,8 @@
 namespace DAG_SPACE {
 
 TaskSetPermutation::TaskSetPermutation(
-    const DAG_Model& dag_tasks, const std::vector<std::vector<int>>& chains)
+    const DAG_Model& dag_tasks, const std::vector<std::vector<int>>& chains,
+    const std::string& type_trait)
     : start_time_((std::chrono::high_resolution_clock::now())),
       dag_tasks_(dag_tasks),
       tasks_info_(
@@ -15,7 +16,8 @@ TaskSetPermutation::TaskSetPermutation(
       variable_range_od_(FindVariableRange(dag_tasks_)),
       rta_(GetResponseTimeTaskSet(dag_tasks_)),
       best_possible_variable_od_(
-          FindBestPossibleVariableOD(dag_tasks_, tasks_info_, rta_)) {
+          FindBestPossibleVariableOD(dag_tasks_, tasks_info_, rta_)),
+      type_trait_(type_trait) {
   adjacent_two_task_permutations_.reserve(
       1e2);  // there are never more than 1e2 edges
   FindPairPermutations();
@@ -27,7 +29,7 @@ void TaskSetPermutation::FindPairPermutations() {
     if (ifTimeout(start_time_)) break;
     adjacent_two_task_permutations_.push_back(
         TwoTaskPermutations(edge_curr.from_id, edge_curr.to_id, dag_tasks_,
-                            tasks_info_, rta_, single_perm_count));
+                            tasks_info_, rta_, type_trait_, single_perm_count));
     single_perm_count +=
         adjacent_two_task_permutations_.back().single_permutations_.size();
     std::cout << "Pair permutation #: "

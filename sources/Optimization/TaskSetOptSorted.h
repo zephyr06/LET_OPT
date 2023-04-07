@@ -5,8 +5,9 @@ namespace DAG_SPACE {
 class TaskSetOptSorted : public TaskSetPermutation {
  public:
   TaskSetOptSorted(const DAG_Model& dag_tasks,
-                   const std::vector<std::vector<int>>& chains)
-      : TaskSetPermutation(dag_tasks, chains) {
+                   const std::vector<std::vector<int>>& chains,
+                   const std::string& type_trait)
+      : TaskSetPermutation(dag_tasks, chains, type_trait) {
     feasible_chains_ =
         FeasiblieChainsManagerVec(adjacent_two_task_permutations_.size());
   }

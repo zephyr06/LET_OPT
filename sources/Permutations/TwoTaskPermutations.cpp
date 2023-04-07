@@ -109,10 +109,13 @@ void TwoTaskPermutations::AppendAllPermutations(
 }
 
 void TwoTaskPermutations::FindAllPermutations() {
-  JobCEC job_curr(task_prev_id_, 0);
-  PermutationInequality perm_ineq(task_prev_id_, task_next_id_);
-  SinglePairPermutation single_permutation(perm_ineq, tasks_info_);
-  AppendAllPermutations(job_curr, single_permutation);
+  if (type_trait_ == "ReactionTime" || type_trait_ == "ReactionTimeApprox") {
+    JobCEC job_curr(task_prev_id_, 0);
+    PermutationInequality perm_ineq(task_prev_id_, task_next_id_);
+    SinglePairPermutation single_permutation(perm_ineq, tasks_info_);
+    AppendAllPermutations(job_curr, single_permutation);
+  } else
+    CoutError("Unrecognized type_trait_!");
 }
 void TwoTaskPermutations::print() const {
   for (uint i = 0; i < single_permutations_.size(); i++) {

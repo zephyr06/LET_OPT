@@ -25,8 +25,8 @@ class PermutationTest1 : public ::testing::Test {
     job10 = JobCEC(1, 0);
     job20 = JobCEC(2, 0);
 
-    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
-    perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
+    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info, "ReactionTime");
+    perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info, "ReactionTime");
 
     variable_od = VariableOD(tasks);
     dag_tasks.chains_[0] = {0, 1, 2};
@@ -50,8 +50,8 @@ class PermutationTest1 : public ::testing::Test {
 
 TEST_F(PermutationTest1, GetFirstReactJob) {
   // chain is 0 -> 1 -> 2
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
@@ -76,8 +76,8 @@ TEST_F(PermutationTest1, GetFirstReactJob) {
 
 TEST_F(PermutationTest1, ChainsPermutation_v1) {
   // chain is 0 -> 1 -> 2
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
@@ -99,8 +99,8 @@ TEST_F(PermutationTest1, ChainsPermutation_v1) {
 }
 
 TEST_F(PermutationTest1, GetSubChains) {
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
   std::vector<std::vector<int>> chains_full_length = {{0, 1, 2}};
@@ -114,8 +114,8 @@ TEST_F(PermutationTest1, data_age) {
   // chain is 0 -> 1 -> 2
   std::vector<int> chain = {0, 1, 2};
   dag_tasks.chains_ = {chain};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
@@ -193,8 +193,8 @@ class PermutationTest_Non_Har : public ::testing::Test {
 
 TEST_F(PermutationTest_Non_Har, ChainsPermutation_v1) {
   // chain is 0 -> 1 -> 2
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
@@ -222,8 +222,8 @@ TEST_F(PermutationTest_Non_Har, ChainsPermutation_v1) {
 }
 TEST_F(PermutationTest_Non_Har, ObjReactionTimeApprox) {
   // chain is 0 -> 1 -> 2
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
@@ -252,8 +252,8 @@ TEST_F(PermutationTest_Non_Har, ObjReactionTimeApprox) {
 TEST_F(PermutationTest_Non_Har, data_age) {
   // chain is 0 -> 1 -> 2
   std::vector<int> chain = {0, 1, 2};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
   dag_tasks.chains_ = {chain};
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
@@ -276,8 +276,8 @@ TEST_F(PermutationTest_Non_Har, data_age) {
 
 TEST_F(PermutationTest_Non_Har, diff_deadline_from_variable) {
   // chain is 0 -> 1 -> 2
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
@@ -376,10 +376,10 @@ class PermutationTest_2chain_v1 : public ::testing::Test {
     job10 = JobCEC(1, 0);
     job20 = JobCEC(2, 0);
 
-    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
-    perm03 = TwoTaskPermutations(0, 3, dag_tasks, tasks_info);
-    perm34 = TwoTaskPermutations(3, 4, dag_tasks, tasks_info);
-    perm13 = TwoTaskPermutations(1, 3, dag_tasks, tasks_info);
+    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info, "ReactionTime");
+    perm03 = TwoTaskPermutations(0, 3, dag_tasks, tasks_info, "ReactionTime");
+    perm34 = TwoTaskPermutations(3, 4, dag_tasks, tasks_info, "ReactionTime");
+    perm13 = TwoTaskPermutations(1, 3, dag_tasks, tasks_info, "ReactionTime");
 
     // perm01[0].print();
     // perm03[0].print();
@@ -471,8 +471,8 @@ TEST_F(PermutationTest_2chain_v1, PerformStandardLETAnalysis) {
 TEST_F(PermutationTest_2chain_v1, GetSubChains) {
   // chain is 0 -> 3 -> 4
   // chain is 1 -> 3 -> 4
-  TwoTaskPermutations perm03(0, 3, dag_tasks, tasks_info);
-  TwoTaskPermutations perm34(3, 4, dag_tasks, tasks_info);
+  TwoTaskPermutations perm03(0, 3, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm34(3, 4, dag_tasks, tasks_info, "ReactionTime");
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm03[0]);
   std::vector<std::vector<int>> chains_full_length = {{0, 3, 4}, {1, 3, 4}};
@@ -485,8 +485,8 @@ TEST_F(PermutationTest_2chain_v1, GetSubChains) {
 TEST_F(PermutationTest_2chain_v1, GetSubChains_v2) {
   // chain is 0 -> 3 -> 4
   // chain is 1 -> 3 -> 4
-  TwoTaskPermutations perm03(0, 3, dag_tasks, tasks_info);
-  TwoTaskPermutations perm34(3, 4, dag_tasks, tasks_info);
+  TwoTaskPermutations perm03(0, 3, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm34(3, 4, dag_tasks, tasks_info, "ReactionTime");
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm03[0]);
   chains_perm.push_back(perm34[0]);
@@ -500,9 +500,9 @@ TEST_F(PermutationTest_2chain_v1, GetSubChains_v2) {
 TEST_F(PermutationTest_2chain_v1, GetSubChains_v3) {
   // chain is 0 -> 3 -> 4
   // chain is 1 -> 3 -> 4
-  TwoTaskPermutations perm03(0, 3, dag_tasks, tasks_info);
-  TwoTaskPermutations perm34(3, 4, dag_tasks, tasks_info);
-  TwoTaskPermutations perm13(1, 3, dag_tasks, tasks_info);
+  TwoTaskPermutations perm03(0, 3, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm34(3, 4, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm13(1, 3, dag_tasks, tasks_info, "ReactionTime");
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm03[0]);
   chains_perm.push_back(perm34[0]);
@@ -517,9 +517,9 @@ TEST_F(PermutationTest_2chain_v1, GetSubChains_v3) {
 TEST_F(PermutationTest_2chain_v1, GetSubChains_v4) {
   // chain is 0 -> 3 -> 4
   // chain is 1 -> 3 -> 4
-  TwoTaskPermutations perm03(0, 3, dag_tasks, tasks_info);
-  TwoTaskPermutations perm34(3, 4, dag_tasks, tasks_info);
-  TwoTaskPermutations perm13(1, 3, dag_tasks, tasks_info);
+  TwoTaskPermutations perm03(0, 3, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm34(3, 4, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm13(1, 3, dag_tasks, tasks_info, "ReactionTime");
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm03[0]);
   // chains_perm.push_back(perm34[0]);
@@ -550,9 +550,9 @@ class PermutationTest42 : public ::testing::Test {
 TEST_F(PermutationTest42, GetSubChains) {
   // chain is 0 -> 3 -> 4
   // chain is 1 -> 3 -> 4
-  TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info);
-  TwoTaskPermutations perm02(0, 2, dag_tasks, tasks_info);
-  TwoTaskPermutations perm14(1, 4, dag_tasks, tasks_info);
+  TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm02(0, 2, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm14(1, 4, dag_tasks, tasks_info, "ReactionTime");
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm14[0]);
   chains_perm.push_back(perm02[0]);

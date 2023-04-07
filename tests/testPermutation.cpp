@@ -221,14 +221,16 @@ TEST_F(PermutationTest3, GetPossibleReactingJobs_non_harmonic_period) {
 }
 
 TEST_F(PermutationTest1, simple_contructor_harmonic) {
-  TwoTaskPermutations two_task_permutation(1, 2, dag_tasks, tasks_info);
+  TwoTaskPermutations two_task_permutation(1, 2, dag_tasks, tasks_info,
+                                           "ReactionTime");
   EXPECT_EQ(2, two_task_permutation.size());
   // PermutationInequality perm_expected0(1, 2, 0, false, 0, true);
   EXPECT_EQ(0, two_task_permutation[0]->inequality_.upper_bound_);
   // PermutationInequality perm_expected1(1, 2, 0, false, 20, true);
   EXPECT_EQ(20, two_task_permutation[1]->inequality_.upper_bound_);
 
-  two_task_permutation = TwoTaskPermutations(0, 2, dag_tasks, tasks_info);
+  two_task_permutation =
+      TwoTaskPermutations(0, 2, dag_tasks, tasks_info, "ReactionTime");
 
   EXPECT_TRUE(
       JobCEC(2, 0) ==
@@ -260,7 +262,7 @@ TEST_F(PermutationTest1, simple_contructor_harmonic) {
 
 TEST_F(PermutationTest1, simple_contructor_harmonic_v2) {
   TwoTaskPermutations two_task_permutation =
-      TwoTaskPermutations(2, 0, dag_tasks, tasks_info);
+      TwoTaskPermutations(2, 0, dag_tasks, tasks_info, "ReactionTime");
   EXPECT_EQ(3, two_task_permutation.size());
 
   int permutation_index = 0;
@@ -295,7 +297,8 @@ TEST_F(PermutationTest1, simple_contructor_harmonic_v2) {
 }
 
 TEST_F(PermutationTest3, simple_contructor_non_harmonic) {
-  TwoTaskPermutations two_task_permutation(0, 1, dag_tasks, tasks_info);
+  TwoTaskPermutations two_task_permutation(0, 1, dag_tasks, tasks_info,
+                                           "ReactionTime");
   EXPECT_EQ(5, two_task_permutation.size());
 
   int permutation_index = 0;
@@ -409,7 +412,8 @@ class PermutationTest4 : public ::testing::Test {
 };
 
 TEST_F(PermutationTest4, GenerateBoxPermutationConstraints) {
-  TwoTaskPermutations two_task_permutation(23, 22, dag_tasks, tasks_info);
+  TwoTaskPermutations two_task_permutation(23, 22, dag_tasks, tasks_info,
+                                           "ReactionTime");
   PermutationInequality perm_bound = GenerateBoxPermutationConstraints(
       23, 22, two_task_permutation.variable_od_range_);
   perm_bound.print();
@@ -422,7 +426,8 @@ TEST_F(PermutationTest4, simple_contructor_v1) {
   std::cout << "RTA-22-old: " << GetResponseTime(tasks, 22) << "\n";
   std::cout << "RTA-22: " << GetResponseTime(dag_tasks, 22) << "\n";
   std::cout << "RTA-23: " << GetResponseTime(dag_tasks, 23) << "\n";
-  TwoTaskPermutations two_task_permutation(23, 22, dag_tasks, tasks_info);
+  TwoTaskPermutations two_task_permutation(23, 22, dag_tasks, tasks_info,
+                                           "ReactionTime");
   EXPECT_EQ(0, two_task_permutation.size());
 }
 

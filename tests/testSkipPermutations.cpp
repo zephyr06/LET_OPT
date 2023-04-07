@@ -32,15 +32,16 @@ class PermutationTest1 : public ::testing::Test {
 };
 
 TEST_F(PermutationTest1, obj_) {
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
-  TwoTaskPermutations perm24(2, 4, dag_tasks, tasks_info);
-  TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info);
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm24(2, 4, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info, "ReactionTime");
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm12[8]);
   chains_perm.push_back(perm24[11]);
   chains_perm.push_back(perm23[3]);
   chains_perm.print();
-  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_,
+                                      "ReactionTime");
   std::pair<VariableOD, int> res =
       FindODWithLP(task_sets_perms.dag_tasks_, task_sets_perms.tasks_info_,
                    chains_perm, task_sets_perms.graph_of_all_ca_chains_,
@@ -66,16 +67,17 @@ TEST_F(PermutationTest1, obj_) {
 
 // TODO: add it to TaskSetPermutation
 TEST_F(PermutationTest1, FindBestPossibleVariableOD) {
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
-  TwoTaskPermutations perm24(2, 4, dag_tasks, tasks_info);
-  TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info);
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm24(2, 4, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info, "ReactionTime");
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm12[8]);
   chains_perm.push_back(perm24[11]);
   chains_perm.push_back(perm23[3]);
   chains_perm.print();
 
-  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_,
+                                      "ReactionTime");
   VariableRange variable_range = FindPossibleVariableOD(
       dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm);
   auto rta = GetResponseTimeTaskSet(dag_tasks);
@@ -131,9 +133,9 @@ class PermutationTest2 : public ::testing::Test {
 };
 
 TEST_F(PermutationTest2, FindBestPossibleVariableOD) {
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
-  // TwoTaskPermutations perm24(2, 4, dag_tasks, tasks_info);
-  // TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info);
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+  // TwoTaskPermutations perm24(2, 4, dag_tasks, tasks_info,"ReactionTime");
+  // TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info,"ReactionTime");
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm12[0]);
   // chains_perm.push_back(perm24[11]);
@@ -141,7 +143,8 @@ TEST_F(PermutationTest2, FindBestPossibleVariableOD) {
   chains_perm.print();
   auto rta = GetResponseTimeTaskSet(dag_tasks);
 
-  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_,
+                                      "ReactionTime");
   VariableRange variable_range = FindPossibleVariableOD(
       dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm);
   EXPECT_EQ(0, variable_range.lower_bound[0].offset);
@@ -164,7 +167,8 @@ class PermutationTest24_n3 : public PermutationTestBase {
 };
 
 TEST_F(PermutationTest24_n3, FindPossibleVariableOD) {
-  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_,
+                                      "ReactionTime");
   auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];
   auto perm12 = task_sets_perms.adjacent_two_task_permutations_[1];
   perm01.print();
@@ -179,7 +183,8 @@ TEST_F(PermutationTest24_n3, FindPossibleVariableOD) {
 }
 
 TEST_F(PermutationTest24_n3, select_feasible_perm) {
-  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_,
+                                      "ReactionTime");
   auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];
   auto perm12 = task_sets_perms.adjacent_two_task_permutations_[1];
   perm01.print();
@@ -219,7 +224,8 @@ class PermutationTest18_n3 : public PermutationTestBase {
 };
 
 TEST_F(PermutationTest18_n3, select_feasible_perm) {
-  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_,
+                                      "ReactionTime");
   auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];
   auto perm12 = task_sets_perms.adjacent_two_task_permutations_[1];
   perm01.print();
@@ -240,7 +246,8 @@ TEST_F(PermutationTest18_n3, select_feasible_perm) {
 }
 
 TEST_F(PermutationTest18_n3, skip_worse_perm1) {
-  TaskSetOptSorted task_sets_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptSorted task_sets_perms(dag_tasks, dag_tasks.chains_,
+                                   "ReactionTime");
   auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];
   auto perm12 = task_sets_perms.adjacent_two_task_permutations_[1];
   perm01.print();
@@ -267,7 +274,8 @@ TEST_F(PermutationTest18_n3, skip_worse_perm1) {
   EXPECT_EQ(1, iterator01.size());
 }
 TEST_F(PermutationTest18_n3, skip_worse_perm2) {
-  TaskSetOptSorted task_sets_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptSorted task_sets_perms(dag_tasks, dag_tasks.chains_,
+                                   "ReactionTime");
   auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];
   auto perm12 = task_sets_perms.adjacent_two_task_permutations_[1];
   perm01.print();

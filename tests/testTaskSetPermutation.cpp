@@ -28,8 +28,8 @@ class PermutationTest1 : public ::testing::Test {
     job10 = JobCEC(1, 0);
     job20 = JobCEC(2, 0);
 
-    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
-    perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
+    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info, "ReactionTime");
+    perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info, "ReactionTime");
     dag_tasks.chains_[0] = {0, 1, 2};
     // task_sets_perms = TaskSetPermutation(dag_tasks, {task_chain});
   };
@@ -52,7 +52,7 @@ class PermutationTest1 : public ::testing::Test {
 };
 
 TEST_F(PermutationTest1, Iteration) {
-  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, {task_chain});
+  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, {task_chain}, "ReactionTime");
   int obj_find =
       task_sets_perms.PerformOptimizationEnumerate<ObjReactionTime>();
   // task_sets_perms.best_yet_chain_[0]->print();
@@ -61,7 +61,7 @@ TEST_F(PermutationTest1, Iteration) {
   EXPECT_EQ(20, obj_find);
 }
 TEST_F(PermutationTest1, Iteration_Sorted) {
-  TaskSetOptSorted task_sets_perms(dag_tasks, {task_chain});
+  TaskSetOptSorted task_sets_perms(dag_tasks, {task_chain}, "ReactionTime");
   int obj_find = task_sets_perms.PerformOptimizationSort<ObjReactionTime>();
   // task_sets_perms.best_yet_chain_[0]->print();
   // task_sets_perms.best_yet_chain_[1]->print();
@@ -69,14 +69,14 @@ TEST_F(PermutationTest1, Iteration_Sorted) {
   EXPECT_EQ(20, obj_find);
 }
 TEST_F(PermutationTest1, GetUnvisitedFutureEdges) {
-  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, {task_chain});
+  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, {task_chain}, "ReactionTime");
   EXPECT_EQ(1, task_sets_perms.GetUnvisitedFutureEdges(0).size());
 }
 
 // TEST_F(PermutationTest1, CompareAndUpdateMinOffsetLB) {
 //   dag_tasks.chains_ = {{0, 1, 2}};
-//   TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-//   TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info);
+//   TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info,"ReactionTime");
+//   TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info,"ReactionTime");
 
 //   ChainsPermutation chains_perm;
 //   chains_perm.push_back(perm01[0]);
@@ -144,8 +144,8 @@ class PermutationTest2 : public ::testing::Test {
     job10 = JobCEC(1, 0);
     job20 = JobCEC(2, 0);
 
-    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
-    perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
+    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info, "ReactionTime");
+    perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info, "ReactionTime");
     // task_sets_perms = TaskSetPermutation(dag_tasks, {task_chain});
   };
 
@@ -349,8 +349,8 @@ class PermutationTest4 : public ::testing::Test {
     job10 = JobCEC(1, 0);
     job20 = JobCEC(2, 0);
 
-    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
-    perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info);
+    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info, "ReactionTime");
+    perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info, "ReactionTime");
   };
 
   DAG_Model dag_tasks;
@@ -444,10 +444,10 @@ class PermutationTest_2chain_v1 : public ::testing::Test {
     job10 = JobCEC(1, 0);
     job20 = JobCEC(2, 0);
 
-    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
-    perm03 = TwoTaskPermutations(0, 3, dag_tasks, tasks_info);
-    perm34 = TwoTaskPermutations(3, 4, dag_tasks, tasks_info);
-    perm13 = TwoTaskPermutations(1, 3, dag_tasks, tasks_info);
+    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info, "ReactionTime");
+    perm03 = TwoTaskPermutations(0, 3, dag_tasks, tasks_info, "ReactionTime");
+    perm34 = TwoTaskPermutations(3, 4, dag_tasks, tasks_info, "ReactionTime");
+    perm13 = TwoTaskPermutations(1, 3, dag_tasks, tasks_info, "ReactionTime");
 
     variable_od = VariableOD(tasks);
     dag_tasks.chains_[0] = {0, 3, 4};
@@ -473,7 +473,8 @@ class PermutationTest_2chain_v1 : public ::testing::Test {
 };
 
 TEST_F(PermutationTest_2chain_v1, GetUnvisitedFutureEdges) {
-  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_);
+  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_,
+                                      "ReactionTime");
   EXPECT_EQ(2, task_sets_perms.GetUnvisitedFutureEdges(0).size());
   EXPECT_EQ(Edge(3, 4), task_sets_perms.GetUnvisitedFutureEdges(0)[1]);
 }
@@ -499,10 +500,10 @@ class PermutationTest6 : public ::testing::Test {
     tasks = dag_tasks.GetTaskSet();
     tasks_info = TaskSetInfoDerived(tasks);
 
-    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info);
-    perm04 = TwoTaskPermutations(0, 4, dag_tasks, tasks_info);
-    perm34 = TwoTaskPermutations(3, 4, dag_tasks, tasks_info);
-    perm13 = TwoTaskPermutations(1, 3, dag_tasks, tasks_info);
+    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info, "ReactionTime");
+    perm04 = TwoTaskPermutations(0, 4, dag_tasks, tasks_info, "ReactionTime");
+    perm34 = TwoTaskPermutations(3, 4, dag_tasks, tasks_info, "ReactionTime");
+    perm13 = TwoTaskPermutations(1, 3, dag_tasks, tasks_info, "ReactionTime");
 
     variable_od = VariableOD(tasks);
     dag_tasks.chains_[0] = {0, 1};
@@ -549,8 +550,8 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSource) {
 
 TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSource_ret_false) {
   // task 0,1,3's periods are 100,400,100
-  TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info);
-  TwoTaskPermutations perm13(1, 3, dag_tasks, tasks_info);
+  TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm13(1, 3, dag_tasks, tasks_info, "ReactionTime");
   perm10[0]->print();
   perm13[4]->print();
 
@@ -572,7 +573,7 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSource_ret_false) {
 }
 
 TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSink) {
-  TwoTaskPermutations perm41(4, 1, dag_tasks, tasks_info);
+  TwoTaskPermutations perm41(4, 1, dag_tasks, tasks_info, "ReactionTime");
   perm01[0]->print();
   perm41[1]->print();
   ChainsPermutation chains_perm;
@@ -593,8 +594,8 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSink) {
 
 TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSink_ret_false) {
   // task 0,1,3's periods are 100,400,100
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info);
-  TwoTaskPermutations perm31(3, 1, dag_tasks, tasks_info);
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm31(3, 1, dag_tasks, tasks_info, "ReactionTime");
   perm01[0]->print();
   perm31[4]->print();
 

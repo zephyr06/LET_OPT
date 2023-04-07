@@ -18,7 +18,8 @@ class TaskSetPermutation {
  public:
   // TaskSetPermutation() {}
   TaskSetPermutation(const DAG_Model& dag_tasks,
-                     const std::vector<std::vector<int>>& chains);
+                     const std::vector<std::vector<int>>& chains,
+                     const std::string& type_trait);
 
   void FindPairPermutations();
   bool ExamSchedulabilityOptSol() const;
@@ -56,6 +57,7 @@ class TaskSetPermutation {
   std::vector<int> rta_;
   VariableOD best_possible_variable_od_;
   VariableRange variable_range_od_;
+  std::string type_trait_;
   int infeasible_iteration_ = 0;
 };
 

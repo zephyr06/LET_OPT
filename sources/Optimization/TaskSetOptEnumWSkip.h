@@ -5,8 +5,9 @@ namespace DAG_SPACE {
 class TaskSetOptEnumWSkip : public TaskSetPermutation {
  public:
   TaskSetOptEnumWSkip(const DAG_Model& dag_tasks,
-                      const std::vector<std::vector<int>>& chains)
-      : TaskSetPermutation(dag_tasks, chains) {}
+                      const std::vector<std::vector<int>>& chains,
+                      const std::string& type_trait)
+      : TaskSetPermutation(dag_tasks, chains, type_trait) {}
 
   template <typename ObjectiveFunction>
   int PerformOptimizationEnumerate() {
