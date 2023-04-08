@@ -7,11 +7,13 @@ include_directories(${CMAKE_SOURCE_DIR})
 
 add_definitions(-DPROJECT_ROOT_DIR="${PROJECT_SOURCE_DIR}")
 
-# find_package(GTSAMCMakeTools)
-# include(GtsamMakeConfigFile)
-# include(GtsamBuildTypes)
-# include(GtsamTesting)
-# set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
+if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+find_package(GTSAMCMakeTools)
+include(GtsamMakeConfigFile)
+include(GtsamBuildTypes)
+include(GtsamTesting)
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH}" "${GTSAM_DIR}/../GTSAMCMakeTools")
+endif()
 
 set(CMAKE_WARN_DEPRECATED OFF)
 set(CMAKE_ERROR_DEPRECATED OFF)
@@ -67,7 +69,7 @@ if (CPLEX_FOUND)
 endif()
 
 add_subdirectory(sources)
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
 find_package(GTest REQUIRED)
 target_link_libraries(${CONVENIENCE_LIB_NAME}  GTest::GTest GTest::Main) # discover and run all the tests
 target_link_libraries(${CONVENIENCE_LIB_NAME} gtest_main)
