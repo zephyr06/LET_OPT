@@ -8,7 +8,11 @@ class PermutationTest18_n3 : public PermutationTestBase {
   void SetUp() override {
     SetUpBase("test_n3_v18");
     dag_tasks.chains_ = {{0, 1, 2}};
+    type_trait = "DataAge";
   }
+
+ public:
+  std::string type_trait;
 };
 
 TEST_F(PermutationTest18_n3, GetPossibleReadingJobs) {
@@ -19,6 +23,7 @@ TEST_F(PermutationTest18_n3, GetPossibleReadingJobs) {
   EXPECT_EQ(JobCEC(0, 0), read_jobs[1]);
   EXPECT_EQ(JobCEC(0, 1), read_jobs[2]);
 }
+
 TEST_F(PermutationTest18_n3, PermIneqDA) {
   PermutationInequality perm_ineq01(JobCEC(0, 0), JobCEC(1, 0), tasks_info,
                                     "DataAge");
@@ -27,19 +32,28 @@ TEST_F(PermutationTest18_n3, PermIneqDA) {
   EXPECT_EQ(10, perm_ineq01.upper_bound_);
 }
 
-TEST_F(PermutationTest18_n3, Single_perm1) {
-  PermutationInequality perm_ineq01(JobCEC(0, 0), JobCEC(1, 0), tasks_info,
-                                    "DataAge");
-  perm_ineq01.print();
-  EXPECT_EQ(0, perm_ineq01.lower_bound_);
-  EXPECT_EQ(10, perm_ineq01.upper_bound_);
+TEST_F(PermutationTest18_n3, perm_AppendJobs) {
+  PermutationInequality perm_ineq01(0, 1, "DataAge");
+  SinglePairPermutation single_permutation(perm_ineq01, tasks_info, type_trait);
+  auto variable_od_range = FindVariableRange(dag_tasks);
+  variable_od_range.lower_bound.print();
+  variable_od_range.upper_bound.print();
+  EXPECT_TRUE(single_permutation.AppendJobs(JobCEC(0, 1), JobCEC(1, 0),
+                                            tasks_info, variable_od_range));
+  single_permutation.print();
+  EXPECT_EQ(10, single_permutation.inequality_.lower_bound_);
+  EXPECT_EQ(17, single_permutation.inequality_.upper_bound_);
 }
 
 class PermutationTest23_n3 : public PermutationTestBase {
   void SetUp() override {
     SetUpBase("test_n3_v23");
     dag_tasks.chains_ = {{0, 1, 2}};
+    type_trait = "DataAge";
   }
+
+ public:
+  std::string type_trait;
 };
 
 TEST_F(PermutationTest23_n3, GetPossibleReadingJobs) {
@@ -67,6 +81,27 @@ TEST_F(PermutationTest23_n3, PermIneqDA) {
   EXPECT_EQ(-200, perm_ineq12.lower_bound_);
   EXPECT_EQ(-50, perm_ineq12.upper_bound_);
 }
+
+TEST_F(PermutationTest23_n3, perm_AppendJobs) {
+  PermutationInequality perm_ineq12(1, 2, "DataAge");
+  SinglePairPermutation single_permutation(perm_ineq12, tasks_info, type_trait);
+  auto variable_od_range = FindVariableRange(dag_tasks);
+  variable_od_range.lower_bound.print();
+  variable_od_range.upper_bound.print();
+  EXPECT_TRUE(single_permutation.AppendJobs(JobCEC(1, 0), JobCEC(2, 0),
+                                            tasks_info, variable_od_range));
+  single_permutation.print();
+  EXPECT_TRUE(single_permutation.AppendJobs(JobCEC(1, 1), JobCEC(2, 1),
+                                            tasks_info, variable_od_range));
+  single_permutation.print();
+  EXPECT_TRUE(single_permutation.AppendJobs(JobCEC(1, 2), JobCEC(2, 2),
+                                            tasks_info, variable_od_range));
+
+  single_permutation.print();
+  EXPECT_EQ(0, single_permutation.inequality_.lower_bound_);
+  EXPECT_EQ(50, single_permutation.inequality_.upper_bound_);
+}
+
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);

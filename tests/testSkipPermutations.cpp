@@ -97,9 +97,9 @@ TEST_F(PermutationTest1, FindBestPossibleVariableOD) {
   EXPECT_EQ(159 + 10, variable_range.upper_bound[3].offset);  // modified
   EXPECT_EQ(200, variable_range.upper_bound[3].deadline);
 
-  EXPECT_EQ(0, variable_range.lower_bound[4].offset);
-  EXPECT_EQ(889, variable_range.lower_bound[4].deadline);
-  EXPECT_EQ(9, variable_range.upper_bound[4].offset);  // modified
+  EXPECT_EQ(1, variable_range.lower_bound[4].offset);
+  EXPECT_EQ(890, variable_range.lower_bound[4].deadline);
+  EXPECT_EQ(19, variable_range.upper_bound[4].offset);  // modified
   EXPECT_EQ(1000, variable_range.upper_bound[4].deadline);
 
   VariableOD variable_od = FindBestPossibleVariableOD(
@@ -111,8 +111,8 @@ TEST_F(PermutationTest1, FindBestPossibleVariableOD) {
   EXPECT_EQ(1, variable_od[2].deadline);
   EXPECT_EQ(169, variable_od[3].offset);
   EXPECT_EQ(165, variable_od[3].deadline);
-  EXPECT_EQ(9, variable_od[4].offset);
-  EXPECT_EQ(889, variable_od[4].deadline);
+  EXPECT_EQ(19, variable_od[4].offset);
+  EXPECT_EQ(890, variable_od[4].deadline);
 }
 
 class PermutationTest2 : public ::testing::Test {

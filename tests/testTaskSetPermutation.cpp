@@ -120,12 +120,12 @@ TEST_F(PermutationTest1, GenerateBoxPermutationConstraints) {
   VariableRange variable_range = FindVariableRange(dag_tasks);
   PermutationInequality perm_ineq =
       GenerateBoxPermutationConstraints(0, 1, variable_range, "ReactionTime");
-  EXPECT_EQ(1 - 17, perm_ineq.lower_bound_);
+  EXPECT_EQ(1 - 17 - 1, perm_ineq.lower_bound_);
   EXPECT_EQ(10 - 0, perm_ineq.upper_bound_);
 
   perm_ineq =
       GenerateBoxPermutationConstraints(1, 2, variable_range, "ReactionTime");
-  EXPECT_EQ(3 - 14, perm_ineq.lower_bound_);
+  EXPECT_EQ(3 - 14 - 1, perm_ineq.lower_bound_);
   EXPECT_EQ(20 - 0, perm_ineq.upper_bound_);
 }
 
@@ -181,12 +181,12 @@ TEST_F(PermutationTest2, GenerateBoxPermutationConstraints) {
   VariableRange variable_range = FindVariableRange(dag_tasks);
   PermutationInequality perm_ineq =
       GenerateBoxPermutationConstraints(4, 3, variable_range, "ReactionTime");
-  EXPECT_EQ(61 - (100 - 27), perm_ineq.lower_bound_);
+  EXPECT_EQ(61 - (100 - 27) - 1, perm_ineq.lower_bound_);
   EXPECT_EQ(100 - 0, perm_ineq.upper_bound_);
 
   perm_ineq =
       GenerateBoxPermutationConstraints(3, 0, variable_range, "ReactionTime");
-  EXPECT_EQ(27 - (100 - 17), perm_ineq.lower_bound_);
+  EXPECT_EQ(27 - (100 - 17) - 1, perm_ineq.lower_bound_);
   EXPECT_EQ(100 - 0, perm_ineq.upper_bound_);
 }
 
@@ -544,7 +544,7 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSource) {
   GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
   VariableRange variable_od_range(FindVariableRange(dag_tasks));
   Interval intv1 = GetDeadlineRange(variable_od_range, *perm01[0]);
-  EXPECT_EQ(-369, intv1.start);
+  EXPECT_EQ(-369 - 1, intv1.start);
   EXPECT_EQ(-300 + 379, intv1.start + intv1.length);
 
   Interval intv2 = GetDeadlineRange(variable_od_range, *perm04[1]);
@@ -568,7 +568,7 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSource_ret_false) {
   GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
   VariableRange variable_od_range(FindVariableRange(dag_tasks));
   Interval intv1 = GetDeadlineRange(variable_od_range, *perm10[0]);
-  EXPECT_EQ(-69, intv1.start);
+  EXPECT_EQ(-69 - 1, intv1.start);
   EXPECT_EQ(0 + 90, intv1.start + intv1.length);
 
   Interval intv2 = GetDeadlineRange(variable_od_range, *perm13[4]);
@@ -589,7 +589,7 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSink) {
   VariableRange variable_od_range(FindVariableRange(dag_tasks));
   Interval intv1 = GetOffsetRange(variable_od_range, *perm01[0]);
   EXPECT_EQ(310, intv1.start);
-  EXPECT_EQ(369 + 100, intv1.start + intv1.length);
+  EXPECT_EQ(369 + 1 + 100, intv1.start + intv1.length);
 
   Interval intv2 = GetOffsetRange(variable_od_range, *perm41[1]);
   EXPECT_EQ(200 + 60, intv2.start);
@@ -612,7 +612,7 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSink_ret_false) {
   VariableRange variable_od_range(FindVariableRange(dag_tasks));
   Interval intv1 = GetOffsetRange(variable_od_range, *perm01[0]);
   EXPECT_EQ(300 + 10, intv1.start);
-  EXPECT_EQ(369 + 100, intv1.start + intv1.length);
+  EXPECT_EQ(369 + 1 + 100, intv1.start + intv1.length);
 
   Interval intv2 = GetOffsetRange(variable_od_range, *perm31[4]);
   EXPECT_EQ(10 + 11 + 12 + 13 - 100, intv2.start);

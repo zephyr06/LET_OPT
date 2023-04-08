@@ -5,13 +5,17 @@
 #include "sources/Utils/JobCEC.h"
 namespace DAG_SPACE {
 
+// In ReactionTime type_trait
 // lower&upper bound consistency permutation is described by
 //      o_{task_next_id} + lower_bound < d_{task_prev_id} ;
 //      d_{task_prev_id} <= o_{task_next_id} + upper_bound ;
-// This is the same as the following in the paper:
-// o_{i+1} + x < d_i < o_{i+1} + y
 // Currently, this struct only saves the first-reaction relationship, that
 // means, if J_{11} triggers J_{22}, then J_{11} cannot trigger J_{21}
+// In DataAge type_trait,
+// lower&upper bound consistency permutation is described by
+//      d_{task_prev_id} + lower_bound < o_{task_next_id} ;
+//      o_{task_next_id} <= d_{task_prev_id} + upper_bound ;
+// Currently, this struct only saves the first-reaction relationship,
 class PermutationInequality {
  public:
   PermutationInequality() {}
