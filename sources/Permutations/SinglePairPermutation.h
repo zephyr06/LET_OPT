@@ -17,7 +17,7 @@ struct SinglePairPermutation {
 
   SinglePairPermutation(
       int task_prev_id, int task_next_id,
-      std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches,
+      std::unordered_map<JobCEC, JobCEC> job_first_react_matches,
       const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
       const std::string& type_trait);
 
@@ -29,7 +29,7 @@ struct SinglePairPermutation {
   // constructors for the convenience of iteration in TwoTaskPermutations
   SinglePairPermutation(
       PermutationInequality inequality,
-      std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches,
+      std::unordered_map<JobCEC, JobCEC> job_first_react_matches,
       const std::string& type_trait);
 
   // copy constructor
@@ -57,9 +57,7 @@ struct SinglePairPermutation {
   // data members
   PermutationInequality
       inequality_;  //  for convenience of skipping permutations
-  std::unordered_map<JobCEC, std::vector<JobCEC>>
-      job_first_react_matches_;  // TODO: there should be only one job in the
-                                 // vector, make it happen
+  std::unordered_map<JobCEC, JobCEC> job_first_react_matches_;
   int index_global_;
   int index_local_;
   std::string type_trait_;

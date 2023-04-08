@@ -10,13 +10,13 @@ PermutationInequality GetPermIneq(const DAG_Model& dag_tasks,
                                   int prev_task_id, int next_task_id,
                                   const std::string& type_trait);
 
-std::vector<JobCEC> GetPossibleReactingJobsLET(
+JobCEC GetPossibleReactingJobsLET(
     const JobCEC& job_curr, const Task& task_next, int superperiod,
     const RegularTaskSystem::TaskSetInfoDerived& tasks_info);
 
-std::unordered_map<JobCEC, std::vector<JobCEC>> GetJobMatch(
+std::unordered_map<JobCEC, JobCEC> GetJobMatch(
     const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,
-    int prev_task_id, int next_task_id);
+    int prev_task_id, int next_task_id, const std::string& type_trait);
 
 SinglePairPermutation GetSinglePermutationStanLET(
     const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,

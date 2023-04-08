@@ -5,7 +5,7 @@ namespace DAG_SPACE {
 
 SinglePairPermutation::SinglePairPermutation(
     int task_prev_id, int task_next_id,
-    std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches,
+    std::unordered_map<JobCEC, JobCEC> job_first_react_matches,
     const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
     const std::string& type_trait)
     : inequality_(
@@ -13,8 +13,8 @@ SinglePairPermutation::SinglePairPermutation(
       job_first_react_matches_(job_first_react_matches),
       index_global_(-1),
       type_trait_(type_trait) {
-  for (const auto& [job_source, job_matches] : job_first_react_matches_) {
-    PermutationInequality perm_new(job_source, job_matches[0], tasks_info,
+  for (const auto& [job_source, job_match] : job_first_react_matches_) {
+    PermutationInequality perm_new(job_source, job_match, tasks_info,
                                    "ReactionTime");
     PermutationInequality perm_merged =
         MergeTwoSinglePermutations(perm_new, inequality_);
@@ -43,7 +43,7 @@ SinglePairPermutation::SinglePairPermutation(
 // constructors for the convenience of iteration in TwoTaskPermutations
 SinglePairPermutation::SinglePairPermutation(
     PermutationInequality inequality,
-    std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches,
+    std::unordered_map<JobCEC, JobCEC> job_first_react_matches,
     const std::string& type_trait)
     : inequality_(inequality),
       job_first_react_matches_(job_first_react_matches),
@@ -69,9 +69,9 @@ void SinglePairPermutation::print() const {
     std::cout << "Local index of the SinglePairPermutation is " << index_local_
               << "\n";
   inequality_.print();
-  for (const auto& [key, value] : job_first_react_matches_) {
+  for (const auto& [key, job_next] : job_first_react_matches_) {
     std::cout << key.ToString() << "'s following jobs are ";
-    for (auto job_next : value) std::cout << job_next.ToString() << ", ";
+    std::cout << job_next.ToString() << ", ";
     std::cout << "\n";
   }
   std::cout << "\n";
@@ -81,14 +81,13 @@ bool SinglePairPermutation::AddMatchJobPair(const JobCEC& job_curr,
                                             const JobCEC& job_match) {
   auto itr = job_first_react_matches_.find(job_curr);
   if (itr == job_first_react_matches_.end())
-    job_first_react_matches_[job_curr] = {job_match};
+    job_first_react_matches_[job_curr] = job_match;
   else {
-    JobCEC last_matched_job = itr->second.back();
+    JobCEC last_matched_job = itr->second;
     if (job_match.jobId < last_matched_job.jobId) return false;
-    if (job_first_react_matches_[job_curr].size() > 0 &&
-        job_first_react_matches_[job_curr].back().jobId > job_match.jobId)
+    if (job_first_react_matches_[job_curr].jobId > job_match.jobId)
       CoutError("Wrong order in AddMatchJobPair!");
-    job_first_react_matches_[job_curr].push_back(job_match);
+    job_first_react_matches_[job_curr] = job_match;
   }
 
   return true;
@@ -100,12 +99,11 @@ void SinglePairPermutation::PopMatchJobPair(const JobCEC& job_curr,
   if (itr == job_first_react_matches_.end())
     return;
   else {
-    if (itr->second.size() > 0) {
-      JobCEC last_matched_job = itr->second.back();
-      if (job_match.jobId == last_matched_job.jobId) {
-        itr->second.pop_back();
-        if (itr->second.size() == 0) job_first_react_matches_.erase(job_curr);
-      }
+    JobCEC last_matched_job = itr->second;
+    if (job_match.jobId == last_matched_job.jobId) {
+      // itr->second.pop_back();
+      // if (itr->second.size() == 0)
+      job_first_react_matches_.erase(job_curr);
     }
   }
 }
@@ -136,7 +134,7 @@ bool IfSkipAnotherPermRT(const SinglePairPermutation& perm_base,
     auto itr2 = perm_another.job_first_react_matches_.find(job_curr);
     ASSERT(itr2 != perm_another.job_first_react_matches_.end(),
            "perm_base and perm_another should have the same jobs");
-    if (itr->second[0].jobId > itr2->second[0].jobId) return false;
+    if (itr->second.jobId > itr2->second.jobId) return false;
   }
   return true;
 }

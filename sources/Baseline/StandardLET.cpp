@@ -15,28 +15,28 @@ PermutationInequality GetPermIneq(const DAG_Model& dag_tasks,
 //         task_next.period);
 // }
 
-std::vector<JobCEC> GetPossibleReactingJobsLET(
+JobCEC GetPossibleReactingJobsLET(
     const JobCEC& job_curr, const Task& task_next, int superperiod,
     const RegularTaskSystem::TaskSetInfoDerived& tasks_info) {
   int job_finish_curr = GetDeadline(job_curr, tasks_info);
   int period_next = tasks_info.GetTask(task_next.id).period;
-  return {
-      JobCEC(task_next.id, std::ceil(float(job_finish_curr) / period_next))};
+  return JobCEC(task_next.id, std::ceil(float(job_finish_curr) / period_next));
 }
 
-std::unordered_map<JobCEC, std::vector<JobCEC>> GetJobMatch(
+// TODO: add DA support
+std::unordered_map<JobCEC, JobCEC> GetJobMatch(
     const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,
-    int prev_task_id, int next_task_id) {
+    int prev_task_id, int next_task_id, const std::string& type_trait) {
   const TaskSet& tasks = dag_tasks.GetTaskSet();
 
   Task task_prev = tasks[dag_tasks.GetTaskIndex(prev_task_id)];
   Task task_next = tasks[dag_tasks.GetTaskIndex(next_task_id)];
   int super_period = GetSuperPeriod(task_prev, task_next);
 
-  std::unordered_map<JobCEC, std::vector<JobCEC>> job_matches;
+  std::unordered_map<JobCEC, JobCEC> job_matches;
   for (int i = 0; i < super_period / task_prev.period; i++) {
     JobCEC job_curr(prev_task_id, i);
-    std::vector<JobCEC> jobs_possible_match = GetPossibleReactingJobsLET(
+    JobCEC jobs_possible_match = GetPossibleReactingJobsLET(
         job_curr, task_next, super_period, tasks_info);
     job_matches[job_curr] = jobs_possible_match;
   }
@@ -46,11 +46,11 @@ std::unordered_map<JobCEC, std::vector<JobCEC>> GetJobMatch(
 SinglePairPermutation GetSinglePermutationStanLET(
     const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,
     int prev_task_id, int next_task_id, const std::string& type_trait) {
-  return SinglePairPermutation(
-      GetPermIneq(dag_tasks, tasks_info, prev_task_id, next_task_id,
-                  type_trait),
-      GetJobMatch(dag_tasks, tasks_info, prev_task_id, next_task_id),
-      type_trait);
+  return SinglePairPermutation(GetPermIneq(dag_tasks, tasks_info, prev_task_id,
+                                           next_task_id, type_trait),
+                               GetJobMatch(dag_tasks, tasks_info, prev_task_id,
+                                           next_task_id, type_trait),
+                               type_trait);
 }
 
 ChainsPermutation GetStandardLETChain(

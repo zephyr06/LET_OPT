@@ -221,7 +221,7 @@ class PermutationTest3 : public ::testing::Test {
 
 TEST_F(PermutationTest1, SinglePairPermutation_constructor) {
   int prev_id = 0, next_id = 1;
-  std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches01;
+  std::unordered_map<JobCEC, JobCEC> job_first_react_matches01;
   for (uint i = 0; i < 2; i++) {
     JobCEC job_curr(prev_id, i);
     job_first_react_matches01[job_curr] = {JobCEC(1, 0)};
@@ -236,7 +236,7 @@ TEST_F(PermutationTest1, SinglePairPermutation_constructor) {
   prev_id = 1;
   next_id = 2;
 
-  std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches12;
+  std::unordered_map<JobCEC, JobCEC> job_first_react_matches12;
   job_first_react_matches12[JobCEC(1, 0)] = {JobCEC(2, 0)};
   SinglePairPermutation single_perm12(1, 2, job_first_react_matches12,
                                       tasks_info, "ReactionTime");
@@ -248,7 +248,7 @@ TEST_F(PermutationTest1, SinglePairPermutation_constructor) {
 
 TEST_F(PermutationTest1, SinglePairPermutation_valid) {
   int prev_id = 0, next_id = 1;
-  std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches01;
+  std::unordered_map<JobCEC, JobCEC> job_first_react_matches01;
   for (uint i = 0; i < 2; i++) {
     JobCEC job_curr(prev_id, i);
     job_first_react_matches01[job_curr] = {JobCEC(next_id, 0)};
@@ -256,7 +256,7 @@ TEST_F(PermutationTest1, SinglePairPermutation_valid) {
   SinglePairPermutation single_perm01(0, 1, job_first_react_matches01,
                                       tasks_info, "ReactionTime");
 
-  std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches12;
+  std::unordered_map<JobCEC, JobCEC> job_first_react_matches12;
   job_first_react_matches12[JobCEC(1, 0)] = {JobCEC(2, 0)};
   SinglePairPermutation single_perm12(1, 2, job_first_react_matches12,
                                       tasks_info, "ReactionTime");
@@ -274,7 +274,7 @@ TEST_F(PermutationTest1, SinglePairPermutation_valid) {
 
 TEST_F(PermutationTest3, SinglePairPermutation_constructor) {
   int prev_id = 0, next_id = 1;
-  std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches01;
+  std::unordered_map<JobCEC, JobCEC> job_first_react_matches01;
   for (uint i = 0; i < 5; i++) {
     JobCEC job_curr(prev_id, i);
     job_first_react_matches01[job_curr] = {JobCEC(1, 0)};
@@ -293,7 +293,7 @@ TEST_F(PermutationTest3, SinglePairPermutation_constructor) {
 
   prev_id = 1;
   next_id = 2;
-  std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches12;
+  std::unordered_map<JobCEC, JobCEC> job_first_react_matches12;
   job_first_react_matches12[JobCEC(1, 0)] = {JobCEC(2, 0)};
   SinglePairPermutation single_perm12(1, 2, job_first_react_matches12,
                                       tasks_info, "ReactionTime");
@@ -305,7 +305,7 @@ TEST_F(PermutationTest3, SinglePairPermutation_constructor) {
 
 TEST_F(PermutationTest3, ChainsPermutation_valid_v1) {
   int prev_id = 0, next_id = 1;
-  std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches01;
+  std::unordered_map<JobCEC, JobCEC> job_first_react_matches01;
   for (uint i = 0; i < 5; i++) {
     JobCEC job_curr(prev_id, i);
     job_first_react_matches01[job_curr] = {JobCEC(1, 0)};
@@ -321,7 +321,7 @@ TEST_F(PermutationTest3, ChainsPermutation_valid_v1) {
 
   prev_id = 1;
   next_id = 2;
-  std::unordered_map<JobCEC, std::vector<JobCEC>> job_first_react_matches12;
+  std::unordered_map<JobCEC, JobCEC> job_first_react_matches12;
   job_first_react_matches12[JobCEC(1, 0)] = {JobCEC(2, 1)};
   PermutationInequality perm_ineq12(prev_id, next_id, 0, true, 10, true,
                                     "ReactionTime");

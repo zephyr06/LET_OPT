@@ -138,25 +138,27 @@ TEST_F(PermutationTest1, data_age) {
 TEST_F(PermutationTest1, GetPossibleReactingJobsLET) {
   // chain is 0 -> 1 -> 2
   EXPECT_EQ(
-      1, GetPossibleReactingJobsLET(JobCEC(0, 0), tasks[1], 20, tasks_info)[0]
-             .jobId);
+      1,
+      GetPossibleReactingJobsLET(JobCEC(0, 0), tasks[1], 20, tasks_info).jobId);
 
   EXPECT_EQ(
-      1, GetPossibleReactingJobsLET(JobCEC(0, 1), tasks[1], 20, tasks_info)[0]
-             .jobId);
+      1,
+      GetPossibleReactingJobsLET(JobCEC(0, 1), tasks[1], 20, tasks_info).jobId);
 
   EXPECT_EQ(
-      1, GetPossibleReactingJobsLET(JobCEC(1, 0), tasks[2], 20, tasks_info)[0]
-             .jobId);
+      1,
+      GetPossibleReactingJobsLET(JobCEC(1, 0), tasks[2], 20, tasks_info).jobId);
 }
 
 TEST_F(PermutationTest1, GetJobMatch) {
   // chain is 0 -> 1 -> 2
-  auto job_match_map01 = GetJobMatch(dag_tasks, tasks_info, 0, 1);
-  EXPECT_EQ(1, job_match_map01[JobCEC(0, 0)][0].jobId);
-  EXPECT_EQ(1, job_match_map01[JobCEC(0, 1)][0].jobId);
-  auto job_match_map10 = GetJobMatch(dag_tasks, tasks_info, 1, 2);
-  EXPECT_EQ(1, job_match_map10[JobCEC(1, 0)][0].jobId);
+  auto job_match_map01 =
+      GetJobMatch(dag_tasks, tasks_info, 0, 1, "ReactionTime");
+  EXPECT_EQ(1, job_match_map01[JobCEC(0, 0)].jobId);
+  EXPECT_EQ(1, job_match_map01[JobCEC(0, 1)].jobId);
+  auto job_match_map10 =
+      GetJobMatch(dag_tasks, tasks_info, 1, 2, "ReactionTime");
+  EXPECT_EQ(1, job_match_map10[JobCEC(1, 0)].jobId);
 }
 
 TEST_F(PermutationTest1, PerformStandardLETAnalysis) {
@@ -298,17 +300,17 @@ TEST_F(PermutationTest_Non_Har, diff_deadline_from_variable) {
 TEST_F(PermutationTest_Non_Har, GetPossibleReactingJobsLET) {
   // chain is 0 -> 1 -> 2
   EXPECT_EQ(
-      1, GetPossibleReactingJobsLET(JobCEC(0, 0), tasks[1], 30, tasks_info)[0]
-             .jobId);
+      1,
+      GetPossibleReactingJobsLET(JobCEC(0, 0), tasks[1], 30, tasks_info).jobId);
   EXPECT_EQ(
-      2, GetPossibleReactingJobsLET(JobCEC(0, 1), tasks[1], 30, tasks_info)[0]
-             .jobId);
+      2,
+      GetPossibleReactingJobsLET(JobCEC(0, 1), tasks[1], 30, tasks_info).jobId);
   EXPECT_EQ(
-      2, GetPossibleReactingJobsLET(JobCEC(0, 2), tasks[1], 30, tasks_info)[0]
-             .jobId);
+      2,
+      GetPossibleReactingJobsLET(JobCEC(0, 2), tasks[1], 30, tasks_info).jobId);
   EXPECT_EQ(
-      1, GetPossibleReactingJobsLET(JobCEC(1, 0), tasks[2], 15, tasks_info)[0]
-             .jobId);
+      1,
+      GetPossibleReactingJobsLET(JobCEC(1, 0), tasks[2], 15, tasks_info).jobId);
 }
 
 TEST_F(PermutationTest_Non_Har, PerformStandardLETAnalysis) {
@@ -346,12 +348,12 @@ class PermutationTest_Non_Har2 : public ::testing::Test {
 TEST_F(PermutationTest_Non_Har2, GetPossibleReactingJobsLET) {
   // chain is 0 -> 1 -> 2
   EXPECT_EQ(
-      2, GetPossibleReactingJobsLET(JobCEC(0, 0), tasks[1], 30, tasks_info)[0]
-             .jobId);
+      2,
+      GetPossibleReactingJobsLET(JobCEC(0, 0), tasks[1], 30, tasks_info).jobId);
 
   EXPECT_EQ(
-      3, GetPossibleReactingJobsLET(JobCEC(0, 1), tasks[1], 30, tasks_info)[0]
-             .jobId);
+      3,
+      GetPossibleReactingJobsLET(JobCEC(0, 1), tasks[1], 30, tasks_info).jobId);
 }
 TEST_F(PermutationTest_Non_Har2, PerformStandardLETAnalysis) {
   // chain is 0 -> 1 -> 2

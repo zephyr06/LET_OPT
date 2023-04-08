@@ -189,12 +189,12 @@ TEST_F(PermutationTest23, FeasibleChainManager) {
             fea_chain_man.better_perm_per_chain_per_edge_[Edge(1, 2)].size());
   auto prm_ref_set = fea_chain_man.better_perm_per_chain_per_edge_[Edge(1, 2)];
   for (auto perm : prm_ref_set) {
-    std::unordered_map<JobCEC, std::vector<JobCEC>> job_react =
+    std::unordered_map<JobCEC, JobCEC> job_react =
         perm.job_first_react_matches_;
-    EXPECT_THAT(0, ::testing::Ge(job_react[JobCEC(1, 0)][0].jobId));
-    EXPECT_THAT(1, ::testing::Ge(job_react[JobCEC(1, 1)][0].jobId));
-    EXPECT_THAT(1, ::testing::Ge(job_react[JobCEC(1, 2)][0].jobId));
-    EXPECT_THAT(2, ::testing::Ge(job_react[JobCEC(1, 3)][0].jobId));
+    EXPECT_THAT(0, ::testing::Ge(job_react[JobCEC(1, 0)].jobId));
+    EXPECT_THAT(1, ::testing::Ge(job_react[JobCEC(1, 1)].jobId));
+    EXPECT_THAT(1, ::testing::Ge(job_react[JobCEC(1, 2)].jobId));
+    EXPECT_THAT(2, ::testing::Ge(job_react[JobCEC(1, 3)].jobId));
   }
 }
 
