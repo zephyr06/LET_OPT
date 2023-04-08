@@ -25,7 +25,7 @@ TEST_F(PermutationTest18_n3, GetPossibleReadingJobs) {
 }
 
 TEST_F(PermutationTest18_n3, PermIneqDA) {
-  PermutationInequality perm_ineq01(JobCEC(0, 0), JobCEC(1, 0), tasks_info,
+  PermutationInequality perm_ineq01(JobCEC(1, 0), JobCEC(0, 0), tasks_info,
                                     "DataAge");
   perm_ineq01.print();
   EXPECT_EQ(0, perm_ineq01.lower_bound_);
@@ -38,11 +38,18 @@ TEST_F(PermutationTest18_n3, perm_AppendJobs) {
   auto variable_od_range = FindVariableRange(dag_tasks);
   variable_od_range.lower_bound.print();
   variable_od_range.upper_bound.print();
-  EXPECT_TRUE(single_permutation.AppendJobs(JobCEC(0, 1), JobCEC(1, 0),
+  EXPECT_TRUE(single_permutation.AppendJobs(JobCEC(1, 0), JobCEC(0, 1),
                                             tasks_info, variable_od_range));
   single_permutation.print();
   EXPECT_EQ(10, single_permutation.inequality_.lower_bound_);
   EXPECT_EQ(17, single_permutation.inequality_.upper_bound_);
+}
+
+TEST_F(PermutationTest18_n3, TwoTaskPerm) {
+  TwoTaskPermutations two_task_permutation(1, 2, dag_tasks, tasks_info,
+                                           "DataAge");
+  two_task_permutation.print();
+  EXPECT_EQ(2, two_task_permutation.size());
 }
 
 class PermutationTest23_n3 : public PermutationTestBase {
@@ -75,7 +82,7 @@ TEST_F(PermutationTest23_n3, GetPossibleReadingJobs_v2) {
 }
 
 TEST_F(PermutationTest23_n3, PermIneqDA) {
-  PermutationInequality perm_ineq12(JobCEC(1, 0), JobCEC(2, 1), tasks_info,
+  PermutationInequality perm_ineq12(JobCEC(2, 1), JobCEC(1, 0), tasks_info,
                                     "DataAge");
   perm_ineq12.print();
   EXPECT_EQ(-200, perm_ineq12.lower_bound_);
@@ -88,13 +95,13 @@ TEST_F(PermutationTest23_n3, perm_AppendJobs) {
   auto variable_od_range = FindVariableRange(dag_tasks);
   variable_od_range.lower_bound.print();
   variable_od_range.upper_bound.print();
-  EXPECT_TRUE(single_permutation.AppendJobs(JobCEC(1, 0), JobCEC(2, 0),
+  EXPECT_TRUE(single_permutation.AppendJobs(JobCEC(2, 0), JobCEC(1, 0),
                                             tasks_info, variable_od_range));
   single_permutation.print();
-  EXPECT_TRUE(single_permutation.AppendJobs(JobCEC(1, 1), JobCEC(2, 1),
+  EXPECT_TRUE(single_permutation.AppendJobs(JobCEC(2, 1), JobCEC(1, 1),
                                             tasks_info, variable_od_range));
   single_permutation.print();
-  EXPECT_TRUE(single_permutation.AppendJobs(JobCEC(1, 2), JobCEC(2, 2),
+  EXPECT_TRUE(single_permutation.AppendJobs(JobCEC(2, 2), JobCEC(1, 2),
                                             tasks_info, variable_od_range));
 
   single_permutation.print();

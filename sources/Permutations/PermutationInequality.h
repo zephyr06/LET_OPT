@@ -22,48 +22,51 @@ class PermutationInequality {
 
   PermutationInequality(int task_prev_id, int task_next_id,
                         const std::string& type_trait)
-      : task_prev_id_(task_prev_id),
+      : type_trait_(type_trait),
+        task_prev_id_(task_prev_id),
         task_next_id_(task_next_id),
         lower_bound_(-1e9),
         lower_bound_valid_(false),
         upper_bound_(1e9),
-        upper_bound_valid_(false),
-        type_trait_(type_trait) {}
+        upper_bound_valid_(false) {}
 
   PermutationInequality(int task_prev_id, int task_next_id, int lower_bound,
                         bool lower_bound_valid, int upper_bound,
                         bool upper_bound_valid, const std::string& type_trait)
-      : task_prev_id_(task_prev_id),
+      : type_trait_(type_trait),
+        task_prev_id_(task_prev_id),
         task_next_id_(task_next_id),
         lower_bound_(lower_bound),
         lower_bound_valid_(lower_bound_valid),
         upper_bound_(upper_bound),
-        upper_bound_valid_(upper_bound_valid),
-        type_trait_(type_trait) {}
+        upper_bound_valid_(upper_bound_valid) {}
 
   // job_curr -> job_match
   PermutationInequality(const JobCEC& job_curr, const JobCEC& job_match,
                         const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
                         const std::string& type_trait)
-      : task_prev_id_(job_curr.taskId),
-        task_next_id_(job_match.taskId),
-        lower_bound_(1e9),
-        lower_bound_valid_(true),
-        upper_bound_(1e9),
-        upper_bound_valid_(true),
-        type_trait_(type_trait) {
+      : type_trait_(type_trait) {
     if (type_trait == "ReactionTimeApprox" || type_trait == "ReactionTime") {
-      upper_bound_ = GetActivationTime(job_match, tasks_info) -
-                     GetActivationTime(job_curr, tasks_info);
+      task_prev_id_ = job_curr.taskId;
+      task_next_id_ = job_match.taskId;
       JobCEC job_match_prev_job(job_match.taskId, job_match.jobId - 1);
       lower_bound_ = GetActivationTime(job_match_prev_job, tasks_info) -
                      GetActivationTime(job_curr, tasks_info);
+      lower_bound_valid_ = true;
+      upper_bound_ = GetActivationTime(job_match, tasks_info) -
+                     GetActivationTime(job_curr, tasks_info);
+      upper_bound_valid_ = true;
+
     } else if (type_trait == "DataAgeApprox" || type_trait == "DataAge") {
-      lower_bound_ = GetActivationTime(job_curr, tasks_info) -
-                     GetActivationTime(job_match, tasks_info);
-      JobCEC job_curr_next_job(job_curr.taskId, job_curr.jobId + 1);
-      upper_bound_ = GetActivationTime(job_curr_next_job, tasks_info) -
-                     GetActivationTime(job_match, tasks_info);
+      task_prev_id_ = job_match.taskId;
+      task_next_id_ = job_curr.taskId;
+      lower_bound_ = GetActivationTime(job_match, tasks_info) -
+                     GetActivationTime(job_curr, tasks_info);
+      lower_bound_valid_ = true;
+      JobCEC job_match_next_job(job_match.taskId, job_match.jobId + 1);
+      upper_bound_ = GetActivationTime(job_match_next_job, tasks_info) -
+                     GetActivationTime(job_curr, tasks_info);
+      upper_bound_valid_ = true;
     } else
       CoutError("Type trait not found in PermIneq!");
   }
@@ -115,13 +118,13 @@ class PermutationInequality {
   }
 
   // data member
+  std::string type_trait_;
   int task_prev_id_;
   int task_next_id_;
   int lower_bound_;
   bool lower_bound_valid_;
   int upper_bound_;
   bool upper_bound_valid_;
-  std::string type_trait_;
 };
 
 /**
@@ -145,6 +148,6 @@ PermutationInequality MergeTwoSinglePermutations(
     const PermutationInequality& perm1, const PermutationInequality& perm2);
 
 PermutationInequality GenerateBoxPermutationConstraints(
-    int task_prev_id, int task_next_id, const VariableRange& variable_range,
+    int task_curr_id, int task_match_id, const VariableRange& variable_range,
     const std::string& type_trait);
 }  // namespace DAG_SPACE

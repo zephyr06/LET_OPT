@@ -71,6 +71,8 @@ class TwoTaskPermutations {
         return single_permutations_[i];
     }
 
+    std::vector<JobCEC> GetPossibleMatchJobs(const JobCEC& job_curr);
+
     void InsertNewPermSingle(SinglePairPermutation& permutation_current);
 
     void AppendAllPermutations(const JobCEC& job_curr,
