@@ -35,6 +35,7 @@ class PermutationInequality {
         upper_bound_(upper_bound),
         upper_bound_valid_(upper_bound_valid),
         type_trait_(type_trait) {}
+
   // job_curr -> job_match
   PermutationInequality(const JobCEC& job_curr, const JobCEC& job_match,
                         const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
@@ -70,8 +71,8 @@ class PermutationInequality {
                 << "} + " << upper_bound_ << "\n";
     else if (type_trait_.find("DataAge") != std::string::npos)
       std::cout << "d_{" << task_prev_id_ << "} + " << lower_bound_ << " <= "
-                << "o_{" << task_next_id_ << "} < d_{" << task_prev_id_
-                << "} + " << upper_bound_ << "\n";
+                << "o_{" << task_next_id_ << "} <= d_{" << task_prev_id_
+                << "} + " << upper_bound_ + 1 << "\n";
   }
 
   inline bool operator==(const PermutationInequality& other) const {

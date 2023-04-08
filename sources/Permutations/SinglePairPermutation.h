@@ -35,7 +35,9 @@ struct SinglePairPermutation {
   // copy constructor
   SinglePairPermutation(const SinglePairPermutation& other);
 
+  // job_curr -> job_match
   bool AddMatchJobPair(const JobCEC& job_curr, const JobCEC& job_match);
+  // job_curr -> job_match
   void PopMatchJobPair(const JobCEC& job_curr, const JobCEC& job_match);
 
   void print() const;
