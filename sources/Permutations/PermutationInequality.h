@@ -80,7 +80,7 @@ class PermutationInequality {
     else if (type_trait_.find("DataAge") != std::string::npos)
       std::cout << "d_{" << task_prev_id_ << "} + " << lower_bound_ << " <= "
                 << "o_{" << task_next_id_ << "} <= d_{" << task_prev_id_
-                << "} + " << upper_bound_ + 1 << "\n";
+                << "} + " << upper_bound_ - 1 << "\n";
   }
 
   inline bool operator==(const PermutationInequality& other) const {
