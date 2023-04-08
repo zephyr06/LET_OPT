@@ -77,6 +77,27 @@ void SinglePairPermutation::print() const {
   std::cout << "\n";
 }
 
+bool SinglePairPermutation::AppendJobs(
+    const JobCEC& job_curr, const JobCEC& job_match,
+    const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
+    const VariableRange& variable_od_range) {
+  PermutationInequality perm_new(job_curr, job_match, tasks_info, type_trait_);
+  PermutationInequality perm_merged =
+      MergeTwoSinglePermutations(perm_new, inequality_);
+  if (perm_merged.IsValid()) {
+    // Add bound constraints
+    PermutationInequality perm_bound = GenerateBoxPermutationConstraints(
+        job_curr.taskId, job_match.taskId, variable_od_range, type_trait_);
+    perm_merged = MergeTwoSinglePermutations(perm_merged, perm_bound);
+  }
+
+  if (perm_merged.IsValid()) {
+    inequality_ = perm_merged;
+    return AddMatchJobPair(job_curr, job_match);
+  } else
+    return false;
+}
+
 bool SinglePairPermutation::AddMatchJobPair(const JobCEC& job_curr,
                                             const JobCEC& job_match) {
   auto itr = job_first_react_matches_.find(job_curr);

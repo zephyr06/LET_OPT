@@ -27,6 +27,14 @@ TEST_F(PermutationTest18_n3, PermIneqDA) {
   EXPECT_EQ(10, perm_ineq01.upper_bound_);
 }
 
+TEST_F(PermutationTest18_n3, Single_perm1) {
+  PermutationInequality perm_ineq01(JobCEC(0, 0), JobCEC(1, 0), tasks_info,
+                                    "DataAge");
+  perm_ineq01.print();
+  EXPECT_EQ(0, perm_ineq01.lower_bound_);
+  EXPECT_EQ(10, perm_ineq01.upper_bound_);
+}
+
 class PermutationTest23_n3 : public PermutationTestBase {
   void SetUp() override {
     SetUpBase("test_n3_v23");

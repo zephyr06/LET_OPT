@@ -35,6 +35,12 @@ struct SinglePairPermutation {
   // copy constructor
   SinglePairPermutation(const SinglePairPermutation& other);
 
+  // try to append a pair of job matches to permutation_current, return true
+  // if success, false if conflicted
+  bool AppendJobs(const JobCEC& job_curr, const JobCEC& job_match,
+                  const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
+                  const VariableRange& variable_od_range);
+
   // job_curr -> job_match
   bool AddMatchJobPair(const JobCEC& job_curr, const JobCEC& job_match);
   // job_curr -> job_match

@@ -1,4 +1,5 @@
 #pragma once
+#include "sources/Optimization/Variable.h"
 #include "sources/TaskModel/DAG_Model.h"
 #include "sources/Utils/Interval.h"
 #include "sources/Utils/JobCEC.h"
@@ -139,4 +140,7 @@ int MergeLargerThanValue(const PermutationInequality& perm1,
 PermutationInequality MergeTwoSinglePermutations(
     const PermutationInequality& perm1, const PermutationInequality& perm2);
 
+PermutationInequality GenerateBoxPermutationConstraints(
+    int task_prev_id, int task_next_id, const VariableRange& variable_range,
+    const std::string& type_trait);
 }  // namespace DAG_SPACE
