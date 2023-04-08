@@ -71,6 +71,8 @@ class TwoTaskPermutations {
         return single_permutations_[i];
     }
 
+    void InsertNewPermSingle(SinglePairPermutation& permutation_current);
+
     void AppendAllPermutations(const JobCEC& job_curr,
                                SinglePairPermutation& permutation_current);
 
