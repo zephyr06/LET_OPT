@@ -35,28 +35,43 @@ class PermutationInequality {
         upper_bound_(upper_bound),
         upper_bound_valid_(upper_bound_valid),
         type_trait_(type_trait) {}
-
+  // job_curr -> job_match
   PermutationInequality(const JobCEC& job_curr, const JobCEC& job_match,
                         const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
                         const std::string& type_trait)
       : task_prev_id_(job_curr.taskId),
         task_next_id_(job_match.taskId),
         lower_bound_(1e9),
-        lower_bound_valid_(false),
-        upper_bound_(GetActivationTime(job_match, tasks_info) -
-                     GetActivationTime(job_curr, tasks_info)),
+        lower_bound_valid_(true),
+        upper_bound_(1e9),
         upper_bound_valid_(true),
         type_trait_(type_trait) {
-    JobCEC job_match_prev_job(job_match.taskId, job_match.jobId - 1);
-    lower_bound_valid_ = true;
-    lower_bound_ = GetActivationTime(job_match_prev_job, tasks_info) -
-                   GetActivationTime(job_curr, tasks_info);
+    if (type_trait == "ReactionTimeApprox" || type_trait == "ReactionTime") {
+      upper_bound_ = GetActivationTime(job_match, tasks_info) -
+                     GetActivationTime(job_curr, tasks_info);
+      JobCEC job_match_prev_job(job_match.taskId, job_match.jobId - 1);
+      lower_bound_ = GetActivationTime(job_match_prev_job, tasks_info) -
+                     GetActivationTime(job_curr, tasks_info);
+    } else if (type_trait == "DataAgeApprox" || type_trait == "DataAge") {
+      lower_bound_ = GetActivationTime(job_curr, tasks_info) -
+                     GetActivationTime(job_match, tasks_info);
+      JobCEC job_curr_next_job(job_curr.taskId, job_curr.jobId + 1);
+      upper_bound_ = GetActivationTime(job_curr_next_job, tasks_info) -
+                     GetActivationTime(job_match, tasks_info);
+    } else
+      CoutError("Type trait not found in PermIneq!");
   }
 
   void print() const {
-    std::cout << "o_{" << task_next_id_ << "} + " << lower_bound_ + 1 << " <= "
-              << "d_{" << task_prev_id_ << "} <= o_{" << task_next_id_ << "} + "
-              << upper_bound_ << "\n";
+    if (type_trait_.find("ReactionTime") != std::string::npos)
+      std::cout << "o_{" << task_next_id_ << "} + " << lower_bound_ + 1
+                << " <= "
+                << "d_{" << task_prev_id_ << "} <= o_{" << task_next_id_
+                << "} + " << upper_bound_ << "\n";
+    else if (type_trait_.find("DataAge") != std::string::npos)
+      std::cout << "d_{" << task_prev_id_ << "} + " << lower_bound_ << " <= "
+                << "o_{" << task_next_id_ << "} < d_{" << task_prev_id_
+                << "} + " << upper_bound_ << "\n";
   }
 
   inline bool operator==(const PermutationInequality& other) const {

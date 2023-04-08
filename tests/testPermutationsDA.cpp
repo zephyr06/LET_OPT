@@ -19,6 +19,13 @@ TEST_F(PermutationTest18_n3, GetPossibleReadingJobs) {
   EXPECT_EQ(JobCEC(0, 0), read_jobs[1]);
   EXPECT_EQ(JobCEC(0, 1), read_jobs[2]);
 }
+TEST_F(PermutationTest18_n3, PermIneqDA) {
+  PermutationInequality perm_ineq01(JobCEC(0, 0), JobCEC(1, 0), tasks_info,
+                                    "DataAge");
+  perm_ineq01.print();
+  EXPECT_EQ(0, perm_ineq01.lower_bound_);
+  EXPECT_EQ(10, perm_ineq01.upper_bound_);
+}
 
 class PermutationTest23_n3 : public PermutationTestBase {
   void SetUp() override {
@@ -43,6 +50,14 @@ TEST_F(PermutationTest23_n3, GetPossibleReadingJobs_v2) {
   EXPECT_EQ(JobCEC(2, -1), read_jobs[0]);
   EXPECT_EQ(JobCEC(2, 0), read_jobs[1]);
   EXPECT_EQ(JobCEC(2, 1), read_jobs[2]);
+}
+
+TEST_F(PermutationTest23_n3, PermIneqDA) {
+  PermutationInequality perm_ineq12(JobCEC(1, 0), JobCEC(2, 1), tasks_info,
+                                    "DataAge");
+  perm_ineq12.print();
+  EXPECT_EQ(-200, perm_ineq12.lower_bound_);
+  EXPECT_EQ(-50, perm_ineq12.upper_bound_);
 }
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
