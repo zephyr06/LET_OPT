@@ -53,8 +53,6 @@ FetchContent_Declare(
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
-# find_package(GTest REQUIRED)
-# include(GoogleTest)
 
 add_library(${CONVENIENCE_LIB_NAME} SHARED ${sources})
 
@@ -80,6 +78,3 @@ endif()
 add_subdirectory(tests)
 # add_subdirectory(scripts)
 add_subdirectory(RunSingleFile)
-
-# include(GoogleTest)
-# gtest_discover_tests(LET_OPT)

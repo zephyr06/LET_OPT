@@ -11,9 +11,9 @@ TARGET_LINK_LIBRARIES(GenerateTaskSet ${CONVENIENCE_LIB_NAME})
 # with full pathname. RELATIVE may makes it easier to extract an executable name
 # automatically.
 # file( GLOB APP_SOURCES RELATIVE app/*.cxx )
-file( GLOB TEST_SOURCES "test*.cpp" )
-file(GLOB_RECURSE EXCLUDE_FILE "testEnv.cpp")
-list(REMOVE_ITEM TEST_SOURCES "${EXCLUDE_FILE}")
+# file( GLOB TEST_SOURCES "test*.cpp" )
+# file(GLOB_RECURSE EXCLUDE_FILE "testEnv.cpp")
+# list(REMOVE_ITEM TEST_SOURCES "${EXCLUDE_FILE}")
 
 # foreach( testsourcefile ${TEST_SOURCES} )
 #     # I used a simple string replace, to cut off .cpp.
@@ -27,17 +27,3 @@ list(REMOVE_ITEM TEST_SOURCES "${EXCLUDE_FILE}")
 #     gtest_discover_tests(${testname})
 #     endif()
 # endforeach( testsourcefile ${TEST_SOURCES} )
-
-# enable_testing()
-
-# add_executable(
-#     testGoogleTest
-#     testGoogleTest.cpp
-# )
-# target_link_libraries(
-#     testGoogleTest
-#     ${CONVENIENCE_LIB_NAME}
-# )
-
-# include(GoogleTest)
-# gtest_discover_tests(testGoogleTest)
