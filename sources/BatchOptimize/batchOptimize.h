@@ -37,7 +37,8 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
           ObjectiveFunctionBase::type_trait == "ReactionTimeApprox")
         res = PerformTOM_OPT_EnumW_Skip<ObjReactionTimeApprox>(dag_tasks);
       else if (ObjectiveFunctionBase::type_trait == "DataAge" ||
-               ObjectiveFunctionBase::type_trait == "DataAgeApprox")
+               ObjectiveFunctionBase::type_trait ==
+                   "DataAgeApprox")  // TODO: why DataAge call ObjDataAgeApprox?
         res = PerformTOM_OPT_EnumW_Skip<ObjDataAgeApprox>(dag_tasks);
       else
         CoutError("Unknown type trait in BatchOptimize!");

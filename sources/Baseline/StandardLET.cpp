@@ -8,19 +8,21 @@ PermutationInequality GetPermIneq(const DAG_Model& dag_tasks,
   return PermutationInequality(prev_task_id, next_task_id, type_trait);
 }
 
-// int FindFirstReactJob(const Task& task_prev, const Task& task_next,
-//                       int prev_task_index) {
-//     return std::ceil(
-//         float(prev_task_index * task_prev.period + task_prev.deadline) /
-//         task_next.period);
-// }
-
 JobCEC GetPossibleReactingJobsLET(
     const JobCEC& job_curr, const Task& task_next, int superperiod,
     const RegularTaskSystem::TaskSetInfoDerived& tasks_info) {
   int job_finish_curr = GetDeadline(job_curr, tasks_info);
   int period_next = tasks_info.GetTask(task_next.id).period;
   return JobCEC(task_next.id, std::ceil(float(job_finish_curr) / period_next));
+}
+
+JobCEC GetPossibleReadingJobsLET(
+    const JobCEC& job_curr, const Task& task_prev, int superperiod,
+    const RegularTaskSystem::TaskSetInfoDerived& tasks_info) {
+  int job_start_curr = GetActivationTime(job_curr, tasks_info);
+  int period_prev = tasks_info.GetTask(task_prev.id).period;
+  return JobCEC(task_prev.id,
+                std::floor(float(job_start_curr) / period_prev) - 1);
 }
 
 // TODO: add DA support
@@ -34,12 +36,23 @@ std::unordered_map<JobCEC, JobCEC> GetJobMatch(
   int super_period = GetSuperPeriod(task_prev, task_next);
 
   std::unordered_map<JobCEC, JobCEC> job_matches;
-  for (int i = 0; i < super_period / task_prev.period; i++) {
-    JobCEC job_curr(prev_task_id, i);
-    JobCEC jobs_possible_match = GetPossibleReactingJobsLET(
-        job_curr, task_next, super_period, tasks_info);
-    job_matches[job_curr] = jobs_possible_match;
-  }
+  if (type_trait == "ReactionTimeApprox" || type_trait == "ReactionTime") {
+    for (int i = 0; i < super_period / task_prev.period; i++) {
+      JobCEC job_curr(prev_task_id, i);
+      JobCEC jobs_possible_match = GetPossibleReactingJobsLET(
+          job_curr, task_next, super_period, tasks_info);
+      job_matches[job_curr] = jobs_possible_match;
+    }
+  } else if (type_trait == "DataAge" || type_trait == "DataAgeApprox") {
+    for (int i = 0; i < super_period / task_next.period; i++) {
+      JobCEC job_curr(next_task_id, i);
+      JobCEC jobs_possible_match = GetPossibleReadingJobsLET(
+          job_curr, task_prev, super_period, tasks_info);
+      job_matches[job_curr] = jobs_possible_match;
+    }
+  } else
+    CoutError("Unknown type trait in BatchOptimize!");
+
   return job_matches;
 }
 

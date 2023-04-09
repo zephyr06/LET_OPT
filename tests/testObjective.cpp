@@ -195,6 +195,13 @@ TEST_F(PermutationTest1, PerformStandardLETAnalysis) {
   EXPECT_EQ(60, res.obj_);
 }
 
+TEST_F(PermutationTest1, PerformStandardLETAnalysisDA) {
+  // chain is 0 -> 1 -> 2
+  dag_tasks.chains_[0] = {0, 1, 2};
+  ScheduleResult res = PerformStandardLETAnalysis<ObjDataAge>(dag_tasks);
+  EXPECT_EQ(50, res.obj_);
+}
+
 class PermutationTest_Non_Har : public ::testing::Test {
  protected:
   void SetUp() override {
@@ -366,6 +373,25 @@ TEST_F(PermutationTest_Non_Har, PerformStandardLETAnalysis) {
   EXPECT_EQ(50, res.obj_);
 }
 
+TEST_F(PermutationTest_Non_Har, GetPossibleReadingJobsLET) {
+  // chain is 0 -> 1 -> 2
+  EXPECT_EQ(
+      -1, GetPossibleReadingJobsLET(JobCEC(1, 0), task0, 30, tasks_info).jobId);
+  EXPECT_EQ(
+      -3,
+      GetPossibleReadingJobsLET(JobCEC(1, -1), task0, 30, tasks_info).jobId);
+  EXPECT_EQ(
+      -4,
+      GetPossibleReadingJobsLET(JobCEC(1, -2), task0, 30, tasks_info).jobId);
+}
+
+TEST_F(PermutationTest_Non_Har, PerformStandardLETAnalysisDA) {
+  // chain is 0 -> 1 -> 2
+  dag_tasks.chains_[0] = {0, 1, 2};
+  ScheduleResult res = PerformStandardLETAnalysis<ObjDataAge>(dag_tasks);
+  EXPECT_EQ(45, res.obj_);
+}
+
 class PermutationTest_Non_Har2 : public ::testing::Test {
  protected:
   void SetUp() override {
@@ -406,6 +432,12 @@ TEST_F(PermutationTest_Non_Har2, PerformStandardLETAnalysis) {
   dag_tasks.chains_[0] = {0, 1, 2};
   ScheduleResult res = PerformStandardLETAnalysis<ObjReactionTime>(dag_tasks);
   EXPECT_EQ(40, res.obj_);
+}
+TEST_F(PermutationTest_Non_Har2, PerformStandardLETAnalysisDA) {
+  // chain is 0 -> 1 -> 2
+  dag_tasks.chains_[0] = {0, 1, 2};
+  ScheduleResult res = PerformStandardLETAnalysis<ObjDataAge>(dag_tasks);
+  EXPECT_EQ(45, res.obj_);
 }
 
 class PermutationTest_2chain_v1 : public ::testing::Test {
@@ -514,6 +546,12 @@ TEST_F(PermutationTest_2chain_v1, PerformStandardLETAnalysis) {
   // chain is 1 -> 3 -> 4
   ScheduleResult res = PerformStandardLETAnalysis<ObjReactionTime>(dag_tasks);
   EXPECT_EQ(600 + 600, res.obj_);
+}
+TEST_F(PermutationTest_2chain_v1, PerformStandardLETAnalysisDA) {
+  // chain is 0 -> 3 -> 4
+  // chain is 1 -> 3 -> 4
+  ScheduleResult res = PerformStandardLETAnalysis<ObjDataAge>(dag_tasks);
+  EXPECT_EQ(500 + 600, res.obj_);
 }
 
 TEST_F(PermutationTest_2chain_v1, GetSubChains) {

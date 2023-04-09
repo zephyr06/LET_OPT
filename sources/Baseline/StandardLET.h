@@ -14,6 +14,14 @@ JobCEC GetPossibleReactingJobsLET(
     const JobCEC& job_curr, const Task& task_next, int superperiod,
     const RegularTaskSystem::TaskSetInfoDerived& tasks_info);
 
+JobCEC GetPossibleReadingJobsLET(
+    const JobCEC& job_curr, const Task& task_prev, int superperiod,
+    const RegularTaskSystem::TaskSetInfoDerived& tasks_info);
+
+std::unordered_map<JobCEC, JobCEC> GetJobMatch(
+    const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,
+    int prev_task_id, int next_task_id, const std::string& type_trait);
+
 std::unordered_map<JobCEC, JobCEC> GetJobMatch(
     const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,
     int prev_task_id, int next_task_id, const std::string& type_trait);
@@ -37,6 +45,7 @@ ScheduleResult PerformStandardLETAnalysis(const DAG_Model& dag_tasks) {
   ChainsPermutation chains_perm =
       GetStandardLETChain(dag_tasks, tasks_info, dag_tasks.chains_,
                           ObjectiveFunctionBase::type_trait);
+  //   chains_perm.print();
   VariableOD variable_od = VariableOD(tasks);
   res.obj_ = ObjectiveFunctionBase::Obj(dag_tasks, tasks_info, chains_perm,
                                         variable_od, dag_tasks.chains_);

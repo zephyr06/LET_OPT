@@ -21,9 +21,9 @@ TEST(RunSingle, v1) {
   std::cout << "Schedulable? " << CheckSchedulability(dag_tasks) << "\n";
 
   TaskSetOptEnumWSkip task_sets_perms =
-      TaskSetOptEnumWSkip(dag_tasks, {dag_tasks.chains_}, "ReactionTime");
+      TaskSetOptEnumWSkip(dag_tasks, {dag_tasks.chains_}, "DataAgeApprox");
   int obj_find =
-      task_sets_perms.PerformOptimizationEnumerate<ObjReactionTimeApprox>();
+      task_sets_perms.PerformOptimizationEnumerate<ObjDataAgeApprox>();
 
   std::cout << "The best permutation is: \n";
   task_sets_perms.best_yet_chain_.print();
