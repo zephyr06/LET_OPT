@@ -75,6 +75,21 @@ JobCEC GetLastReadJob(const JobCEC &job_curr,
   return read_job;
 }
 
+JobCEC GetLastReadJob(const JobCEC job_source,
+                      const ChainsPermutation &chains_perm,
+                      const std::vector<int> &chain,
+                      const TaskSetInfoDerived &tasks_info) {
+  JobCEC job_last_read = job_source;
+  for (uint i = chain.size() - 1; i > 0;
+       i--)  // iterate through task-level cause-effect chain
+  {
+    Edge edge_i(chain[i - 1], chain[i]);
+    job_last_read =
+        GetLastReadJob(job_last_read, *chains_perm[edge_i], tasks_info);
+  }
+  return job_last_read;
+}
+
 double ObjDataAgeIntermediate::ObjSingleChain(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
     const ChainsPermutation &chains_perm, const std::vector<int> &chain,
@@ -87,15 +102,8 @@ double ObjDataAgeIntermediate::ObjSingleChain(
        j++)  // iterate each source job within a hyper-period
   {
     JobCEC job_source(chain.back(), j);
-    JobCEC job_last_read = job_source;
-    for (uint i = chain.size() - 1; i > 0;
-         i--)  // iterate through task-level cause-effect chain
-    {
-      Edge edge_i(chain[i - 1], chain[i]);
-      job_last_read =
-          GetLastReadJob(job_last_read, *chains_perm[edge_i], tasks_info);
-    }
-
+    JobCEC job_last_read =
+        GetLastReadJob(job_source, chains_perm, chain, tasks_info);
     max_data_age =
         std::max(max_data_age,
                  int(GetDeadline(job_source, variable_od, tasks_info) -
