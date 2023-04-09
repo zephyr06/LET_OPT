@@ -31,7 +31,7 @@ class LPOptimizer {
         constraint_array_(env_) {
     variable_od_opt_.valid_ = false;
     cplexSolver_.setOut(env_.getNullStream());
-    name2ilo_const_.reserve(1e3);
+    // name2ilo_const_.reserve(1e3);
   }
 
   void Init();
@@ -144,7 +144,7 @@ class LPOptimizer {
   IloNumVarArray varArray_art_;
   IloConstraintArray constraint_array_;
   int optimal_obj_ = INFEASIBLE_OBJ;
-  std::unordered_map<std::string, IloRange> name2ilo_const_;
+  // std::unordered_map<std::string, IloRange> name2ilo_const_;
   // std::unordered_map<int, uint> task_id2position_cplex_;
 };
 

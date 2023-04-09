@@ -95,8 +95,8 @@ void LPOptimizer::AddPermutationInequalityConstraints(
     const Edge &edge_curr = graph_of_all_ca_chains_.edge_vec_ordered_[i];
     if (allow_partial_edges && !chains_perm.exist(edge_curr)) continue;
     const PermutationInequality &ineq = chains_perm[edge_curr]->inequality_;
-    std::string const_name1 = GetPermuIneqConstraintNamePrev(i);
-    std::string const_name2 = GetPermuIneqConstraintNameNext(i);
+    // std::string const_name1 = GetPermuIneqConstraintNamePrev(i);
+    // std::string const_name2 = GetPermuIneqConstraintNameNext(i);
     if (ineq.type_trait_ == "ReactionTimeApprox" ||
         ineq.type_trait_ == "ReactionTime") {
       // model_.add(
@@ -109,10 +109,9 @@ void LPOptimizer::AddPermutationInequalityConstraints(
           varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] -
               varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)],
           -1 * GlobalVariablesDAGOpt::kCplexInequalityThreshold -
-              ineq.lower_bound_,
-          const_name1.c_str());
+              ineq.lower_bound_);  // ,const_name1.c_str()
       model_.add(myConstraint1);
-      name2ilo_const_[const_name1] = myConstraint1;
+      // name2ilo_const_[const_name1] = myConstraint1;
 
       // model_.add(
       //     varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)] <=
@@ -122,27 +121,28 @@ void LPOptimizer::AddPermutationInequalityConstraints(
           env_, -IloInfinity,
           varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)] -
               varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)],
-          ineq.upper_bound_, const_name2.c_str());
+          ineq.upper_bound_);  // , const_name2.c_str()
       model_.add(myConstraint2);
-      name2ilo_const_[const_name2] = myConstraint2;
+      // name2ilo_const_[const_name2] = myConstraint2;
     } else if (ineq.type_trait_ == "DataAgeApprox" ||
                ineq.type_trait_ == "DataAge") {
       IloRange myConstraint1(
           env_, ineq.lower_bound_,
           varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] -
               varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)],
-          IloInfinity, const_name1.c_str());
+          IloInfinity);  // , const_name1.c_str()
       model_.add(myConstraint1);
-      name2ilo_const_[const_name1] = myConstraint1;
+      // name2ilo_const_[const_name1] = myConstraint1;
 
       IloRange myConstraint2(
           env_, -IloInfinity,
           varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] -
               varArray_[GetVariableIndexVirtualDeadline(ineq.task_prev_id_)],
-          ineq.upper_bound_ - GlobalVariablesDAGOpt::kCplexInequalityThreshold,
-          const_name2.c_str());
+          ineq.upper_bound_ -
+              GlobalVariablesDAGOpt::
+                  kCplexInequalityThreshold);  // , const_name2.c_str()
       model_.add(myConstraint2);
-      name2ilo_const_[const_name2] = myConstraint2;
+      // name2ilo_const_[const_name2] = myConstraint2;
     }
 
     if (GlobalVariablesDAGOpt::debugMode) {
@@ -176,14 +176,15 @@ void LPOptimizer::AddTwoJobLengthConstraint(const JobCEC &start_job,
                                             const JobCEC &finish_job,
                                             int chain_count,
                                             int job_pair_index) {
-  std::string const_name = GetReactConstraintName(chain_count, job_pair_index);
+  // std::string const_name = GetReactConstraintName(chain_count,
+  // job_pair_index);
   IloExpr finish_expr = GetFinishTimeExpression(finish_job);
   IloExpr start_expr = GetStartTimeExpression(start_job);
   IloRange myConstraint1(env_, 0,
                          varArray_art_[chain_count] - finish_expr + start_expr,
-                         IloInfinity, const_name.c_str());
+                         IloInfinity);  // , const_name.c_str()
   model_.add(myConstraint1);
-  name2ilo_const_[const_name] = myConstraint1;
+  // name2ilo_const_[const_name] = myConstraint1;
   finish_expr.end();
   start_expr.end();
 }
@@ -191,14 +192,15 @@ void LPOptimizer::AddTwoJobApproxLengthConstraint(const JobCEC &start_job,
                                                   const JobCEC &finish_job,
                                                   int chain_count,
                                                   int job_pair_index) {
-  std::string const_name = GetReactConstraintName(chain_count, job_pair_index);
+  // std::string const_name = GetReactConstraintName(chain_count,
+  // job_pair_index);
   IloExpr finish_expr = GetFinishTimeExpressionApprox(finish_job);
   IloExpr start_expr = GetStartTimeExpressionApprox(start_job);
   IloRange myConstraint1(env_, 0,
                          varArray_art_[chain_count] - finish_expr + start_expr,
-                         IloInfinity, const_name.c_str());
+                         IloInfinity);  // , const_name.c_str()
   model_.add(myConstraint1);
-  name2ilo_const_[const_name] = myConstraint1;
+  // name2ilo_const_[const_name] = myConstraint1;
   finish_expr.end();
   start_expr.end();
 }
