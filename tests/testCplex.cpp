@@ -171,40 +171,43 @@ TEST_F(PermutationTest2, OptimizeApproxDA) {
 //   EXPECT_EQ(20, res.second);
 // }
 
-TEST_F(PermutationTest1, FindMinOffset) {
-  dag_tasks.chains_ = {{0, 1, 2}};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+// TEST_F(PermutationTest1, FindMinOffset) {
+//   dag_tasks.chains_ = {{0, 1, 2}};
+//   TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+//   TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
 
-  ChainsPermutation chains_perm;
-  chains_perm.push_back(perm01[0]);
-  chains_perm.push_back(perm12[0]);
-  chains_perm.print();
+//   ChainsPermutation chains_perm;
+//   chains_perm.push_back(perm01[0]);
+//   chains_perm.push_back(perm12[0]);
+//   chains_perm.print();
 
-  GraphOfChains graph_chains(dag_tasks.chains_);
+//   GraphOfChains graph_chains(dag_tasks.chains_);
 
-  std::vector<int> rta = {1, 3, 6};
-  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "ReactionTime",
-                           rta);
-  auto range = lp_optimizer.FindMinOffset(2, chains_perm);
-  EXPECT_EQ(14, range);
-  // EXPECT_EQ(14, range.start + range.length);
-  lp_optimizer.ClearCplexMemory();
+//   std::vector<int> rta = {1, 3, 6};
+//   LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains,
+//   "ReactionTime",
+//                            rta);
+//   auto range = lp_optimizer.FindMinOffset(2, chains_perm);
+//   EXPECT_EQ(14, range);
+//   // EXPECT_EQ(14, range.start + range.length);
+//   lp_optimizer.ClearCplexMemory();
 
-  LPOptimizer lp_optimizer1(dag_tasks, tasks_info, graph_chains, "ReactionTime",
-                            rta);
-  range = lp_optimizer1.FindMinOffset(1, chains_perm);
-  EXPECT_EQ(11, range);
-  // EXPECT_EQ(11, range.start + range.length);
-  lp_optimizer1.ClearCplexMemory();
+//   LPOptimizer lp_optimizer1(dag_tasks, tasks_info, graph_chains,
+//   "ReactionTime",
+//                             rta);
+//   range = lp_optimizer1.FindMinOffset(1, chains_perm);
+//   EXPECT_EQ(11, range);
+//   // EXPECT_EQ(11, range.start + range.length);
+//   lp_optimizer1.ClearCplexMemory();
 
-  LPOptimizer lp_optimizer0(dag_tasks, tasks_info, graph_chains, "ReactionTime",
-                            rta);
-  range = lp_optimizer0.FindMinOffset(0, chains_perm);
-  EXPECT_EQ(0, range);
-  // EXPECT_EQ(0, range.start + range.length);
-  lp_optimizer0.ClearCplexMemory();
-}
+//   LPOptimizer lp_optimizer0(dag_tasks, tasks_info, graph_chains,
+//   "ReactionTime",
+//                             rta);
+//   range = lp_optimizer0.FindMinOffset(0, chains_perm);
+//   EXPECT_EQ(0, range);
+//   // EXPECT_EQ(0, range.start + range.length);
+//   lp_optimizer0.ClearCplexMemory();
+// }
 
 class PermutationTest22 : public PermutationTestBase {
   void SetUp() override {

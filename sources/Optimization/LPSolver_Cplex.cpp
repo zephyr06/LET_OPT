@@ -72,11 +72,9 @@ std::pair<VariableOD, int> LPOptimizer::OptimizeWithoutClear(
 
 // this function doesn't include artificial variables
 void LPOptimizer::AddVariablesOD(int number_of_tasks_to_opt) {
-  BeginTimer("AddVariablesOD");
   numVariables_ = number_of_tasks_to_opt * 2;
   varArray_ = IloNumVarArray(env_, numVariables_, 0, tasks_info_.hyper_period,
                              IloNumVar::Float);
-  EndTimer("AddVariablesOD");
 }
 
 void LPOptimizer::AddArtificialVariables() {
@@ -260,32 +258,6 @@ void LPOptimizer::AddObjectiveFunctions(const ChainsPermutation &chains_perm) {
   EndTimer("AddObjective");
 }
 
-IloExpr LPOptimizer::GetStartTimeExpression(const JobCEC &job) {
-  IloExpr exp(env_);
-  exp += varArray_[GetVariableIndexVirtualOffset(job)];
-  exp += job.jobId * tasks_info_.GetTask(job.taskId).period;
-  return exp;
-}
-
-IloExpr LPOptimizer::GetFinishTimeExpression(const JobCEC &job) {
-  IloExpr exp(env_);
-  exp += varArray_[GetVariableIndexVirtualDeadline(job)];
-  exp += job.jobId * tasks_info_.GetTask(job.taskId).period;
-  return exp;
-}
-
-IloExpr LPOptimizer::GetStartTimeExpressionApprox(const JobCEC &job) {
-  IloExpr exp(env_);
-  exp += GetActivationTime(job, tasks_info_);
-  return exp;
-}
-
-IloExpr LPOptimizer::GetFinishTimeExpressionApprox(const JobCEC &job) {
-  IloExpr exp(env_);
-  exp += GetDeadline(job, tasks_info_);
-  return exp;
-}
-
 VariableOD LPOptimizer::ExtratOptSolution(IloNumArray &values_optimized) {
   VariableOD variable_od_opt(dag_tasks_.GetTaskSet());
   for (int task_id = 0; task_id < tasks_info_.N; task_id++) {
@@ -297,45 +269,47 @@ VariableOD LPOptimizer::ExtratOptSolution(IloNumArray &values_optimized) {
   return variable_od_opt;
 }
 
+// ****************following functions are commented**************
+
 // TODO: consider whether it's necessary to improve efficiency there by
 // reducing problem size;
-int LPOptimizer::FindMinOffset(int task_id,
-                               const ChainsPermutation &chains_perm) {
-  // Interval interval_res(1e8, -1e8);
-  AddVariablesOD(tasks_info_.N);
-  AddSchedulabilityConstraints();
-  AddPermutationInequalityConstraints(chains_perm, true);
+// int LPOptimizer::FindMinOffset(int task_id,
+//                                const ChainsPermutation &chains_perm) {
+//   // Interval interval_res(1e8, -1e8);
+//   AddVariablesOD(tasks_info_.N);
+//   AddSchedulabilityConstraints();
+//   AddPermutationInequalityConstraints(chains_perm, true);
 
-  IloObjective obj_ilo =
-      IloMinimize(env_, varArray_[GetVariableIndexVirtualOffset(task_id)]);
-  model_.add(obj_ilo);
-  cplexSolver_.extract(model_);
-  // WriteModelToFile("test_lp1.lp");
-  bool found_feasible_solution = cplexSolver_.solve();
-  if (found_feasible_solution) {
-    IloNumArray values_optimized(env_, numVariables_);
-    cplexSolver_.getValues(varArray_, values_optimized);
-    // interval_res.start =
-    return values_optimized[GetVariableIndexVirtualOffset(task_id)];
-  } else
-    return INFEASIBLE_OBJ;
+//   IloObjective obj_ilo =
+//       IloMinimize(env_, varArray_[GetVariableIndexVirtualOffset(task_id)]);
+//   model_.add(obj_ilo);
+//   cplexSolver_.extract(model_);
+//   // WriteModelToFile("test_lp1.lp");
+//   bool found_feasible_solution = cplexSolver_.solve();
+//   if (found_feasible_solution) {
+//     IloNumArray values_optimized(env_, numVariables_);
+//     cplexSolver_.getValues(varArray_, values_optimized);
+//     // interval_res.start =
+//     return values_optimized[GetVariableIndexVirtualOffset(task_id)];
+//   } else
+//     return INFEASIBLE_OBJ;
 
-  // obj_ilo.setLinearCoef(varArray_[GetVariableIndexVirtualOffset(task_id)],
-  //                       -1);
-  // cplexSolver_.extract(model_);
-  // found_feasible_solution = cplexSolver_.solve();
-  // if (found_feasible_solution) {
-  //     IloNumArray values_optimized(env_, numVariables_);
-  //     cplexSolver_.getValues(varArray_, values_optimized);
-  //     interval_res.length =
-  //         values_optimized[GetVariableIndexVirtualOffset(task_id)] -
-  //         interval_res.start;
-  // } else
-  //     return interval_res;
-  // // WriteModelToFile("test_lp2.lp");
-  // // ClearCplexMemory();
-  // return interval_res;
-}
+//   // obj_ilo.setLinearCoef(varArray_[GetVariableIndexVirtualOffset(task_id)],
+//   //                       -1);
+//   // cplexSolver_.extract(model_);
+//   // found_feasible_solution = cplexSolver_.solve();
+//   // if (found_feasible_solution) {
+//   //     IloNumArray values_optimized(env_, numVariables_);
+//   //     cplexSolver_.getValues(varArray_, values_optimized);
+//   //     interval_res.length =
+//   //         values_optimized[GetVariableIndexVirtualOffset(task_id)] -
+//   //         interval_res.start;
+//   // } else
+//   //     return interval_res;
+//   // // WriteModelToFile("test_lp2.lp");
+//   // // ClearCplexMemory();
+//   // return interval_res;
+// }
 
 // void LPOptimizer::UpdatePermutationInequalityConstraints(
 //     const ChainsPermutation &chains_perm) {

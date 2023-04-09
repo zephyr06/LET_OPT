@@ -45,8 +45,6 @@ class LPOptimizer {
     AddArtificialVariables();
   }
 
-  int FindMinOffset(int task_id, const ChainsPermutation &chains_perm);
-
   void AddVariablesOD(int number_of_tasks_to_opt);
   void AddArtificialVariables();
   void AddPermutationInequalityConstraints(const ChainsPermutation &chains_perm,
@@ -62,10 +60,28 @@ class LPOptimizer {
                                        const JobCEC &finish_job,
                                        int chain_count, int job_pair_index);
 
-  IloExpr GetStartTimeExpression(const JobCEC &jobCEC);
-  IloExpr GetFinishTimeExpression(const JobCEC &jobCEC);
-  IloExpr GetStartTimeExpressionApprox(const JobCEC &jobCEC);
-  IloExpr GetFinishTimeExpressionApprox(const JobCEC &jobCEC);
+  inline IloExpr GetStartTimeExpression(const JobCEC &job) {
+    IloExpr exp(env_);
+    exp += varArray_[GetVariableIndexVirtualOffset(job)];
+    exp += job.jobId * tasks_info_.GetTask(job.taskId).period;
+    return exp;
+  }
+  inline IloExpr GetFinishTimeExpression(const JobCEC &job) {
+    IloExpr exp(env_);
+    exp += varArray_[GetVariableIndexVirtualDeadline(job)];
+    exp += job.jobId * tasks_info_.GetTask(job.taskId).period;
+    return exp;
+  }
+  inline IloExpr GetStartTimeExpressionApprox(const JobCEC &job) {
+    IloExpr exp(env_);
+    exp += GetActivationTime(job, tasks_info_);
+    return exp;
+  }
+  inline IloExpr GetFinishTimeExpressionApprox(const JobCEC &job) {
+    IloExpr exp(env_);
+    exp += GetDeadline(job, tasks_info_);
+    return exp;
+  }
   VariableOD ExtratOptSolution(IloNumArray &values_optimized);
 
   inline int GetVariableIndexVirtualOffset(int task_id) { return task_id * 2; }
@@ -94,6 +110,7 @@ class LPOptimizer {
            std::to_string(job_id);
   }
 
+  // int FindMinOffset(int task_id, const ChainsPermutation &chains_perm);
   // void AddObjectiveFunctionDataAge();
   // void AddObjectiveFunctionReactionTime();
   // std::pair<VariableOD, int> OptimizeAfterUpdate(
@@ -141,18 +158,18 @@ inline std::pair<VariableOD, int> FindODWithLP(
   return lp_optimizer.Optimize(chains_perm);
 }
 
-inline int GetMinOffSet(int task_id, const DAG_Model &dag_tasks,
-                        const TaskSetInfoDerived &tasks_info,
-                        const ChainsPermutation &chains_perm,
-                        const GraphOfChains &graph_of_all_ca_chains,
-                        const std::string &obj_trait,
-                        const std::vector<int> &rta) {
-  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_of_all_ca_chains,
-                           obj_trait, rta);
-  int res = lp_optimizer.FindMinOffset(task_id, chains_perm);
-  lp_optimizer.ClearCplexMemory();
-  return res;
-}
+// inline int GetMinOffSet(int task_id, const DAG_Model &dag_tasks,
+//                         const TaskSetInfoDerived &tasks_info,
+//                         const ChainsPermutation &chains_perm,
+//                         const GraphOfChains &graph_of_all_ca_chains,
+//                         const std::string &obj_trait,
+//                         const std::vector<int> &rta) {
+//   LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_of_all_ca_chains,
+//                            obj_trait, rta);
+//   int res = lp_optimizer.FindMinOffset(task_id, chains_perm);
+//   lp_optimizer.ClearCplexMemory();
+//   return res;
+// }
 // inline bool ExamFeasibility(
 //     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
 //     const ChainsPermutation &chains_perm,
