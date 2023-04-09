@@ -13,8 +13,8 @@ namespace DAG_SPACE {
 // means, if J_{11} triggers J_{22}, then J_{11} cannot trigger J_{21}
 // In DataAge type_trait,
 // lower&upper bound consistency permutation is described by
-//      d_{task_prev_id} + lower_bound < o_{task_next_id} ;
-//      o_{task_next_id} <= d_{task_prev_id} + upper_bound ;
+//      d_{task_prev_id} + lower_bound <= o_{task_next_id} ;
+//      o_{task_next_id} < d_{task_prev_id} + upper_bound ;
 // Currently, this struct only saves the first-reaction relationship,
 class PermutationInequality {
  public:
