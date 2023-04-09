@@ -66,12 +66,15 @@ TEST_F(PermutationTest1, GetFirstReactJob) {
                               JobCEC(1, 0), *chains_perm[Edge(1, 2)]));
 
   // span super-periods
-  EXPECT_EQ(JobCEC(1, 1), GetFirstReactJob(JobCEC(0, 2), chains_perm,
-                                           Edge(0, 1), tasks_info));
-  EXPECT_EQ(JobCEC(1, 1), GetFirstReactJob(JobCEC(0, 3), chains_perm,
-                                           Edge(0, 1), tasks_info));
-  EXPECT_EQ(JobCEC(2, 1), GetFirstReactJob(JobCEC(1, 1), chains_perm,
-                                           Edge(1, 2), tasks_info));
+  EXPECT_EQ(
+      JobCEC(1, 1),
+      GetFirstReactJob(JobCEC(0, 2), *chains_perm[Edge(0, 1)], tasks_info));
+  EXPECT_EQ(
+      JobCEC(1, 1),
+      GetFirstReactJob(JobCEC(0, 3), *chains_perm[Edge(0, 1)], tasks_info));
+  EXPECT_EQ(
+      JobCEC(2, 1),
+      GetFirstReactJob(JobCEC(1, 1), *chains_perm[Edge(1, 2)], tasks_info));
 }
 
 TEST_F(PermutationTest1, ChainsPermutation_v1) {

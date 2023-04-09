@@ -50,7 +50,7 @@ TEST_F(PermutationTest18_n3, TwoTaskPerm) {
                                            "DataAge");
   two_task_permutation.print();
   EXPECT_EQ(2, two_task_permutation.size());
-  SinglePairPermutation perm01 = *(two_task_permutation[1]);
+  SinglePairPermutation perm01 = *(two_task_permutation[0]);
   EXPECT_EQ(0, perm01.inequality_.lower_bound_);
   EXPECT_EQ(12, perm01.inequality_.upper_bound_);
 }
@@ -118,26 +118,26 @@ TEST_F(PermutationTest23_n3, TwoTaskPerm) {
   two_task_permutation.print();
   EXPECT_EQ(7, two_task_permutation.size());
 
-  EXPECT_EQ(-150, two_task_permutation[0]->inequality_.lower_bound_);
-  EXPECT_EQ(-101 + 1, two_task_permutation[0]->inequality_.upper_bound_);
+  EXPECT_EQ(-150, two_task_permutation[6]->inequality_.lower_bound_);
+  EXPECT_EQ(-101 + 1, two_task_permutation[6]->inequality_.upper_bound_);
 
-  EXPECT_EQ(-100, two_task_permutation[1]->inequality_.lower_bound_);
-  EXPECT_EQ(-51 + 1, two_task_permutation[1]->inequality_.upper_bound_);
+  EXPECT_EQ(-100, two_task_permutation[5]->inequality_.lower_bound_);
+  EXPECT_EQ(-51 + 1, two_task_permutation[5]->inequality_.upper_bound_);
 
-  EXPECT_EQ(-50, two_task_permutation[2]->inequality_.lower_bound_);
-  EXPECT_EQ(-1 + 1, two_task_permutation[2]->inequality_.upper_bound_);
+  EXPECT_EQ(-50, two_task_permutation[4]->inequality_.lower_bound_);
+  EXPECT_EQ(-1 + 1, two_task_permutation[4]->inequality_.upper_bound_);
 
   EXPECT_EQ(0, two_task_permutation[3]->inequality_.lower_bound_);
   EXPECT_EQ(49 + 1, two_task_permutation[3]->inequality_.upper_bound_);
 
-  EXPECT_EQ(50, two_task_permutation[4]->inequality_.lower_bound_);
-  EXPECT_EQ(99 + 1, two_task_permutation[4]->inequality_.upper_bound_);
+  EXPECT_EQ(50, two_task_permutation[2]->inequality_.lower_bound_);
+  EXPECT_EQ(99 + 1, two_task_permutation[2]->inequality_.upper_bound_);
 
-  EXPECT_EQ(100, two_task_permutation[5]->inequality_.lower_bound_);
-  EXPECT_EQ(149 + 1, two_task_permutation[5]->inequality_.upper_bound_);
+  EXPECT_EQ(100, two_task_permutation[1]->inequality_.lower_bound_);
+  EXPECT_EQ(149 + 1, two_task_permutation[1]->inequality_.upper_bound_);
 
-  EXPECT_EQ(150, two_task_permutation[6]->inequality_.lower_bound_);
-  EXPECT_EQ(195 + 1, two_task_permutation[6]->inequality_.upper_bound_);
+  EXPECT_EQ(150, two_task_permutation[0]->inequality_.lower_bound_);
+  EXPECT_EQ(195 + 1, two_task_permutation[0]->inequality_.upper_bound_);
 }
 
 int main(int argc, char** argv) {

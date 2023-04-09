@@ -25,7 +25,7 @@ std::unordered_map<JobCEC, JobCEC> GetFirstReactMap(
          i++)  // iterate through task-level cause-effect chain
     {
       Edge edge_i(chain[i], chain[i + 1]);
-      job_curr = GetFirstReactJob(job_curr, chains_perm, edge_i, tasks_info);
+      job_curr = GetFirstReactJob(job_curr, *chains_perm[edge_i], tasks_info);
     }
     first_react_map[job_source] = job_curr;
   }

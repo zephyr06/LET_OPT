@@ -10,8 +10,7 @@ JobCEC GetFirstReactJobWithSuperPeriod(
     const JobCEC &job_curr, const SinglePairPermutation &pair_perm_curr);
 
 JobCEC GetFirstReactJob(const JobCEC &job_curr,
-                        const ChainsPermutation &chains_perm,
-                        const Edge &edge_curr,
+                        const SinglePairPermutation &pair_perm_curr,
                         const TaskSetInfoDerived &tasks_info);
 
 class ObjReactionTimeIntermediate : public ObjectiveFunctionBaseIntermediate {

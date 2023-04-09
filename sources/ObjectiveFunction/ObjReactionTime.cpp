@@ -20,10 +20,9 @@ JobCEC GetFirstReactJobWithSuperPeriod(
 }
 
 JobCEC GetFirstReactJob(const JobCEC &job_curr,
-                        const ChainsPermutation &chains_perm,
-                        const Edge &edge_curr,
+                        const SinglePairPermutation &pair_perm_curr,
                         const TaskSetInfoDerived &tasks_info) {
-  const SinglePairPermutation &pair_perm_curr = *chains_perm[edge_curr];
+  // const SinglePairPermutation &pair_perm_curr = *chains_perm[edge_curr];
   int task_id_prev = job_curr.taskId;
   if (task_id_prev != pair_perm_curr.inequality_.task_prev_id_)
     CoutError("Wrong task_index_in_chain index in GetFirstReactJob!");
@@ -57,7 +56,7 @@ double ObjReactionTimeIntermediate::ObjSingleChain(
          i++)  // iterate through task-level cause-effect chain
     {
       Edge edge_i(chain[i], chain[i + 1]);
-      job_curr = GetFirstReactJob(job_curr, chains_perm, edge_i, tasks_info);
+      job_curr = GetFirstReactJob(job_curr, *chains_perm[edge_i], tasks_info);
     }
 
     int deadline_curr = GetDeadline(job_curr, variable_od, tasks_info);
