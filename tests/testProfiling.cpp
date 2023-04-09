@@ -68,42 +68,42 @@ TEST_F(PermutationTest_long_time23, Optimize_direct) {
   PrintTimer();
 }
 
-TEST_F(PermutationTest_long_time23, Optimize_Incre) {
-  // chain is 0 -> 1 -> 4
-  dag_tasks.chains_ = {{0, 1, 2, 3}};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
-  TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info, "ReactionTime");
-  ChainsPermutation chains_perm;
-  chains_perm.push_back(perm01[0]);
-  chains_perm.push_back(perm12[0]);
-  chains_perm.push_back(perm23[0]);
+// TEST_F(PermutationTest_long_time23, Optimize_Incre) {
+//   // chain is 0 -> 1 -> 4
+//   dag_tasks.chains_ = {{0, 1, 2, 3}};
+//   TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+//   TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+//   TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info, "ReactionTime");
+//   ChainsPermutation chains_perm;
+//   chains_perm.push_back(perm01[0]);
+//   chains_perm.push_back(perm12[0]);
+//   chains_perm.push_back(perm23[0]);
 
-  ChainsPermutation chains_perm2;
-  chains_perm2.push_back(perm01[1]);
-  chains_perm2.push_back(perm12[1]);
-  chains_perm2.push_back(perm23[1]);
+//   ChainsPermutation chains_perm2;
+//   chains_perm2.push_back(perm01[1]);
+//   chains_perm2.push_back(perm12[1]);
+//   chains_perm2.push_back(perm23[1]);
 
-  GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
+//   GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
 
-  std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+//   std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
 
-  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_of_all_ca_chains,
-                           "ReactionTime", rta);
-  lp_optimizer.OptimizeWithoutClear(chains_perm2);
+//   LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_of_all_ca_chains,
+//                            "ReactionTime", rta);
+//   lp_optimizer.OptimizeWithoutClear(chains_perm2);
 
-  auto start = std::chrono::high_resolution_clock::now();
-  for (int i = 0; i < REPEAT; i++) {
-    lp_optimizer.UpdateSystem(chains_perm);
-    lp_optimizer.OptimizeAfterUpdate(chains_perm);
-  }
-  auto stop = std::chrono::high_resolution_clock::now();
-  auto duration =
-      std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-  std::cout << "Time taken during Incre_Optimize: "
-            << double(duration.count()) / 1e6 << "\n";
-  PrintTimer();
-}
+//   auto start = std::chrono::high_resolution_clock::now();
+//   for (int i = 0; i < REPEAT; i++) {
+//     lp_optimizer.UpdateSystem(chains_perm);
+//     lp_optimizer.OptimizeAfterUpdate(chains_perm);
+//   }
+//   auto stop = std::chrono::high_resolution_clock::now();
+//   auto duration =
+//       std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+//   std::cout << "Time taken during Incre_Optimize: "
+//             << double(duration.count()) / 1e6 << "\n";
+//   PrintTimer();
+// }
 
 // TEST_F(PermutationTest_long_time23, ExamObj) {
 //     // chain is 0 -> 1 -> 4

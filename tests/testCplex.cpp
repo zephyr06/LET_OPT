@@ -55,12 +55,12 @@ TEST_F(PermutationTest1, OptimizeApprox) {
 }
 TEST_F(PermutationTest1, OptimizeApproxDA_v1) {
   dag_tasks.chains_ = {{0, 1, 2}};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "DataAgeApprox");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAgeApprox");
 
   ChainsPermutation chains_perm;
-  chains_perm.push_back(perm01[0]);
-  chains_perm.push_back(perm12[0]);
+  chains_perm.push_back(perm01[2]);
+  chains_perm.push_back(perm12[1]);
   chains_perm.print();
 
   GraphOfChains graph_chains(dag_tasks.chains_);
@@ -68,13 +68,15 @@ TEST_F(PermutationTest1, OptimizeApproxDA_v1) {
   std::vector<int> rta = {1, 3, 6};
   LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "DataAgeApprox",
                            rta);
-  auto res = lp_optimizer.Optimize(chains_perm);
-  EXPECT_EQ(10, res.second);
+  auto res = lp_optimizer.OptimizeWithoutClear(chains_perm);
+  lp_optimizer.WriteModelToFile();
+  lp_optimizer.ClearCplexMemory();
+  EXPECT_EQ(50, res.second);
 }
 TEST_F(PermutationTest1, OptimizeApproxDA_v2) {
   dag_tasks.chains_ = {{0, 1, 2}};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "DataAgeApprox");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAgeApprox");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
@@ -85,7 +87,9 @@ TEST_F(PermutationTest1, OptimizeApproxDA_v2) {
 
   std::vector<int> rta = {1, 3, 6};
   LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "DataAge", rta);
-  auto res = lp_optimizer.Optimize(chains_perm);
+  auto res = lp_optimizer.OptimizeWithoutClear(chains_perm);
+  lp_optimizer.WriteModelToFile();
+  lp_optimizer.ClearCplexMemory();
   EXPECT_EQ(10, res.second);
 }
 
@@ -123,8 +127,8 @@ TEST_F(PermutationTest2, OptimizeApprox) {
 
 TEST_F(PermutationTest2, OptimizeApproxDA) {
   dag_tasks.chains_ = {{0, 1, 2}};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
@@ -139,32 +143,33 @@ TEST_F(PermutationTest2, OptimizeApproxDA) {
   EXPECT_EQ(10, res.second);
 }
 
-TEST_F(PermutationTest1, Incremental) {
-  dag_tasks.chains_ = {{0, 1, 2}};
-  GraphOfChains graph_chains(dag_tasks.chains_);
-  std::vector<int> rta = {1, 3, 6};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+// TEST_F(PermutationTest1, Incremental) {
+//   dag_tasks.chains_ = {{0, 1, 2}};
+//   GraphOfChains graph_chains(dag_tasks.chains_);
+//   std::vector<int> rta = {1, 3, 6};
+//   TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+//   TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
 
-  ChainsPermutation chains_perm1;
-  chains_perm1.push_back(perm01[0]);
-  chains_perm1.push_back(perm12[0]);
+//   ChainsPermutation chains_perm1;
+//   chains_perm1.push_back(perm01[0]);
+//   chains_perm1.push_back(perm12[0]);
 
-  ChainsPermutation chains_perm2;
-  chains_perm2.push_back(perm01[1]);
-  chains_perm2.push_back(perm12[0]);
+//   ChainsPermutation chains_perm2;
+//   chains_perm2.push_back(perm01[1]);
+//   chains_perm2.push_back(perm12[0]);
 
-  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "ReactionTime",
-                           rta);
-  auto res = lp_optimizer.OptimizeWithoutClear(chains_perm2);
-  lp_optimizer.WriteModelToFile("recourse1.lp");
+//   LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains,
+//   "ReactionTime",
+//                            rta);
+//   auto res = lp_optimizer.OptimizeWithoutClear(chains_perm2);
+//   lp_optimizer.WriteModelToFile("recourse1.lp");
 
-  lp_optimizer.UpdateSystem(chains_perm1);
-  lp_optimizer.WriteModelToFile("recourse2.lp");
-  res = lp_optimizer.OptimizeAfterUpdate(chains_perm1);
+//   lp_optimizer.UpdateSystem(chains_perm1);
+//   lp_optimizer.WriteModelToFile("recourse2.lp");
+//   res = lp_optimizer.OptimizeAfterUpdate(chains_perm1);
 
-  EXPECT_EQ(20, res.second);
-}
+//   EXPECT_EQ(20, res.second);
+// }
 
 TEST_F(PermutationTest1, FindMinOffset) {
   dag_tasks.chains_ = {{0, 1, 2}};
@@ -209,8 +214,8 @@ class PermutationTest22 : public PermutationTestBase {
 };
 TEST_F(PermutationTest22, OptimizeApproxDA) {
   dag_tasks.chains_ = {{0, 1, 2}};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "DataAgeApprox");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAgeApprox");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);

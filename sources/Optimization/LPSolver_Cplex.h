@@ -32,7 +32,6 @@ class LPOptimizer {
     variable_od_opt_.valid_ = false;
     cplexSolver_.setOut(env_.getNullStream());
     name2ilo_const_.reserve(1e3);
-    react_chain_map_prevs_.reserve(dag_tasks.chains_.size());
   }
 
   void Init();
@@ -40,14 +39,6 @@ class LPOptimizer {
   std::pair<VariableOD, int> Optimize(const ChainsPermutation &chains_perm);
   std::pair<VariableOD, int> OptimizeWithoutClear(
       const ChainsPermutation &chains_perm);
-  std::pair<VariableOD, int> OptimizeAfterUpdate(
-      const ChainsPermutation &chains_perm);
-
-  inline const std::pair<VariableOD, int> IncrementOptimize(
-      const ChainsPermutation &chains_perm) {
-    UpdateSystem(chains_perm);
-    return OptimizeAfterUpdate(chains_perm);
-  }
 
   inline void AddVariables() {
     AddVariablesOD(tasks_info_.N);
@@ -64,24 +55,18 @@ class LPOptimizer {
 
   void AddConstantObjectiveFunctions(const ChainsPermutation &chains_perm);
   void AddObjectiveFunctions(const ChainsPermutation &chains_perm);  // RTDA obj
-  // void AddObjectiveFunctionDataAge();
-  // void AddObjectiveFunctionReactionTime();
 
-  void UpdatePermutationInequalityConstraints(
-      const ChainsPermutation &chains_perm);
+  void AddTwoJobLengthConstraint(const JobCEC &start_job,
+                                 const JobCEC &finish_job, int chain_count,
+                                 int job_pair_index);
+  void AddTwoJobApproxLengthConstraint(const JobCEC &start_job,
+                                       const JobCEC &finish_job,
+                                       int chain_count, int job_pair_index);
 
-  void UpdateObjectiveFunctions(const ChainsPermutation &chains_perm);
-
-  inline void UpdateSystem(const ChainsPermutation &chains_perm) {
-    UpdatePermutationInequalityConstraints(chains_perm);
-    UpdateObjectiveFunctions(chains_perm);
-    // chains_perm_ = chains_perm;
-  }
-
-  IloExpr GetStartTimeExpression(JobCEC &jobCEC);
-  IloExpr GetFinishTimeExpression(JobCEC &jobCEC);
-  IloExpr GetStartTimeExpressionApprox(JobCEC &jobCEC);
-  IloExpr GetFinishTimeExpressionApprox(JobCEC &jobCEC);
+  IloExpr GetStartTimeExpression(const JobCEC &jobCEC);
+  IloExpr GetFinishTimeExpression(const JobCEC &jobCEC);
+  IloExpr GetStartTimeExpressionApprox(const JobCEC &jobCEC);
+  IloExpr GetFinishTimeExpressionApprox(const JobCEC &jobCEC);
   VariableOD ExtratOptSolution(IloNumArray &values_optimized);
 
   inline int GetVariableIndexVirtualOffset(int task_id) { return task_id * 2; }
@@ -110,6 +95,22 @@ class LPOptimizer {
            std::to_string(job_id);
   }
 
+  // void AddObjectiveFunctionDataAge();
+  // void AddObjectiveFunctionReactionTime();
+  // std::pair<VariableOD, int> OptimizeAfterUpdate(
+  //     const ChainsPermutation &chains_perm);
+
+  // void UpdatePermutationInequalityConstraints(
+  //     const ChainsPermutation &chains_perm);
+
+  // void UpdateObjectiveFunctions(const ChainsPermutation &chains_perm);
+
+  // inline void UpdateSystem(const ChainsPermutation &chains_perm) {
+  //   UpdatePermutationInequalityConstraints(chains_perm);
+  //   UpdateObjectiveFunctions(chains_perm);
+  //   // chains_perm_ = chains_perm;
+  // }
+
  public:
   const DAG_Model &dag_tasks_;
   const TaskSetInfoDerived &tasks_info_;
@@ -118,7 +119,6 @@ class LPOptimizer {
   VariableOD variable_od_opt_;
   int numVariables_;
   std::string obj_trait_;
-  std::vector<std::unordered_map<JobCEC, JobCEC>> react_chain_map_prevs_;
   const std::vector<int> &rta_;
 
   IloEnv env_;
