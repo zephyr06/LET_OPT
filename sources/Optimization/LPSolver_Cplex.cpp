@@ -260,16 +260,6 @@ void LPOptimizer::AddObjectiveFunctions(const ChainsPermutation &chains_perm) {
   EndTimer("AddObjective");
 }
 
-void LPOptimizer::AddConstantObjectiveFunctions(
-    const ChainsPermutation &chains_perm) {
-  IloExpr rtda_expression(env_);
-  std::stringstream var_name;
-  auto theta_rt =
-      IloNumVar(env_, 3, IloInfinity, IloNumVar::Float, var_name.str().c_str());
-  model_.add(IloMinimize(env_, rtda_expression));
-  rtda_expression.end();
-}
-
 IloExpr LPOptimizer::GetStartTimeExpression(const JobCEC &job) {
   IloExpr exp(env_);
   exp += varArray_[GetVariableIndexVirtualOffset(job)];

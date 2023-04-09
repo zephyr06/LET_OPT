@@ -53,7 +53,6 @@ class LPOptimizer {
                                            bool allow_partial_edges = false);
   void AddSchedulabilityConstraints();
 
-  void AddConstantObjectiveFunctions(const ChainsPermutation &chains_perm);
   void AddObjectiveFunctions(const ChainsPermutation &chains_perm);  // RTDA obj
 
   void AddTwoJobLengthConstraint(const JobCEC &start_job,
@@ -129,7 +128,6 @@ class LPOptimizer {
   IloConstraintArray constraint_array_;
   int optimal_obj_ = INFEASIBLE_OBJ;
   std::unordered_map<std::string, IloRange> name2ilo_const_;
-  std::unordered_map<std::string, IloNumVar> name2ilo_var_;
   // std::unordered_map<int, uint> task_id2position_cplex_;
 };
 
