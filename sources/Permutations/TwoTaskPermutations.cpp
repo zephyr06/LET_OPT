@@ -125,6 +125,9 @@ void TwoTaskPermutations::FindAllPermutations() {
     SinglePairPermutation single_permutation(perm_ineq, tasks_info_,
                                              type_trait_);
     AppendAllPermutations(job_curr, single_permutation);
+    // reverse the saving order for faster elimination speed;
+    std::reverse(single_permutations_.begin(), single_permutations_.end());
+
   } else
     CoutError("Unrecognized type_trait_!");
 }

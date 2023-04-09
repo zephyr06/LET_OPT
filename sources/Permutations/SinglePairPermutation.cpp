@@ -10,10 +10,10 @@ SinglePairPermutation::SinglePairPermutation(
     const std::string& type_trait)
     : inequality_(
           PermutationInequality(task_prev_id, task_next_id, type_trait)),
-      job_first_react_matches_(job_first_react_matches),
+      job_matches_(job_first_react_matches),
       index_global_(-1),
       type_trait_(type_trait) {
-  for (const auto& [job_source, job_match] : job_first_react_matches_) {
+  for (const auto& [job_source, job_match] : job_matches_) {
     PermutationInequality perm_new(job_source, job_match, tasks_info,
                                    "ReactionTime");
     PermutationInequality perm_merged =
@@ -36,8 +36,8 @@ SinglePairPermutation::SinglePairPermutation(
   int superperiod =
       GetSuperPeriod(tasks_info.GetTask(inequality.task_prev_id_),
                      tasks_info.GetTask(inequality.task_next_id_));
-  job_first_react_matches_.reserve(
-      superperiod / tasks_info.GetTask(inequality.task_prev_id_).period);
+  job_matches_.reserve(superperiod /
+                       tasks_info.GetTask(inequality.task_prev_id_).period);
 }
 
 // constructors for the convenience of iteration in TwoTaskPermutations
@@ -46,7 +46,7 @@ SinglePairPermutation::SinglePairPermutation(
     std::unordered_map<JobCEC, JobCEC> job_first_react_matches,
     const std::string& type_trait)
     : inequality_(inequality),
-      job_first_react_matches_(job_first_react_matches),
+      job_matches_(job_first_react_matches),
       type_trait_(type_trait) {}
 
 // copy constructor
@@ -54,7 +54,7 @@ SinglePairPermutation::SinglePairPermutation(
     const SinglePairPermutation& other) {
   BeginTimer("SinglePairPermutation_copy");
   inequality_ = other.inequality_;
-  job_first_react_matches_ = other.job_first_react_matches_;
+  job_matches_ = other.job_matches_;
   index_global_ = other.index_global_;
   index_local_ = other.index_local_;
   type_trait_ = other.type_trait_;
@@ -69,8 +69,14 @@ void SinglePairPermutation::print() const {
     std::cout << "Local index of the SinglePairPermutation is " << index_local_
               << "\n";
   inequality_.print();
-  for (const auto& [key, job_next] : job_first_react_matches_) {
-    std::cout << key.ToString() << "'s following jobs are ";
+  for (const auto& [key, job_next] : job_matches_) {
+    std::cout << key.ToString();
+    if (type_trait_.find("ReactionTime") != std::string::npos)
+      std::cout << "'s following jobs are ";
+    else if (type_trait_.find("DataAge") != std::string::npos)
+      std::cout << "'s reading jobs are ";
+    else
+      CoutError("Unrecognized type_trait!");
     std::cout << job_next.ToString() << ", ";
     std::cout << "\n";
   }
@@ -100,15 +106,15 @@ bool SinglePairPermutation::AppendJobs(
 
 bool SinglePairPermutation::AddMatchJobPair(const JobCEC& job_curr,
                                             const JobCEC& job_match) {
-  auto itr = job_first_react_matches_.find(job_curr);
-  if (itr == job_first_react_matches_.end())
-    job_first_react_matches_[job_curr] = job_match;
+  auto itr = job_matches_.find(job_curr);
+  if (itr == job_matches_.end())
+    job_matches_[job_curr] = job_match;
   else {
     JobCEC last_matched_job = itr->second;
     if (job_match.jobId < last_matched_job.jobId) return false;
-    if (job_first_react_matches_[job_curr].jobId > job_match.jobId)
+    if (job_matches_[job_curr].jobId > job_match.jobId)
       CoutError("Wrong order in AddMatchJobPair!");
-    job_first_react_matches_[job_curr] = job_match;
+    job_matches_[job_curr] = job_match;
   }
 
   return true;
@@ -116,15 +122,15 @@ bool SinglePairPermutation::AddMatchJobPair(const JobCEC& job_curr,
 
 void SinglePairPermutation::PopMatchJobPair(const JobCEC& job_curr,
                                             const JobCEC& job_match) {
-  auto itr = job_first_react_matches_.find(job_curr);
-  if (itr == job_first_react_matches_.end())
+  auto itr = job_matches_.find(job_curr);
+  if (itr == job_matches_.end())
     return;
   else {
     JobCEC last_matched_job = itr->second;
     if (job_match.jobId == last_matched_job.jobId) {
       // itr->second.pop_back();
       // if (itr->second.size() == 0)
-      job_first_react_matches_.erase(job_curr);
+      job_matches_.erase(job_curr);
     }
   }
 }
@@ -149,11 +155,11 @@ bool IfSkipAnotherPermRT(const SinglePairPermutation& perm_base,
   ASSERT(perm_base.GetPrevTaskId() == perm_another.GetPrevTaskId() &&
              perm_base.GetNextTaskId() == perm_another.GetNextTaskId(),
          "perm_base and perm_another should be about the same tasks");
-  for (auto itr = perm_base.job_first_react_matches_.begin();
-       itr != perm_base.job_first_react_matches_.end(); itr++) {
+  for (auto itr = perm_base.job_matches_.begin();
+       itr != perm_base.job_matches_.end(); itr++) {
     const JobCEC& job_curr = itr->first;
-    auto itr2 = perm_another.job_first_react_matches_.find(job_curr);
-    ASSERT(itr2 != perm_another.job_first_react_matches_.end(),
+    auto itr2 = perm_another.job_matches_.find(job_curr);
+    ASSERT(itr2 != perm_another.job_matches_.end(),
            "perm_base and perm_another should have the same jobs");
     if (itr->second.jobId > itr2->second.jobId) return false;
   }

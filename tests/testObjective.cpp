@@ -110,31 +110,55 @@ TEST_F(PermutationTest1, GetSubChains) {
   EXPECT_TRUE(expected_sub_chains == chains_sub);
 }
 
+TEST_F(PermutationTest1, GetLastReadJobWithSuperPeriod) {
+  TwoTaskPermutations two_task_permutation(0, 1, dag_tasks, tasks_info,
+                                           "DataAge");
+  auto perm01 = *two_task_permutation[2];
+  perm01.print();
+  EXPECT_EQ(JobCEC(0, -1), GetLastReadJobWithSuperPeriod(JobCEC(1, 0), perm01));
+  two_task_permutation[1]->print();
+  EXPECT_EQ(JobCEC(0, 0), GetLastReadJobWithSuperPeriod(
+                              JobCEC(1, 0), *two_task_permutation[1]));
+}
+
+TEST_F(PermutationTest1, GetLastReadJob) {
+  TwoTaskPermutations two_task_permutation(0, 1, dag_tasks, tasks_info,
+                                           "DataAge");
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(two_task_permutation[1]);
+  EXPECT_EQ(JobCEC(0, 4),
+            GetLastReadJob(JobCEC(1, 2), *two_task_permutation[1], tasks_info));
+}
+
 TEST_F(PermutationTest1, data_age) {
   // chain is 0 -> 1 -> 2
   std::vector<int> chain = {0, 1, 2};
   dag_tasks.chains_ = {chain};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
 
   ChainsPermutation chains_perm;
-  chains_perm.push_back(perm01[0]);
-  chains_perm.push_back(perm12[0]);
-  EXPECT_EQ(10, ObjDataAge::Obj(dag_tasks, tasks_info, chains_perm, variable_od,
+  chains_perm.push_back(perm01[2]);
+  chains_perm.push_back(perm12[1]);
+  chains_perm.print();
+  EXPECT_EQ(50, ObjDataAge::Obj(dag_tasks, tasks_info, chains_perm, variable_od,
                                 dag_tasks.chains_));
 
   chains_perm.clear();
-  chains_perm.push_back(perm01[0]);
-  chains_perm.push_back(perm12[1]);
+  chains_perm.push_back(perm01[2]);
+  chains_perm.push_back(perm12[0]);
+  chains_perm.print();
   EXPECT_EQ(10 + 20, ObjDataAge::Obj(dag_tasks, tasks_info, chains_perm,
                                      variable_od, dag_tasks.chains_));
 
   chains_perm.clear();
   chains_perm.push_back(perm01[1]);
-  chains_perm.push_back(perm12[1]);
-  EXPECT_EQ(40, ObjDataAge::Obj(dag_tasks, tasks_info, chains_perm, variable_od,
+  chains_perm.push_back(perm12[0]);
+  chains_perm.print();
+  EXPECT_EQ(20, ObjDataAge::Obj(dag_tasks, tasks_info, chains_perm, variable_od,
                                 dag_tasks.chains_));
 }
+
 TEST_F(PermutationTest1, GetPossibleReactingJobsLET) {
   // chain is 0 -> 1 -> 2
   EXPECT_EQ(
@@ -251,28 +275,47 @@ TEST_F(PermutationTest_Non_Har, ObjReactionTimeApprox) {
   EXPECT_EQ(35, ObjReactionTimeApprox::Obj(dag_tasks, tasks_info, chains_perm,
                                            variable_od, dag_tasks.chains_));
 }
+
+TEST_F(PermutationTest_Non_Har, GetLastReadJob) {
+  TwoTaskPermutations two_task_permutation(0, 1, dag_tasks, tasks_info,
+                                           "DataAge");
+  two_task_permutation[3]->print();
+  EXPECT_EQ(JobCEC(0, 8),
+            GetLastReadJob(JobCEC(1, 6), *two_task_permutation[3], tasks_info));
+
+  EXPECT_EQ(
+      JobCEC(0, -2),
+      GetLastReadJob(JobCEC(1, -1), *two_task_permutation[3], tasks_info));
+  EXPECT_EQ(
+      JobCEC(0, -10),
+      GetLastReadJob(JobCEC(1, -6), *two_task_permutation[3], tasks_info));
+}
+
 TEST_F(PermutationTest_Non_Har, data_age) {
   // chain is 0 -> 1 -> 2
   std::vector<int> chain = {0, 1, 2};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
   dag_tasks.chains_ = {chain};
   ChainsPermutation chains_perm;
-  chains_perm.push_back(perm01[0]);
-  chains_perm.push_back(perm12[0]);
-  EXPECT_EQ(10, ObjDataAge::Obj(dag_tasks, tasks_info, chains_perm, variable_od,
+  chains_perm.push_back(perm01[4]);
+  chains_perm.push_back(perm12[1]);
+  chains_perm.print();
+  EXPECT_EQ(45, ObjDataAge::Obj(dag_tasks, tasks_info, chains_perm, variable_od,
                                 dag_tasks.chains_));
 
   chains_perm.clear();
-  chains_perm.push_back(perm01[0]);
-  chains_perm.push_back(perm12[1]);
-  EXPECT_EQ(10 + 15, ObjDataAge::Obj(dag_tasks, tasks_info, chains_perm,
-                                     variable_od, dag_tasks.chains_));
+  chains_perm.push_back(perm01[4]);
+  chains_perm.push_back(perm12[0]);
+  chains_perm.print();
+  EXPECT_EQ(30, ObjDataAge::Obj(dag_tasks, tasks_info, chains_perm, variable_od,
+                                dag_tasks.chains_));
 
   chains_perm.clear();
-  chains_perm.push_back(perm01[1]);
-  chains_perm.push_back(perm12[1]);
-  EXPECT_EQ(30, ObjDataAge::Obj(dag_tasks, tasks_info, chains_perm, variable_od,
+  chains_perm.push_back(perm01[3]);
+  chains_perm.push_back(perm12[0]);
+  chains_perm.print();
+  EXPECT_EQ(25, ObjDataAge::Obj(dag_tasks, tasks_info, chains_perm, variable_od,
                                 dag_tasks.chains_));
 }
 

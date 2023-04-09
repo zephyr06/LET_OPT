@@ -6,6 +6,13 @@ std::unordered_map<JobCEC, JobCEC> GetFirstReactMap(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
     const ChainsPermutation &chains_perm, const std::vector<int> &chain);
 
+JobCEC GetLastReadJobWithSuperPeriod(
+    const JobCEC &job_curr, const SinglePairPermutation &pair_perm_curr);
+
+JobCEC GetLastReadJob(const JobCEC &job_curr,
+                      const SinglePairPermutation &pair_perm_curr,
+                      const TaskSetInfoDerived &tasks_info);
+
 class ObjDataAgeIntermediate : public ObjectiveFunctionBaseIntermediate {
  public:
   static const std::string type_trait;

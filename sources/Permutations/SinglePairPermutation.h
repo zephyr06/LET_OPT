@@ -53,7 +53,7 @@ struct SinglePairPermutation {
 
   inline bool operator==(const SinglePairPermutation& other) const {
     return inequality_ == other.inequality_ &&
-           job_first_react_matches_ == other.job_first_react_matches_;
+           job_matches_ == other.job_matches_;
   }
 
   inline bool operator!=(const SinglePairPermutation& other) const {
@@ -63,7 +63,7 @@ struct SinglePairPermutation {
   // data members
   PermutationInequality
       inequality_;  //  for convenience of skipping permutations
-  std::unordered_map<JobCEC, JobCEC> job_first_react_matches_;
+  std::unordered_map<JobCEC, JobCEC> job_matches_;
   int index_global_;
   int index_local_;
   std::string type_trait_;

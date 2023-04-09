@@ -7,8 +7,8 @@ const std::string ObjReactionTimeIntermediate::type_trait(
 
 JobCEC GetFirstReactJobWithSuperPeriod(
     const JobCEC &job_curr, const SinglePairPermutation &pair_perm_curr) {
-  auto itr = pair_perm_curr.job_first_react_matches_.find(job_curr);
-  if (itr == pair_perm_curr.job_first_react_matches_.end())
+  auto itr = pair_perm_curr.job_matches_.find(job_curr);
+  if (itr == pair_perm_curr.job_matches_.end())
     CoutError(
         "Didn't find job_curr records in "
         "GetFirstReactJobWithSuperPeriod!");
