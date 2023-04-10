@@ -158,6 +158,44 @@ TEST_F(PermutationTest25_n3, TwoTaskPerm) {
   EXPECT_EQ(2, perm12.size());
 }
 
+TEST_F(PermutationTest25_n3, IsPermConflicted_CheckAllWithSameSource_DA) {
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
+  perm01[0]->print();
+  perm12[1]->print();
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[0]);
+  // chains_perm.push_back(perm12[3]);
+  dag_tasks.chains_ = {{0, 1}, {1, 2}};
+  GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
+  VariableRange variable_od_range(FindVariableRange(dag_tasks));
+  variable_od_range.lower_bound.print();
+  variable_od_range.upper_bound.print();
+  Interval intv1 =
+      GetDeadlineRange_DAPerm(variable_od_range, perm01[0]->inequality_);
+  // EXPECT_EQ(0 - 77, intv1.start);
+  EXPECT_EQ(61, intv1.start);
+  EXPECT_EQ(138, intv1.start + intv1.length);
+  Interval intv_offset =
+      GetOffsetRange_DAPerm(variable_od_range, perm01[0]->inequality_);
+  EXPECT_EQ(61, intv_offset.start);
+  EXPECT_EQ(138, intv_offset.start + intv_offset.length);
+
+  Interval intv2 =
+      GetDeadlineRange_DAPerm(variable_od_range, perm12[1]->inequality_);
+  EXPECT_EQ(101, intv2.start);
+  // EXPECT_EQ(40 + 200, intv2.start + intv2.length);
+  EXPECT_EQ(200, intv2.start + intv2.length);
+
+  Interval intv_offset2 =
+      GetOffsetRange_DAPerm(variable_od_range, perm12[1]->inequality_);
+  EXPECT_EQ(0, intv_offset2.start);
+  EXPECT_EQ(40, intv_offset2.start + intv_offset2.length);
+
+  EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllWithSameSource(
+      variable_od_range, *perm12[1], graph_of_all_ca_chains));
+}
+
 // TEST_F(PermutationTest25_n3, overall_opt) {
 //   TaskSetOptEnumWSkip task_sets_perms =
 //       TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAgeApprox");

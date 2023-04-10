@@ -3,25 +3,26 @@
 #include "sources/Utils/colormod.h"
 
 struct Interval {
-    double start;
-    double length;
+  double start;
+  double length;
+  Interval() {}
 
-    Interval(double s1, double l1) : start(s1), length(l1) {}
+  Interval(double s1, double l1) : start(s1), length(l1) {}
 
-    inline double getFinish() const { return start + length; }
+  inline double getFinish() const { return start + length; }
 
-    inline bool IfBelong(double x) { return x >= start && x <= start + length; }
-    // whether interval x belongs to this
-    inline bool IfBelong(Interval x) {
-        return start <= x.start && x.start + x.length <= start + length;
-    }
-    inline void UpdateSF(double startI, double finish) {
-        start = startI;
-        length = finish - start;
-    }
+  inline bool IfBelong(double x) { return x >= start && x <= start + length; }
+  // whether interval x belongs to this
+  inline bool IfBelong(Interval x) {
+    return start <= x.start && x.start + x.length <= start + length;
+  }
+  inline void UpdateSF(double startI, double finish) {
+    start = startI;
+    length = finish - start;
+  }
 };
 inline bool compare(Interval &i1, Interval &i2) {
-    return (i1.start < i2.start);
+  return (i1.start < i2.start);
 }
 
 /**

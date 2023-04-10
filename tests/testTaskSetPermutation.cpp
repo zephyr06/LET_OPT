@@ -434,6 +434,155 @@ TEST_F(PermutationTest5, ChainsPermutation_valid_v1) {
   EXPECT_EQ(6, graph_chains.next_tasks_[25][0]);
 }
 
+class PermutationTest6 : public ::testing::Test {
+ protected:
+  void SetUp() override {
+    dag_tasks = ReadDAG_Tasks(
+        GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v8.csv", "orig",
+        2);
+    tasks = dag_tasks.GetTaskSet();
+    tasks_info = TaskSetInfoDerived(tasks);
+
+    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info, "ReactionTime");
+    perm04 = TwoTaskPermutations(0, 4, dag_tasks, tasks_info, "ReactionTime");
+    perm34 = TwoTaskPermutations(3, 4, dag_tasks, tasks_info, "ReactionTime");
+    perm13 = TwoTaskPermutations(1, 3, dag_tasks, tasks_info, "ReactionTime");
+
+    variable_od = VariableOD(tasks);
+    dag_tasks.chains_[0] = {0, 1};
+    dag_tasks.chains_.push_back({0, 4});
+  };
+
+  DAG_Model dag_tasks;
+  TaskSet tasks;
+  TaskSetInfoDerived tasks_info;
+  Task task0;
+  Task task1;
+  Task task2;
+  JobCEC job00;
+  JobCEC job01;
+  JobCEC job10;
+  JobCEC job20;
+
+  TwoTaskPermutations perm01;
+  TwoTaskPermutations perm04;
+  TwoTaskPermutations perm34;
+  TwoTaskPermutations perm13;
+  VariableOD variable_od;
+};
+
+TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSource) {
+  perm01[0]->print();
+  perm04[1]->print();
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[0]);
+  // chains_perm.push_back(perm04[3]);
+  dag_tasks.chains_ = {{0, 1}, {0, 4}};
+  GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
+  VariableRange variable_od_range(FindVariableRange(dag_tasks));
+  variable_od_range.lower_bound.print();
+  variable_od_range.upper_bound.print();
+  Interval intv1 =
+      GetDeadlineRange_RTPerm(variable_od_range, perm01[0]->inequality_);
+  EXPECT_EQ(10, intv1.start);
+  EXPECT_EQ(-300 + 379, intv1.start + intv1.length);
+
+  Interval intv2 =
+      GetDeadlineRange_RTPerm(variable_od_range, perm04[1]->inequality_);
+  EXPECT_EQ(10, intv2.start);
+  EXPECT_EQ(100, intv2.start + intv2.length);
+  EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllWithSameSource(
+      variable_od_range, *perm04[1], graph_of_all_ca_chains));
+}
+
+TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSource_ret_false) {
+  // task 0,1,3's periods are 100,400,100
+  TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm13(1, 3, dag_tasks, tasks_info, "ReactionTime");
+  perm10[0]->print();
+  perm13[4]->print();
+
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm10[0]);
+  // chains_perm.push_back(perm04[3]);
+  dag_tasks.chains_ = {{1, 0}, {1, 3}};
+  GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
+  VariableRange variable_od_range(FindVariableRange(dag_tasks));
+  variable_od_range.lower_bound.print();
+  variable_od_range.upper_bound.print();
+  Interval intv1 =
+      GetDeadlineRange_RTPerm(variable_od_range, perm10[0]->inequality_);
+  EXPECT_EQ(21, intv1.start);
+  EXPECT_EQ(0 + 90, intv1.start + intv1.length);
+
+  Interval intv2 =
+      GetDeadlineRange_RTPerm(variable_od_range, perm13[4]->inequality_);
+  EXPECT_EQ(300, intv2.start);
+  EXPECT_EQ(400, intv2.start + intv2.length);
+  EXPECT_TRUE(chains_perm.IsPermConflicted_CheckAllWithSameSource(
+      variable_od_range, *perm13[4], graph_of_all_ca_chains));
+}
+
+TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSink) {
+  TwoTaskPermutations perm41(4, 1, dag_tasks, tasks_info, "ReactionTime");
+  perm01[0]->print();
+  perm41[1]->print();
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[0]);
+  dag_tasks.chains_ = {{0, 1}, {4, 1}};
+  GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
+  VariableRange variable_od_range(FindVariableRange(dag_tasks));
+  Interval intv1 =
+      GetOffsetRange_RTPerm(variable_od_range, perm01[0]->inequality_);
+  EXPECT_EQ(310, intv1.start);
+  EXPECT_EQ(379, intv1.start + intv1.length);  // before clap: 369 + 1 + 100
+
+  Interval intv2 =
+      GetOffsetRange_RTPerm(variable_od_range, perm41[1]->inequality_);
+  EXPECT_EQ(200 + 60, intv2.start);
+  EXPECT_EQ(379, intv2.start + intv2.length);  // before clap: 300 + 500
+  EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllWithSameSink(
+      variable_od_range, *perm41[1], graph_of_all_ca_chains));
+}
+
+TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSink_ret_false) {
+  // task 0,1,3's periods are 100,400,100
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm31(3, 1, dag_tasks, tasks_info, "ReactionTime");
+  perm01[0]->print();
+  perm31[4]->print();
+
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[0]);
+  dag_tasks.chains_ = {{0, 1}, {3, 1}};
+  GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
+  VariableRange variable_od_range(FindVariableRange(dag_tasks));
+  Interval intv1 =
+      GetOffsetRange_RTPerm(variable_od_range, perm01[0]->inequality_);
+  EXPECT_EQ(300 + 10, intv1.start);
+  EXPECT_EQ(379, intv1.start + intv1.length);  // before clap 369 + 1 + 100
+
+  Interval intv2 =
+      GetOffsetRange_RTPerm(variable_od_range, perm31[4]->inequality_);
+  EXPECT_EQ(0, intv2.start);  // before clap 10 + 11 + 12 + 13 - 100
+  EXPECT_EQ(100, intv2.start + intv2.length);
+  EXPECT_TRUE(chains_perm.IsPermConflicted_CheckAllWithSameSink(
+      variable_od_range, *perm31[4], graph_of_all_ca_chains));
+}
+
+class PermutationTest7_n30 : public PermutationTestBase {
+  void SetUp() override { SetUpBase("test_n30_v7"); }
+};
+TEST_F(PermutationTest7_n30, GraphOfChains) {
+  // auto task_sets_perms = TaskSetPermutation(dag_tasks, dag_tasks.chains_);
+  GraphOfChains graph_of_all_ca_chains_(dag_tasks.chains_);
+  EXPECT_EQ(12, graph_of_all_ca_chains_.edge_records_.size());
+}
+
+TEST(ReadGlobalVariable, v1) {
+  EXPECT_EQ("RM", GlobalVariablesDAGOpt::priorityMode);
+}
+
 class PermutationTest_2chain_v1 : public ::testing::Test {
  protected:
   void SetUp() override {
@@ -496,144 +645,6 @@ TEST_F(PermutationTest_2chain_v1, TaskSetPermutation_sort) {
   auto res = PerformTOM_OPT_Sort<ObjReactionTime>(dag_tasks);
   EXPECT_THAT(res.obj_, testing::Le(128 + 28));
 }
-
-class PermutationTest6 : public ::testing::Test {
- protected:
-  void SetUp() override {
-    dag_tasks = ReadDAG_Tasks(
-        GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v8.csv", "orig",
-        2);
-    tasks = dag_tasks.GetTaskSet();
-    tasks_info = TaskSetInfoDerived(tasks);
-
-    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info, "ReactionTime");
-    perm04 = TwoTaskPermutations(0, 4, dag_tasks, tasks_info, "ReactionTime");
-    perm34 = TwoTaskPermutations(3, 4, dag_tasks, tasks_info, "ReactionTime");
-    perm13 = TwoTaskPermutations(1, 3, dag_tasks, tasks_info, "ReactionTime");
-
-    variable_od = VariableOD(tasks);
-    dag_tasks.chains_[0] = {0, 1};
-    dag_tasks.chains_.push_back({0, 4});
-  };
-
-  DAG_Model dag_tasks;
-  TaskSet tasks;
-  TaskSetInfoDerived tasks_info;
-  Task task0;
-  Task task1;
-  Task task2;
-  JobCEC job00;
-  JobCEC job01;
-  JobCEC job10;
-  JobCEC job20;
-
-  TwoTaskPermutations perm01;
-  TwoTaskPermutations perm04;
-  TwoTaskPermutations perm34;
-  TwoTaskPermutations perm13;
-  VariableOD variable_od;
-};
-
-TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSource) {
-  perm01[0]->print();
-  perm04[1]->print();
-  ChainsPermutation chains_perm;
-  chains_perm.push_back(perm01[0]);
-  // chains_perm.push_back(perm04[3]);
-  dag_tasks.chains_ = {{0, 1}, {0, 4}};
-  GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
-  VariableRange variable_od_range(FindVariableRange(dag_tasks));
-  Interval intv1 = GetDeadlineRange(variable_od_range, *perm01[0]);
-  EXPECT_EQ(-369 - 1, intv1.start);
-  EXPECT_EQ(-300 + 379, intv1.start + intv1.length);
-
-  Interval intv2 = GetDeadlineRange(variable_od_range, *perm04[1]);
-  EXPECT_EQ(-400, intv2.start);
-  EXPECT_EQ(-300 + 500 - 60, intv2.start + intv2.length);
-  EXPECT_TRUE(chains_perm.IsPermConflicted_CheckAllWithSameSource(
-      variable_od_range, *perm04[1], graph_of_all_ca_chains));
-}
-
-TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSource_ret_false) {
-  // task 0,1,3's periods are 100,400,100
-  TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info, "ReactionTime");
-  TwoTaskPermutations perm13(1, 3, dag_tasks, tasks_info, "ReactionTime");
-  perm10[0]->print();
-  perm13[4]->print();
-
-  ChainsPermutation chains_perm;
-  chains_perm.push_back(perm10[0]);
-  // chains_perm.push_back(perm04[3]);
-  dag_tasks.chains_ = {{1, 0}, {1, 3}};
-  GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
-  VariableRange variable_od_range(FindVariableRange(dag_tasks));
-  Interval intv1 = GetDeadlineRange(variable_od_range, *perm10[0]);
-  EXPECT_EQ(-69 - 1, intv1.start);
-  EXPECT_EQ(0 + 90, intv1.start + intv1.length);
-
-  Interval intv2 = GetDeadlineRange(variable_od_range, *perm13[4]);
-  EXPECT_EQ(300, intv2.start);
-  EXPECT_EQ(400 + 54, intv2.start + intv2.length);
-  EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllWithSameSource(
-      variable_od_range, *perm13[4], graph_of_all_ca_chains));
-}
-
-TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSink) {
-  TwoTaskPermutations perm41(4, 1, dag_tasks, tasks_info, "ReactionTime");
-  perm01[0]->print();
-  perm41[1]->print();
-  ChainsPermutation chains_perm;
-  chains_perm.push_back(perm01[0]);
-  dag_tasks.chains_ = {{0, 1}, {4, 1}};
-  GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
-  VariableRange variable_od_range(FindVariableRange(dag_tasks));
-  Interval intv1 = GetOffsetRange(variable_od_range, *perm01[0]);
-  EXPECT_EQ(310, intv1.start);
-  EXPECT_EQ(369 + 1 + 100, intv1.start + intv1.length);
-
-  Interval intv2 = GetOffsetRange(variable_od_range, *perm41[1]);
-  EXPECT_EQ(200 + 60, intv2.start);
-  EXPECT_EQ(300 + 500, intv2.start + intv2.length);
-  EXPECT_TRUE(chains_perm.IsPermConflicted_CheckAllWithSameSink(
-      variable_od_range, *perm41[1], graph_of_all_ca_chains));
-}
-
-TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSink_ret_false) {
-  // task 0,1,3's periods are 100,400,100
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
-  TwoTaskPermutations perm31(3, 1, dag_tasks, tasks_info, "ReactionTime");
-  perm01[0]->print();
-  perm31[4]->print();
-
-  ChainsPermutation chains_perm;
-  chains_perm.push_back(perm01[0]);
-  dag_tasks.chains_ = {{0, 1}, {3, 1}};
-  GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
-  VariableRange variable_od_range(FindVariableRange(dag_tasks));
-  Interval intv1 = GetOffsetRange(variable_od_range, *perm01[0]);
-  EXPECT_EQ(300 + 10, intv1.start);
-  EXPECT_EQ(369 + 1 + 100, intv1.start + intv1.length);
-
-  Interval intv2 = GetOffsetRange(variable_od_range, *perm31[4]);
-  EXPECT_EQ(10 + 11 + 12 + 13 - 100, intv2.start);
-  EXPECT_EQ(100, intv2.start + intv2.length);
-  EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllWithSameSink(
-      variable_od_range, *perm31[4], graph_of_all_ca_chains));
-}
-
-class PermutationTest7_n30 : public PermutationTestBase {
-  void SetUp() override { SetUpBase("test_n30_v7"); }
-};
-TEST_F(PermutationTest7_n30, GraphOfChains) {
-  // auto task_sets_perms = TaskSetPermutation(dag_tasks, dag_tasks.chains_);
-  GraphOfChains graph_of_all_ca_chains_(dag_tasks.chains_);
-  EXPECT_EQ(12, graph_of_all_ca_chains_.edge_records_.size());
-}
-
-TEST(ReadGlobalVariable, v1) {
-  EXPECT_EQ("RM", GlobalVariablesDAGOpt::priorityMode);
-}
-
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);

@@ -8,49 +8,134 @@ namespace DAG_SPACE {
 
 // symbols in this function are explained as follows, and we want d_0's range
 // perm_prev: o_1 + x < d_0 <= o_1 + y
-Interval GetDeadlineRange(const VariableRange& variable_od_range,
-                          const SinglePairPermutation& perm_prev) {
-  int o1_index = perm_prev.GetNextTaskId();
+Interval GetDeadlineRange_RTPerm(const VariableRange& variable_od_range,
+                                 const PermutationInequality& perm_ineq) {
+  int o1_index = perm_ineq.task_next_id_;
   int low_bound_o1 = variable_od_range.lower_bound.at(o1_index).offset;
-  int d0_lb_from_o1 = low_bound_o1 + perm_prev.inequality_.lower_bound_;
+  int d0_lb_from_o1 = low_bound_o1 + perm_ineq.lower_bound_;
   int upp_bound_o1 = variable_od_range.upper_bound.at(o1_index).offset;
-  int d0_ub_from_o1 = upp_bound_o1 + perm_prev.inequality_.upper_bound_;
-  return Interval(d0_lb_from_o1, d0_ub_from_o1 - d0_lb_from_o1);
+  int d0_ub_from_o1 = upp_bound_o1 + perm_ineq.upper_bound_;
+  // return Interval(d0_lb_from_o1, d0_ub_from_o1 - d0_lb_from_o1);
+  int d0_task_index = perm_ineq.task_prev_id_;
+  Interval deadline_range(0, 0);
+  deadline_range.start = std::max(
+      variable_od_range.lower_bound.at(d0_task_index).deadline, d0_lb_from_o1);
+  deadline_range.length =
+      std::min(d0_ub_from_o1,
+               variable_od_range.upper_bound.at(d0_task_index).deadline) -
+      deadline_range.start;
+  return deadline_range;
 }
 
 // symbols in this function are explained as follows, and we want o_1's range
 // perm_prev: o_1 + x < d_0 <= o_1 + y
-Interval GetOffsetRange(const VariableRange& variable_od_range,
-                        const SinglePairPermutation& perm_prev) {
-  int d0_index = perm_prev.GetPrevTaskId();
+Interval GetOffsetRange_RTPerm(const VariableRange& variable_od_range,
+                               const PermutationInequality& perm_ineq) {
+  int d0_index = perm_ineq.task_prev_id_;
   int low_bound_d0 = variable_od_range.lower_bound.at(d0_index).deadline;
-  int o1_lb_from_d0 = low_bound_d0 - perm_prev.inequality_.upper_bound_;
+  int o1_lb_from_d0 = low_bound_d0 - perm_ineq.upper_bound_;
   int upp_bound_d0 = variable_od_range.upper_bound.at(d0_index).deadline;
-  int o1_ub_from_d0 = upp_bound_d0 - perm_prev.inequality_.lower_bound_;
-  return Interval(o1_lb_from_d0, o1_ub_from_d0 - o1_lb_from_d0);
+  int o1_ub_from_d0 = upp_bound_d0 - perm_ineq.lower_bound_;
+  // return Interval(o1_lb_from_d0, o1_ub_from_d0 - o1_lb_from_d0);
+  Interval offset_range(0, 0);
+  int o1_task_index = perm_ineq.task_next_id_;
+  offset_range.start = std::max(
+      variable_od_range.lower_bound.at(o1_task_index).offset, o1_lb_from_d0);
+  offset_range.length =
+      std::min(o1_ub_from_d0,
+               variable_od_range.upper_bound.at(o1_task_index).offset) -
+      offset_range.start;
+  return offset_range;
+}
+
+// symbols in this function are explained as follows, and we want d_0's range
+// perm_prev: d_0 + x <= o_1 < d_0 + y
+Interval GetDeadlineRange_DAPerm(const VariableRange& variable_od_range,
+                                 const PermutationInequality& perm_ineq) {
+  int o1_task_index = perm_ineq.task_next_id_;
+  int low_bound_o1 = variable_od_range.lower_bound.at(o1_task_index).offset;
+  int d0_lb_from_o1 = low_bound_o1 - (perm_ineq.upper_bound_ - 1);
+  int upp_bound_o1 = variable_od_range.upper_bound.at(o1_task_index).offset;
+  int d0_ub_from_o1 = upp_bound_o1 - perm_ineq.lower_bound_;
+  int d0_task_index = perm_ineq.task_prev_id_;
+  Interval deadline_range(0, 0);
+  deadline_range.start = std::max(
+      variable_od_range.lower_bound.at(d0_task_index).deadline, d0_lb_from_o1);
+  deadline_range.length =
+      std::min(d0_ub_from_o1,
+               variable_od_range.upper_bound.at(d0_task_index).deadline) -
+      deadline_range.start;
+  return deadline_range;
+}
+
+// symbols in this function are explained as follows, and we want o_1's range
+// perm_prev: d_0 + x <= o_1 < d_0 + y
+Interval GetOffsetRange_DAPerm(const VariableRange& variable_od_range,
+                               const PermutationInequality& perm_ineq) {
+  int d0_task_index = perm_ineq.task_prev_id_;
+  int low_bound_d0 = variable_od_range.lower_bound.at(d0_task_index).deadline;
+  int o1_lb_from_d0 = low_bound_d0 + perm_ineq.lower_bound_;
+  int upp_bound_d0 = variable_od_range.upper_bound.at(d0_task_index).deadline;
+  int o1_ub_from_d0 = upp_bound_d0 + perm_ineq.upper_bound_;
+  Interval offset_range(0, 0);
+  int o1_task_index = perm_ineq.task_next_id_;
+  offset_range.start = std::max(
+      variable_od_range.lower_bound.at(o1_task_index).offset, o1_lb_from_d0);
+  offset_range.length =
+      std::min(o1_ub_from_d0,
+               variable_od_range.upper_bound.at(o1_task_index).offset) -
+      offset_range.start;
+  return offset_range;
 }
 
 // we analyze the lower bound and upper bound of d_0
+// return true if conflicted, false if safe
 bool IsTwoPermConflicted_SameSource(const VariableRange& variable_od_range,
                                     const SinglePairPermutation& perm_prev,
                                     const SinglePairPermutation& perm_curr) {
-  Interval deadline_range_from_prev =
-      GetDeadlineRange(variable_od_range, perm_prev);
-  Interval deadline_range_from_curr =
-      GetDeadlineRange(variable_od_range, perm_curr);
-  return Overlap(deadline_range_from_prev, deadline_range_from_curr) > 0;
+  Interval deadline_range_from_prev;
+  Interval deadline_range_from_curr;
+  if (perm_prev.type_trait_ == "ReactionTimeApprox" ||
+      perm_prev.type_trait_ == "ReactionTime") {
+    deadline_range_from_prev =
+        GetDeadlineRange_RTPerm(variable_od_range, perm_prev.inequality_);
+    deadline_range_from_curr =
+        GetDeadlineRange_RTPerm(variable_od_range, perm_curr.inequality_);
+  } else if (perm_prev.type_trait_ == "DataAgeApprox" ||
+             perm_prev.type_trait_ == "DataAge") {
+    deadline_range_from_prev =
+        GetDeadlineRange_DAPerm(variable_od_range, perm_prev.inequality_);
+    deadline_range_from_curr =
+        GetDeadlineRange_DAPerm(variable_od_range, perm_curr.inequality_);
+  } else
+    CoutError("Unrecognized type_trait_ in IsTwoPermConflicted_SameSource!");
+  return Overlap(deadline_range_from_prev, deadline_range_from_curr) == 0;
 }
 
+// return true if conflicted, false if safe
 bool IsTwoPermConflicted_SameSink(const VariableRange& variable_od_range,
                                   const SinglePairPermutation& perm_prev,
                                   const SinglePairPermutation& perm_curr) {
-  Interval offset_range_from_prev =
-      GetOffsetRange(variable_od_range, perm_prev);
-  Interval offset_range_from_curr =
-      GetOffsetRange(variable_od_range, perm_curr);
-  return Overlap(offset_range_from_prev, offset_range_from_curr) > 0;
+  Interval offset_range_from_prev, offset_range_from_curr;
+  if (perm_prev.type_trait_ == "ReactionTimeApprox" ||
+      perm_prev.type_trait_ == "ReactionTime") {
+    offset_range_from_prev =
+        GetOffsetRange_RTPerm(variable_od_range, perm_prev.inequality_);
+    offset_range_from_curr =
+        GetOffsetRange_RTPerm(variable_od_range, perm_curr.inequality_);
+  } else if (perm_prev.type_trait_ == "DataAgeApprox" ||
+             perm_prev.type_trait_ == "DataAge") {
+    offset_range_from_prev =
+        GetOffsetRange_DAPerm(variable_od_range, perm_prev.inequality_);
+    offset_range_from_curr =
+        GetOffsetRange_DAPerm(variable_od_range, perm_curr.inequality_);
+  } else
+    CoutError("Unrecognized type_trait_ in IsTwoPermConflicted_SameSource!");
+
+  return Overlap(offset_range_from_prev, offset_range_from_curr) == 0;
 }
 
+// return true if conflicted, false if safe
 bool IsTwoPermConflicted_SerialConnect(const VariableRange& variable_od_range,
                                        const SinglePairPermutation& perm_prev,
                                        const SinglePairPermutation& perm_curr) {
@@ -81,6 +166,7 @@ bool IsTwoPermConflicted_SerialConnect(const VariableRange& variable_od_range,
   return true;
 }
 
+// return true if conflicted, false if safe
 bool ChainsPermutation::IsPermConflicted_CheckAllWithSameSource(
     const VariableRange& variable_od_range,
     const SinglePairPermutation& perm_curr,
@@ -99,12 +185,13 @@ bool ChainsPermutation::IsPermConflicted_CheckAllWithSameSource(
       continue;
     const SinglePairPermutation& perm_ite =
         *permutation_chain_map_.at(edge_ite);
-    if (!IsTwoPermConflicted_SameSource(variable_od_range, perm_ite, perm_curr))
-      return false;
+    if (IsTwoPermConflicted_SameSource(variable_od_range, perm_ite, perm_curr))
+      return true;
   }
-  return true;
+  return false;
 }
 
+// return true if conflicted, false if safe
 bool ChainsPermutation::IsPermConflicted_CheckAllWithSameSink(
     const VariableRange& variable_od_range,
     const SinglePairPermutation& perm_curr,
@@ -121,12 +208,13 @@ bool ChainsPermutation::IsPermConflicted_CheckAllWithSameSink(
                  // chain yet, therefore no conflictions
     const SinglePairPermutation& perm_ite =
         *permutation_chain_map_.at(edge_ite);
-    if (!IsTwoPermConflicted_SameSink(variable_od_range, perm_ite, perm_curr))
-      return false;
+    if (IsTwoPermConflicted_SameSink(variable_od_range, perm_ite, perm_curr))
+      return true;
   }
-  return true;
+  return false;
 }
 
+// TODO: return true if conflicted, false if safe
 bool ChainsPermutation::IsPermConflicted_CheckAllSerialConnect(
     const VariableRange& variable_od_range,
     const SinglePairPermutation& perm_curr,
@@ -177,12 +265,12 @@ bool ChainsPermutation::IsValid(
     if (!IsPermConflicted_CheckAllSerialConnect(variable_od_range, perm_curr,
                                                 graph_of_all_ca_chains))
       return false;
-    if (!IsPermConflicted_CheckAllWithSameSource(variable_od_range, perm_curr,
-                                                 graph_of_all_ca_chains))
+    if (IsPermConflicted_CheckAllWithSameSource(variable_od_range, perm_curr,
+                                                graph_of_all_ca_chains))
       return false;
 
-    if (!IsPermConflicted_CheckAllWithSameSink(variable_od_range, perm_curr,
-                                               graph_of_all_ca_chains))
+    if (IsPermConflicted_CheckAllWithSameSink(variable_od_range, perm_curr,
+                                              graph_of_all_ca_chains))
       return false;
   }
   return true;

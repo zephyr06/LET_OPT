@@ -1,17 +1,27 @@
 #pragma once
 #include <memory>
 
-#include "sources/Permutations/GraphOfChains.h"
 #include "sources/Permutations/Edge.h"
+#include "sources/Permutations/GraphOfChains.h"
 #include "sources/Permutations/TwoTaskPermutations.h"
 #include "sources/Utils/profilier.h"
 namespace DAG_SPACE {
 
-Interval GetDeadlineRange(const VariableRange &variable_od_range,
-                          const SinglePairPermutation &perm_prev);
+Interval GetDeadlineRange_RTPerm(const VariableRange &variable_od_range,
+                                 const PermutationInequality &ineq_perm);
 
-Interval GetOffsetRange(const VariableRange &variable_od_range,
-                        const SinglePairPermutation &perm_prev);
+Interval GetOffsetRange_RTPerm(const VariableRange &variable_od_range,
+                               const PermutationInequality &ineq_perm);
+
+// symbols in this function are explained as follows, and we want o_1's range
+// perm_prev: d_0 + x <= o_1 < d_0 + y
+Interval GetOffsetRange_DAPerm(const VariableRange &variable_od_range,
+                               const PermutationInequality &perm_ineq);
+
+// symbols in this function are explained as follows, and we want d_0's range
+// perm_prev: d_0 + x <= o_1 < d_0 + y
+Interval GetDeadlineRange_DAPerm(const VariableRange &variable_od_range,
+                                 const PermutationInequality &perm_ineq);
 
 // this class actually stores graphs rather than a single chain
 class ChainsPermutation {
