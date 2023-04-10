@@ -39,7 +39,8 @@ class TaskSetOptSorted : public TaskSetPermutation {
         GetUnvisitedFutureEdges(position);
     PermIneqBound_Range perm_ineq_bound_range = GetEdgeIneqRange(
         adjacent_two_task_permutations_[position].GetEdge(),
-        FindPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm));
+        FindPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm),
+        ObjectiveFunction::type_trait);
     TwoTaskPermutationsIterator iterator(
         adjacent_two_task_permutations_[position], perm_ineq_bound_range);
     bool feasible_prev_chain = false;

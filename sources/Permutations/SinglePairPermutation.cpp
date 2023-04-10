@@ -144,7 +144,7 @@ bool IfSkipAnotherPerm(const SinglePairPermutation& perm_base,
     return IfSkipAnotherPermRT(perm_base, perm_another);
   // TODO: check the following, seek theoretical verification
   else if (obj_trait == "DataAge" || obj_trait == "DataAgeApprox")
-    return IfSkipAnotherPermRT(perm_base, perm_another);
+    return IfSkipAnotherPermDA(perm_base, perm_another);
   else
     CoutError("Not implemented for obj_trait: " + obj_trait);
   return false;
@@ -162,6 +162,23 @@ bool IfSkipAnotherPermRT(const SinglePairPermutation& perm_base,
     ASSERT(itr2 != perm_another.job_matches_.end(),
            "perm_base and perm_another should have the same jobs");
     if (itr->second.jobId > itr2->second.jobId) return false;
+  }
+  return true;
+}
+
+// return true if perm_another can be safely skipped
+bool IfSkipAnotherPermDA(const SinglePairPermutation& perm_base,
+                         const SinglePairPermutation& perm_another) {
+  ASSERT(perm_base.GetPrevTaskId() == perm_another.GetPrevTaskId() &&
+             perm_base.GetNextTaskId() == perm_another.GetNextTaskId(),
+         "perm_base and perm_another should be about the same tasks");
+  for (auto itr_base = perm_base.job_matches_.begin();
+       itr_base != perm_base.job_matches_.end(); itr_base++) {
+    const JobCEC& job_curr = itr_base->first;
+    auto itr_ano = perm_another.job_matches_.find(job_curr);
+    ASSERT(itr_ano != perm_another.job_matches_.end(),
+           "perm_base and perm_another should have the same jobs");
+    if (itr_base->second.jobId < itr_ano->second.jobId) return false;
   }
   return true;
 }

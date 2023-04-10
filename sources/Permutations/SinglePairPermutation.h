@@ -75,6 +75,10 @@ typedef std::shared_ptr<const SinglePairPermutation> PermPtr;
 bool IfSkipAnotherPermRT(const SinglePairPermutation& perm_base,
                          const SinglePairPermutation& perm_another);
 
+// return true if perm_another can be safely skipped
+bool IfSkipAnotherPermDA(const SinglePairPermutation& perm_base,
+                         const SinglePairPermutation& perm_another);
+
 bool IfSkipAnotherPerm(const SinglePairPermutation& perm_base,
                        const SinglePairPermutation& perm_another,
                        const std::string& obj_trait);

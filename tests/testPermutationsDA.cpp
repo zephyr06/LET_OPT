@@ -205,6 +205,35 @@ TEST_F(PermutationTest25_n3, overall_opt) {
       task_sets_perms.PerformOptimizationEnumerate<ObjDataAgeApprox>();
   EXPECT_EQ(300, obj_find);
 }
+
+TEST_F(PermutationTest25_n3, GetEdgeIneqRangeDA) {
+  VariableRange variable_range = FindVariableRange(dag_tasks);
+  variable_range.lower_bound.print();
+  variable_range.upper_bound.print();
+  PermIneqBound_Range range = GetEdgeIneqRangeDA(Edge(0, 1), variable_range);
+  EXPECT_EQ(138 - 61, range.lower_bound_s_upper_bound);
+  EXPECT_EQ(0 - 200, range.upper_bound_s_lower_bound);
+}
+TEST_F(PermutationTest25_n3, SkipDAPerm) {
+  TaskSetOptEnumWSkip task_sets_perms =
+      TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
+  task_sets_perms.adjacent_two_task_permutations_[0].print();
+  task_sets_perms.adjacent_two_task_permutations_[1].print();
+  auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];
+  auto perm12 = task_sets_perms.adjacent_two_task_permutations_[1];
+  EXPECT_TRUE(IfSkipAnotherPermDA(*perm01[0], *perm01[1]));
+  EXPECT_FALSE(IfSkipAnotherPermDA(*perm01[1], *perm01[0]));
+  EXPECT_TRUE(IfSkipAnotherPermDA(*perm12[0], *perm12[1]));
+  EXPECT_FALSE(IfSkipAnotherPermDA(*perm12[1], *perm12[0]));
+}
+TEST_F(PermutationTest25_n3, overall_opt_Sort) {
+  TaskSetOptSorted task_sets_perms =
+      TaskSetOptSorted(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
+  task_sets_perms.adjacent_two_task_permutations_[0].print();
+  task_sets_perms.adjacent_two_task_permutations_[1].print();
+  int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAgeApprox>();
+  EXPECT_EQ(300, obj_find);
+}
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);

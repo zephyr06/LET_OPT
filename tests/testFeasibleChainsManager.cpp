@@ -23,26 +23,18 @@ TEST_F(PermutationTest22, IfSkipAnotherPermRT) {
   EXPECT_FALSE(IfSkipAnotherPermRT(*perm10[4], *perm10[3]));
 }
 
-// return true if perm_another can be safely skipped
-bool IfSkipAnotherPermDA(const SinglePairPermutation& perm_base,
-                         const SinglePairPermutation& perm_another) {
-  if (!IfSkipAnotherPermRT(perm_base, perm_another)) return false;
-
-  return true;
-}
-
 TEST_F(PermutationTest22, IfSkipAnotherPermDA) {
   TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info, "ReactionTime");
   perm10.print();
-  EXPECT_TRUE(IfSkipAnotherPermDA(*perm10[0], *perm10[1]));
-  EXPECT_TRUE(IfSkipAnotherPermDA(*perm10[0], *perm10[2]));
-  EXPECT_TRUE(IfSkipAnotherPermDA(*perm10[0], *perm10[3]));
-  EXPECT_TRUE(IfSkipAnotherPermDA(*perm10[0], *perm10[4]));
+  EXPECT_FALSE(IfSkipAnotherPermDA(*perm10[0], *perm10[1]));
+  EXPECT_FALSE(IfSkipAnotherPermDA(*perm10[0], *perm10[2]));
+  EXPECT_FALSE(IfSkipAnotherPermDA(*perm10[0], *perm10[3]));
+  EXPECT_FALSE(IfSkipAnotherPermDA(*perm10[0], *perm10[4]));
 
-  EXPECT_FALSE(IfSkipAnotherPermDA(*perm10[1], *perm10[0]));
-  EXPECT_FALSE(IfSkipAnotherPermDA(*perm10[2], *perm10[1]));
-  EXPECT_FALSE(IfSkipAnotherPermDA(*perm10[3], *perm10[2]));
-  EXPECT_FALSE(IfSkipAnotherPermDA(*perm10[4], *perm10[3]));
+  EXPECT_TRUE(IfSkipAnotherPermDA(*perm10[1], *perm10[0]));
+  EXPECT_TRUE(IfSkipAnotherPermDA(*perm10[2], *perm10[1]));
+  EXPECT_TRUE(IfSkipAnotherPermDA(*perm10[3], *perm10[2]));
+  EXPECT_TRUE(IfSkipAnotherPermDA(*perm10[4], *perm10[3]));
 }
 
 class PermutationTest18 : public PermutationTestBase {
@@ -189,8 +181,7 @@ TEST_F(PermutationTest23, FeasibleChainManager) {
             fea_chain_man.better_perm_per_chain_per_edge_[Edge(1, 2)].size());
   auto prm_ref_set = fea_chain_man.better_perm_per_chain_per_edge_[Edge(1, 2)];
   for (auto perm : prm_ref_set) {
-    std::unordered_map<JobCEC, JobCEC> job_react =
-        perm.job_matches_;
+    std::unordered_map<JobCEC, JobCEC> job_react = perm.job_matches_;
     EXPECT_THAT(0, ::testing::Ge(job_react[JobCEC(1, 0)].jobId));
     EXPECT_THAT(1, ::testing::Ge(job_react[JobCEC(1, 1)].jobId));
     EXPECT_THAT(1, ::testing::Ge(job_react[JobCEC(1, 2)].jobId));

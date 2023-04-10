@@ -3,6 +3,18 @@
 #include "sources/Permutations/TwoTaskPermutationsIterator.h"
 namespace DAG_SPACE {
 
+PermIneqBound_Range GetEdgeIneqRange(const Edge& edge,
+                                     const VariableRange& variable_range,
+                                     const std::string& type_trait) {
+  if (type_trait == "ReactionTimeApprox" || type_trait == "ReactionTime") {
+    return GetEdgeIneqRangeRT(edge, variable_range);
+  } else if (type_trait == "DataAgeApprox" || type_trait == "DataAge") {
+    return GetEdgeIneqRangeDA(edge, variable_range);
+  } else
+    CoutError("Unrecognized type_trait in GetEdgeIneqRange!");
+  return PermIneqBound_Range{-1, -1};
+}
+
 bool IfChainsContainBetterPerm(const ChainsPermutation& chains_perm_partial,
                                const FeasibleChainManager& feasible_chain_man) {
   const std::vector<Edge>& edges_inserted = chains_perm_partial.GetEdges();

@@ -197,7 +197,7 @@ TEST_F(PermutationTest24_n3, select_feasible_perm) {
   variable_range.lower_bound.print();
   variable_range.upper_bound.print();
   Edge edge_ite(1, 2);
-  PermIneqBound_Range edge_range = GetEdgeIneqRange(edge_ite, variable_range);
+  PermIneqBound_Range edge_range = GetEdgeIneqRangeRT(edge_ite, variable_range);
   EXPECT_EQ(20 - 0, edge_range.lower_bound_s_upper_bound);
   EXPECT_EQ(18 - 10, edge_range.upper_bound_s_lower_bound);
   std::cout << "Valid range for edge(1,2): "
@@ -237,7 +237,7 @@ TEST_F(PermutationTest18_n3, select_feasible_perm) {
   variable_range.lower_bound.print();
   variable_range.upper_bound.print();
   Edge edge_ite(0, 1);
-  PermIneqBound_Range edge_range = GetEdgeIneqRange(edge_ite, variable_range);
+  PermIneqBound_Range edge_range = GetEdgeIneqRangeRT(edge_ite, variable_range);
   EXPECT_EQ(10 - 0, edge_range.lower_bound_s_upper_bound);
   EXPECT_EQ(1 - 17, edge_range.upper_bound_s_lower_bound);
   TwoTaskPermutationsIterator iterator(
@@ -257,7 +257,8 @@ TEST_F(PermutationTest18_n3, skip_worse_perm1) {
   VariableRange variable_range =
       FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
   Edge edge_ite01(0, 1);
-  PermIneqBound_Range edge_range = GetEdgeIneqRange(edge_ite01, variable_range);
+  PermIneqBound_Range edge_range =
+      GetEdgeIneqRangeRT(edge_ite01, variable_range);
   TwoTaskPermutationsIterator iterator01(
       task_sets_perms.adjacent_two_task_permutations_[0], edge_range);
   EXPECT_EQ(3, iterator01.size());
@@ -285,7 +286,8 @@ TEST_F(PermutationTest18_n3, skip_worse_perm2) {
   VariableRange variable_range =
       FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
   Edge edge_ite01(0, 1);
-  PermIneqBound_Range edge_range = GetEdgeIneqRange(edge_ite01, variable_range);
+  PermIneqBound_Range edge_range =
+      GetEdgeIneqRangeRT(edge_ite01, variable_range);
   TwoTaskPermutationsIterator iterator01(
       task_sets_perms.adjacent_two_task_permutations_[0], edge_range);
   EXPECT_EQ(3, iterator01.size());
@@ -309,7 +311,7 @@ TEST_F(PermutationTest18_n3, skip_worse_perm2) {
   VariableRange variable_range12 =
       FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm_next_lv);
   PermIneqBound_Range edge_range12 =
-      GetEdgeIneqRange(edge_ite12, variable_range12);
+      GetEdgeIneqRangeRT(edge_ite12, variable_range12);
   TwoTaskPermutationsIterator iterator12(
       task_sets_perms.adjacent_two_task_permutations_[1], edge_range12);
   EXPECT_EQ(2, iterator12.size());

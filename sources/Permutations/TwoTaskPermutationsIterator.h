@@ -24,7 +24,7 @@ struct PermIneqBound_Range {
   int upper_bound_s_lower_bound;
 };
 
-inline PermIneqBound_Range GetEdgeIneqRange(
+inline PermIneqBound_Range GetEdgeIneqRangeRT(
     const Edge& edge, const VariableRange& variable_range) {
   int low = variable_range.upper_bound.at(edge.from_id).deadline -
             variable_range.lower_bound.at(edge.to_id).offset;
@@ -32,6 +32,19 @@ inline PermIneqBound_Range GetEdgeIneqRange(
             variable_range.upper_bound.at(edge.to_id).offset;
   return PermIneqBound_Range{low, upp};
 }
+
+inline PermIneqBound_Range GetEdgeIneqRangeDA(
+    const Edge& edge, const VariableRange& variable_range) {
+  int low = variable_range.upper_bound.at(edge.to_id).offset -
+            variable_range.lower_bound.at(edge.from_id).deadline;
+  int upp = variable_range.lower_bound.at(edge.to_id).offset -
+            variable_range.upper_bound.at(edge.from_id).deadline;
+  return PermIneqBound_Range{low, upp};
+}
+
+PermIneqBound_Range GetEdgeIneqRange(const Edge& edge,
+                                     const VariableRange& variable_range,
+                                     const std::string& type_trait);
 
 class TwoTaskPermutationsIterator : public TwoTaskPermutations {
  public:
