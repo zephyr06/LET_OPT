@@ -196,15 +196,15 @@ TEST_F(PermutationTest25_n3, IsPermConflicted_CheckAllWithSameSource_DA) {
       variable_od_range, *perm12[1], graph_of_all_ca_chains));
 }
 
-// TEST_F(PermutationTest25_n3, overall_opt) {
-//   TaskSetOptEnumWSkip task_sets_perms =
-//       TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
-//   task_sets_perms.adjacent_two_task_permutations_[0].print();
-//   task_sets_perms.adjacent_two_task_permutations_[1].print();
-//   int obj_find =
-//       task_sets_perms.PerformOptimizationEnumerate<ObjDataAgeApprox>();
-//   EXPECT_EQ(300, obj_find);
-// }
+TEST_F(PermutationTest25_n3, overall_opt) {
+  TaskSetOptEnumWSkip task_sets_perms =
+      TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
+  task_sets_perms.adjacent_two_task_permutations_[0].print();
+  task_sets_perms.adjacent_two_task_permutations_[1].print();
+  int obj_find =
+      task_sets_perms.PerformOptimizationEnumerate<ObjDataAgeApprox>();
+  EXPECT_EQ(300, obj_find);
+}
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
