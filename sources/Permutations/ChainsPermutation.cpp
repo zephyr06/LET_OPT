@@ -109,7 +109,9 @@ bool IsTwoPermConflicted_SameSource(const VariableRange& variable_od_range,
         GetDeadlineRange_DAPerm(variable_od_range, perm_curr.inequality_);
   } else
     CoutError("Unrecognized type_trait_ in IsTwoPermConflicted_SameSource!");
-  return Overlap(deadline_range_from_prev, deadline_range_from_curr) == 0;
+  return Overlap(deadline_range_from_prev, deadline_range_from_curr) == 0 &&
+         (!(WhetherSerialAdjacent(deadline_range_from_prev,
+                                  deadline_range_from_curr)));
 }
 
 // return true if conflicted, false if safe
@@ -132,7 +134,9 @@ bool IsTwoPermConflicted_SameSink(const VariableRange& variable_od_range,
   } else
     CoutError("Unrecognized type_trait_ in IsTwoPermConflicted_SameSource!");
 
-  return Overlap(offset_range_from_prev, offset_range_from_curr) == 0;
+  return Overlap(offset_range_from_prev, offset_range_from_curr) == 0 &&
+         (!WhetherSerialAdjacent(offset_range_from_prev,
+                                 offset_range_from_curr));
 }
 
 // return true if conflicted, false if safe
