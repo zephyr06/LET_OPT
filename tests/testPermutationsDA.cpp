@@ -234,6 +234,39 @@ TEST_F(PermutationTest25_n3, overall_opt_Sort) {
   int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAgeApprox>();
   EXPECT_EQ(300, obj_find);
 }
+class PermutationTest6_n5 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n5_v6");
+    type_trait = "DataAge";
+  }
+
+ public:
+  std::string type_trait;
+};
+
+TEST_F(PermutationTest6_n5, GetEdgeIneqRangeDA) {
+  VariableRange variable_range = FindVariableRange(dag_tasks);
+  variable_range.lower_bound.print();
+  variable_range.upper_bound.print();
+  PermIneqBound_Range range = GetEdgeIneqRangeDA(Edge(0, 4), variable_range);
+  EXPECT_EQ(50 - 69, range.lower_bound_s_upper_bound);
+  EXPECT_EQ(0 - 200, range.upper_bound_s_lower_bound);
+}
+
+TEST_F(PermutationTest6_n5, overall_opt_Sort) {
+  TaskSetOptSorted task_sets_perms =
+      TaskSetOptSorted(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
+  task_sets_perms.adjacent_two_task_permutations_[0].print();
+  task_sets_perms.adjacent_two_task_permutations_[1].print();
+  int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAgeApprox>();
+
+  TaskSetOptEnumWSkip task_sets_perms_enum =
+      TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
+  EXPECT_EQ(
+      task_sets_perms_enum.PerformOptimizationEnumerate<ObjDataAgeApprox>(),
+      obj_find);
+}
+
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);

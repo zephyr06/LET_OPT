@@ -322,27 +322,55 @@ void UpdateVariablesRangePrevDeadline(VariableRange& variable_range,
                                       int prev_id, int next_id,
                                       bool& whether_changed,
                                       const PermutationInequality& ineq) {
-  UpdateVariableSafeMin(
-      variable_range.lower_bound[prev_id].deadline,
-      variable_range.lower_bound[next_id].offset + ineq.lower_bound_ + 1,
-      whether_changed);
-  UpdateVariableSafeMax(
-      variable_range.upper_bound[prev_id].deadline,
-      variable_range.upper_bound[next_id].offset + ineq.upper_bound_,
-      whether_changed);
+  if (ineq.type_trait_ == "ReactionTimeApprox" ||
+      ineq.type_trait_ == "ReactionTime") {
+    UpdateVariableSafeMin(
+        variable_range.lower_bound[prev_id].deadline,
+        variable_range.lower_bound[next_id].offset + ineq.lower_bound_ + 1,
+        whether_changed);
+    UpdateVariableSafeMax(
+        variable_range.upper_bound[prev_id].deadline,
+        variable_range.upper_bound[next_id].offset + ineq.upper_bound_,
+        whether_changed);
+  } else if (ineq.type_trait_ == "DataAgeApprox" ||
+             ineq.type_trait_ == "DataAge") {
+    UpdateVariableSafeMin(
+        variable_range.lower_bound[prev_id].deadline,
+        variable_range.lower_bound[next_id].offset - ineq.upper_bound_ + 1,
+        whether_changed);
+    UpdateVariableSafeMax(
+        variable_range.upper_bound[prev_id].deadline,
+        variable_range.upper_bound[next_id].offset - ineq.lower_bound_,
+        whether_changed);
+  } else
+    CoutError("Unrecognized type_trait_ in UpdateVariablesRangePrevDeadline!");
 }
 // in-place update
 void UpdateVariablesRangeNextOffset(VariableRange& variable_range, int prev_id,
                                     int next_id, bool& whether_changed,
                                     const PermutationInequality& ineq) {
-  UpdateVariableSafeMax(
-      variable_range.upper_bound[next_id].offset,
-      variable_range.upper_bound[prev_id].deadline - ineq.lower_bound_ - 1,
-      whether_changed);
-  UpdateVariableSafeMin(
-      variable_range.lower_bound[next_id].offset,
-      variable_range.lower_bound[prev_id].deadline - ineq.upper_bound_,
-      whether_changed);
+  if (ineq.type_trait_ == "ReactionTimeApprox" ||
+      ineq.type_trait_ == "ReactionTime") {
+    UpdateVariableSafeMax(
+        variable_range.upper_bound[next_id].offset,
+        variable_range.upper_bound[prev_id].deadline - ineq.lower_bound_ - 1,
+        whether_changed);
+    UpdateVariableSafeMin(
+        variable_range.lower_bound[next_id].offset,
+        variable_range.lower_bound[prev_id].deadline - ineq.upper_bound_,
+        whether_changed);
+  } else if (ineq.type_trait_ == "DataAgeApprox" ||
+             ineq.type_trait_ == "DataAge") {
+    UpdateVariableSafeMax(
+        variable_range.upper_bound[next_id].offset,
+        variable_range.upper_bound[prev_id].deadline + ineq.upper_bound_ - 1,
+        whether_changed);
+    UpdateVariableSafeMin(
+        variable_range.lower_bound[next_id].offset,
+        variable_range.lower_bound[prev_id].deadline + ineq.lower_bound_,
+        whether_changed);
+  } else
+    CoutError("Unrecognized type_trait_ in UpdateVariablesRangePrevDeadline!");
 }
 
 VariableRange FindPossibleVariableOD(const DAG_Model& dag_tasks,

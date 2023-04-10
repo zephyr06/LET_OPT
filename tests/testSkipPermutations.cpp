@@ -65,7 +65,6 @@ TEST_F(PermutationTest1, obj_) {
   EXPECT_THAT(obj_curr, testing::Le(res.second));
 }
 
-// TODO: add it to TaskSetPermutation
 TEST_F(PermutationTest1, FindBestPossibleVariableOD) {
   TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
   TwoTaskPermutations perm24(2, 4, dag_tasks, tasks_info, "ReactionTime");
@@ -114,7 +113,54 @@ TEST_F(PermutationTest1, FindBestPossibleVariableOD) {
   EXPECT_EQ(19, variable_od[4].offset);
   EXPECT_EQ(890, variable_od[4].deadline);
 }
+// TODO: add it to TaskSetPermutation
+TEST_F(PermutationTest1, FindBestPossibleVariableOD_DA) {
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm24(2, 4, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info, "DataAge");
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm12[8]);
+  chains_perm.push_back(perm24[11]);
+  chains_perm.push_back(perm23[3]);
+  chains_perm.print();
 
+  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_, "DataAge");
+  VariableRange variable_range = FindPossibleVariableOD(
+      dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm);
+  auto rta = GetResponseTimeTaskSet(dag_tasks);
+
+  EXPECT_EQ(0, variable_range.lower_bound[1].offset);
+  EXPECT_EQ(341, variable_range.lower_bound[1].deadline);  // modified
+  EXPECT_EQ(82, variable_range.upper_bound[1].offset);     // true max is 82
+  EXPECT_EQ(359, variable_range.upper_bound[1].deadline);
+
+  EXPECT_EQ(0, variable_range.lower_bound[2].offset);
+  EXPECT_EQ(1, variable_range.lower_bound[2].deadline);
+  EXPECT_EQ(9, variable_range.upper_bound[2].offset);
+  EXPECT_EQ(10, variable_range.upper_bound[2].deadline);
+
+  EXPECT_EQ(151, variable_range.lower_bound[3].offset);       // modified
+  EXPECT_EQ(159 + 10, variable_range.upper_bound[3].offset);  // modified
+  EXPECT_EQ(165, variable_range.lower_bound[3].deadline);     // true min is 165
+  EXPECT_EQ(200, variable_range.upper_bound[3].deadline);
+
+  EXPECT_EQ(1, variable_range.lower_bound[4].offset);
+  EXPECT_EQ(19, variable_range.upper_bound[4].offset);  // modified
+  EXPECT_EQ(890, variable_range.lower_bound[4].deadline);
+  EXPECT_EQ(1000, variable_range.upper_bound[4].deadline);
+
+  VariableOD variable_od = FindBestPossibleVariableOD(
+      dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm);
+
+  EXPECT_EQ(82, variable_od[1].offset);
+  EXPECT_EQ(341, variable_od[1].deadline);
+  EXPECT_EQ(9, variable_od[2].offset);
+  EXPECT_EQ(1, variable_od[2].deadline);
+  EXPECT_EQ(169, variable_od[3].offset);
+  EXPECT_EQ(165, variable_od[3].deadline);
+  EXPECT_EQ(19, variable_od[4].offset);
+  EXPECT_EQ(890, variable_od[4].deadline);
+}
 class PermutationTest2 : public ::testing::Test {
  protected:
   void SetUp() override {
