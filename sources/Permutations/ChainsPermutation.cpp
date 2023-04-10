@@ -144,16 +144,29 @@ bool IsTwoPermConflicted_SameSink(const VariableRange& variable_od_range,
 bool IsTwoPermConflicted_SerialConnect(const VariableRange& variable_od_range,
                                        const SinglePairPermutation& perm_prev,
                                        const SinglePairPermutation& perm_curr) {
+  Interval offset_curr_range;
+  Interval deadline_curr_range;
+  int rta_curr =
+      variable_od_range.lower_bound.at(perm_curr.GetPrevTaskId()).deadline;
   if (perm_prev.GetNextTaskId() == perm_curr.GetPrevTaskId()) {
-    Interval offset_curr_range =
-        GetOffsetRange_RTPerm(variable_od_range, perm_prev.inequality_);
-    Interval deadline_curr_range =
-        GetDeadlineRange_RTPerm(variable_od_range, perm_curr.inequality_);
-    int rta_curr =
-        variable_od_range.lower_bound.at(perm_curr.GetPrevTaskId()).deadline;
-    if (offset_curr_range.start + rta_curr > deadline_curr_range.getFinish()) {
-      return true;
-    }
+    if (perm_prev.type_trait_ == "ReactionTimeApprox" ||
+        perm_prev.type_trait_ == "ReactionTime") {
+      offset_curr_range =
+          GetOffsetRange_RTPerm(variable_od_range, perm_prev.inequality_);
+      deadline_curr_range =
+          GetDeadlineRange_RTPerm(variable_od_range, perm_curr.inequality_);
+
+    } else if (perm_prev.type_trait_ == "DataAgeApprox" ||
+               perm_prev.type_trait_ == "DataAge") {
+      offset_curr_range =
+          GetOffsetRange_DAPerm(variable_od_range, perm_prev.inequality_);
+      deadline_curr_range =
+          GetDeadlineRange_DAPerm(variable_od_range, perm_curr.inequality_);
+    } else
+      CoutError("Unrecognized type_trait_ in IsTwoPermConflicted_SameSource!");
+  }
+  if (offset_curr_range.start + rta_curr > deadline_curr_range.getFinish()) {
+    return true;
   }
   return false;
 }
