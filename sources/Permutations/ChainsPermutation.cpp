@@ -160,10 +160,10 @@ bool IsTwoPermConflicted_SerialConnect(const VariableRange& variable_od_range,
         variable_od_range.lower_bound.at(perm_curr.GetPrevTaskId()).deadline;
     int offset_curr_max = deadline_curr_max - rta_curr;
     if (offset_curr_max < offset_curr_min) {
-      return false;
+      return true;
     }
   }
-  return true;
+  return false;
 }
 
 // return true if conflicted, false if safe
@@ -230,9 +230,9 @@ bool ChainsPermutation::IsPermConflicted_CheckAllSerialConnect(
                  // chain yet, therefore no conflictions
     const SinglePairPermutation& perm_ite =
         *permutation_chain_map_.at(edge_ite);
-    if (!IsTwoPermConflicted_SerialConnect(variable_od_range, perm_ite,
-                                           perm_curr))
-      return false;
+    if (IsTwoPermConflicted_SerialConnect(variable_od_range, perm_ite,
+                                          perm_curr))
+      return true;
   }
 
   // check serial case: perm_curr -> perm_ite
@@ -247,12 +247,12 @@ bool ChainsPermutation::IsPermConflicted_CheckAllSerialConnect(
       continue;
     const SinglePairPermutation& perm_ite =
         *permutation_chain_map_.at(edge_ite);
-    if (!IsTwoPermConflicted_SerialConnect(variable_od_range, perm_curr,
-                                           perm_ite))
-      return false;
+    if (IsTwoPermConflicted_SerialConnect(variable_od_range, perm_curr,
+                                          perm_ite))
+      return true;
   }
 
-  return true;
+  return false;
 }
 
 bool ChainsPermutation::IsValid(
@@ -262,8 +262,8 @@ bool ChainsPermutation::IsValid(
   int perm_single_chain_size = permutation_chain_map_.size();
   if (perm_single_chain_size > 0) {
     // TODO: this function has not been fully tested
-    if (!IsPermConflicted_CheckAllSerialConnect(variable_od_range, perm_curr,
-                                                graph_of_all_ca_chains))
+    if (IsPermConflicted_CheckAllSerialConnect(variable_od_range, perm_curr,
+                                               graph_of_all_ca_chains))
       return false;
     if (IsPermConflicted_CheckAllWithSameSource(variable_od_range, perm_curr,
                                                 graph_of_all_ca_chains))

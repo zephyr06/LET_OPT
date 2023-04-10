@@ -434,6 +434,82 @@ TEST_F(PermutationTest5, ChainsPermutation_valid_v1) {
   EXPECT_EQ(6, graph_chains.next_tasks_[25][0]);
 }
 
+class PermutationTest7_n30 : public PermutationTestBase {
+  void SetUp() override { SetUpBase("test_n30_v7"); }
+};
+TEST_F(PermutationTest7_n30, GraphOfChains) {
+  // auto task_sets_perms = TaskSetPermutation(dag_tasks, dag_tasks.chains_);
+  GraphOfChains graph_of_all_ca_chains_(dag_tasks.chains_);
+  EXPECT_EQ(12, graph_of_all_ca_chains_.edge_records_.size());
+}
+
+TEST(ReadGlobalVariable, v1) {
+  EXPECT_EQ("RM", GlobalVariablesDAGOpt::priorityMode);
+}
+
+class PermutationTest_2chain_v1 : public ::testing::Test {
+ protected:
+  void SetUp() override {
+    dag_tasks = ReadDAG_Tasks(
+        GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v18.csv",
+        "orig", 2);
+    tasks = dag_tasks.GetTaskSet();
+    tasks_info = TaskSetInfoDerived(tasks);
+    task0 = tasks[0];
+    task1 = tasks[1];
+    task2 = tasks[2];
+    job00 = JobCEC(0, 0);
+    job01 = JobCEC(0, 1);
+    job10 = JobCEC(1, 0);
+    job20 = JobCEC(2, 0);
+
+    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info, "ReactionTime");
+    perm03 = TwoTaskPermutations(0, 3, dag_tasks, tasks_info, "ReactionTime");
+    perm34 = TwoTaskPermutations(3, 4, dag_tasks, tasks_info, "ReactionTime");
+    perm13 = TwoTaskPermutations(1, 3, dag_tasks, tasks_info, "ReactionTime");
+
+    variable_od = VariableOD(tasks);
+    dag_tasks.chains_[0] = {0, 3, 4};
+    dag_tasks.chains_.push_back({1, 3, 4});
+  };
+
+  DAG_Model dag_tasks;
+  TaskSet tasks;
+  TaskSetInfoDerived tasks_info;
+  Task task0;
+  Task task1;
+  Task task2;
+  JobCEC job00;
+  JobCEC job01;
+  JobCEC job10;
+  JobCEC job20;
+
+  TwoTaskPermutations perm01;
+  TwoTaskPermutations perm03;
+  TwoTaskPermutations perm34;
+  TwoTaskPermutations perm13;
+  VariableOD variable_od;
+};
+
+TEST_F(PermutationTest_2chain_v1, GetUnvisitedFutureEdges) {
+  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_,
+                                      "ReactionTime");
+  EXPECT_EQ(2, task_sets_perms.GetUnvisitedFutureEdges(0).size());
+  EXPECT_EQ(Edge(3, 4), task_sets_perms.GetUnvisitedFutureEdges(0)[1]);
+}
+TEST_F(PermutationTest_2chain_v1, TaskSetPermutation) {
+  // dag_tasks.chains_[0] = {0, 3, 4};
+  // dag_tasks.chains_.push_back({1, 3, 4});
+  auto res = PerformTOM_OPT_EnumW_Skip<ObjReactionTime>(dag_tasks);
+  EXPECT_THAT(res.obj_, testing::Le(128 + 28));
+}
+TEST_F(PermutationTest_2chain_v1, TaskSetPermutation_sort) {
+  // dag_tasks.chains_[0] = {0, 3, 4};
+  // dag_tasks.chains_.push_back({1, 3, 4});
+  auto res = PerformTOM_OPT_Sort<ObjReactionTime>(dag_tasks);
+  EXPECT_THAT(res.obj_, testing::Le(128 + 28));
+}
+
 class PermutationTest6 : public ::testing::Test {
  protected:
   void SetUp() override {
@@ -569,82 +645,42 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllWithSameSink_ret_false) {
   EXPECT_TRUE(chains_perm.IsPermConflicted_CheckAllWithSameSink(
       variable_od_range, *perm31[4], graph_of_all_ca_chains));
 }
+TEST_F(PermutationTest6, IsPermConflicted_CheckAllSerialConnect) {
+  // task 0,1,3's periods are 100,400,100
+  TwoTaskPermutations perm43(4, 3, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm04(0, 4, dag_tasks, tasks_info, "ReactionTime");
+  perm04.print();
+  perm43.print();
+  std::cout << "****************************\n";
+  // perm04[0]->print();
+  // perm43[0]->print();
+  dag_tasks.chains_ = {{4, 3}, {0, 4}};
+  GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
+  VariableRange variable_od_range(FindVariableRange(dag_tasks));
 
-class PermutationTest7_n30 : public PermutationTestBase {
-  void SetUp() override { SetUpBase("test_n30_v7"); }
-};
-TEST_F(PermutationTest7_n30, GraphOfChains) {
-  // auto task_sets_perms = TaskSetPermutation(dag_tasks, dag_tasks.chains_);
-  GraphOfChains graph_of_all_ca_chains_(dag_tasks.chains_);
-  EXPECT_EQ(12, graph_of_all_ca_chains_.edge_records_.size());
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm04[0]);
+  EXPECT_TRUE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
+      variable_od_range, *perm43[0], graph_of_all_ca_chains));
+  EXPECT_TRUE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
+      variable_od_range, *perm43[1], graph_of_all_ca_chains));
+  EXPECT_TRUE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
+      variable_od_range, *perm43[2], graph_of_all_ca_chains));
+  EXPECT_TRUE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
+      variable_od_range, *perm43[3], graph_of_all_ca_chains));
+
+  chains_perm.clear();
+  chains_perm.push_back(perm04[5]);
+  EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
+      variable_od_range, *perm43[0], graph_of_all_ca_chains));
+  EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
+      variable_od_range, *perm43[1], graph_of_all_ca_chains));
+  EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
+      variable_od_range, *perm43[2], graph_of_all_ca_chains));
+  EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
+      variable_od_range, *perm43[3], graph_of_all_ca_chains));
 }
 
-TEST(ReadGlobalVariable, v1) {
-  EXPECT_EQ("RM", GlobalVariablesDAGOpt::priorityMode);
-}
-
-class PermutationTest_2chain_v1 : public ::testing::Test {
- protected:
-  void SetUp() override {
-    dag_tasks = ReadDAG_Tasks(
-        GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v18.csv",
-        "orig", 2);
-    tasks = dag_tasks.GetTaskSet();
-    tasks_info = TaskSetInfoDerived(tasks);
-    task0 = tasks[0];
-    task1 = tasks[1];
-    task2 = tasks[2];
-    job00 = JobCEC(0, 0);
-    job01 = JobCEC(0, 1);
-    job10 = JobCEC(1, 0);
-    job20 = JobCEC(2, 0);
-
-    perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info, "ReactionTime");
-    perm03 = TwoTaskPermutations(0, 3, dag_tasks, tasks_info, "ReactionTime");
-    perm34 = TwoTaskPermutations(3, 4, dag_tasks, tasks_info, "ReactionTime");
-    perm13 = TwoTaskPermutations(1, 3, dag_tasks, tasks_info, "ReactionTime");
-
-    variable_od = VariableOD(tasks);
-    dag_tasks.chains_[0] = {0, 3, 4};
-    dag_tasks.chains_.push_back({1, 3, 4});
-  };
-
-  DAG_Model dag_tasks;
-  TaskSet tasks;
-  TaskSetInfoDerived tasks_info;
-  Task task0;
-  Task task1;
-  Task task2;
-  JobCEC job00;
-  JobCEC job01;
-  JobCEC job10;
-  JobCEC job20;
-
-  TwoTaskPermutations perm01;
-  TwoTaskPermutations perm03;
-  TwoTaskPermutations perm34;
-  TwoTaskPermutations perm13;
-  VariableOD variable_od;
-};
-
-TEST_F(PermutationTest_2chain_v1, GetUnvisitedFutureEdges) {
-  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_,
-                                      "ReactionTime");
-  EXPECT_EQ(2, task_sets_perms.GetUnvisitedFutureEdges(0).size());
-  EXPECT_EQ(Edge(3, 4), task_sets_perms.GetUnvisitedFutureEdges(0)[1]);
-}
-TEST_F(PermutationTest_2chain_v1, TaskSetPermutation) {
-  // dag_tasks.chains_[0] = {0, 3, 4};
-  // dag_tasks.chains_.push_back({1, 3, 4});
-  auto res = PerformTOM_OPT_EnumW_Skip<ObjReactionTime>(dag_tasks);
-  EXPECT_THAT(res.obj_, testing::Le(128 + 28));
-}
-TEST_F(PermutationTest_2chain_v1, TaskSetPermutation_sort) {
-  // dag_tasks.chains_[0] = {0, 3, 4};
-  // dag_tasks.chains_.push_back({1, 3, 4});
-  auto res = PerformTOM_OPT_Sort<ObjReactionTime>(dag_tasks);
-  EXPECT_THAT(res.obj_, testing::Le(128 + 28));
-}
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
