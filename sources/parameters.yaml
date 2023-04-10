@@ -1,7 +1,7 @@
 %YAML:1.0
-debugMode: 0
+debugMode: 1
 TIME_LIMIT: 600 # seconds, -1 means unlimited time
-SKIP_PERM: 2
+SKIP_PERM: 0
 SearchDP_Friendly: 1
 # the proportion of permutations to keep! 1 means no sampling
 SAMPLE_SMALL_TASKS: 0
@@ -18,7 +18,7 @@ priorityMode: RM
 # test_n5_v9 test_n5_v16 requies many permutations
 # test_n5_v41 test_n30_v2  test_n5_v22  test_n3_v24
 # test_n5_v27 is a long case
-testDataSetName: test_n5_v49
+testDataSetName: test_n3_v25
 TIME_SCALE_FACTOR: 10
 CHAIN_NUMBER: 2
 
