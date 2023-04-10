@@ -681,6 +681,39 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllSerialConnect) {
       variable_od_range, *perm43[3], graph_of_all_ca_chains));
 }
 
+class PermutationTest5_n5 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n5_v5");
+    type_trait = "ReactionTime";
+  }
+
+ public:
+  std::string type_trait;
+};
+TEST_F(PermutationTest5_n5, IsPermConflicted_CheckAllWithSameSink) {
+  TwoTaskPermutations perm14(1, 4, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm34(3, 4, dag_tasks, tasks_info, "ReactionTime");
+  perm14.print();
+  perm34.print();
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm34[0]);
+  GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
+  VariableRange variable_od_range(FindVariableRange(dag_tasks));
+  variable_od_range.lower_bound.print();
+  variable_od_range.upper_bound.print();
+  Interval intv1 =
+      GetOffsetRange_RTPerm(variable_od_range, perm14[0]->inequality_);
+
+  EXPECT_EQ(0, intv1.start);
+  EXPECT_EQ(0, intv1.start + intv1.length);  // before clap: 369 + 1 + 100
+
+  Interval intv2 =
+      GetOffsetRange_RTPerm(variable_od_range, perm34[0]->inequality_);
+  EXPECT_EQ(0, intv2.start);
+  EXPECT_EQ(0, intv2.start + intv2.length);  // before clap: 300 + 500
+  EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllWithSameSink(
+      variable_od_range, *perm14[0], graph_of_all_ca_chains));
+}
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);

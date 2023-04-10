@@ -35,6 +35,6 @@ inline bool compare(Interval &i1, Interval &i2) {
  */
 double Overlap(Interval &v1, Interval &v2);
 
-bool WhetherAdjacent(const Interval &v1, const Interval &v2);
+bool WhetherSerialAdjacent(const Interval &v1, const Interval &v2);
 
 double IntervalOverlapError(std::vector<Interval> &intervalVec);

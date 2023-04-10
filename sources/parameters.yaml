@@ -1,5 +1,5 @@
 %YAML:1.0
-debugMode: 1
+debugMode: 0
 TIME_LIMIT: 600 # seconds, -1 means unlimited time
 SKIP_PERM: 0
 SearchDP_Friendly: 1
