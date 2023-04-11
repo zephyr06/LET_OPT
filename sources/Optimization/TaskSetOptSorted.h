@@ -40,8 +40,10 @@ class TaskSetOptSorted : public TaskSetPermutation {
     PermIneqBound_Range perm_ineq_bound_range = GetEdgeIneqRange(
         adjacent_two_task_permutations_[position].GetEdge(),
         variable_range_w_chains, ObjectiveFunction::type_trait);
+    BeginTimer("iterator_constructor");
     TwoTaskPermutationsIterator iterator(
         adjacent_two_task_permutations_[position], perm_ineq_bound_range);
+    EndTimer("iterator_constructor");
 
     int count = iterator.size();
     std::vector<Edge> unvisited_future_edges =
