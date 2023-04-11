@@ -1,7 +1,7 @@
 #pragma once
 #include "sources/ObjectiveFunction/ObjDataAge.h"
 namespace DAG_SPACE {
-// TODO: test this class!
+
 class ObjDataAgeApprox {
  public:
   static const std::string type_trait;

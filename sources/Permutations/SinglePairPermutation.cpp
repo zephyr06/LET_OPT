@@ -139,10 +139,9 @@ void SinglePairPermutation::PopMatchJobPair(const JobCEC& job_curr,
 bool IfSkipAnotherPerm(const SinglePairPermutation& perm_base,
                        const SinglePairPermutation& perm_another,
                        const std::string& obj_trait) {
-  // TODO: remove "ReactionTime" because it cannot be skipped safely?
+  // TODO: remove "ReactionTime"/"DataAge" because it cannot be skipped safely?
   if (obj_trait == "ReactionTime" || obj_trait == "ReactionTimeApprox")
     return IfSkipAnotherPermRT(perm_base, perm_another);
-  // TODO: check the following, seek theoretical verification
   else if (obj_trait == "DataAge" || obj_trait == "DataAgeApprox")
     return IfSkipAnotherPermDA(perm_base, perm_another);
   else

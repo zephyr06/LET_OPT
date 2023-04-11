@@ -218,7 +218,7 @@ bool ChainsPermutation::IsPermConflicted_CheckAllWithSameSink(
   return false;
 }
 
-// TODO: return true if conflicted, false if safe
+// return true if conflicted, false if safe
 bool ChainsPermutation::IsPermConflicted_CheckAllSerialConnect(
     const VariableRange& variable_od_range,
     const SinglePairPermutation& perm_curr,

@@ -113,7 +113,7 @@ TEST_F(PermutationTest1, FindBestPossibleVariableOD) {
   EXPECT_EQ(19, variable_od[4].offset);
   EXPECT_EQ(890, variable_od[4].deadline);
 }
-// TODO: add it to TaskSetPermutation
+
 TEST_F(PermutationTest1, FindBestPossibleVariableOD_DA) {
   TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
   TwoTaskPermutations perm24(2, 4, dag_tasks, tasks_info, "DataAge");
