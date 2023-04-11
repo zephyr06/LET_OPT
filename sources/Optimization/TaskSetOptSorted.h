@@ -58,9 +58,7 @@ class TaskSetOptSorted : public TaskSetPermutation {
       if (iterator.empty()) break;
 
       const auto& perm_sing_curr = iterator.pop_front();
-      // TODO: variable_range_od_ could be updated with chains_perm
-      if (chains_perm.IsValid(variable_range_w_chains,
-                              *perm_sing_curr,  // variable_range_w_chains
+      if (chains_perm.IsValid(variable_range_w_chains, *perm_sing_curr,
                               graph_of_all_ca_chains_, rta_)) {
         chains_perm.push_back(perm_sing_curr);
 

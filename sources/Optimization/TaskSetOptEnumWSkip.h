@@ -47,10 +47,11 @@ class TaskSetOptEnumWSkip : public TaskSetPermutation {
       return;
     }
 
+    VariableRange variable_range_w_chains =
+        FindPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm);
     PermIneqBound_Range perm_ineq_bound_range = GetEdgeIneqRange(
         adjacent_two_task_permutations_[position].GetEdge(),
-        FindPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm),
-        ObjectiveFunction::type_trait);
+        variable_range_w_chains, ObjectiveFunction::type_trait);
     TwoTaskPermutationsIterator iterator(
         adjacent_two_task_permutations_[position], perm_ineq_bound_range);
 
@@ -58,7 +59,7 @@ class TaskSetOptEnumWSkip : public TaskSetPermutation {
       if (ifTimeout(start_time_)) break;
       const auto& perm_sing_curr = iterator.pop_front();
 
-      if (chains_perm.IsValid(variable_range_od_, *perm_sing_curr,
+      if (chains_perm.IsValid(variable_range_w_chains, *perm_sing_curr,
                               graph_of_all_ca_chains_, rta_)) {
         chains_perm.push_back(perm_sing_curr);
 
