@@ -153,10 +153,10 @@ bool ExamVariableFeasibility(const VariableOD& variable,
 //      o_{task_next_id} + lower_bound < d_{task_prev_id} ;
 //      d_{task_prev_id} <= o_{task_next_id} + upper_bound ;
 //  const std::vector<int>& rta
-void SetVariableHelperSingleEdge(const Edge& edge, VariableOD& variable,
-                                 const PermutationInequality& ineq,
-                                 const DAG_Model& dag_tasks,
-                                 const std::vector<int>& rta) {
+void SetVariableHelperSingleEdgeRT(const Edge& edge, VariableOD& variable,
+                                   const PermutationInequality& ineq,
+                                   const DAG_Model& dag_tasks,
+                                   const std::vector<int>& rta) {
 #ifdef PROFILE_CODE
   BeginTimer(__FUNCTION__);
 #endif
@@ -198,8 +198,8 @@ VariableOD FindODFromSingleChainPermutation(
   for (uint i = 0; i < chain.size() - 1; i++) {
     Edge edge(chain[i], chain[i + 1]);
     const SinglePairPermutation& single_perm = *chains_perm[edge];
-    SetVariableHelperSingleEdge(edge, variable, single_perm.inequality_,
-                                dag_tasks, rta);
+    SetVariableHelperSingleEdgeRT(edge, variable, single_perm.inequality_,
+                                  dag_tasks, rta);
     if (!variable.valid_) break;
   }
   if (variable.valid_)
