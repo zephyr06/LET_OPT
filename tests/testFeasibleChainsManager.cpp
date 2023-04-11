@@ -10,7 +10,7 @@ class PermutationTest22 : public PermutationTestBase {
 };
 
 TEST_F(PermutationTest22, IfSkipAnotherPermRT) {
-  TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info, "ReactionTimeApprox");
   perm10.print();
   EXPECT_TRUE(IfSkipAnotherPermRT(*perm10[0], *perm10[1]));
   EXPECT_TRUE(IfSkipAnotherPermRT(*perm10[0], *perm10[2]));
@@ -24,7 +24,7 @@ TEST_F(PermutationTest22, IfSkipAnotherPermRT) {
 }
 
 TEST_F(PermutationTest22, IfSkipAnotherPermDA) {
-  TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm10(1, 0, dag_tasks, tasks_info, "ReactionTimeApprox");
   perm10.print();
   EXPECT_FALSE(IfSkipAnotherPermDA(*perm10[0], *perm10[1]));
   EXPECT_FALSE(IfSkipAnotherPermDA(*perm10[0], *perm10[2]));
@@ -46,9 +46,9 @@ class PermutationTest18 : public PermutationTestBase {
 
 TEST_F(PermutationTest18, FeasibleChainManager) {
   TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_,
-                                     "ReactionTime");
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+                                     "ReactionTimeApprox");
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTimeApprox");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTimeApprox");
   perm01.print();
   perm12.print();
   ChainsPermutation chains_perm;
@@ -56,7 +56,7 @@ TEST_F(PermutationTest18, FeasibleChainManager) {
   chains_perm.push_back(perm12[0]);
   FeasibleChainManager fea_chain_man(
       chains_perm, task_set_perms.adjacent_two_task_permutations_,
-      "ReactionTime");
+      "ReactionTimeApprox");
   EXPECT_EQ(2, fea_chain_man.better_perm_per_chain_per_edge_.size());
   EXPECT_EQ(0,
             fea_chain_man.better_perm_per_chain_per_edge_[Edge(0, 1)].size());
@@ -66,7 +66,7 @@ TEST_F(PermutationTest18, FeasibleChainManager) {
 
 TEST_F(PermutationTest18, IfChainsContainBetterPerm) {
   TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_,
-                                     "ReactionTime");
+                                     "ReactionTimeApprox");
   TwoTaskPermutations perm01 =
       task_set_perms.adjacent_two_task_permutations_[0];
   TwoTaskPermutations perm12 =
@@ -78,7 +78,7 @@ TEST_F(PermutationTest18, IfChainsContainBetterPerm) {
   chains_perm.push_back(perm12[0]);
   FeasibleChainManager fea_chain_man(
       chains_perm, task_set_perms.adjacent_two_task_permutations_,
-      "ReactionTime");
+      "ReactionTimeApprox");
   ChainsPermutation chains_perm_partial;
   chains_perm_partial.push_back(perm01[0]);
   EXPECT_FALSE(IfChainsContainBetterPerm(chains_perm_partial, fea_chain_man));
@@ -96,7 +96,7 @@ TEST_F(PermutationTest18, IfChainsContainBetterPerm) {
   chains_perm2.push_back(perm12[1]);
   FeasibleChainManager fea_chain_man2(
       chains_perm2, task_set_perms.adjacent_two_task_permutations_,
-      "ReactionTime");
+      "ReactionTimeApprox");
 
   chains_perm_partial.clear();
   chains_perm_partial.push_back(perm01[0]);
@@ -107,9 +107,9 @@ TEST_F(PermutationTest18, IfChainsContainBetterPerm) {
 
 TEST_F(PermutationTest18, IfFutureEdgesContainBetterPerm) {
   TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_,
-                                     "ReactionTime");
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+                                     "ReactionTimeApprox");
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTimeApprox");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTimeApprox");
   perm01.print();
   perm12.print();
   ChainsPermutation chains_perm;
@@ -117,7 +117,7 @@ TEST_F(PermutationTest18, IfFutureEdgesContainBetterPerm) {
   chains_perm.push_back(perm12[0]);
   FeasibleChainManager fea_chain_man(
       chains_perm, task_set_perms.adjacent_two_task_permutations_,
-      "ReactionTime");
+      "ReactionTimeApprox");
   std::vector<Edge> unvisited_edges = {Edge(1, 2)};
   EXPECT_FALSE(IfFutureEdgesContainBetterPerm(unvisited_edges, fea_chain_man));
   // unvisited_edges.clear();
@@ -128,7 +128,7 @@ TEST_F(PermutationTest18, IfFutureEdgesContainBetterPerm) {
   chains_perm2.push_back(perm12[1]);
   FeasibleChainManager fea_chain_man2(
       chains_perm2, task_set_perms.adjacent_two_task_permutations_,
-      "ReactionTime");
+      "ReactionTimeApprox");
 
   EXPECT_TRUE(IfFutureEdgesContainBetterPerm(unvisited_edges, fea_chain_man2));
   EXPECT_FALSE(IfFutureEdgesContainBetterPerm({}, fea_chain_man2));
@@ -159,9 +159,9 @@ class PermutationTest23 : public PermutationTestBase {
 };
 TEST_F(PermutationTest23, FeasibleChainManager) {
   TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_,
-                                     "ReactionTime");
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+                                     "ReactionTimeApprox");
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTimeApprox");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTimeApprox");
   perm01.print();
   std::cout << "***********************************\n";
   perm12.print();
@@ -173,7 +173,7 @@ TEST_F(PermutationTest23, FeasibleChainManager) {
                                      // J(1,3)->J(2,2)
   FeasibleChainManager fea_chain_man(
       chains_perm, task_set_perms.adjacent_two_task_permutations_,
-      "ReactionTime");
+      "ReactionTimeApprox");
   EXPECT_EQ(2, fea_chain_man.better_perm_per_chain_per_edge_.size());
   EXPECT_EQ(1,
             fea_chain_man.better_perm_per_chain_per_edge_[Edge(0, 1)].size());
@@ -191,9 +191,9 @@ TEST_F(PermutationTest23, FeasibleChainManager) {
 
 TEST_F(PermutationTest23, FeasibleChainManager_incomplete) {
   TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_,
-                                     "ReactionTime");
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+                                     "ReactionTimeApprox");
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTimeApprox");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTimeApprox");
   perm01.print();
   std::cout << "***********************************\n";
   perm12.print();
@@ -201,7 +201,7 @@ TEST_F(PermutationTest23, FeasibleChainManager_incomplete) {
   chains_perm.push_back(perm01[1]);
   FeasibleChainManager fea_chain_man(
       chains_perm, task_set_perms.adjacent_two_task_permutations_,
-      "ReactionTime");
+      "ReactionTimeApprox");
   EXPECT_EQ(2, fea_chain_man.better_perm_per_chain_per_edge_.size());
   EXPECT_EQ(1,
             fea_chain_man.better_perm_per_chain_per_edge_[Edge(0, 1)].size());
@@ -211,7 +211,7 @@ TEST_F(PermutationTest23, FeasibleChainManager_incomplete) {
 
 TEST_F(PermutationTest23, IfChainsContainBetterPerm) {
   TaskSetOptEnumWSkip task_set_perms(dag_tasks, dag_tasks.chains_,
-                                     "ReactionTime");
+                                     "ReactionTimeApprox");
   TwoTaskPermutations perm01 =
       task_set_perms.adjacent_two_task_permutations_[0];
   TwoTaskPermutations perm12 =
@@ -227,7 +227,7 @@ TEST_F(PermutationTest23, IfChainsContainBetterPerm) {
                                      // J(1,3)->J(2,2)
   FeasibleChainManager fea_chain_man(
       chains_perm, task_set_perms.adjacent_two_task_permutations_,
-      "ReactionTime");
+      "ReactionTimeApprox");
 
   ChainsPermutation chains_perm_partial;
   chains_perm_partial.push_back(perm01[1]);

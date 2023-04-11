@@ -273,9 +273,8 @@ VariableOD LPOptimizer::ExtratOptSolution(IloNumArray &values_optimized) {
 
 // ****************following functions are commented**************
 
-// TODO: consider whether it's necessary to improve efficiency there by
-// reducing problem size;
-// int LPOptimizer::FindMinOffset(int task_id,
+// TO_Commented_DO: consider whether it's necessary to improve efficiency there
+// by reducing problem size; int LPOptimizer::FindMinOffset(int task_id,
 //                                const ChainsPermutation &chains_perm) {
 //   // Interval interval_res(1e8, -1e8);
 //   AddVariablesOD(tasks_info_.N);

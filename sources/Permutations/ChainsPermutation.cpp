@@ -266,7 +266,6 @@ bool ChainsPermutation::IsValid(const VariableRange& variable_od_range,
                                 const std::vector<int>& rta) const {
   int perm_single_chain_size = permutation_chain_map_.size();
   if (perm_single_chain_size > 0) {
-    // TODO: this function has not been fully tested
     if (IsPermConflicted_CheckAllSerialConnect(variable_od_range, perm_curr,
                                                graph_of_all_ca_chains, rta))
       return false;
