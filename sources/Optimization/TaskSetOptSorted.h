@@ -35,8 +35,6 @@ class TaskSetOptSorted : public TaskSetPermutation {
              INFEASIBLE_OBJ;
     }
 
-    std::vector<Edge> unvisited_future_edges =
-        GetUnvisitedFutureEdges(position);
     PermIneqBound_Range perm_ineq_bound_range = GetEdgeIneqRange(
         adjacent_two_task_permutations_[position].GetEdge(),
         FindPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm),
@@ -46,6 +44,8 @@ class TaskSetOptSorted : public TaskSetPermutation {
     bool feasible_prev_chain = false;
 
     int count = iterator.size();
+    std::vector<Edge> unvisited_future_edges =
+        GetUnvisitedFutureEdges(position);
     while (!iterator.empty()) {
       if (ifTimeout(start_time_)) break;
       BeginTimer("RemoveCandidates_related");

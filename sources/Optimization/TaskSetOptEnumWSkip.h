@@ -47,20 +47,27 @@ class TaskSetOptEnumWSkip : public TaskSetPermutation {
       return;
     }
 
-    for (uint i = 0; i < adjacent_two_task_permutations_[position].size();
-         i++) {
+    PermIneqBound_Range perm_ineq_bound_range = GetEdgeIneqRange(
+        adjacent_two_task_permutations_[position].GetEdge(),
+        FindPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm),
+        ObjectiveFunction::type_trait);
+    TwoTaskPermutationsIterator iterator(
+        adjacent_two_task_permutations_[position], perm_ineq_bound_range);
+
+    while (!iterator.empty()) {
       if (ifTimeout(start_time_)) break;
-      if (chains_perm.IsValid(variable_range_od_,
-                              *adjacent_two_task_permutations_[position][i],
+      const auto& perm_sing_curr = iterator.pop_front();
+
+      if (chains_perm.IsValid(variable_range_od_, *perm_sing_curr,
                               graph_of_all_ca_chains_)) {
-        chains_perm.push_back(adjacent_two_task_permutations_[position][i]);
+        chains_perm.push_back(perm_sing_curr);
 
         // try to skip some permutations
         if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {
           IterateAllChainsPermutations<ObjectiveFunction>(position + 1,
                                                           chains_perm);
         }
-        chains_perm.pop(*adjacent_two_task_permutations_[position][i]);
+        chains_perm.pop(*perm_sing_curr);
       }
     }
   }
