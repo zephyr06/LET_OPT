@@ -91,7 +91,7 @@ bool SinglePairPermutation::AppendJobs(
   PermutationInequality perm_merged =
       MergeTwoSinglePermutations(perm_new, inequality_);
   if (perm_merged.IsValid()) {
-    // Add bound constraints // TODO: move it to constructor
+    // Add bound constraints // TODO_Minor: move it to constructor
     PermutationInequality perm_bound = GenerateBoxPermutationConstraints(
         job_curr.taskId, job_match.taskId, variable_od_range, type_trait_);
     perm_merged = MergeTwoSinglePermutations(perm_merged, perm_bound);

@@ -49,7 +49,7 @@ PermIneqBound_Range GetEdgeIneqRange(const Edge& edge,
 class TwoTaskPermutationsIterator : public TwoTaskPermutations {
  public:
   TwoTaskPermutationsIterator() {}
-  // TODO: there is a copy consturctor call, consider adjust it
+  // TODO_Minor: there is a copy consturctor call, consider adjust it
   TwoTaskPermutationsIterator(const TwoTaskPermutations& two_task_perms)
       : TwoTaskPermutations(two_task_perms) {
     for (const auto& ptr : single_permutations_)

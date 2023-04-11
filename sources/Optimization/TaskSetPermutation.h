@@ -27,10 +27,12 @@ class TaskSetPermutation {
   void PrintSinglePermIndex(const ChainsPermutation& chains_perm) const;
   void PrintSinglePermIndex(const ChainsPermutation& chains_perm,
                             const std::vector<Edge>& edges) const;
-  // About optimization
+
   bool WhetherContainInfeasibleSubChains(
       const ChainsPermutation& chains_perm,
       const std::vector<std::vector<int>>& sub_chains);
+
+  // The following functions more related to optimization
 
   template <typename ObjectiveFunction>
   inline double GetBestPossibleObj(
