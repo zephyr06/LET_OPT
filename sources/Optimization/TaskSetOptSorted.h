@@ -27,12 +27,12 @@ class TaskSetOptSorted : public TaskSetPermutation {
   }
 
   template <typename ObjectiveFunction>
-  bool IterateSortedPerms(uint position, ChainsPermutation& chains_perm) {
+  void IterateSortedPerms(uint position, ChainsPermutation& chains_perm) {
     if (position == graph_of_all_ca_chains_.edge_records_
                         .size()) {  // finish iterate all the pair permutations
       iteration_count_++;
-      return EvaluateChainsPermutation<ObjectiveFunction>(chains_perm) !=
-             INFEASIBLE_OBJ;
+      EvaluateChainsPermutation<ObjectiveFunction>(chains_perm);
+      return;
     }
 
     PermIneqBound_Range perm_ineq_bound_range = GetEdgeIneqRange(
@@ -41,7 +41,6 @@ class TaskSetOptSorted : public TaskSetPermutation {
         ObjectiveFunction::type_trait);
     TwoTaskPermutationsIterator iterator(
         adjacent_two_task_permutations_[position], perm_ineq_bound_range);
-    bool feasible_prev_chain = false;
 
     int count = iterator.size();
     std::vector<Edge> unvisited_future_edges =
@@ -64,6 +63,7 @@ class TaskSetOptSorted : public TaskSetPermutation {
       if (iterator.empty()) break;
 
       const auto& perm_sing_curr = iterator.pop_front();
+      // TODO: variable_range_od_ could be updated with chains_perm
       if (chains_perm.IsValid(variable_range_od_, *perm_sing_curr,
                               graph_of_all_ca_chains_)) {
         chains_perm.push_back(perm_sing_curr);
@@ -90,7 +90,6 @@ class TaskSetOptSorted : public TaskSetPermutation {
         CoutWarning("deadlock found during IterateSortedPerms");
       }
     }
-    return feasible_prev_chain;
   }
 
   // chains_perm already pushed the new perm_single
