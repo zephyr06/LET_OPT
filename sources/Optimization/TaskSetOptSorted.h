@@ -35,10 +35,11 @@ class TaskSetOptSorted : public TaskSetPermutation {
       return;
     }
 
+    VariableRange variable_range_w_chains =
+        FindPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm);
     PermIneqBound_Range perm_ineq_bound_range = GetEdgeIneqRange(
         adjacent_two_task_permutations_[position].GetEdge(),
-        FindPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm),
-        ObjectiveFunction::type_trait);
+        variable_range_w_chains, ObjectiveFunction::type_trait);
     TwoTaskPermutationsIterator iterator(
         adjacent_two_task_permutations_[position], perm_ineq_bound_range);
 
@@ -48,24 +49,19 @@ class TaskSetOptSorted : public TaskSetPermutation {
     while (!iterator.empty()) {
       if (ifTimeout(start_time_)) break;
       BeginTimer("RemoveCandidates_related");
-      uint size_before = iterator.size();
       iterator.RemoveCandidates(chains_perm, feasible_chains_.chain_man_vec_,
                                 unvisited_future_edges);
       iterator.RemoveCandidates(chains_perm,
                                 feasible_chains_.chain_man_vec_incomplete_,
                                 unvisited_future_edges);
-      uint size_after = iterator.size();
-      if (size_after < size_before)
-        decrease_success++;
-      else
-        decrease_fail++;
       EndTimer("RemoveCandidates_related");
       if (iterator.empty()) break;
 
       const auto& perm_sing_curr = iterator.pop_front();
       // TODO: variable_range_od_ could be updated with chains_perm
-      if (chains_perm.IsValid(variable_range_od_, *perm_sing_curr,
-                              graph_of_all_ca_chains_)) {
+      if (chains_perm.IsValid(variable_range_w_chains,
+                              *perm_sing_curr,  // variable_range_w_chains
+                              graph_of_all_ca_chains_, rta_)) {
         chains_perm.push_back(perm_sing_curr);
 
         if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {

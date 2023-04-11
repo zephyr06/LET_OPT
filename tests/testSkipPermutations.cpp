@@ -249,14 +249,14 @@ TEST_F(PermutationTest24_n3, select_feasible_perm) {
   std::cout << "Valid range for edge(1,2): "
             << edge_range.lower_bound_s_upper_bound << ", "
             << edge_range.upper_bound_s_lower_bound << "\n";
+  // std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+  EXPECT_FALSE(
+      chains_perm.IsValid(task_sets_perms.variable_range_od_, *perm12[0],
+                          task_sets_perms.graph_of_all_ca_chains_, rta));
 
-  EXPECT_FALSE(chains_perm.IsValid(task_sets_perms.variable_range_od_,
-                                   *perm12[0],
-                                   task_sets_perms.graph_of_all_ca_chains_));
-
-  EXPECT_TRUE(chains_perm.IsValid(task_sets_perms.variable_range_od_,
-                                  *perm12[1],
-                                  task_sets_perms.graph_of_all_ca_chains_));
+  EXPECT_TRUE(
+      chains_perm.IsValid(task_sets_perms.variable_range_od_, *perm12[1],
+                          task_sets_perms.graph_of_all_ca_chains_, rta));
   TwoTaskPermutationsIterator iterator(
       task_sets_perms.adjacent_two_task_permutations_[1], edge_range);
   EXPECT_EQ(1, iterator.size());

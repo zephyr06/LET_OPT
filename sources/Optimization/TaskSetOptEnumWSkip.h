@@ -59,7 +59,7 @@ class TaskSetOptEnumWSkip : public TaskSetPermutation {
       const auto& perm_sing_curr = iterator.pop_front();
 
       if (chains_perm.IsValid(variable_range_od_, *perm_sing_curr,
-                              graph_of_all_ca_chains_)) {
+                              graph_of_all_ca_chains_, rta_)) {
         chains_perm.push_back(perm_sing_curr);
 
         // try to skip some permutations

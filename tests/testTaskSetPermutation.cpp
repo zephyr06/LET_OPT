@@ -268,8 +268,9 @@ TEST_F(PermutationTest1, SinglePairPermutation_valid) {
   // chains_perm.push_back(single_perm12);
 
   GraphOfChains graph_chains({task_chain});
+  std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
   EXPECT_TRUE(
-      chains_perm.IsValid(variable_range_od, single_perm12, graph_chains));
+      chains_perm.IsValid(variable_range_od, single_perm12, graph_chains, rta));
 }
 
 TEST_F(PermutationTest3, SinglePairPermutation_constructor) {
@@ -335,8 +336,9 @@ TEST_F(PermutationTest3, ChainsPermutation_valid_v1) {
   // EXPECT_TRUE(chains_perm.IsValid(variable_range_od));
   // chains_perm.push_back(single_perm12);
   GraphOfChains graph_chains({{0, 1, 2}});
+  std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
   EXPECT_FALSE(
-      chains_perm.IsValid(variable_range_od, single_perm12, graph_chains));
+      chains_perm.IsValid(variable_range_od, single_perm12, graph_chains, rta));
 }
 
 class PermutationTest4 : public ::testing::Test {
@@ -691,28 +693,29 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllSerialConnect) {
   dag_tasks.chains_ = {{4, 3}, {0, 4}};
   GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
   VariableRange variable_od_range(FindVariableRange(dag_tasks));
+  std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm04[0]);
   EXPECT_TRUE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
-      variable_od_range, *perm43[0], graph_of_all_ca_chains));
+      variable_od_range, *perm43[0], graph_of_all_ca_chains, rta));
   EXPECT_TRUE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
-      variable_od_range, *perm43[1], graph_of_all_ca_chains));
+      variable_od_range, *perm43[1], graph_of_all_ca_chains, rta));
   EXPECT_TRUE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
-      variable_od_range, *perm43[2], graph_of_all_ca_chains));
+      variable_od_range, *perm43[2], graph_of_all_ca_chains, rta));
   EXPECT_TRUE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
-      variable_od_range, *perm43[3], graph_of_all_ca_chains));
+      variable_od_range, *perm43[3], graph_of_all_ca_chains, rta));
 
   chains_perm.clear();
   chains_perm.push_back(perm04[5]);
   EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
-      variable_od_range, *perm43[0], graph_of_all_ca_chains));
+      variable_od_range, *perm43[0], graph_of_all_ca_chains, rta));
   EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
-      variable_od_range, *perm43[1], graph_of_all_ca_chains));
+      variable_od_range, *perm43[1], graph_of_all_ca_chains, rta));
   EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
-      variable_od_range, *perm43[2], graph_of_all_ca_chains));
+      variable_od_range, *perm43[2], graph_of_all_ca_chains, rta));
   EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
-      variable_od_range, *perm43[3], graph_of_all_ca_chains));
+      variable_od_range, *perm43[3], graph_of_all_ca_chains, rta));
 }
 
 TEST_F(PermutationTest6, IsPermConflicted_CheckAllSerialConnectDA) {
@@ -727,28 +730,28 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllSerialConnectDA) {
   dag_tasks.chains_ = {{4, 3}, {0, 4}};
   GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
   VariableRange variable_od_range(FindVariableRange(dag_tasks));
-
+  std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm04[0]);
   EXPECT_TRUE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
-      variable_od_range, *perm43[0], graph_of_all_ca_chains));
+      variable_od_range, *perm43[0], graph_of_all_ca_chains, rta));
   EXPECT_TRUE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
-      variable_od_range, *perm43[1], graph_of_all_ca_chains));
+      variable_od_range, *perm43[1], graph_of_all_ca_chains, rta));
   EXPECT_TRUE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
-      variable_od_range, *perm43[2], graph_of_all_ca_chains));
+      variable_od_range, *perm43[2], graph_of_all_ca_chains, rta));
   EXPECT_TRUE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
-      variable_od_range, *perm43[3], graph_of_all_ca_chains));
+      variable_od_range, *perm43[3], graph_of_all_ca_chains, rta));
 
   chains_perm.clear();
   chains_perm.push_back(perm04[5]);
   EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
-      variable_od_range, *perm43[0], graph_of_all_ca_chains));
+      variable_od_range, *perm43[0], graph_of_all_ca_chains, rta));
   EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
-      variable_od_range, *perm43[1], graph_of_all_ca_chains));
+      variable_od_range, *perm43[1], graph_of_all_ca_chains, rta));
   EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
-      variable_od_range, *perm43[2], graph_of_all_ca_chains));
+      variable_od_range, *perm43[2], graph_of_all_ca_chains, rta));
   EXPECT_FALSE(chains_perm.IsPermConflicted_CheckAllSerialConnect(
-      variable_od_range, *perm43[3], graph_of_all_ca_chains));
+      variable_od_range, *perm43[3], graph_of_all_ca_chains, rta));
 }
 
 int main(int argc, char** argv) {

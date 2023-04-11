@@ -143,11 +143,11 @@ bool IsTwoPermConflicted_SameSink(const VariableRange& variable_od_range,
 // TODO: pass rta as arguments
 bool IsTwoPermConflicted_SerialConnect(const VariableRange& variable_od_range,
                                        const SinglePairPermutation& perm_prev,
-                                       const SinglePairPermutation& perm_curr) {
+                                       const SinglePairPermutation& perm_curr,
+                                       const std::vector<int>& rta) {
   Interval offset_curr_range;
   Interval deadline_curr_range;
-  int rta_curr =
-      variable_od_range.lower_bound.at(perm_curr.GetPrevTaskId()).deadline;
+  int rta_curr = rta[perm_curr.GetPrevTaskId()];
   if (perm_prev.GetNextTaskId() == perm_curr.GetPrevTaskId()) {
     if (perm_prev.type_trait_ == "ReactionTimeApprox" ||
         perm_prev.type_trait_ == "ReactionTime") {
@@ -223,7 +223,8 @@ bool ChainsPermutation::IsPermConflicted_CheckAllWithSameSink(
 bool ChainsPermutation::IsPermConflicted_CheckAllSerialConnect(
     const VariableRange& variable_od_range,
     const SinglePairPermutation& perm_curr,
-    const GraphOfChains& graph_of_all_ca_chains) const {
+    const GraphOfChains& graph_of_all_ca_chains,
+    const std::vector<int>& rta) const {
   // check serial case: perm_ite -> perm_curr
   int source_task_id = perm_curr.GetPrevTaskId();
   std::vector<int> source_prev_task_ids =
@@ -236,7 +237,7 @@ bool ChainsPermutation::IsPermConflicted_CheckAllSerialConnect(
     const SinglePairPermutation& perm_ite =
         *permutation_chain_map_.at(edge_ite);
     if (IsTwoPermConflicted_SerialConnect(variable_od_range, perm_ite,
-                                          perm_curr))
+                                          perm_curr, rta))
       return true;
   }
 
@@ -253,22 +254,22 @@ bool ChainsPermutation::IsPermConflicted_CheckAllSerialConnect(
     const SinglePairPermutation& perm_ite =
         *permutation_chain_map_.at(edge_ite);
     if (IsTwoPermConflicted_SerialConnect(variable_od_range, perm_curr,
-                                          perm_ite))
+                                          perm_ite, rta))
       return true;
   }
 
   return false;
 }
 
-bool ChainsPermutation::IsValid(
-    const VariableRange& variable_od_range,
-    const SinglePairPermutation& perm_curr,
-    const GraphOfChains& graph_of_all_ca_chains) const {
+bool ChainsPermutation::IsValid(const VariableRange& variable_od_range,
+                                const SinglePairPermutation& perm_curr,
+                                const GraphOfChains& graph_of_all_ca_chains,
+                                const std::vector<int>& rta) const {
   int perm_single_chain_size = permutation_chain_map_.size();
   if (perm_single_chain_size > 0) {
     // TODO: this function has not been fully tested
     if (IsPermConflicted_CheckAllSerialConnect(variable_od_range, perm_curr,
-                                               graph_of_all_ca_chains))
+                                               graph_of_all_ca_chains, rta))
       return false;
     if (IsPermConflicted_CheckAllWithSameSource(variable_od_range, perm_curr,
                                                 graph_of_all_ca_chains))
@@ -372,7 +373,8 @@ void UpdateVariablesRangeNextOffset(VariableRange& variable_range, int prev_id,
   } else
     CoutError("Unrecognized type_trait_ in UpdateVariablesRangePrevDeadline!");
 }
-
+// the bounds are safe but pessimistic, i.e., the actual up could be smaller,
+// the actual lb could be higher
 VariableRange FindPossibleVariableOD(const DAG_Model& dag_tasks,
                                      const TaskSetInfoDerived& tasks_info,
                                      const std::vector<int>& rta,

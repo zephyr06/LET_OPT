@@ -139,6 +139,39 @@ TEST_F(PermutationTest23_n3, TwoTaskPerm) {
   EXPECT_EQ(150, two_task_permutation[0]->inequality_.lower_bound_);
   EXPECT_EQ(195 + 1, two_task_permutation[0]->inequality_.upper_bound_);
 }
+
+class PermutationTest6_n5 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n5_v6");
+    type_trait = "DataAge";
+  }
+
+ public:
+  std::string type_trait;
+};
+
+TEST_F(PermutationTest6_n5, GetEdgeIneqRangeDA) {
+  VariableRange variable_range = FindVariableRange(dag_tasks);
+  variable_range.lower_bound.print();
+  variable_range.upper_bound.print();
+  PermIneqBound_Range range = GetEdgeIneqRangeDA(Edge(0, 4), variable_range);
+  EXPECT_EQ(50 - 69, range.lower_bound_s_upper_bound);
+  EXPECT_EQ(0 - 200, range.upper_bound_s_lower_bound);
+}
+
+TEST_F(PermutationTest6_n5, overall_opt_Sort) {
+  TaskSetOptSorted task_sets_perms =
+      TaskSetOptSorted(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
+  task_sets_perms.adjacent_two_task_permutations_[0].print();
+  task_sets_perms.adjacent_two_task_permutations_[1].print();
+  int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAgeApprox>();
+
+  TaskSetOptEnumWSkip task_sets_perms_enum =
+      TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
+  EXPECT_EQ(
+      task_sets_perms_enum.PerformOptimizationEnumerate<ObjDataAgeApprox>(),
+      obj_find);
+}
 class PermutationTest25_n3 : public PermutationTestBase {
   void SetUp() override {
     SetUpBase("test_n3_v25");
@@ -226,47 +259,61 @@ TEST_F(PermutationTest25_n3, SkipDAPerm) {
   EXPECT_TRUE(IfSkipAnotherPermDA(*perm12[0], *perm12[1]));
   EXPECT_FALSE(IfSkipAnotherPermDA(*perm12[1], *perm12[0]));
 }
+
+TEST_F(PermutationTest25_n3, FindPossibleVariableOD) {
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[0]);
+  chains_perm.print();
+  perm12[0]->print();
+  GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
+  std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+  VariableRange variable_range_w_chains =
+      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
+  EXPECT_EQ(0, variable_range_w_chains.lower_bound[0].offset);
+  EXPECT_EQ(77, variable_range_w_chains.upper_bound[0].offset);  // different
+  EXPECT_EQ(61, variable_range_w_chains.lower_bound[1].offset);
+  EXPECT_EQ(138, variable_range_w_chains.upper_bound[1].offset);
+  EXPECT_EQ(0, variable_range_w_chains.lower_bound[2].offset);
+  EXPECT_EQ(40, variable_range_w_chains.upper_bound[2].offset);
+
+  EXPECT_EQ(61, variable_range_w_chains.lower_bound[0].deadline);
+  EXPECT_EQ(138, variable_range_w_chains.upper_bound[0].deadline);  // different
+  EXPECT_EQ(123, variable_range_w_chains.lower_bound[1].deadline);  // different
+  EXPECT_EQ(200, variable_range_w_chains.upper_bound[1].deadline);
+  EXPECT_EQ(60, variable_range_w_chains.lower_bound[2].deadline);
+  EXPECT_EQ(100, variable_range_w_chains.upper_bound[2].deadline);
+}
+
+TEST_F(PermutationTest25_n3, IsValid) {
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[0]);
+  chains_perm.print();
+  perm12[0]->print();
+  GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
+  std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+  VariableRange variable_range_w_chains =
+      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
+  variable_range_w_chains.lower_bound[0].offset = 77;
+  variable_range_w_chains.upper_bound[0].deadline = 77;
+  variable_range_w_chains.lower_bound.print();
+  variable_range_w_chains.upper_bound.print();
+  EXPECT_TRUE(chains_perm.IsValid(variable_range_w_chains, *perm12[0],
+                                  graph_of_all_ca_chains, rta));
+}
 TEST_F(PermutationTest25_n3, overall_opt_Sort) {
   TaskSetOptSorted task_sets_perms =
       TaskSetOptSorted(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
   task_sets_perms.adjacent_two_task_permutations_[0].print();
   task_sets_perms.adjacent_two_task_permutations_[1].print();
   int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAgeApprox>();
+  EXPECT_TRUE(task_sets_perms.ExamSchedulabilityOptSol());
+  // TODO: the optimal solution seems to be 200!!
   EXPECT_EQ(300, obj_find);
 }
-class PermutationTest6_n5 : public PermutationTestBase {
-  void SetUp() override {
-    SetUpBase("test_n5_v6");
-    type_trait = "DataAge";
-  }
-
- public:
-  std::string type_trait;
-};
-
-TEST_F(PermutationTest6_n5, GetEdgeIneqRangeDA) {
-  VariableRange variable_range = FindVariableRange(dag_tasks);
-  variable_range.lower_bound.print();
-  variable_range.upper_bound.print();
-  PermIneqBound_Range range = GetEdgeIneqRangeDA(Edge(0, 4), variable_range);
-  EXPECT_EQ(50 - 69, range.lower_bound_s_upper_bound);
-  EXPECT_EQ(0 - 200, range.upper_bound_s_lower_bound);
-}
-
-TEST_F(PermutationTest6_n5, overall_opt_Sort) {
-  TaskSetOptSorted task_sets_perms =
-      TaskSetOptSorted(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
-  task_sets_perms.adjacent_two_task_permutations_[0].print();
-  task_sets_perms.adjacent_two_task_permutations_[1].print();
-  int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAgeApprox>();
-
-  TaskSetOptEnumWSkip task_sets_perms_enum =
-      TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
-  EXPECT_EQ(
-      task_sets_perms_enum.PerformOptimizationEnumerate<ObjDataAgeApprox>(),
-      obj_find);
-}
-
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);

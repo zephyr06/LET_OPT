@@ -74,7 +74,8 @@ class ChainsPermutation {
   // several IsValid()-related functions
   bool IsValid(const VariableRange &variable_od_range,
                const SinglePairPermutation &perm_curr,
-               const GraphOfChains &graph_of_all_ca_chains) const;
+               const GraphOfChains &graph_of_all_ca_chains,
+               const std::vector<int> &rta) const;
 
   bool IsPermConflicted_CheckAllWithSameSource(
       const VariableRange &variable_od_range,
@@ -89,7 +90,8 @@ class ChainsPermutation {
   bool IsPermConflicted_CheckAllSerialConnect(
       const VariableRange &variable_od_range,
       const SinglePairPermutation &perm_curr,
-      const GraphOfChains &graph_of_all_ca_chains) const;
+      const GraphOfChains &graph_of_all_ca_chains,
+      const std::vector<int> &rta) const;
 
   void print() const {
     for (auto itr = permutation_chain_map_.begin();
