@@ -271,6 +271,8 @@ TEST_F(PermutationTest25_n3, FindPossibleVariableOD) {
   std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
   VariableRange variable_range_w_chains =
       FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
+  variable_range_w_chains.lower_bound.print();
+  variable_range_w_chains.upper_bound.print();
   EXPECT_EQ(0, variable_range_w_chains.lower_bound[0].offset);
   EXPECT_EQ(77, variable_range_w_chains.upper_bound[0].offset);  // different
   EXPECT_EQ(61, variable_range_w_chains.lower_bound[1].offset);
