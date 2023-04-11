@@ -172,6 +172,19 @@ TEST_F(PermutationTest6_n5, overall_opt_Sort) {
                 .PerformOptimizationSkipInfeasible<ObjDataAgeApprox>(),
             obj_find);
 }
+TEST_F(PermutationTest6_n5, overall_opt_brute_force) {
+  TaskSetOptEnumerate task_sets_perms =
+      TaskSetOptEnumerate(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
+  task_sets_perms.adjacent_two_task_permutations_[0].print();
+  task_sets_perms.adjacent_two_task_permutations_[1].print();
+  int obj_find = task_sets_perms.PerformOptimizationBF<ObjDataAgeApprox>();
+
+  TaskSetOptEnumWSkip task_sets_perms_enum =
+      TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
+  EXPECT_EQ(task_sets_perms_enum
+                .PerformOptimizationSkipInfeasible<ObjDataAgeApprox>(),
+            obj_find);
+}
 class PermutationTest25_n3 : public PermutationTestBase {
   void SetUp() override {
     SetUpBase("test_n3_v25");
@@ -236,6 +249,15 @@ TEST_F(PermutationTest25_n3, overall_opt) {
   task_sets_perms.adjacent_two_task_permutations_[1].print();
   int obj_find =
       task_sets_perms.PerformOptimizationSkipInfeasible<ObjDataAgeApprox>();
+  EXPECT_EQ(300, obj_find);
+}
+
+TEST_F(PermutationTest25_n3, overall_opt_bf) {
+  TaskSetOptEnumerate task_sets_perms =
+      TaskSetOptEnumerate(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
+  task_sets_perms.adjacent_two_task_permutations_[0].print();
+  task_sets_perms.adjacent_two_task_permutations_[1].print();
+  int obj_find = task_sets_perms.PerformOptimizationBF<ObjDataAgeApprox>();
   EXPECT_EQ(300, obj_find);
 }
 

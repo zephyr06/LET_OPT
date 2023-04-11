@@ -1,4 +1,5 @@
 #pragma once
+#include "sources/Optimization/TaskSetOptEnumerate.h"
 #include "sources/Optimization/TaskSetPermutation.h"
 namespace DAG_SPACE {
 
