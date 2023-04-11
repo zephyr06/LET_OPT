@@ -28,10 +28,6 @@ class TaskSetPermutation {
   void PrintSinglePermIndex(const ChainsPermutation& chains_perm,
                             const std::vector<Edge>& edges) const;
 
-  bool WhetherContainInfeasibleSubChains(
-      const ChainsPermutation& chains_perm,
-      const std::vector<std::vector<int>>& sub_chains);
-
   // The following functions more related to optimization
 
   template <typename ObjectiveFunction>
@@ -60,5 +56,9 @@ class TaskSetPermutation {
   std::string type_trait_;
   int infeasible_iteration_ = 0;
 };
+
+//   bool WhetherContainInfeasibleSubChains(
+//       const ChainsPermutation& chains_perm,
+//       const std::vector<std::vector<int>>& sub_chains);
 
 }  // namespace DAG_SPACE

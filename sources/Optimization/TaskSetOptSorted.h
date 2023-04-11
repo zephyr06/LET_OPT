@@ -97,13 +97,6 @@ class TaskSetOptSorted : public TaskSetPermutation {
     std::vector<std::vector<int>> sub_chains =
         GetSubChains(dag_tasks_.chains_, chains_perm);
 
-    if (WhetherContainInfeasibleSubChains(chains_perm, sub_chains)) {
-#ifdef PROFILE_CODE
-      EndTimer(__FUNCTION__);
-#endif
-      return true;
-    }
-
     if (GetBestPossibleObj<ObjectiveFunction>(chains_perm, sub_chains) >
         best_yet_obj_) {
       if (GlobalVariablesDAGOpt::debugMode) {

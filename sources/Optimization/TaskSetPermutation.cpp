@@ -85,29 +85,29 @@ std::vector<Edge> TaskSetPermutation::GetUnvisitedFutureEdges(
   return edges;
 }
 
-bool TaskSetPermutation::WhetherContainInfeasibleSubChains(
-    const ChainsPermutation& chains_perm,
-    const std::vector<std::vector<int>>& sub_chains) {
-  for (const auto& sub_chain : sub_chains) {
-    if (sub_chain.size() == 0) continue;
-    if (GlobalVariablesDAGOpt::SKIP_PERM >= 2 &&
-        !FindODFromSingleChainPermutation(
-             dag_tasks_, chains_perm, graph_of_all_ca_chains_, sub_chain, rta_)
-             .valid_) {
-      if (GlobalVariablesDAGOpt::debugMode) {
-        std::cout << "Early break at level " << chains_perm.size() << ": ";
-        PrintSinglePermIndex(chains_perm);
-        std::cout
-            << " due to being conflicted permutations from sub-chains while "
-               "exploring the "
-            // << adjacent_two_task_permutations_[position].size() -
-            //        iterator.size()
-            << " permutations\n";
-        std::cout << "\n";
-      }
-      return true;
-    }
-  }
-  return false;
-}
+// bool TaskSetPermutation::WhetherContainInfeasibleSubChains(
+//     const ChainsPermutation& chains_perm,
+//     const std::vector<std::vector<int>>& sub_chains) {
+//   for (const auto& sub_chain : sub_chains) {
+//     if (sub_chain.size() == 0) continue;
+//     if (GlobalVariablesDAGOpt::SKIP_PERM >= 2 &&
+//         !FindODFromSingleChainPermutation(
+//              dag_tasks_, chains_perm, graph_of_all_ca_chains_, sub_chain,
+//              rta_) .valid_) {
+//       if (GlobalVariablesDAGOpt::debugMode) {
+//         std::cout << "Early break at level " << chains_perm.size() << ": ";
+//         PrintSinglePermIndex(chains_perm);
+//         std::cout
+//             << " due to being conflicted permutations from sub-chains while "
+//                "exploring the "
+//             // << adjacent_two_task_permutations_[position].size() -
+//             //        iterator.size()
+//             << " permutations\n";
+//         std::cout << "\n";
+//       }
+//       return true;
+//     }
+//   }
+//   return false;
+// }
 }  // namespace DAG_SPACE

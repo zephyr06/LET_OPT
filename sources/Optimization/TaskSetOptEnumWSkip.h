@@ -21,7 +21,6 @@ class TaskSetOptEnumWSkip : public TaskSetPermutation {
   bool WhetherSkipToNextPerm(const ChainsPermutation& chains_perm) {
     std::vector<std::vector<int>> sub_chains =
         GetSubChains(dag_tasks_.chains_, chains_perm);
-    if (WhetherContainInfeasibleSubChains(chains_perm, sub_chains)) return true;
 
     if (GetBestPossibleObj<ObjectiveFunction>(chains_perm, sub_chains) >
         best_yet_obj_) {
