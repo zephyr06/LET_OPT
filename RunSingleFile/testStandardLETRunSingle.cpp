@@ -1,11 +1,12 @@
 
 
-#include "gmock/gmock.h"
+
 #include "sources/Baseline/StandardLET.h"
 #include "sources/Optimization/OptimizeMain.h"
 
 using namespace DAG_SPACE;
-TEST(RunSingle, v1) {
+int main(int argc, char** argv) {
+   
     auto dag_tasks =
         ReadDAG_Tasks(GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/" +
                           GlobalVariablesDAGOpt::testDataSetName + ".csv",
@@ -18,10 +19,4 @@ TEST(RunSingle, v1) {
     std::cout << "Schedulable? " << CheckSchedulability(dag_tasks) << "\n";
     int obj_find = PerformStandardLETAnalysis<ObjReactionTime>(dag_tasks).obj_;
     std::cout << "The minimum objective function found is " << obj_find << "\n";
-}
-
-int main(int argc, char** argv) {
-    // ::testing::InitGoogleTest(&argc, argv);
-    ::testing::InitGoogleMock(&argc, argv);
-    return RUN_ALL_TESTS();
 }

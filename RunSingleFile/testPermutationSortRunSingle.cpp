@@ -1,10 +1,9 @@
 
 
-#include "gmock/gmock.h"
 #include "sources/Optimization/OptimizeMain.h"
 
 using namespace DAG_SPACE;
-TEST(RunSingle, v1) {
+int main(int argc, char** argv) {
 #ifdef PROFILE_CODE
   BeginTimer("main");
 #endif
@@ -41,10 +40,4 @@ TEST(RunSingle, v1) {
   EndTimer("main");
   PrintTimer();
 #endif
-}
-
-int main(int argc, char** argv) {
-  // ::testing::InitGoogleTest(&argc, argv);
-  ::testing::InitGoogleMock(&argc, argv);
-  return RUN_ALL_TESTS();
 }
