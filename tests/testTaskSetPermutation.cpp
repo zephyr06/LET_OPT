@@ -54,7 +54,7 @@ class PermutationTest1 : public ::testing::Test {
 TEST_F(PermutationTest1, Iteration) {
   TaskSetOptEnumWSkip task_sets_perms(dag_tasks, {task_chain}, "ReactionTime");
   int obj_find =
-      task_sets_perms.PerformOptimizationEnumerate<ObjReactionTime>();
+      task_sets_perms.PerformOptimizationSkipInfeasible<ObjReactionTime>();
   // task_sets_perms.best_yet_chain_[0]->print();
   // task_sets_perms.best_yet_chain_[1]->print();
   EXPECT_THAT(task_sets_perms.iteration_count_, testing::Le(6));

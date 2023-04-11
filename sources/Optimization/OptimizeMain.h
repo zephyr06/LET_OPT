@@ -23,7 +23,8 @@ ScheduleResult PerformTOM_OPT_EnumW_Skip(const DAG_Model& dag_tasks) {
   ScheduleResult res;
   TaskSetOptEnumWSkip task_sets_perms = TaskSetOptEnumWSkip(
       dag_tasks, dag_tasks.chains_, ObjectiveFunction::type_trait);
-  res.obj_ = task_sets_perms.PerformOptimizationEnumerate<ObjectiveFunction>();
+  res.obj_ =
+      task_sets_perms.PerformOptimizationSkipInfeasible<ObjectiveFunction>();
   if (res.obj_ >= 1e8) {
     res.obj_ = PerformStandardLETAnalysis<ObjectiveFunction>(dag_tasks).obj_;
   }

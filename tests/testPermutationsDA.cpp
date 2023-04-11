@@ -168,9 +168,9 @@ TEST_F(PermutationTest6_n5, overall_opt_Sort) {
 
   TaskSetOptEnumWSkip task_sets_perms_enum =
       TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
-  EXPECT_EQ(
-      task_sets_perms_enum.PerformOptimizationEnumerate<ObjDataAgeApprox>(),
-      obj_find);
+  EXPECT_EQ(task_sets_perms_enum
+                .PerformOptimizationSkipInfeasible<ObjDataAgeApprox>(),
+            obj_find);
 }
 class PermutationTest25_n3 : public PermutationTestBase {
   void SetUp() override {
@@ -235,7 +235,7 @@ TEST_F(PermutationTest25_n3, overall_opt) {
   task_sets_perms.adjacent_two_task_permutations_[0].print();
   task_sets_perms.adjacent_two_task_permutations_[1].print();
   int obj_find =
-      task_sets_perms.PerformOptimizationEnumerate<ObjDataAgeApprox>();
+      task_sets_perms.PerformOptimizationSkipInfeasible<ObjDataAgeApprox>();
   EXPECT_EQ(300, obj_find);
 }
 

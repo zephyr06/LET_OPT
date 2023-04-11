@@ -10,9 +10,9 @@ class TaskSetOptEnumWSkip : public TaskSetPermutation {
       : TaskSetPermutation(dag_tasks, chains, type_trait) {}
 
   template <typename ObjectiveFunction>
-  int PerformOptimizationEnumerate() {
+  int PerformOptimizationSkipInfeasible() {
     ChainsPermutation chains_perm;
-    IterateAllChainsPermutations<ObjectiveFunction>(0, chains_perm);
+    IterateAllPermsWSkip<ObjectiveFunction>(0, chains_perm);
     return best_yet_obj_;
   }
 
@@ -37,8 +37,7 @@ class TaskSetOptEnumWSkip : public TaskSetPermutation {
 
   // depth equals the number of edge pais
   template <typename ObjectiveFunction>
-  void IterateAllChainsPermutations(uint position,
-                                    ChainsPermutation& chains_perm) {
+  void IterateAllPermsWSkip(uint position, ChainsPermutation& chains_perm) {
     if (position == graph_of_all_ca_chains_.edge_records_
                         .size()) {  // finish iterate all the pair permutations
       iteration_count_++;
@@ -64,8 +63,7 @@ class TaskSetOptEnumWSkip : public TaskSetPermutation {
 
         // try to skip some permutations
         if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {
-          IterateAllChainsPermutations<ObjectiveFunction>(position + 1,
-                                                          chains_perm);
+          IterateAllPermsWSkip<ObjectiveFunction>(position + 1, chains_perm);
         }
         chains_perm.pop(perm_sing_curr);
       }
