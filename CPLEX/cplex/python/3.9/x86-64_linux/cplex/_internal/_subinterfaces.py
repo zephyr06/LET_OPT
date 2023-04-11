@@ -8020,7 +8020,7 @@ class PresolveInterface(BaseInterface):
             rmat = _HBMatrix(lin_expr)
         CPX_PROC.preaddrows(self._env._e, self._cplex._lp, rhs, senses,
                             rmat.matbeg, rmat.matind, rmat.matval, names)
-        # TODO: We don't return an iterator here because there's no way to
+        # TO_CPLEX_DO: We don't return an iterator here because there's no way to
         #       get indices of presolve rows from names.
 
     def set_objective(self, objective):

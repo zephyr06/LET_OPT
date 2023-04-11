@@ -1772,7 +1772,7 @@ class Cplex():
         self._genericcallback = None
         self._genericcontextmask = None
         _proc.setgenericcallbackfunc(self._env._e, self._lp, contextmask, None)
-        # TODO: Use hasattr() or similar to check whether 'functor' has
+        # TO_CPLEX_DO: Use hasattr() or similar to check whether 'functor' has
         #        a method called 'invoke'? This is never a complete
         #        guard since the attribute may be deleted from the instance
         #        later. So for now we just don't do it.
