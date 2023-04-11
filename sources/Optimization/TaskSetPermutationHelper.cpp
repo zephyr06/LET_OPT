@@ -42,7 +42,7 @@ std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
   chains_perm.push_back(single_perm);
   auto first_job_map =
       GetFirstReactMaps(chains_perm, chains, dag_tasks, tasks_info);
-  chains_perm.pop(*single_perm);
+  chains_perm.pop(single_perm);
   return first_job_map;
 }
 

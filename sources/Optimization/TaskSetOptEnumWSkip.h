@@ -67,7 +67,7 @@ class TaskSetOptEnumWSkip : public TaskSetPermutation {
           IterateAllChainsPermutations<ObjectiveFunction>(position + 1,
                                                           chains_perm);
         }
-        chains_perm.pop(*perm_sing_curr);
+        chains_perm.pop(perm_sing_curr);
       }
     }
   }

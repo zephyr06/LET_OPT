@@ -71,7 +71,7 @@ class TaskSetOptSorted : public TaskSetPermutation {
         if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {
           IterateSortedPerms<ObjectiveFunction>(position + 1, chains_perm);
         }
-        chains_perm.pop(*perm_sing_curr);
+        chains_perm.pop(perm_sing_curr);
       } else {
         if (GlobalVariablesDAGOpt::debugMode) {
           std::cout << "Early break at level " << position << ": ";

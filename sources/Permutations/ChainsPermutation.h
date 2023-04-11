@@ -37,7 +37,7 @@ class ChainsPermutation {
 
   inline size_t size() const { return permutation_chain_map_.size(); }
 
-  void push_back(const std::shared_ptr<const SinglePairPermutation> perm) {
+  void push_back(const std::shared_ptr<const SinglePairPermutation> &perm) {
     // permutation_chain_.push_back(perm);
     Edge edge_curr(perm->GetPrevTaskId(), perm->GetNextTaskId());
     if (permutation_chain_map_.find(edge_curr) !=
@@ -51,8 +51,8 @@ class ChainsPermutation {
 
   void clear() { permutation_chain_map_.clear(); }
 
-  inline void pop(const SinglePairPermutation &perm) {
-    Edge edge_curr(perm.GetPrevTaskId(), perm.GetNextTaskId());
+  inline void pop(const std::shared_ptr<const SinglePairPermutation> &perm) {
+    Edge edge_curr(perm->GetPrevTaskId(), perm->GetNextTaskId());
     permutation_chain_map_.erase(edge_curr);
   }
 
