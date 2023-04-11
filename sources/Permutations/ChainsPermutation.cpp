@@ -140,7 +140,6 @@ bool IsTwoPermConflicted_SameSink(const VariableRange& variable_od_range,
 }
 
 // return true if conflicted, false if safe
-// TODO: pass rta as arguments
 bool IsTwoPermConflicted_SerialConnect(const VariableRange& variable_od_range,
                                        const SinglePairPermutation& perm_prev,
                                        const SinglePairPermutation& perm_curr,

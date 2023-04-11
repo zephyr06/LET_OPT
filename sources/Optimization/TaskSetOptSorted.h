@@ -110,7 +110,7 @@ class TaskSetOptSorted : public TaskSetPermutation {
         std::cout << " due to guarantee to perform worse at the "
                      "per-chain test\n";
       }
-      // TODO: push to feasible_chains_vec, probbaly use a separate queue
+
       feasible_chains_.push_back_incomplete(
           FeasibleChainManager(chains_perm, adjacent_two_task_permutations_,
                                ObjectiveFunction::type_trait));

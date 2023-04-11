@@ -12,8 +12,6 @@
 #include "sources/Utils/profilier.h"
 namespace DAG_SPACE {
 
-// currently, as asusme there is only one chain
-// TODO: what's the usage of chains in arguments
 class TaskSetPermutation {
  public:
   // TaskSetPermutation() {}

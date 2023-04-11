@@ -13,7 +13,7 @@ JobCEC GetFirstReactJobWithSuperPeriod(
         "Didn't find job_curr records in "
         "GetFirstReactJobWithSuperPeriod!");
   else {
-    return itr->second;  // assume it is sorted, TODO: guarantee it
+    return itr->second;
   }
 
   return JobCEC(-1, -1);

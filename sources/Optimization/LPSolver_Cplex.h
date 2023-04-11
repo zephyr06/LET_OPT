@@ -10,7 +10,6 @@
 namespace DAG_SPACE {
 
 const int INFEASIBLE_OBJ = 1e9;
-// TODO: make it work with templates
 // rta is organized by task_id
 class LPOptimizer {
  public:

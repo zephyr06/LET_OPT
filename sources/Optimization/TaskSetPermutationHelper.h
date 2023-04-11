@@ -32,9 +32,10 @@ std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
 
 // return true if it's possible for curr_first_job_maps to achieve better
 // performance than curr_best_first_job_maps
-bool CompareNewPerm(
-    const std::vector<std::unordered_map<JobCEC, JobCEC>>& curr_first_job_maps,
-    const std::vector<std::unordered_map<JobCEC, JobCEC>>&
-        curr_best_first_job_maps);
+// bool CompareNewPerm(
+//     const std::vector<std::unordered_map<JobCEC, JobCEC>>&
+//     curr_first_job_maps, const std::vector<std::unordered_map<JobCEC,
+//     JobCEC>>&
+//         curr_best_first_job_maps);
 
 }  // namespace DAG_SPACE
