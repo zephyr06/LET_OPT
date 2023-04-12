@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
       DAG_SPACE::InitialMethod, DAG_SPACE::TOM_BF, DAG_SPACE::TOM_WSkip,
       DAG_SPACE::TOM_Sort};
   std::vector<DAG_SPACE::BASELINEMETHODS> baselinemethods_bf = {
-      DAG_SPACE::TOM_BF};
+      DAG_SPACE::InitialMethod, DAG_SPACE::TOM_BF};
 
   if (obj_type == "RT") {
     DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTimeApprox>(
