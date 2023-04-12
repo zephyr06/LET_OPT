@@ -12,7 +12,8 @@ JobCEC GetPossibleReactingJobsLET(
     const JobCEC& job_curr, const Task& task_next, int superperiod,
     const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
     const VariableOD& variable_od) {
-  int job_finish_curr = GetDeadline(job_curr, tasks_info);
+  int job_finish_curr = GetActivationTime(job_curr, tasks_info) +
+                        variable_od.at(job_curr.taskId).deadline;
   int period_next = tasks_info.GetTask(task_next.id).period;
   return JobCEC(task_next.id, std::ceil(float(job_finish_curr) / period_next));
 }
@@ -21,7 +22,8 @@ JobCEC GetPossibleReadingJobsLET(
     const JobCEC& job_curr, const Task& task_prev, int superperiod,
     const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
     const VariableOD& variable_od) {
-  int job_start_curr = GetActivationTime(job_curr, tasks_info);
+  int job_start_curr = GetActivationTime(job_curr, tasks_info) +
+                       variable_od.at(job_curr.taskId).offset;
   int period_prev = tasks_info.GetTask(task_prev.id).period;
   return JobCEC(task_prev.id,
                 std::floor(float(job_start_curr) / period_prev) - 1);

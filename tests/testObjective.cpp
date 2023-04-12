@@ -386,6 +386,17 @@ TEST_F(PermutationTest_Non_Har, GetPossibleReadingJobsLET) {
                     .jobId);
 }
 
+TEST_F(PermutationTest_Non_Har, GetPossibleReadingJobsLET_v2) {
+  // chain is 0 -> 1 -> 2
+  variable_od[1].offset = 10;
+  EXPECT_EQ(0, GetPossibleReadingJobsLET(JobCEC(1, 0), task0, 30, tasks_info,
+                                         variable_od)
+                   .jobId);
+  EXPECT_EQ(1, GetPossibleReadingJobsLET(JobCEC(1, 1), task0, 30, tasks_info,
+                                         variable_od)
+                   .jobId);
+}
+
 TEST_F(PermutationTest_Non_Har, PerformStandardLETAnalysisDA) {
   // chain is 0 -> 1 -> 2
   dag_tasks.chains_[0] = {0, 1, 2};
