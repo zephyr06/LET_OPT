@@ -6,14 +6,14 @@ TEST(average_performance, v1) {
   BeginTimer("main");
 
   std::vector<DAG_SPACE::BASELINEMETHODS> baselineMethods = {
-      DAG_SPACE::InitialMethod, DAG_SPACE::TOM};
+      DAG_SPACE::InitialMethod, DAG_SPACE::BASELINEMETHODS::TOM_Sort};
   ClearResultFiles(GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/PerfTest");
   BatchSettings batch_test_settings(5, 0, 300, "TaskData/PerfTest/");
   auto res = DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTime>(
       baselineMethods, batch_test_settings);
-  EXPECT_THAT(res[BASELINEMETHODS::TOM].performance, testing::Le(0.478));
+  EXPECT_THAT(res[TOM_Sort].performance, testing::Le(0.478));
 
-  EXPECT_DOUBLE_EQ(1.0, res[BASELINEMETHODS::TOM].schedulableRatio);
+  EXPECT_DOUBLE_EQ(1.0, res[TOM_Sort].schedulableRatio);
   EndTimer("main");
   PrintTimer();
 }

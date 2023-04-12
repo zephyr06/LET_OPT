@@ -1,21 +1,11 @@
 #pragma once
 #include <vector>
 
+#include "sources/BatchOptimize/BaselineMethods.h"
 #include "sources/Utils/DeclareDAG.h"
 #include "sources/Utils/VariadicTable.h"
 
 namespace DAG_SPACE {
-// !!!if adding more methods, need to update BaselineMethodNames below !!!
-enum BASELINEMETHODS {
-  InitialMethod,    // 0
-  TOM,              // 1
-  TOM_Sort,         // 2
-  TOM_Approx,       // 3
-  TOM_Sort_Approx,  // 4
-  SA                // 5
-};
-const std::vector<std::string> BaselineMethodNames = {
-    "InitialMethod", "TOM", "TOM_Sort", "TOM_Approx", "TOM_Sort_Approx", "SA"};
 
 struct ScheduleResult {
   bool schedulable_;
@@ -45,7 +35,7 @@ class ResultsManager {
   void add(BASELINEMETHODS method, const ScheduleResult& result,
            std::string file);
 
-  std::vector<BatchResult> GetBatchResVec(
+  std::unordered_map<DAG_SPACE::BASELINEMETHODS, BatchResult> GetBatchResVec(
       const std::vector<DAG_SPACE::BASELINEMETHODS>& baselineMethods) const;
 
   void PrintLongestCase(BASELINEMETHODS method) const;

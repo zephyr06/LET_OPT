@@ -39,6 +39,7 @@ struct ProfilerData {
   }
 };
 extern std::unordered_map<std::string, ProfilerData> profilerMap;
+
 void BeginTimer(std::string funcName);
 
 void EndTimer(std::string funcName, bool print = false);
@@ -65,3 +66,10 @@ class TimerFunc {
   typedef std::chrono::time_point<std::chrono::high_resolution_clock> TimerType;
   TimerType begin;
 };
+
+inline double GetTimeTaken(TimerType start, TimerType stop) {
+  return double(
+             std::chrono::duration_cast<std::chrono::microseconds>(stop - start)
+                 .count()) /
+         1e6;
+}

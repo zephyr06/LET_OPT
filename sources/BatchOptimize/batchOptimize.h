@@ -26,36 +26,18 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
     case InitialMethod:
       res = PerformStandardLETAnalysis<ObjectiveFunctionBase>(dag_tasks);
       break;
-    case TOM:
+    case TOM_BF:
+      res = PerformTOM_OPT_BF<ObjDataAgeApprox>(dag_tasks);
+      break;
+    case TOM_WSkip:
       res = PerformTOM_OPT_EnumW_Skip<ObjectiveFunctionBase>(dag_tasks);
       break;
     case TOM_Sort:
       res = PerformTOM_OPT_Sort<ObjectiveFunctionBase>(dag_tasks);
       break;
-    case TOM_Approx:
-      if (ObjectiveFunctionBase::type_trait == "ReactionTime" ||
-          ObjectiveFunctionBase::type_trait == "ReactionTimeApprox")
-        res = PerformTOM_OPT_EnumW_Skip<ObjReactionTimeApprox>(dag_tasks);
-      else if (ObjectiveFunctionBase::type_trait == "DataAge" ||
-               ObjectiveFunctionBase::type_trait ==
-                   "DataAgeApprox")  // TODO: why DataAge call ObjDataAgeApprox?
-        res = PerformTOM_OPT_EnumW_Skip<ObjDataAgeApprox>(dag_tasks);
-      else
-        CoutError("Unknown type trait in BatchOptimize!");
-      break;
-    case TOM_Sort_Approx:
-      if (ObjectiveFunctionBase::type_trait == "ReactionTime" ||
-          ObjectiveFunctionBase::type_trait == "ReactionTimeApprox")
-        res = PerformTOM_OPT_Sort<ObjReactionTimeApprox>(dag_tasks);
-      else if (ObjectiveFunctionBase::type_trait == "DataAge" ||
-               ObjectiveFunctionBase::type_trait == "DataAgeApprox")
-        res = PerformTOM_OPT_Sort<ObjDataAgeApprox>(dag_tasks);
-      else
-        CoutError("Unknown type trait in BatchOptimize!");
-      break;
     case SA:
       // TO ADD
-      break;
+      // break;
 
     default:
       CoutError("Please provide batchTestMethod implementation!");
@@ -85,7 +67,7 @@ struct BatchSettings {
 };
 
 template <typename ObjectiveFunctionBase>
-std::vector<BatchResult> BatchOptimizeOrder(
+std::unordered_map<DAG_SPACE::BASELINEMETHODS, BatchResult> BatchOptimizeOrder(
     std::vector<DAG_SPACE::BASELINEMETHODS> &baselineMethods,
     const BatchSettings &batch_test_settings)
 //  int N = -1,
@@ -140,10 +122,12 @@ std::vector<BatchResult> BatchOptimizeOrder(
   // }
 
   // result analysis
-  results_man.PrintWorseCase(BASELINEMETHODS::TOM_Approx,
-                             BASELINEMETHODS::TOM_Sort_Approx);
+  // results_man.PrintWorseCase(BASELINEMETHODS::TOM_Approx,
+  //                            BASELINEMETHODS::TOM_Sort_Approx);
   results_man.PrintResultTable(baselineMethods);
-  results_man.PrintLongestCase(BASELINEMETHODS::TOM);
+  if (std::find(baselineMethods.begin(), baselineMethods.end(),
+                BASELINEMETHODS::TOM_WSkip_Approx) != baselineMethods.end())
+    results_man.PrintLongestCase(BASELINEMETHODS::TOM_WSkip_Approx);
   results_man.PrintTimeOutCase();
 
   std::cout << "Average length of cause-effect chains: " << Average(chain_lenth)

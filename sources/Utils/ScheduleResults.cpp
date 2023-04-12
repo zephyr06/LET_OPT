@@ -12,15 +12,16 @@ void ResultsManager::add(BASELINEMETHODS method, const ScheduleResult& result,
     file_name_.push_back(file);
 }
 
-std::vector<BatchResult> ResultsManager::GetBatchResVec(
+std::unordered_map<DAG_SPACE::BASELINEMETHODS, BatchResult>
+ResultsManager::GetBatchResVec(
     const std::vector<DAG_SPACE::BASELINEMETHODS>& baselineMethods) const {
-  std::vector<BatchResult> batchResVec;
+  std::unordered_map<DAG_SPACE::BASELINEMETHODS, BatchResult> batchResVec;
   for (auto method : baselineMethods) {
     BatchResult batchRes{Average(schedulableAll_.at(method)),
                          Average(objsAll_.at(method),
                                  objsAll_.at(BASELINEMETHODS::InitialMethod)),
                          Average(runTimeAll_.at(method))};
-    batchResVec.push_back(batchRes);
+    batchResVec[method] = (batchRes);
   }
   return batchResVec;
 }
