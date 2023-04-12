@@ -8,9 +8,6 @@ MaxFileIndex=999
 FILES_PER_CPU=500
 
 
-cd ~/Programming/LET_OPT/release
-cmake -DCMAKE_BUILD_TYPE=RELEASE ..
-make BatchRunAll.run 
 cd ~/Programming/LET_OPT/Experiments
 
 perform_optimization() {

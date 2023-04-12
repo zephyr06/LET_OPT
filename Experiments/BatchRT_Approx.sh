@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J hello-world
+#SBATCH -J BatchRunAll $1 $2 $3
 #SBATCH --account=ev_charging
 #SBATCH --partition=normal_q
 #SBATCH --nodes=1 --ntasks-per-node=1 --cpus-per-task=1
@@ -16,6 +16,10 @@ module load boost/1.79
 module load Eigen/3.3.7
 module load yaml-cpp/0.6.3-GCCcore-8.3.0
 
+
+cd ~/Programming/LET_OPT/release
+cmake -DCMAKE_BUILD_TYPE=RELEASE ..
+make BatchRunAll.run 
 cd ~/Programming/LET_OPT/release
 N=$1
 file_index=$2
