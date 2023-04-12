@@ -1,14 +1,13 @@
 #pragma once
 #include "sources/Optimization/TaskSetOptEnumerate.h"
-#include "sources/Optimization/TaskSetPermutation.h"
 namespace DAG_SPACE {
 
-class TaskSetOptEnumWSkip : public TaskSetPermutation {
+class TaskSetOptEnumWSkip : public TaskSetOptEnumerate {
  public:
   TaskSetOptEnumWSkip(const DAG_Model& dag_tasks,
                       const std::vector<std::vector<int>>& chains,
                       const std::string& type_trait)
-      : TaskSetPermutation(dag_tasks, chains, type_trait) {}
+      : TaskSetOptEnumerate(dag_tasks, chains, type_trait) {}
 
   template <typename ObjectiveFunction>
   int PerformOptimizationSkipInfeasible() {
@@ -69,26 +68,6 @@ class TaskSetOptEnumWSkip : public TaskSetPermutation {
         chains_perm.pop(perm_sing_curr);
       }
     }
-  }
-
-  template <typename ObjectiveFunction>
-  double EvaluateChainsPermutation(const ChainsPermutation& chains_perm) {
-    std::pair<VariableOD, int> res = FindODWithLP(
-        dag_tasks_, tasks_info_, chains_perm, graph_of_all_ca_chains_,
-        ObjectiveFunction::type_trait, rta_);
-
-    if (res.first.valid_)  // if valid, we'll exam obj; otherwise, we'll
-                           // just move forward
-    {
-      if (res.second < best_yet_obj_) {
-        best_yet_obj_ = res.second;
-        best_yet_chain_ = chains_perm;
-        best_yet_variable_od_ = res.first;
-      }
-    } else {
-      infeasible_iteration_++;
-    }
-    return res.second;
   }
 };
 
