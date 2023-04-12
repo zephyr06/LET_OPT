@@ -3,7 +3,8 @@
 namespace DAG_SPACE {
 
 std::string GetResFileName(const std::string &pathDataset,
-                           const std::string &file, BASELINEMETHODS method) {
+                           const std::string &file, BASELINEMETHODS method,
+                           const std::string obj_trait) {
   std::string property;
   //   if (method == 0) {
   //     property = "_Initial_Res.txt";
@@ -13,7 +14,7 @@ std::string GetResFileName(const std::string &pathDataset,
   //     property = "_TOM_FAST_Res.txt";
   //   }
   if (method < BaselineMethodNames.size())
-    property = "_" + BaselineMethodNames[method] + "_Res.txt";
+    property = "_" + BaselineMethodNames[method] + "_" + obj_trait + "_Res.txt";
   else {
     CoutError("Unknown method index in GetResFileName!");
   }
@@ -21,8 +22,9 @@ std::string GetResFileName(const std::string &pathDataset,
 }
 // TOTEST: read & write
 void WriteToResultFile(const std::string &pathDataset, const std::string &file,
-                       DAG_SPACE::ScheduleResult &res, BASELINEMETHODS method) {
-  std::string resFile = GetResFileName(pathDataset, file, method);
+                       DAG_SPACE::ScheduleResult &res, BASELINEMETHODS method,
+                       const std::string obj_trait) {
+  std::string resFile = GetResFileName(pathDataset, file, method, obj_trait);
   std::ofstream outfileWrite;
   outfileWrite.open(resFile, std::ofstream::out |
                                  std::ofstream::trunc);  // std::ios_base::app
@@ -34,9 +36,10 @@ void WriteToResultFile(const std::string &pathDataset, const std::string &file,
 
 DAG_SPACE::ScheduleResult ReadFromResultFile(const std::string &pathDataset,
                                              const std::string &file,
-                                             BASELINEMETHODS method) {
+                                             BASELINEMETHODS method,
+                                             const std::string obj_trait) {
   DAG_SPACE::ScheduleResult result;
-  std::string resFile = GetResFileName(pathDataset, file, method);
+  std::string resFile = GetResFileName(pathDataset, file, method, obj_trait);
   std::ifstream cResultFile(resFile.data());
   // double timeTaken = 0, obj = 0;
   // int schedulable = 0;
@@ -46,8 +49,8 @@ DAG_SPACE::ScheduleResult ReadFromResultFile(const std::string &pathDataset,
 }
 
 bool VerifyResFileExist(const std::string &pathDataset, const std::string &file,
-                        BASELINEMETHODS method) {
-  std::string resFile = GetResFileName(pathDataset, file, method);
+                        BASELINEMETHODS method, const std::string obj_trait) {
+  std::string resFile = GetResFileName(pathDataset, file, method, obj_trait);
   std::ifstream myfile;
   myfile.open(resFile);
   if (myfile) {

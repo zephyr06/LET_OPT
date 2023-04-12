@@ -101,8 +101,10 @@ std::unordered_map<DAG_SPACE::BASELINEMETHODS, BatchResult> BatchOptimizeOrder(
 
     for (auto batchTestMethod : baselineMethods) {
       DAG_SPACE::ScheduleResult res;
-      if (VerifyResFileExist(pathDataset, file, batchTestMethod)) {
-        res = ReadFromResultFile(pathDataset, file, batchTestMethod);
+      if (VerifyResFileExist(pathDataset, file, batchTestMethod,
+                             ObjectiveFunctionBase::type_trait)) {
+        res = ReadFromResultFile(pathDataset, file, batchTestMethod,
+                                 ObjectiveFunctionBase::type_trait);
       } else {
         res = PerformSingleScheduling<ObjectiveFunctionBase>(dag_tasks,
                                                              batchTestMethod);
@@ -114,7 +116,8 @@ std::unordered_map<DAG_SPACE::BASELINEMETHODS, BatchResult> BatchOptimizeOrder(
 
       if (!res.schedulable_ || res.obj_ >= 1e8) errorFiles.push_back(file);
 
-      WriteToResultFile(pathDataset, file, res, batchTestMethod);
+      WriteToResultFile(pathDataset, file, res, batchTestMethod,
+                        ObjectiveFunctionBase::type_trait);
       results_man.add(batchTestMethod, res, file);
     }
     fileIndex++;
