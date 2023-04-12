@@ -2,6 +2,7 @@
 #include <algorithm>  // for std::gcd
 
 #include "gmock/gmock.h"  // Brings in gMock.
+#include "sources/Baseline/JobCommunications.h"
 #include "sources/Optimization/Variable.h"
 #include "testEnv.cpp"
 using namespace DAG_SPACE;
@@ -44,7 +45,6 @@ class Martinez18TaskSetPerms {
     for (int i = 0; i < gcd; i++) offsets.push_back(i);
     return offsets;
   }
-
   void FindPossibleOffsets() {
     possible_offsets_map_.reserve(chain_.size());
     possible_offsets_map_[chain_[0]] = {0};
@@ -58,6 +58,14 @@ class Martinez18TaskSetPerms {
       hp_yet = std::lcm(hp_yet, period_curr);
     }
   }
+
+  int PerformOptimization() {
+    Martinez18Perm perms_offset;
+    Iterate(0, perms_offset);
+    return best_yet_obj_;
+  }
+
+  void Iterate(int position, Martinez18Perm& perms_offset) { ; }
 
   // data members
   TimerType start_time_;
@@ -90,6 +98,69 @@ TEST_F(PermutationTest18_n3, Martinez18Perm) {
   EXPECT_EQ(3, mart_perm.size());
   EXPECT_EQ(1, mart_perm[1]);
   EXPECT_EQ(3, mart_perm[2]);
+}
+VariableOD GetVariable(const Martinez18Perm& mart_perm,
+                       const DAG_Model& dag_tasks) {
+  VariableOD variable_od(dag_tasks.GetTaskSet());
+  for (uint i = 0; i < variable_od.size(); i++) {
+    variable_od[i].offset = mart_perm[i];
+  }
+  return variable_od;
+}
+
+int ObjDataAgeFromVariable(const Martinez18Perm& mart_perm,
+                           const DAG_Model& dag_tasks,
+                           const TaskSetInfoDerived& tasks_info,
+                           const std::vector<int>& chain) {
+  VariableOD variable_od = GetVariable(mart_perm, dag_tasks);
+  ChainsPermutation chains_perm = GetChainsPermFromVariable(
+      dag_tasks, tasks_info, {chain}, "DataAge", variable_od);
+  return ObjDataAge::Obj(dag_tasks, tasks_info, chains_perm, variable_od,
+                         {chain});
+}
+
+TEST_F(PermutationTest18_n3, GetPossibleReadingJobs) {
+  VariableOD variable_od(tasks);
+  variable_od[1].offset = 10;
+  variable_od[2].offset = 10;
+  std::vector<int> chain = {0, 1, 2};
+  Martinez18Perm mart_perm;
+  mart_perm.push_back(0);
+  mart_perm.push_back(1);
+  mart_perm.push_back(3);
+  EXPECT_EQ(JobCEC(0, 0), GetPossibleReadingJobs(JobCEC(1, 0), task0, 20,
+                                                 tasks_info, variable_od));
+}
+
+TEST_F(PermutationTest18_n3, Obj_v1) {
+  VariableOD variable_od(tasks);
+  variable_od[1].offset = 1;
+  variable_od[2].offset = 3;
+  std::vector<int> chain = {0, 1, 2};
+  Martinez18Perm mart_perm;
+  mart_perm.push_back(0);
+  mart_perm.push_back(1);
+  mart_perm.push_back(3);
+  EXPECT_EQ(50,
+            ObjDataAgeFromVariable(mart_perm, dag_tasks, tasks_info, chain));
+}
+
+TEST_F(PermutationTest18_n3, Obj_v2) {
+  VariableOD variable_od(tasks);
+  variable_od[1].offset = 10;
+  variable_od[2].offset = 10;
+  std::vector<int> chain = {0, 1, 2};
+  Martinez18Perm mart_perm;
+  mart_perm.push_back(0);
+  mart_perm.push_back(10);
+  mart_perm.push_back(3);
+  EXPECT_EQ(40,
+            ObjDataAgeFromVariable(mart_perm, dag_tasks, tasks_info, chain));
+}
+
+TEST_F(PermutationTest18_n3, Iterate) {
+  Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
+  EXPECT_EQ(40, mart_task_perms.PerformOptimization());
 }
 
 int main(int argc, char** argv) {
