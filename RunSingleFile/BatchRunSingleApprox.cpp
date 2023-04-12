@@ -17,6 +17,9 @@ int main(int argc, char *argv[]) {
       .default_value(1000)
       .help("the last file index that's going to be optimized (Not INCLUSIVE)")
       .scan<'i', int>();
+  program.add_argument("--obj")
+      .default_value(std::string("RT"))
+      .help("the type of objective function, RT or DA");
 
   try {
     program.parse_args(argc, argv);
@@ -28,14 +31,22 @@ int main(int argc, char *argv[]) {
   int N = program.get<int>("--N");
   int begin_index = program.get<int>("--begin");
   int end_index = program.get<int>("--end");
+  std::string obj_type = program.get<std::string>("--obj");
 
   std::vector<DAG_SPACE::BASELINEMETHODS> baselineMethods = {
       DAG_SPACE::InitialMethod, DAG_SPACE::TOM_WSkip, DAG_SPACE::TOM_Sort};
-
   DAG_SPACE::BatchSettings batch_test_settings(
       N, begin_index, end_index, "TaskData/N" + std::to_string(N) + "/");
-  DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTimeApprox>(
-      baselineMethods, batch_test_settings);
+
+  if (obj_type == "RT")
+    DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTimeApprox>(
+        baselineMethods, batch_test_settings);
+  else if (obj_type == "DA")
+    DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjDataAgeApprox>(
+        baselineMethods, batch_test_settings);
+  else
+    CoutError("Please provide recognized --obj");
+
   std::cout << "N: " << N << "\n";
   PrintTimer();
 }
