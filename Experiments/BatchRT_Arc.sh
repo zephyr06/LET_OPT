@@ -5,12 +5,12 @@ MaxTaskNumber=5
 
 MinFileIndex=0
 MaxFileIndex=999
-FILES_PER_CPU=200
+FILES_PER_CPU=500
 
 
 cd ~/Programming/LET_OPT/release
 cmake -DCMAKE_BUILD_TYPE=RELEASE ..
-make BatchRunSingle.run -j8
+make BatchRunSingle.run 
 cd ~/Programming/LET_OPT/Experiments
 
 perform_optimization() {
