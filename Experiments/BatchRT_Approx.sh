@@ -20,4 +20,4 @@ cd ~/Programming/LET_OPT/release
 N=$1
 file_index=$2
 end_index=$3
-./RunSingleFile/BatchRunSingle.run --N "$N" --begin "$file_index" --end "$end_index" 
+./RunSingleFile/BatchRunAll.run --N "$N" --begin "$file_index" --end "$end_index" 
