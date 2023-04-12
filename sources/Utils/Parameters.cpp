@@ -22,7 +22,6 @@ int FEASIBLE_INCOMPLETE_CHAINS_MAX =
     loaded_doc["FEASIBLE_INCOMPLETE_CHAINS_MAX"].as<int>();
 const double kCplexInequalityThreshold =
     loaded_doc["kCplexInequalityThreshold"].as<double>();
-int SearchDP_Friendly = loaded_doc["SearchDP_Friendly"].as<int>();
 // Task set settings
 const std::string testDataSetName =
     loaded_doc["testDataSetName"].as<std::string>();
