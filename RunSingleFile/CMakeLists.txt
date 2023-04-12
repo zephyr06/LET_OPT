@@ -1,7 +1,7 @@
 # gtsamAddTestsGlob(RunSingles "*RunSingle*.cpp" "" "${CONVENIENCE_LIB_NAME}")
 
 
-file( GLOB TEST_SOURCES "*RunSingle*.cpp" )
+file( GLOB TEST_SOURCES "*Run*.cpp" )
 
 foreach( testsourcefile ${TEST_SOURCES} )
     # I used a simple string replace, to cut off .cpp.

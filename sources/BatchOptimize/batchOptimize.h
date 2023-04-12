@@ -126,8 +126,8 @@ std::unordered_map<DAG_SPACE::BASELINEMETHODS, BatchResult> BatchOptimizeOrder(
   //                            BASELINEMETHODS::TOM_Sort_Approx);
   results_man.PrintResultTable(baselineMethods);
   if (std::find(baselineMethods.begin(), baselineMethods.end(),
-                BASELINEMETHODS::TOM_WSkip_Approx) != baselineMethods.end())
-    results_man.PrintLongestCase(BASELINEMETHODS::TOM_WSkip_Approx);
+                BASELINEMETHODS::TOM_WSkip) != baselineMethods.end())
+    results_man.PrintLongestCase(BASELINEMETHODS::TOM_WSkip);
   results_man.PrintTimeOutCase();
 
   std::cout << "Average length of cause-effect chains: " << Average(chain_lenth)

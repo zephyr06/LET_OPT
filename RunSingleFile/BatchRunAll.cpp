@@ -30,11 +30,13 @@ int main(int argc, char *argv[]) {
   int end_index = program.get<int>("--end");
 
   std::vector<DAG_SPACE::BASELINEMETHODS> baselineMethods = {
-      DAG_SPACE::InitialMethod, DAG_SPACE::TOM_WSkip, DAG_SPACE::TOM_Sort};
+      DAG_SPACE::InitialMethod, DAG_SPACE::TOM_WSkip,
+      DAG_SPACE::TOM_Sort};  // DAG_SPACE::TOM, DAG_SPACE::TOM_Sort,
+                             // ObjReactionTime
 
   DAG_SPACE::BatchSettings batch_test_settings(
       N, begin_index, end_index, "TaskData/N" + std::to_string(N) + "/");
-  DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTimeApprox>(
+  DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTime_Approx>(
       baselineMethods, batch_test_settings);
   std::cout << "N: " << N << "\n";
   PrintTimer();
