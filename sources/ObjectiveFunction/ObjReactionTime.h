@@ -13,6 +13,11 @@ JobCEC GetFirstReactJob(const JobCEC &job_curr,
                         const SinglePairPermutation &pair_perm_curr,
                         const TaskSetInfoDerived &tasks_info);
 
+JobCEC GetFirstReactJob(const JobCEC job_source,
+                        const ChainsPermutation &chains_perm,
+                        const std::vector<int> &chain,
+                        const TaskSetInfoDerived &tasks_info);
+
 class ObjReactionTimeIntermediate : public ObjectiveFunctionBaseIntermediate {
  public:
   static const std::string type_trait;

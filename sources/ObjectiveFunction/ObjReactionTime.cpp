@@ -41,6 +41,20 @@ JobCEC GetFirstReactJob(const JobCEC &job_curr,
   return react_job;
 }
 
+JobCEC GetFirstReactJob(const JobCEC job_source,
+                        const ChainsPermutation &chains_perm,
+                        const std::vector<int> &chain,
+                        const TaskSetInfoDerived &tasks_info) {
+  JobCEC job_curr = job_source;
+  for (uint i = 0; i < chain.size() - 1;
+       i++)  // iterate through task-level cause-effect chain
+  {
+    Edge edge_i(chain[i], chain[i + 1]);
+    job_curr = GetFirstReactJob(job_curr, *chains_perm[edge_i], tasks_info);
+  }
+  return job_curr;
+}
+
 double ObjReactionTimeIntermediate::ObjSingleChain(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
     const ChainsPermutation &chains_perm, const std::vector<int> &chain,
@@ -51,15 +65,10 @@ double ObjReactionTimeIntermediate::ObjSingleChain(
        j++)  // iterate each source job within a hyper-period
   {
     JobCEC job_source(chain[0], j);
-    JobCEC job_curr = job_source;
-    for (uint i = 0; i < chain.size() - 1;
-         i++)  // iterate through task-level cause-effect chain
-    {
-      Edge edge_i(chain[i], chain[i + 1]);
-      job_curr = GetFirstReactJob(job_curr, *chains_perm[edge_i], tasks_info);
-    }
+    JobCEC job_react =
+        GetFirstReactJob(job_source, chains_perm, chain, tasks_info);
 
-    int deadline_curr = GetDeadline(job_curr, variable_od, tasks_info);
+    int deadline_curr = GetDeadline(job_react, variable_od, tasks_info);
     max_reaction_time = std::max(
         max_reaction_time,
         int(deadline_curr - GetStartTime(job_source, variable_od, tasks_info)));

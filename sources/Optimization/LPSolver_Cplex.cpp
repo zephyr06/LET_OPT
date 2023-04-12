@@ -214,12 +214,12 @@ void LPOptimizer::AddObjectiveFunctions(const ChainsPermutation &chains_perm) {
     if (obj_trait_ == "ReactionTime" || obj_trait_ == "ReactionTimeApprox") {
       LLint total_start_jobs =
           hyper_period / dag_tasks_.GetTask(chain[0]).period + 1;
-      auto react_chain_map =
-          GetFirstReactMap(dag_tasks_, tasks_info_, chains_perm, chain);
       for (LLint start_instance_index = 0;
            start_instance_index <= total_start_jobs; start_instance_index++) {
         JobCEC start_job = {chain[0], (start_instance_index)};
-        JobCEC first_react_job = react_chain_map[start_job];
+        // JobCEC first_react_job = react_chain_map[start_job];
+        JobCEC first_react_job =
+            GetFirstReactJob(start_job, chains_perm, chain, tasks_info_);
         std::string const_name =
             GetReactConstraintName(chain_count, start_instance_index);
         if (obj_trait_ == "ReactionTime") {

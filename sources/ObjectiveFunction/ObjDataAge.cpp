@@ -4,37 +4,6 @@ namespace DAG_SPACE {
 const std::string ObjDataAgeIntermediate::type_trait("ObjDataAgeIntermediate");
 const std::string ObjDataAge::type_trait("DataAge");
 
-std::unordered_map<JobCEC, JobCEC> GetFirstReactMap(
-    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-    const ChainsPermutation &chains_perm, const std::vector<int> &chain) {
-#ifdef PROFILE_CODE
-  BeginTimer(__FUNCTION__);
-#endif
-
-  std::unordered_map<JobCEC, JobCEC> first_react_map;
-  int hyper_period = GetHyperPeriod(tasks_info, chain);
-  int job_num_in_hyper_period =
-      hyper_period / tasks_info.GetTask(chain[0]).period;
-  first_react_map.reserve(job_num_in_hyper_period);
-  for (int j = 0; j < job_num_in_hyper_period + 2;
-       j++)  // iterate each source job within a hyper-period
-  {
-    JobCEC job_source(chain[0], j);
-    JobCEC job_curr = job_source;
-    for (uint i = 0; i < chain.size() - 1;
-         i++)  // iterate through task-level cause-effect chain
-    {
-      Edge edge_i(chain[i], chain[i + 1]);
-      job_curr = GetFirstReactJob(job_curr, *chains_perm[edge_i], tasks_info);
-    }
-    first_react_map[job_source] = job_curr;
-  }
-#ifdef PROFILE_CODE
-  EndTimer(__FUNCTION__);
-#endif
-  return first_react_map;
-}
-
 JobCEC GetLastReadJobWithSuperPeriod(
     const JobCEC &job_curr, const SinglePairPermutation &pair_perm_curr) {
   auto itr = pair_perm_curr.job_matches_.find(job_curr);

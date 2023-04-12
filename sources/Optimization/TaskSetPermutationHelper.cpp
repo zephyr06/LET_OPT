@@ -33,84 +33,6 @@ std::vector<std::vector<int>> GetSubChains(
 
   return sub_chains;
 }
-// Note: this function doesn't change chains_perm
-std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
-    ChainsPermutation& chains_perm,
-    const std::shared_ptr<const SinglePairPermutation> single_perm,
-    const std::vector<std::vector<int>>& chains, const DAG_Model& dag_tasks,
-    const TaskSetInfoDerived& tasks_info) {
-  chains_perm.push_back(single_perm);
-  auto first_job_map =
-      GetFirstReactMaps(chains_perm, chains, dag_tasks, tasks_info);
-  chains_perm.pop(single_perm);
-  return first_job_map;
-}
-
-std::vector<std::unordered_map<JobCEC, JobCEC>> GetFirstReactMaps(
-    const ChainsPermutation& chains_perm,
-    const std::vector<std::vector<int>>& chains, const DAG_Model& dag_tasks,
-    const TaskSetInfoDerived& tasks_info) {
-#ifdef PROFILE_CODE
-  BeginTimer(__FUNCTION__);
-#endif
-
-  std::vector<std::unordered_map<JobCEC, JobCEC>> first_job_map;
-  first_job_map.reserve(chains.size());
-
-  std::vector<std::vector<int>> sub_chains = GetSubChains(chains, chains_perm);
-  for (uint i = 0; i < chains.size(); i++) {
-    const std::vector<int>& chain_sub = sub_chains[i];
-    if (chain_sub.size() == 0) {
-      first_job_map.push_back(std::unordered_map<JobCEC, JobCEC>());
-    } else {
-      first_job_map.push_back(
-          GetFirstReactMap(dag_tasks, tasks_info, chains_perm, chain_sub));
-    }
-  }
-#ifdef PROFILE_CODE
-  EndTimer(__FUNCTION__);
-#endif
-  return first_job_map;
-}
-
-// return true if it's possible for curr_first_job_maps to achieve better
-// performance than curr_best_first_job_maps
-// bool CompareNewPerm(
-//     const std::vector<std::unordered_map<JobCEC, JobCEC>>&
-//     curr_first_job_maps, const std::vector<std::unordered_map<JobCEC,
-//     JobCEC>>&
-//         curr_best_first_job_maps) {
-//   if (curr_best_first_job_maps.size() == 0) return true;
-//   uint chain_size = curr_first_job_maps.size();
-//   if (chain_size != curr_best_first_job_maps.size())
-//     CoutError("Inconsistent map size in CompareNewPerm!");
-//   bool whether_find_better_react = false;
-//   bool whether_find_worse_react = false;
-//   for (uint i = 0; i < chain_size; i++) {
-//     const std::unordered_map<JobCEC, JobCEC>& curr_map =
-//     curr_first_job_maps[i]; const std::unordered_map<JobCEC, JobCEC>&
-//     best_map =
-//         curr_best_first_job_maps[i];
-//     for (auto itr = best_map.begin(); itr != best_map.end(); itr++) {
-//       const JobCEC& start_job = itr->first;
-//       const JobCEC& best_react_job = itr->second;
-//       if (curr_map.find(start_job) == curr_map.end()) {
-//         CoutError("Job not found in CompareNewPerm!");
-//       } else {
-//         if (best_react_job.jobId > curr_map.at(start_job).jobId) {
-//           whether_find_better_react = true;
-//           return true;
-//         } else if (best_react_job.jobId < curr_map.at(start_job).jobId)
-//           whether_find_worse_react = true;
-//       }
-//     }
-//   }
-//   if (GlobalVariablesDAGOpt::SearchDP_Friendly) {
-//     if (!whether_find_worse_react) return true;
-//   }
-
-//   return false;
-// }
 
 bool ExamVariableFeasibility(const VariableOD& variable,
                              const ChainsPermutation& chains_perm,
@@ -274,6 +196,45 @@ VariableOD FindODFromSingleChainPermutation(
 //         variable_set_record[task_id] = true;
 //     } else
 //         return;
+// }
+
+// return true if it's possible for curr_first_job_maps to achieve better
+// performance than curr_best_first_job_maps
+// bool CompareNewPerm(
+//     const std::vector<std::unordered_map<JobCEC, JobCEC>>&
+//     curr_first_job_maps, const std::vector<std::unordered_map<JobCEC,
+//     JobCEC>>&
+//         curr_best_first_job_maps) {
+//   if (curr_best_first_job_maps.size() == 0) return true;
+//   uint chain_size = curr_first_job_maps.size();
+//   if (chain_size != curr_best_first_job_maps.size())
+//     CoutError("Inconsistent map size in CompareNewPerm!");
+//   bool whether_find_better_react = false;
+//   bool whether_find_worse_react = false;
+//   for (uint i = 0; i < chain_size; i++) {
+//     const std::unordered_map<JobCEC, JobCEC>& curr_map =
+//     curr_first_job_maps[i]; const std::unordered_map<JobCEC, JobCEC>&
+//     best_map =
+//         curr_best_first_job_maps[i];
+//     for (auto itr = best_map.begin(); itr != best_map.end(); itr++) {
+//       const JobCEC& start_job = itr->first;
+//       const JobCEC& best_react_job = itr->second;
+//       if (curr_map.find(start_job) == curr_map.end()) {
+//         CoutError("Job not found in CompareNewPerm!");
+//       } else {
+//         if (best_react_job.jobId > curr_map.at(start_job).jobId) {
+//           whether_find_better_react = true;
+//           return true;
+//         } else if (best_react_job.jobId < curr_map.at(start_job).jobId)
+//           whether_find_worse_react = true;
+//       }
+//     }
+//   }
+//   if (GlobalVariablesDAGOpt::SearchDP_Friendly) {
+//     if (!whether_find_worse_react) return true;
+//   }
+
+//   return false;
 // }
 
 }  // namespace DAG_SPACE
