@@ -1,22 +1,15 @@
 #pragma once
+#include "sources/Baseline/Martinez18.h"
 #include "sources/Optimization/TaskSetOptEnumWSkip.h"
 #include "sources/Optimization/TaskSetOptEnumerate.h"
 #include "sources/Optimization/TaskSetOptSorted.h"
 
 namespace DAG_SPACE {
 
-inline void PrintResultAnalysis(const TaskSetPermutation& task_sets_perms,
-                                const ScheduleResult& res) {
-  std::cout << "The total number of permutation iterations is: "
-            << task_sets_perms.iteration_count_ << "\n";
-  if (GlobalVariablesDAGOpt::debugMode == 1) {
-    std::cout << "The best permutation is: \n";
-    task_sets_perms.best_yet_chain_.print();
-  }
-  if (!res.schedulable_ &&
-      res.timeTaken_ < GlobalVariablesDAGOpt::TIME_LIMIT - 5)
-    CoutError("Find an unschedulable case!");
-}
+void PrintResultAnalysis(const TaskSetPermutation& task_sets_perms,
+                         const ScheduleResult& res);
+
+ScheduleResult PerformOPT_Martinez18_DA(const DAG_Model& dag_tasks);
 
 template <typename ObjectiveFunction>
 ScheduleResult PerformTOM_OPT_BF(const DAG_Model& dag_tasks) {
