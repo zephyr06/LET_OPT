@@ -19,8 +19,6 @@ class PermutationTest18_n3 : public PermutationTestBase {
   std::string type_trait;
 };
 
-
-
 TEST_F(PermutationTest18_n3, FindPossibleOffsets) {
   Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
   EXPECT_EQ(3, mart_task_perms.possible_offsets_map_.size());
@@ -92,6 +90,7 @@ TEST_F(PermutationTest18_n3, EvaluateMartSchedulability) {
 TEST_F(PermutationTest18_n3, Iterate) {
   Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
   EXPECT_EQ(40, mart_task_perms.PerformOptimization());
+  EXPECT_EQ(40, PerformOPT_Martinez18_DA(dag_tasks).obj_);
   EXPECT_EQ(11 * 21, mart_task_perms.iteration_count_);
 }
 
@@ -118,6 +117,7 @@ TEST_F(PermutationTest4_n3, Obj_v1) {
 TEST_F(PermutationTest4_n3, Iterate) {
   Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
   EXPECT_EQ(45, mart_task_perms.PerformOptimization());
+  EXPECT_EQ(45, PerformOPT_Martinez18_DA(dag_tasks).obj_);
   EXPECT_EQ((5 + 1) * (15 + 1), mart_task_perms.iteration_count_);
 }
 int main(int argc, char** argv) {

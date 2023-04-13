@@ -5,8 +5,8 @@
 
 namespace DAG_SPACE {
 
-void PrintResultAnalysis(const TaskSetPermutation& task_sets_perms,
-                         const ScheduleResult& res) {
+inline void PrintResultAnalysis(const TaskSetPermutation& task_sets_perms,
+                                const ScheduleResult& res) {
   std::cout << "The total number of permutation iterations is: "
             << task_sets_perms.iteration_count_ << "\n";
   if (GlobalVariablesDAGOpt::debugMode == 1) {

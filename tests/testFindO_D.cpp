@@ -1,5 +1,5 @@
 #include "gmock/gmock.h"  // Brings in gMock.
-#include "sources/Optimization/OptimizeMain.h"
+#include "sources/OptimizeMain.h"
 #include "sources/Optimization/Variable.h"
 #include "sources/Permutations/ChainsPermutation.h"
 #include "sources/Permutations/TwoTaskPermutations.h"

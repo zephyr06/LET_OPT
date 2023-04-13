@@ -85,6 +85,7 @@ bool Martinez18TaskSetPerms::EvaluateMartSchedulability(
     if (perms_offset[task_id] + rta_[task_id] >
         dag_tasks_.GetTask(task_id).deadline)
       return false;
+    if (perms_offset[task_id] == -1) return false;
   }
 
   return true;

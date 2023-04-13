@@ -1,4 +1,4 @@
-#include "sources/Optimization/OptimizeMain.h"
+#include "sources/OptimizeMain.h"
 #include "sources/Permutations/FeasibleChainManager.h"
 #include "testEnv.cpp"
 

@@ -3,8 +3,10 @@
 #include <algorithm>  // for std::gcd
 
 #include "sources/Baseline/JobCommunications.h"
+#include "sources/Baseline/StandardLET.h"
 #include "sources/ObjectiveFunction/ObjDataAge.h"
 #include "sources/Optimization/Variable.h"
+#include "sources/OptimizeMain.h"
 namespace DAG_SPACE {
 class Martinez18Perm : public std::vector<int> {
  public:
@@ -56,6 +58,13 @@ class Martinez18TaskSetPerms {
 
   bool EvaluateMartSchedulability(Martinez18Perm& perms_offset);
 
+  bool ExamSchedulabilityOptSol() {
+    if (best_yet_obj_ == INFEASIBLE_OBJ)
+      return false;
+    else
+      return true;
+  }
+
   // data members
   TimerType start_time_;
   DAG_Model dag_tasks_;
@@ -69,5 +78,21 @@ class Martinez18TaskSetPerms {
   std::unordered_map<int, std::vector<int>> possible_offsets_map_;
   Martinez18Perm best_yet_variable_od_;
 };
+
+ScheduleResult PerformOPT_Martinez18_DA(const DAG_Model& dag_tasks) {
+  auto start = std::chrono::high_resolution_clock::now();
+  ScheduleResult res;
+  Martinez18TaskSetPerms task_sets_perms(dag_tasks, dag_tasks.chains_[0]);
+  res.obj_ = task_sets_perms.PerformOptimization();
+  if (res.obj_ >= 1e8) {
+    res.obj_ = PerformStandardLETAnalysis<ObjDataAge>(dag_tasks).obj_;
+  }
+  res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
+  auto stop = std::chrono::high_resolution_clock::now();
+  res.timeTaken_ = GetTimeTaken(start, stop);
+
+  //   PrintResultAnalysis(task_sets_perms, res);
+  return res;
+}
 
 }  // namespace DAG_SPACE

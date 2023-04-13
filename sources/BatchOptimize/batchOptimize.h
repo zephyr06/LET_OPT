@@ -8,7 +8,7 @@
 
 #include "assert.h"
 #include "sources/Baseline/StandardLET.h"
-#include "sources/Optimization/OptimizeMain.h"
+#include "sources/OptimizeMain.h"
 #include "sources/Utils/BatchUtils.h"
 #include "sources/Utils/ScheduleResults.h"
 #include "sources/Utils/VariadicTable.h"

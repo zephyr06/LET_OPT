@@ -1,6 +1,6 @@
 #include "gmock/gmock.h"  // Brings in gMock.
 #include "sources/Baseline/StandardLET.h"
-#include "sources/Optimization/OptimizeMain.h"
+#include "sources/OptimizeMain.h"
 using namespace DAG_SPACE;
 
 int REPEAT = 100;
