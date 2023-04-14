@@ -237,8 +237,11 @@ void LPOptimizer::AddObjectiveFunctions(const ChainsPermutation &chains_perm) {
           AddTwoJobLengthConstraint(start_job, first_react_job, chain_count,
                                     start_instance_index);
         } else {  // (obj_trait_ == "ReactionTimeApprox")
-          AddTwoJobApproxLengthConstraint(start_job, first_react_job,
-                                          chain_count, start_instance_index);
+          // AddTwoJobApproxLengthConstraint(start_job, first_react_job,
+          //                                 chain_count, start_instance_index);
+
+          AddTwoJobLengthConstraint(start_job, first_react_job, chain_count,
+                                    start_instance_index);
         }
       }
     } else if (obj_trait_ == "DataAge" || obj_trait_ == "DataAgeApprox") {
@@ -255,8 +258,12 @@ void LPOptimizer::AddObjectiveFunctions(const ChainsPermutation &chains_perm) {
           AddTwoJobLengthConstraint(last_read_job, start_job, chain_count,
                                     start_instance_index);
         } else {  // obj_trait_ == "DataAgeApprox"
-          AddTwoJobApproxLengthConstraint(last_read_job, start_job, chain_count,
-                                          start_instance_index);
+          // AddTwoJobApproxLengthConstraint(last_read_job, start_job,
+          // chain_count,
+          //                                 start_instance_index);
+
+          AddTwoJobLengthConstraint(last_read_job, start_job, chain_count,
+                                    start_instance_index);
         }
       }
     }
