@@ -17,10 +17,11 @@ module load Eigen/3.3.7
 module load yaml-cpp/0.6.3-GCCcore-8.3.0
 
 
-cd ~/Programming/LET_OPT/release
+ROOT_PATh=/projects/rtss_let/LET_OPT
+
+cd $ROOT_PATh/release
 cmake -DCMAKE_BUILD_TYPE=RELEASE ..
 make BatchRunAll.run 
-cd ~/Programming/LET_OPT/release
 N=$1
 file_index=$2
 end_index=$3
