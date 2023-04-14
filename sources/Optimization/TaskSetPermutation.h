@@ -19,6 +19,9 @@ class TaskSetPermutation {
                      const std::vector<std::vector<int>>& chains,
                      const std::string& type_trait);
 
+  TaskSetPermutation(const DAG_Model& dag_tasks,
+                     const std::vector<std::vector<int>>& chains);
+
   void FindPairPermutations();
   bool ExamSchedulabilityOptSol() const;
   std::vector<Edge> GetAllEdges() const;

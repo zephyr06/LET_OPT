@@ -29,4 +29,21 @@ ScheduleResult PerformOPT_Martinez18_DA(const DAG_Model& dag_tasks) {
   return res;
 }
 
+
+ScheduleResult PerformTOM_OPTOffset_Sort(const DAG_Model& dag_tasks) {
+  auto start = std::chrono::high_resolution_clock::now();
+  ScheduleResult res;
+  TaskSetOptSorted_Offset task_sets_perms(dag_tasks, dag_tasks.chains_[0]);
+  res.obj_ = task_sets_perms.PerformOptimizationSort<ObjDataAge>();
+  if (res.obj_ >= 1e8) {
+    res.obj_ = PerformStandardLETAnalysis<ObjDataAge>(dag_tasks).obj_;
+  }
+  res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
+  auto stop = std::chrono::high_resolution_clock::now();
+  res.timeTaken_ = GetTimeTaken(start, stop);
+
+  PrintResultAnalysis(task_sets_perms, res);
+  return res;
+}
+
 }  // namespace DAG_SPACE

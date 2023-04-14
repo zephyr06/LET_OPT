@@ -35,9 +35,10 @@ class LPOptimizer {
 
   void Init();
   void ClearCplexMemory();
-  std::pair<VariableOD, int> Optimize(const ChainsPermutation &chains_perm);
+  std::pair<VariableOD, int> Optimize(const ChainsPermutation &chains_perm,
+                                      bool optimize_offset_only = false);
   std::pair<VariableOD, int> OptimizeWithoutClear(
-      const ChainsPermutation &chains_perm);
+      const ChainsPermutation &chains_perm, bool optimize_offset_only = false);
 
   inline void AddVariables() {
     AddVariablesOD(tasks_info_.N);
@@ -45,6 +46,7 @@ class LPOptimizer {
   }
 
   void AddVariablesOD(int number_of_tasks_to_opt);
+  void AddConstantDeadlineConstraint();
   void AddArtificialVariables();
   void AddPermutationInequalityConstraints(const ChainsPermutation &chains_perm,
                                            bool allow_partial_edges = false);
@@ -151,10 +153,10 @@ inline std::pair<VariableOD, int> FindODWithLP(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
     const ChainsPermutation &chains_perm,
     const GraphOfChains &graph_of_all_ca_chains, const std::string &obj_trait,
-    const std::vector<int> &rta) {
+    const std::vector<int> &rta, bool optimize_offset_only = false) {
   LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_of_all_ca_chains,
                            obj_trait, rta);
-  return lp_optimizer.Optimize(chains_perm);
+  return lp_optimizer.Optimize(chains_perm, optimize_offset_only);
 }
 
 // inline int GetMinOffSet(int task_id, const DAG_Model &dag_tasks,

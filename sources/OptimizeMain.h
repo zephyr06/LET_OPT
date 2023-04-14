@@ -3,6 +3,7 @@
 #include "sources/Optimization/TaskSetOptEnumWSkip.h"
 #include "sources/Optimization/TaskSetOptEnumerate.h"
 #include "sources/Optimization/TaskSetOptSorted.h"
+#include "sources/Optimization/TaskSetOptSorted_Offset.h"
 
 namespace DAG_SPACE {
 
@@ -10,6 +11,8 @@ void PrintResultAnalysis(const TaskSetPermutation& task_sets_perms,
                          const ScheduleResult& res);
 
 ScheduleResult PerformOPT_Martinez18_DA(const DAG_Model& dag_tasks);
+
+ScheduleResult PerformTOM_OPTOffset_Sort(const DAG_Model& dag_tasks);
 
 template <typename ObjectiveFunction>
 ScheduleResult PerformTOM_OPT_BF(const DAG_Model& dag_tasks) {

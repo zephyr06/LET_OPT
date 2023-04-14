@@ -32,16 +32,17 @@ void LPOptimizer::ClearCplexMemory() {
 }
 
 std::pair<VariableOD, int> LPOptimizer::Optimize(
-    const ChainsPermutation &chains_perm) {
-  auto res = OptimizeWithoutClear(chains_perm);
+    const ChainsPermutation &chains_perm, bool optimize_offset_only) {
+  auto res = OptimizeWithoutClear(chains_perm, optimize_offset_only);
   ClearCplexMemory();
   return res;
 }
 
 std::pair<VariableOD, int> LPOptimizer::OptimizeWithoutClear(
-    const ChainsPermutation &chains_perm) {
+    const ChainsPermutation &chains_perm, bool optimize_offset_only) {
   BeginTimer("Build_LP_Model");
   AddVariables();  // must be called first
+  if (optimize_offset_only) AddConstantDeadlineConstraint();
   AddSchedulabilityConstraints();
   AddPermutationInequalityConstraints(chains_perm);
   AddObjectiveFunctions(chains_perm);
@@ -75,6 +76,16 @@ void LPOptimizer::AddVariablesOD(int number_of_tasks_to_opt) {
   numVariables_ = number_of_tasks_to_opt * 2;
   varArray_ = IloNumVarArray(env_, numVariables_, 0, tasks_info_.hyper_period,
                              IloNumVar::Float);
+}
+
+void LPOptimizer::AddConstantDeadlineConstraint() {
+  for (int task_id = 0; task_id < tasks_info_.N; task_id++) {
+    int deadline = tasks_info_.GetTask(task_id).deadline;
+    IloRange myConstraint1(env_, deadline,
+                           varArray_[GetVariableIndexVirtualDeadline(task_id)],
+                           deadline);
+    model_.add(myConstraint1);
+  }
 }
 
 void LPOptimizer::AddArtificialVariables() {
