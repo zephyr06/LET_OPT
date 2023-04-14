@@ -38,6 +38,9 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
     case Martinez18:
       res = PerformOPT_Martinez18_DA(dag_tasks);
       break;
+    case TOM_Sort_Offset:
+      res = PerformTOM_OPTOffset_Sort(dag_tasks);
+      break;
 
     default:
       CoutError("Please provide batchTestMethod implementation!");

@@ -11,6 +11,7 @@ enum BASELINEMETHODS {
   TOM_WSkip,      // 2
   TOM_Sort,       // 3
   Martinez18,     // 4
+  TOM_Sort_Offset
   // TOM_BF_Approx,     // 5
   // TOM_WSkip_Approx,  // 6
   // TOM_Sort_Approx,   // 7
@@ -18,7 +19,7 @@ enum BASELINEMETHODS {
 };
 const std::vector<std::string> BaselineMethodNames = {
     "InitialMethod",    "TOM_BF",          "TOM_WSkip",
-    "TOM_Sort",         "Martinez18",      "TOM_BF_Approx",
+    "TOM_Sort",         "Martinez18",     "TOM_Sort_Offset", "TOM_BF_Approx",
     "TOM_WSkip_Approx", "TOM_Sort_Approx", "SA"};
 
 }  // namespace DAG_SPACE
