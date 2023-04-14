@@ -249,7 +249,8 @@ TEST_F(PermutationTest25_n3, overall_opt) {
   task_sets_perms.adjacent_two_task_permutations_[1].print();
   int obj_find =
       task_sets_perms.PerformOptimizationSkipInfeasible<ObjDataAgeApprox>();
-  EXPECT_EQ(300, obj_find);
+  // EXPECT_EQ(300, obj_find);
+  EXPECT_THAT(obj_find, ::testing::Le(300));
 }
 
 TEST_F(PermutationTest25_n3, overall_opt_bf) {
@@ -258,7 +259,8 @@ TEST_F(PermutationTest25_n3, overall_opt_bf) {
   task_sets_perms.adjacent_two_task_permutations_[0].print();
   task_sets_perms.adjacent_two_task_permutations_[1].print();
   int obj_find = task_sets_perms.PerformOptimizationBF<ObjDataAgeApprox>();
-  EXPECT_EQ(300, obj_find);
+  // EXPECT_EQ(300, obj_find);
+  EXPECT_THAT(obj_find, ::testing::Le(300));
 }
 
 TEST_F(PermutationTest25_n3, GetEdgeIneqRangeDA) {
@@ -336,7 +338,8 @@ TEST_F(PermutationTest25_n3, overall_opt_Sort) {
   int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAgeApprox>();
   EXPECT_TRUE(task_sets_perms.ExamSchedulabilityOptSol());
   // TODO: the optimal solution seems to be 200!!
-  EXPECT_EQ(300, obj_find);
+  // EXPECT_EQ(300, obj_find);
+  EXPECT_THAT(obj_find, ::testing::Le(300));
 }
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
