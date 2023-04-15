@@ -15,7 +15,7 @@ class Martinez18Perm : public std::vector<int> {
   Martinez18Perm() {}
   Martinez18Perm(int n) {
     reserve(n);
-    for (int i = 0; i < n; i++) push_back(-1);
+    for (int i = 0; i < n; i++) push_back(0);
   }
   void print() const {
     for (uint i = 0; i < size(); i++) std::cout << at(i) << ", ";
@@ -31,6 +31,7 @@ int ObjDataAgeFromVariable(const Martinez18Perm& mart_perm,
                            const TaskSetInfoDerived& tasks_info,
                            const std::vector<int>& chain);
 
+// TODO: add time_out
 class Martinez18TaskSetPerms {
  public:
   // TaskSetPermutation() {}

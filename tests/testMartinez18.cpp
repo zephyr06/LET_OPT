@@ -120,6 +120,23 @@ TEST_F(PermutationTest4_n3, Iterate) {
   EXPECT_EQ(45, PerformOPT_Martinez18_DA(dag_tasks).obj_);
   EXPECT_EQ((5 + 1) * (15 + 1), mart_task_perms.iteration_count_);
 }
+
+class PermutationTest9_n10 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n10_v9");
+    type_trait = "DataAge";
+  }
+
+ public:
+  std::string type_trait;
+};
+TEST_F(PermutationTest9_n10, TimeOut) {
+  Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
+  EXPECT_THAT(mart_task_perms.PerformOptimization(),
+              ::testing::Le(INFEASIBLE_OBJ - 1));
+  EXPECT_EQ(201 * 201 * 21, mart_task_perms.iteration_count_);
+}
+
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);

@@ -62,9 +62,9 @@ void Martinez18TaskSetPerms::Iterate(uint position,
   const std::vector<int> possible_offsets_curr = possible_offsets_map_[task_id];
 
   for (int offset_curr : possible_offsets_curr) {
+    if (ifTimeout(start_time_)) break;
     perms_offset[task_id] = offset_curr;
     Iterate(position + 1, perms_offset);
-    // perms_offset.pop_back();
   }
 }
 
