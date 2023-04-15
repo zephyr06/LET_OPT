@@ -27,7 +27,7 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
       res = PerformStandardLETAnalysis<ObjectiveFunctionBase>(dag_tasks);
       break;
     case TOM_BF:
-      res = PerformTOM_OPT_BF<ObjDataAgeApprox>(dag_tasks);
+      res = PerformTOM_OPT_BF<ObjectiveFunctionBase>(dag_tasks);
       break;
     case TOM_WSkip:
       res = PerformTOM_OPT_EnumW_Skip<ObjectiveFunctionBase>(dag_tasks);
