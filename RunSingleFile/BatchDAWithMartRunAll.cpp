@@ -36,16 +36,13 @@ int main(int argc, char *argv[]) {
 
   DAG_SPACE::BatchSettings batch_test_settings(
       N, begin_index, end_index, "TaskData/N" + std::to_string(N) + "/");
+  batch_test_settings.chainNum = 1;
 
   std::vector<DAG_SPACE::BASELINEMETHODS> baselineMethods = {
       DAG_SPACE::InitialMethod, DAG_SPACE::TOM_BF, DAG_SPACE::TOM_WSkip,
-      DAG_SPACE::TOM_Sort};
-  std::vector<DAG_SPACE::BASELINEMETHODS> baselinemethods_bf = {
-      DAG_SPACE::InitialMethod, DAG_SPACE::TOM_BF, DAG_SPACE::Martinez18};
+      DAG_SPACE::TOM_Sort, DAG_SPACE::Martinez18};
 
-  DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjDataAgeApprox>(
-      baselineMethods, batch_test_settings);
-  DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjDataAge>(baselinemethods_bf,
+  DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjDataAge>(baselineMethods,
                                                        batch_test_settings);
 
   std::cout << "N: " << N << "\n";
