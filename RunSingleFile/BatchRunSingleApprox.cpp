@@ -39,11 +39,11 @@ int main(int argc, char *argv[]) {
       N, begin_index, end_index, "TaskData/N" + std::to_string(N) + "/");
 
   if (obj_type == "RT")
-    DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTimeApprox>(
+    DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTime>(
         baselineMethods, batch_test_settings);
   else if (obj_type == "DA")
-    DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjDataAgeApprox>(
-        baselineMethods, batch_test_settings);
+    DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjDataAge>(baselineMethods,
+                                                         batch_test_settings);
   else
     CoutError("Please provide recognized --obj");
 

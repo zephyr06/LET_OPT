@@ -21,8 +21,7 @@ int main(int argc, char** argv) {
 
   TaskSetOptSorted task_sets_perms =
       TaskSetOptSorted(dag_tasks, {dag_tasks.chains_}, "ReactionTime");
-  int obj_find =
-      task_sets_perms.PerformOptimizationSort<ObjReactionTimeApprox>();
+  int obj_find = task_sets_perms.PerformOptimizationSort<ObjReactionTime>();
 
   std::cout << "The best permutation is: \n";
   task_sets_perms.best_yet_chain_.print();

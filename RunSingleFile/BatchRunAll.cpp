@@ -39,19 +39,13 @@ int main(int argc, char *argv[]) {
 
   std::vector<DAG_SPACE::BASELINEMETHODS> baselineMethods = {
       DAG_SPACE::InitialMethod, DAG_SPACE::TOM_BF, DAG_SPACE::TOM_WSkip,
-      DAG_SPACE::TOM_Sort};  // TODO: merge the two baselineMethods
-  std::vector<DAG_SPACE::BASELINEMETHODS> baselinemethods_bf = {
-      DAG_SPACE::InitialMethod, DAG_SPACE::TOM_BF};
+      DAG_SPACE::TOM_Sort};
 
   if (obj_type == "RT") {
-    DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTimeApprox>(
-        baselineMethods, batch_test_settings);
     DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTime>(
-        baselinemethods_bf, batch_test_settings);
-  } else if (obj_type == "DA") {
-    DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjDataAgeApprox>(
         baselineMethods, batch_test_settings);
-    DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjDataAge>(baselinemethods_bf,
+  } else if (obj_type == "DA") {
+    DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjDataAge>(baselineMethods,
                                                          batch_test_settings);
   } else
     CoutError("Please provide recognized --obj");

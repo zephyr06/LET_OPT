@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
   TaskSetOptEnumWSkip task_sets_perms =
       TaskSetOptEnumWSkip(dag_tasks, {dag_tasks.chains_}, "DataAge");
   int obj_find =
-      task_sets_perms.PerformOptimizationSkipInfeasible<ObjDataAgeApprox>();
+      task_sets_perms.PerformOptimizationSkipInfeasible<ObjDataAge>();
 
   std::cout << "The best permutation is: \n";
   task_sets_perms.best_yet_chain_.print();
