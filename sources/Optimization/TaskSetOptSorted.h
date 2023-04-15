@@ -107,8 +107,9 @@ class TaskSetOptSorted : public TaskSetPermutation {
     std::vector<std::vector<int>> sub_chains =
         GetSubChains(dag_tasks_.chains_, chains_perm);
 
-    if (GetBestPossibleObj<ObjectiveFunction>(chains_perm, sub_chains) >
-        best_yet_obj_) {
+    int best_possible_obj_incomplete =
+        GetBestPossibleObj<ObjectiveFunction>(chains_perm, sub_chains);
+    if (best_possible_obj_incomplete > best_yet_obj_) {
       if (GlobalVariablesDAGOpt::debugMode) {
         std::cout << "Early break at level " << chains_perm.size() << ": ";
         PrintSinglePermIndex(chains_perm);
@@ -128,6 +129,16 @@ class TaskSetOptSorted : public TaskSetPermutation {
     EndTimer(__FUNCTION__);
 #endif
     return false;
+  }
+
+  template <typename ObjectiveFunction>
+  inline double GetBestPossibleObj(
+      const ChainsPermutation& chains_perm,
+      const std::vector<std::vector<int>>& sub_chains) {
+    VariableOD best_possible_variable_od =
+        FindBestPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm);
+    return ObjectiveFunction::Obj(dag_tasks_, tasks_info_, chains_perm,
+                                  best_possible_variable_od, sub_chains);
   }
 
   template <typename ObjectiveFunction>

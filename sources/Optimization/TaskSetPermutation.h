@@ -33,16 +33,6 @@ class TaskSetPermutation {
 
   // The following functions more related to optimization
 
-  template <typename ObjectiveFunction>
-  inline double GetBestPossibleObj(
-      const ChainsPermutation& chains_perm,
-      const std::vector<std::vector<int>>& sub_chains) {
-    VariableOD best_possible_variable_od =
-        FindBestPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm);
-    return ObjectiveFunction::Obj(dag_tasks_, tasks_info_, chains_perm,
-                                  best_possible_variable_od, sub_chains);
-  }
-
   // data members
   TimerType start_time_;
   DAG_Model dag_tasks_;
