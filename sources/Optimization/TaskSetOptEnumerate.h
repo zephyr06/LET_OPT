@@ -12,13 +12,13 @@ class TaskSetOptEnumerate : public TaskSetPermutation {
   template <typename ObjectiveFunction>
   int PerformOptimizationBF() {
     ChainsPermutation chains_perm;
-    IterateAllPermsWSkip<ObjectiveFunction>(0, chains_perm);
+    IterateAllPermsBF<ObjectiveFunction>(0, chains_perm);
     return best_yet_obj_;
   }
 
   // depth equals the number of edge pais
   template <typename ObjectiveFunction>
-  void IterateAllPermsWSkip(uint position, ChainsPermutation& chains_perm) {
+  void IterateAllPermsBF(uint position, ChainsPermutation& chains_perm) {
     if (position == graph_of_all_ca_chains_.edge_records_
                         .size()) {  // finish iterate all the pair permutations
       iteration_count_++;
@@ -33,7 +33,7 @@ class TaskSetOptEnumerate : public TaskSetPermutation {
       if (ifTimeout(start_time_)) break;
       const auto& perm_sing_curr = iterator.pop_front();
       chains_perm.push_back(perm_sing_curr);
-      IterateAllPermsWSkip<ObjectiveFunction>(position + 1, chains_perm);
+      IterateAllPermsBF<ObjectiveFunction>(position + 1, chains_perm);
       chains_perm.pop(perm_sing_curr);
     }
   }
