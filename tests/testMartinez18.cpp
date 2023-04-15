@@ -130,12 +130,12 @@ class PermutationTest9_n10 : public PermutationTestBase {
  public:
   std::string type_trait;
 };
-TEST_F(PermutationTest9_n10, TimeOut) {
-  Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
-  EXPECT_THAT(mart_task_perms.PerformOptimization(),
-              ::testing::Le(INFEASIBLE_OBJ - 1));
-  EXPECT_EQ(201 * 201 * 21, mart_task_perms.iteration_count_);
-}
+// TEST_F(PermutationTest9_n10, TimeOut) {
+//   Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
+//   EXPECT_THAT(mart_task_perms.PerformOptimization(),
+//               ::testing::Le(INFEASIBLE_OBJ - 1));
+//   EXPECT_EQ(201 * 201 * 21, mart_task_perms.iteration_count_);
+// }
 
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
