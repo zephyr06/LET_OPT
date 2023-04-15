@@ -130,6 +130,14 @@ TEST(DAG_Model, GetHyperPeriod) {
   EXPECT_EQ(100, GetHyperPeriod(tasks_info, {0, 3}));
 }
 
+TEST(DAG_Model, ReadDAG_Tasks_chain_number) {
+  string path =
+      GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v42.csv";
+  DAG_Model dag_tasks = ReadDAG_Tasks(path, "RM", 1);
+
+  EXPECT_EQ(1, dag_tasks.chains_.size());
+}
+
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
