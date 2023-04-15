@@ -31,7 +31,6 @@ int ObjDataAgeFromVariable(const Martinez18Perm& mart_perm,
                            const TaskSetInfoDerived& tasks_info,
                            const std::vector<int>& chain);
 
-// TODO: add time_out
 class Martinez18TaskSetPerms {
  public:
   // TaskSetPermutation() {}
