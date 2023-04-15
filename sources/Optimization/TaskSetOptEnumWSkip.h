@@ -16,25 +16,6 @@ class TaskSetOptEnumWSkip : public TaskSetOptEnumerate {
     return best_yet_obj_;
   }
 
-  // chains_perm already pushed the new perm_single
-  template <typename ObjectiveFunction>
-  bool WhetherSkipToNextPerm(const ChainsPermutation& chains_perm) {
-    std::vector<std::vector<int>> sub_chains =
-        GetSubChains(dag_tasks_.chains_, chains_perm);
-
-    if (GetBestPossibleObj<ObjectiveFunction>(chains_perm, sub_chains) >
-        best_yet_obj_) {
-      if (GlobalVariablesDAGOpt::debugMode) {
-        std::cout << "Early break at level " << chains_perm.size() << ": ";
-        PrintSinglePermIndex(chains_perm);
-        std::cout << " due to guarantee to perform worse at the "
-                     "per-chain test\n";
-      }
-      return true;
-    }
-    return false;
-  }
-
   // depth equals the number of edge pais
   template <typename ObjectiveFunction>
   void IterateAllPermsWSkip(uint position, ChainsPermutation& chains_perm) {
@@ -61,10 +42,8 @@ class TaskSetOptEnumWSkip : public TaskSetOptEnumerate {
                               graph_of_all_ca_chains_, rta_)) {
         chains_perm.push_back(perm_sing_curr);
 
-        // try to skip some permutations
-        if (!WhetherSkipToNextPerm<ObjectiveFunction>(chains_perm)) {
-          IterateAllPermsWSkip<ObjectiveFunction>(position + 1, chains_perm);
-        }
+        IterateAllPermsWSkip<ObjectiveFunction>(position + 1, chains_perm);
+
         chains_perm.pop(perm_sing_curr);
       }
     }
