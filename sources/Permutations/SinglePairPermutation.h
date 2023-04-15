@@ -12,6 +12,7 @@ inline int GetSuperPeriod(const Task& task1, const Task& task2) {
   return std::lcm(task1.period, task2.period);
 }
 
+// save one communication pattern between two tasks
 struct SinglePairPermutation {
   SinglePairPermutation() {}
 
@@ -63,7 +64,8 @@ struct SinglePairPermutation {
   // data members
   PermutationInequality
       inequality_;  //  for convenience of skipping permutations
-  std::unordered_map<JobCEC, JobCEC> job_matches_;
+      // if type_trait_=="ReactionTime", it saves first-reacting jobs; if "DataAge", it saves last-reading jobs
+  std::unordered_map<JobCEC, JobCEC> job_matches_; 
   int index_global_;
   int index_local_;
   std::string type_trait_;
