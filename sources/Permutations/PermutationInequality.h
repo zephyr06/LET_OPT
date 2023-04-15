@@ -46,7 +46,7 @@ class PermutationInequality {
                         const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
                         const std::string& type_trait)
       : type_trait_(type_trait) {
-    if (type_trait == "ReactionTimeApprox" || type_trait == "ReactionTime") {
+    if (type_trait == "ReactionTime") {
       task_prev_id_ = job_curr.taskId;
       task_next_id_ = job_match.taskId;
       JobCEC job_match_prev_job(job_match.taskId, job_match.jobId - 1);
@@ -57,7 +57,7 @@ class PermutationInequality {
                      GetActivationTime(job_curr, tasks_info);
       upper_bound_valid_ = true;
 
-    } else if (type_trait == "DataAgeApprox" || type_trait == "DataAge") {
+    } else if (type_trait == "DataAge") {
       task_prev_id_ = job_match.taskId;
       task_next_id_ = job_curr.taskId;
       lower_bound_ = GetActivationTime(job_match, tasks_info) -

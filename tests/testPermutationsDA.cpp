@@ -161,29 +161,29 @@ TEST_F(PermutationTest6_n5, GetEdgeIneqRangeDA) {
 
 TEST_F(PermutationTest6_n5, overall_opt_Sort) {
   TaskSetOptSorted task_sets_perms =
-      TaskSetOptSorted(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
+      TaskSetOptSorted(dag_tasks, dag_tasks.chains_, "DataAge");
   task_sets_perms.adjacent_two_task_permutations_[0].print();
   task_sets_perms.adjacent_two_task_permutations_[1].print();
-  int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAgeApprox>();
+  int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAge>();
 
   TaskSetOptEnumWSkip task_sets_perms_enum =
-      TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
-  EXPECT_EQ(task_sets_perms_enum
-                .PerformOptimizationSkipInfeasible<ObjDataAgeApprox>(),
-            obj_find);
+      TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAge");
+  EXPECT_EQ(
+      task_sets_perms_enum.PerformOptimizationSkipInfeasible<ObjDataAge>(),
+      obj_find);
 }
 TEST_F(PermutationTest6_n5, overall_opt_brute_force) {
   TaskSetOptEnumerate task_sets_perms =
-      TaskSetOptEnumerate(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
+      TaskSetOptEnumerate(dag_tasks, dag_tasks.chains_, "DataAge");
   task_sets_perms.adjacent_two_task_permutations_[0].print();
   task_sets_perms.adjacent_two_task_permutations_[1].print();
-  int obj_find = task_sets_perms.PerformOptimizationBF<ObjDataAgeApprox>();
+  int obj_find = task_sets_perms.PerformOptimizationBF<ObjDataAge>();
 
   TaskSetOptEnumWSkip task_sets_perms_enum =
-      TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
-  EXPECT_EQ(task_sets_perms_enum
-                .PerformOptimizationSkipInfeasible<ObjDataAgeApprox>(),
-            obj_find);
+      TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAge");
+  EXPECT_EQ(
+      task_sets_perms_enum.PerformOptimizationSkipInfeasible<ObjDataAge>(),
+      obj_find);
 }
 class PermutationTest25_n3 : public PermutationTestBase {
   void SetUp() override {
@@ -197,9 +197,9 @@ class PermutationTest25_n3 : public PermutationTestBase {
 
 TEST_F(PermutationTest25_n3, TwoTaskPerm) {
   // TaskSetOptEnumWSkip task_sets_perms =
-  //     TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
+  //     TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAge");
   // task_sets_perms.adjacent_two_task_permutations_[0].print();
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAgeApprox");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
   perm12.print();
   EXPECT_EQ(2, perm12.size());
 }
@@ -244,21 +244,21 @@ TEST_F(PermutationTest25_n3, IsPermConflicted_CheckAllWithSameSource_DA) {
 
 TEST_F(PermutationTest25_n3, overall_opt) {
   TaskSetOptEnumWSkip task_sets_perms =
-      TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
+      TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAge");
   task_sets_perms.adjacent_two_task_permutations_[0].print();
   task_sets_perms.adjacent_two_task_permutations_[1].print();
   int obj_find =
-      task_sets_perms.PerformOptimizationSkipInfeasible<ObjDataAgeApprox>();
+      task_sets_perms.PerformOptimizationSkipInfeasible<ObjDataAge>();
   // EXPECT_EQ(300, obj_find);
   EXPECT_THAT(obj_find, ::testing::Le(300));
 }
 
 TEST_F(PermutationTest25_n3, overall_opt_bf) {
   TaskSetOptEnumerate task_sets_perms =
-      TaskSetOptEnumerate(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
+      TaskSetOptEnumerate(dag_tasks, dag_tasks.chains_, "DataAge");
   task_sets_perms.adjacent_two_task_permutations_[0].print();
   task_sets_perms.adjacent_two_task_permutations_[1].print();
-  int obj_find = task_sets_perms.PerformOptimizationBF<ObjDataAgeApprox>();
+  int obj_find = task_sets_perms.PerformOptimizationBF<ObjDataAge>();
   // EXPECT_EQ(300, obj_find);
   EXPECT_THAT(obj_find, ::testing::Le(300));
 }
@@ -273,7 +273,7 @@ TEST_F(PermutationTest25_n3, GetEdgeIneqRangeDA) {
 }
 TEST_F(PermutationTest25_n3, SkipDAPerm) {
   TaskSetOptEnumWSkip task_sets_perms =
-      TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
+      TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAge");
   task_sets_perms.adjacent_two_task_permutations_[0].print();
   task_sets_perms.adjacent_two_task_permutations_[1].print();
   auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];
@@ -332,10 +332,10 @@ TEST_F(PermutationTest25_n3, IsValid) {
 }
 TEST_F(PermutationTest25_n3, overall_opt_Sort) {
   TaskSetOptSorted task_sets_perms =
-      TaskSetOptSorted(dag_tasks, dag_tasks.chains_, "DataAgeApprox");
+      TaskSetOptSorted(dag_tasks, dag_tasks.chains_, "DataAge");
   task_sets_perms.adjacent_two_task_permutations_[0].print();
   task_sets_perms.adjacent_two_task_permutations_[1].print();
-  int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAgeApprox>();
+  int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAge>();
   EXPECT_TRUE(task_sets_perms.ExamSchedulabilityOptSol());
   // TODO: the optimal solution seems to be 200!!
   // EXPECT_EQ(300, obj_find);

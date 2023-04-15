@@ -48,15 +48,15 @@ TEST_F(PermutationTest1, OptimizeApprox) {
   GraphOfChains graph_chains(dag_tasks.chains_);
 
   std::vector<int> rta = {1, 3, 6};
-  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains,
-                           "ReactionTimeApprox", rta);
+  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "ReactionTime",
+                           rta);
   auto res = lp_optimizer.Optimize(chains_perm);
   EXPECT_EQ(20, res.second);
 }
 TEST_F(PermutationTest1, OptimizeApproxDA_v1) {
   dag_tasks.chains_ = {{0, 1, 2}};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "DataAgeApprox");
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAgeApprox");
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[2]);
@@ -66,8 +66,7 @@ TEST_F(PermutationTest1, OptimizeApproxDA_v1) {
   GraphOfChains graph_chains(dag_tasks.chains_);
 
   std::vector<int> rta = {1, 3, 6};
-  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "DataAgeApprox",
-                           rta);
+  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "DataAge", rta);
   auto res = lp_optimizer.OptimizeWithoutClear(chains_perm);
   lp_optimizer.WriteModelToFile();
   lp_optimizer.ClearCplexMemory();
@@ -76,8 +75,8 @@ TEST_F(PermutationTest1, OptimizeApproxDA_v1) {
 }
 TEST_F(PermutationTest1, OptimizeApproxDA_v2) {
   dag_tasks.chains_ = {{0, 1, 2}};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "DataAgeApprox");
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAgeApprox");
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
@@ -120,8 +119,8 @@ TEST_F(PermutationTest2, OptimizeApprox) {
   GraphOfChains graph_chains(dag_tasks.chains_);
 
   std::vector<int> rta = {1, 2, 3};
-  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains,
-                           "ReactionTimeApprox", rta);
+  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "ReactionTime",
+                           rta);
   auto res = lp_optimizer.Optimize(chains_perm);
   // EXPECT_EQ(20, res.second);
   EXPECT_THAT(res.second, ::testing::Le(20));
@@ -139,8 +138,7 @@ TEST_F(PermutationTest2, OptimizeApproxDA) {
   GraphOfChains graph_chains(dag_tasks.chains_);
 
   std::vector<int> rta = {1, 2, 3};
-  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "DataAgeApprox",
-                           rta);
+  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "DataAge", rta);
   auto res = lp_optimizer.Optimize(chains_perm);
   // EXPECT_EQ(10, res.second);
   EXPECT_THAT(res.second, ::testing::Le(10));
@@ -220,8 +218,8 @@ class PermutationTest22 : public PermutationTestBase {
 };
 TEST_F(PermutationTest22, OptimizeApproxDA) {
   dag_tasks.chains_ = {{0, 1, 2}};
-  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "DataAgeApprox");
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAgeApprox");
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
 
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
@@ -230,8 +228,7 @@ TEST_F(PermutationTest22, OptimizeApproxDA) {
   GraphOfChains graph_chains(dag_tasks.chains_);
 
   std::vector<int> rta = {1, 2, 3};
-  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "DataAgeApprox",
-                           rta);
+  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "DataAge", rta);
   auto res = lp_optimizer.Optimize(chains_perm);
   // EXPECT_EQ(150, res.second);
   EXPECT_THAT(res.second, ::testing::Le(150));

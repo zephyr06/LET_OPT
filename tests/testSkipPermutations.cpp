@@ -1,8 +1,8 @@
 #include "gmock/gmock.h"  // Brings in gMock.
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
 #include "sources/Optimization/LPSolver_Cplex.h"
-#include "sources/OptimizeMain.h"
 #include "sources/Optimization/Variable.h"
+#include "sources/OptimizeMain.h"
 #include "sources/Permutations/ChainsPermutation.h"
 #include "sources/Permutations/PermutationInequality.h"
 #include "sources/Permutations/TwoTaskPermutations.h"
@@ -271,7 +271,7 @@ class PermutationTest18_n3 : public PermutationTestBase {
 
 TEST_F(PermutationTest18_n3, select_feasible_perm) {
   TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_,
-                                      "ReactionTimeApprox");
+                                      "ReactionTime");
   auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];
   auto perm12 = task_sets_perms.adjacent_two_task_permutations_[1];
   perm01.print();
@@ -293,7 +293,7 @@ TEST_F(PermutationTest18_n3, select_feasible_perm) {
 
 TEST_F(PermutationTest18_n3, skip_worse_perm1) {
   TaskSetOptSorted task_sets_perms(dag_tasks, dag_tasks.chains_,
-                                   "ReactionTimeApprox");
+                                   "ReactionTime");
   auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];
   auto perm12 = task_sets_perms.adjacent_two_task_permutations_[1];
   perm01.print();
@@ -314,7 +314,7 @@ TEST_F(PermutationTest18_n3, skip_worse_perm1) {
   chains_perm.push_back(perm01[1]);
   task_sets_perms.feasible_chains_.push_back_incomplete(FeasibleChainManager(
       chains_perm, task_sets_perms.adjacent_two_task_permutations_,
-      "ReactionTimeApprox"));
+      "ReactionTime"));
   iterator01.RemoveCandidates(
       chains_perm, task_sets_perms.feasible_chains_.chain_man_vec_incomplete_,
       unvisited_future_edges);
@@ -322,7 +322,7 @@ TEST_F(PermutationTest18_n3, skip_worse_perm1) {
 }
 TEST_F(PermutationTest18_n3, skip_worse_perm2) {
   TaskSetOptSorted task_sets_perms(dag_tasks, dag_tasks.chains_,
-                                   "ReactionTimeApprox");
+                                   "ReactionTime");
   auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];
   auto perm12 = task_sets_perms.adjacent_two_task_permutations_[1];
   perm01.print();
@@ -344,7 +344,7 @@ TEST_F(PermutationTest18_n3, skip_worse_perm2) {
   chains_perm.push_back(perm12[1]);
   task_sets_perms.feasible_chains_.push_back_incomplete(FeasibleChainManager(
       chains_perm, task_sets_perms.adjacent_two_task_permutations_,
-      "ReactionTimeApprox"));
+      "ReactionTime"));
   iterator01.RemoveCandidates(
       chains_perm, task_sets_perms.feasible_chains_.chain_man_vec_incomplete_,
       unvisited_future_edges);

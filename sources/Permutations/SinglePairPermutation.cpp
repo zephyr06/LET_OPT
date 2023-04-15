@@ -141,9 +141,12 @@ bool IfSkipAnotherPerm(const SinglePairPermutation& perm_base,
                        const std::string& obj_trait) {
   // If the obj is "ReactionTime"/"DataAge", then it cannot always be be skipped
   // safely, though it should happen not frequently
-  if (obj_trait == "ReactionTimeApprox")  // obj_trait == "ReactionTime" ||
+  // however, in experiments, the Sorted method could only optimize the
+  // approximated RT/DA, therefore, we assume that the objective function is
+  // always the approximated RT/DA if the *Sorted* method is used
+  if (obj_trait == "ReactionTime")
     return IfSkipAnotherPermRT(perm_base, perm_another);
-  else if (obj_trait == "DataAgeApprox")  // obj_trait == "DataAge" ||
+  else if (obj_trait == "DataAge")
     return IfSkipAnotherPermDA(perm_base, perm_another);
   else
     return false;
