@@ -11,13 +11,14 @@ MaxFileIndex=999
 perform_optimization() {
 	task_number=$1
 	files_per_node=$2
+	output_file_name=BatchDA_${task_number}_${file_index}_${end_index}-$(date +"%Y%m%d%H%M%S").out
 	for file_index in $(seq $MinFileIndex $files_per_node $MaxFileIndex); do
 	end_index=$((file_index + files_per_node))
 	echo "Processing N$1: file_index=$file_index:$end_index"
 	# ./RunSingleFile/BatchRunSingle.run --N "$1" --begin "$file_index" --end "$end_index" &
 	# sbatch BatchRT_Approx.sh $1 $file_index $end_index
-	echo "sbatch -J BatchDA_${task_number}_${file_index}_${end_index} SBatchDA.sh $1 $file_index $end_index"
-    sbatch -J BatchDA_${task_number}_${file_index}_${end_index} SBatchDA.sh $1 $file_index $end_index
+	echo "sbatch -J BatchDA_${task_number}_${file_index}_${end_index} --output=${output_file_name} SBatchDA.sh $1 $file_index $end_index"
+    sbatch -J BatchDA_${task_number}_${file_index}_${end_index} --output=${output_file_name} SBatchDA.sh $1 $file_index $end_index
 	done
 	wait
 }

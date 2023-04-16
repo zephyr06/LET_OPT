@@ -13,11 +13,12 @@ perform_optimization() {
 	task_number=$1
 	files_per_task=$2
 	time_per_node=$3
-	echo "sbatch -J BatchRT_${task_number} --nodes=1 --ntasks-per-node=$(((MaxFileIndex+1)/files_per_task)) --cpus-per-task=1 --time ${time_per_node}:0:0 SBatchRTMultiTask.sh $1 $MinFileIndex $files_per_task $MaxFileIndex"
+	output_file_name=BatchRT_${task_number}-$(date +"%Y%m%d%H%M%S").out
+	echo "sbatch -J BatchRT_${task_number} --nodes=1 --ntasks-per-node=$(((MaxFileIndex+1)/files_per_task)) --cpus-per-task=1 --time ${time_per_node}:0:0 --output=${output_file_name} SBatchRTMultiTask.sh $1 $MinFileIndex $files_per_task $MaxFileIndex"
 	## test in local
 	# bash SBatchRTMultiTask.sh $1 $MinFileIndex $files_per_task $MaxFileIndex
 	## launc on ARC
-	sbatch -J BatchRT_${task_number} --nodes=1 --ntasks-per-node=$(((MaxFileIndex+1)/files_per_task)) --cpus-per-task=1 --time ${time_per_node}:0:0 SBatchRTMultiTask.sh $1 $MinFileIndex $files_per_task $MaxFileIndex
+	sbatch -J BatchRT_${task_number} --nodes=1 --ntasks-per-node=$(((MaxFileIndex+1)/files_per_task)) --cpus-per-task=1 --time ${time_per_node}:0:0 --output=${output_file_name} SBatchRTMultiTask.sh $1 $MinFileIndex $files_per_task $MaxFileIndex
 }
 
 

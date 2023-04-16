@@ -22,7 +22,7 @@ module load yaml-cpp/0.6.3-GCCcore-8.3.0
 # module load boost/1.68.0.a 
 # module load Eigen/3.3.7-GCCcore-8.3.0
 # cmake -DCMAKE_BUILD_TYPE=RELEASE ..
-# make BatchRunAll.run 
+# make BatchDAWithMartRunAll.run 
 
 N=$1
 MinFileIndex=$2
