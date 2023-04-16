@@ -1,5 +1,5 @@
 #!/bin/bash
-# SBATCH -J BatchRunAll
+#SBATCH -J BatchRunAll
 #SBATCH --account=ev_charging
 #SBATCH --partition=normal_q
 #SBATCH --nodes=1 --ntasks-per-node=1 --cpus-per-task=1
