@@ -13,7 +13,7 @@ perform_optimization() {
 	task_number=$1
 	files_per_task=$2
 	time_per_node=$3
-	output_file_name=BatchRT_${task_number}-$(date +"%Y%m%d%H%M%S").out
+	output_file_name=log/BatchRT_${task_number}-$(date +"%Y%m%d%H%M%S").out
 	echo "sbatch -J BatchRT_${task_number} --nodes=1 --ntasks-per-node=$(((MaxFileIndex+1)/files_per_task)) --cpus-per-task=1 --time ${time_per_node}:0:0 --output=${output_file_name} SBatchRTMultiTask.sh $1 $MinFileIndex $files_per_task $MaxFileIndex"
 	## test in local
 	# bash SBatchRTMultiTask.sh $1 $MinFileIndex $files_per_task $MaxFileIndex
@@ -25,6 +25,7 @@ perform_optimization() {
 ROOT_PATH=/projects/rtss_let/LET_OPT
 # ROOT_PATH=/home/dong/workspace/LET_OPT
 cd $ROOT_PATH/Experiments/dong/multi_task
+mkdir log
 
 for task_number_index in $(seq 0 1 $TOTAL_TASK_NUMBER); do
 	echo "Processing N=${task_number_list[task_number_index]} with ${files_per_task_list[task_number_index]} files per task:"

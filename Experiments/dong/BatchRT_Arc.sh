@@ -11,7 +11,7 @@ MaxFileIndex=999
 perform_optimization() {
 	task_number=$1
 	files_per_node=$2
-	output_file_name=BatchRT_${task_number}_${file_index}_${end_index}-$(date +"%Y%m%d%H%M%S").out
+	output_file_name=log/BatchRT_${task_number}_${file_index}_${end_index}-$(date +"%Y%m%d%H%M%S").out
 	for file_index in $(seq $MinFileIndex $files_per_node $MaxFileIndex); do
 	end_index=$((file_index + files_per_node))
 	echo "Processing N$1: file_index=$file_index:$end_index"
@@ -26,6 +26,7 @@ perform_optimization() {
 
 ROOT_PATH=/projects/rtss_let/LET_OPT
 cd $ROOT_PATH/Experiments/dong
+mkdir log
 
 for task_number_index in $(seq 0 1 $TOTAL_TASK_NUMBER); do
 echo ${task_number_list[task_number_index]} ${files_per_node_list[task_number_index]}
