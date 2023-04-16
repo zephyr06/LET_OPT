@@ -1,5 +1,8 @@
 import argparse
+import sys
 
+sys.path.insert(1, '~/programming/LET_OPT/CompareWithBaseline')
+from read_res import ReadOptResults
 import baseline_methods_name
 
 baseline_method_names = baseline_methods_name.baseline_method_names
@@ -19,3 +22,4 @@ title = args.title
 if __name__ == "__main__":
     print(baseline_methods_name.baseline_method_names)
     res_vec = ReadOptResults()
+    a = 1
