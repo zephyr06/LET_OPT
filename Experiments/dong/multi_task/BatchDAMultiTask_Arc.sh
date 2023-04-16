@@ -1,7 +1,8 @@
 #!/usr/bin/bash
 
 task_number_list=( 5 10 20 30 )
-files_per_node_list=( 500 250 100 50 )
+files_per_task_list=( 500 250 100 50 )
+time_per_node_list=( 1 8 8 5) # in hour
 TOTAL_TASK_NUMBER=3 # remember to -1
 
 MinFileIndex=0
@@ -10,12 +11,13 @@ MaxFileIndex=999
 
 perform_optimization() {
 	task_number=$1
-	files_per_node=$2
-	echo "sbatch -J BatchRT_${task_number} --nodes=1 --ntasks-per-node=$(((MaxFileIndex+1)/files_per_node)) --cpus-per-task=1 SBatchDAMultiTask.sh $1 $MinFileIndex $files_per_node $MaxFileIndex"
+	files_per_task=$2
+	time_per_node=$3
+	echo "sbatch -J BatchRT_${task_number} --nodes=1 --ntasks-per-node=$(((MaxFileIndex+1)/files_per_task)) --cpus-per-task=1 --time ${time_per_node}:0:0 SBatchDAMultiTask.sh $1 $MinFileIndex $files_per_task $MaxFileIndex"
 	## test in local
-	# bash SBatchDAMultiTask.sh $1 $MinFileIndex $files_per_node $MaxFileIndex
+	# bash SBatchDAMultiTask.sh $1 $MinFileIndex $files_per_task $MaxFileIndex
 	## launc on ARC
-	sbatch -J BatchRT_${task_number} --nodes=1 --ntasks-per-node=$(((MaxFileIndex+1)/files_per_node)) --cpus-per-task=1 SBatchDAMultiTask.sh $1 $MinFileIndex $files_per_node $MaxFileIndex
+	sbatch -J BatchRT_${task_number} --nodes=1 --ntasks-per-node=$(((MaxFileIndex+1)/files_per_task)) --cpus-per-task=1 --time ${time_per_node}:0:0 SBatchDAMultiTask.sh $1 $MinFileIndex $files_per_task $MaxFileIndex
 }
 
 
@@ -24,7 +26,6 @@ ROOT_PATH=/projects/rtss_let/LET_OPT
 cd $ROOT_PATH/Experiments/dong/multi_task
 
 for task_number_index in $(seq 0 1 $TOTAL_TASK_NUMBER); do
-	echo ${task_number_list[task_number_index]} ${files_per_node_list[task_number_index]}
-	echo "Processing N=${task_number_list[task_number_index]}:"
-	perform_optimization ${task_number_list[task_number_index]} ${files_per_node_list[task_number_index]}
+	echo "Processing N=${task_number_list[task_number_index]} with ${files_per_task_list[task_number_index]} files per task:"
+	perform_optimization ${task_number_list[task_number_index]} ${files_per_task_list[task_number_index]} ${time_per_node_list[task_number_index]}
 done

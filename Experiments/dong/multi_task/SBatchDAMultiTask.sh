@@ -26,12 +26,12 @@ module load yaml-cpp/0.6.3-GCCcore-8.3.0
 
 N=$1
 MinFileIndex=$2
-files_per_node=$3
+files_per_task=$3
 MaxFileIndex=$4
 
 ## Launch multiple tasks in one node, make sure applied for adequate ntasks-per-node
-for file_index in $(seq $MinFileIndex $files_per_node $MaxFileIndex); do
-	end_index=$((file_index + files_per_node))
+for file_index in $(seq $MinFileIndex $files_per_task $MaxFileIndex); do
+	end_index=$((file_index + files_per_task))
     echo "./RunSingleFile/BatchDAWithMartRunAll.run --N $N --begin $file_index --end $end_index &"
     ./RunSingleFile/BatchDAWithMartRunAll.run --N $N --begin $file_index --end $end_index &
 done
