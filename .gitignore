@@ -19,6 +19,9 @@ Visualize/currGraph.gv
 **/currGraph.gv.pdf
 **/currGraph.gv
 
+# ignore slurm log
+**/slurm-*.out
+
 # ignore temporary batch results
 CompareWithBaseline_deprecated/
 **/Initial_Res
