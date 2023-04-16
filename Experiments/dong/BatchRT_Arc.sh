@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 task_number_list=( 5 10 20 30 )
-files_per_node_list=( 1000 500 200 100 )
+files_per_node_list=( 200 500 200 100 )
 TOTAL_TASK_NUMBER=3 # remember to -1
 
 MinFileIndex=0
@@ -17,6 +17,7 @@ perform_optimization() {
 	# ./RunSingleFile/BatchRunSingle.run --N "$1" --begin "$file_index" --end "$end_index" &
 	# sbatch BatchRT_Approx.sh $1 $file_index $end_index
 	echo "sbatch -J BatchRT_${task_number}_${file_index}_${end_index} SBatchRT.sh $1 $file_index $end_index"
+    sbatch -J BatchRT_${task_number}_${file_index}_${end_index} SBatchRT.sh $1 $file_index $end_index
 	done
 	wait
 }
