@@ -1,7 +1,7 @@
 ROOT_PATH=/projects/rtss_let/LET_OPT
-ROOT_PATH=/home/dong/workspace/LET_OPT
+#ROOT_PATH=/home/dong/workspace/LET_OPT
 
-backup_file_name=ARC_Backup-$(date +"%Y%m%d%H%M%S")
+backup_file_name=ARC_Results_Backup-$(date +"%Y%m%d%H%M%S")
 echo "backup in $ROOT_PATH/Experiments/backups/${backup_file_name}.tar.gz"
 cd $ROOT_PATH/Experiments/backups
 
