@@ -3,7 +3,7 @@
 #SBATCH --account=ev_charging
 #SBATCH --partition=normal_q
 #SBATCH --nodes=1 --ntasks-per-node=1 --cpus-per-task=1
-#SBATCH --time=0-00:60:00 # 60 minutes
+#SBATCH --time=0-06:00:00 # 6 hours
 
 #SBATCH --mail-user=dongli@vt.edu
 #SBATCH --mail-type=BEGIN  # send email when job begins
