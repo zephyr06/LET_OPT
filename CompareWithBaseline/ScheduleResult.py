@@ -40,11 +40,12 @@ def ReadOptResults(method_name="TOM_Sort", obj_type="DataAge", task_set_number=5
     return res_vec
 
 
-def Average(res_vec):
+def Average(res_vec, base_vec):
     average_obj = 0
     average_runtime = 0
     total_case = len(res_vec)
-    for res in res_vec:
-        average_obj += res.obj
-        average_runtime += res.runtime
+    # for res in res_vec:
+    for i in range(len(res_vec)):
+        average_obj += float(res_vec[i].obj) / base_vec[i].obj
+        average_runtime += res_vec[i].runtime
     return average_obj / total_case, average_runtime / total_case

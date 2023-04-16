@@ -2,6 +2,7 @@ import argparse
 import sys
 import seaborn as sns
 import matplotlib.pyplot as plt
+from PlotResults import *
 
 sys.path.insert(1, '~/programming/LET_OPT/CompareWithBaseline')
 from Read_ScheduleRes import *
@@ -21,10 +22,7 @@ title = args.title
 
 if __name__ == "__main__":
     task_set_number_range = [5]
-    a, b = ReadOptResultsOneMethod("ReactionTime", "TOM_WSkip", task_set_number_range)
+    a, b = ReadOptResultsOneMethod("TOM_WSkip", "ReactionTime", task_set_number_range)
     print(a)
     print(b)
-    method_names = ["InitialMethod", "TOM_BF", "TOM_WSkip", "TOM_Sort"]
-    dataset_pd_obj, dataset_pd_runtime = ReadOptResultsAllMethod(method_names, "ReactionTime", task_set_number_range)
-    dataset_pd_obj.plot()
-    plt.show()
+    draw_RT_results(task_set_number_range)
