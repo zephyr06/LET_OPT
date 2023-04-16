@@ -121,15 +121,33 @@ TEST_F(PermutationTest4_n3, Iterate) {
   EXPECT_EQ((5 + 1) * (15 + 1), mart_task_perms.iteration_count_);
 }
 
-class PermutationTest9_n10 : public PermutationTestBase {
+class PermutationTest51_n5 : public PermutationTestBase {
   void SetUp() override {
-    SetUpBase("test_n10_v9");
+    SetUpBase("test_n5_v51");
     type_trait = "DataAge";
   }
 
  public:
   std::string type_trait;
 };
+
+TEST_F(PermutationTest51_n5, GetPossibleReadingJobs) {
+  VariableOD variable_od(tasks);
+  variable_od[4].offset = 100;
+  variable_od[2].offset = 0;
+  EXPECT_EQ(JobCEC(2, 9),
+            GetPossibleReadingJobs(JobCEC(4, 0), dag_tasks.GetTask(2), 200,
+                                   tasks_info, variable_od));
+}
+// class PermutationTest9_n10 : public PermutationTestBase {
+//   void SetUp() override {
+//     SetUpBase("test_n10_v9");
+//     type_trait = "DataAge";
+//   }
+
+//  public:
+//   std::string type_trait;
+// };
 // TEST_F(PermutationTest9_n10, TimeOut) {
 //   Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
 //   EXPECT_THAT(mart_task_perms.PerformOptimization(),
