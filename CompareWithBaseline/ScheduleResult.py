@@ -26,7 +26,7 @@ def PrintResultVec(res_vec):
 
 
 # return 1D array of the results
-def ReadOptResults(obj_type="DataAge", method_name="TOM_Sort", task_set_number=5, root_path=ROOT_PATH):
+def ReadOptResults(method_name="TOM_Sort", obj_type="DataAge", task_set_number=5, root_path=ROOT_PATH):
     data_set_folder = root_path + "TaskData/N" + str(task_set_number)
     res_vec = []
     files_all = os.listdir(data_set_folder)
