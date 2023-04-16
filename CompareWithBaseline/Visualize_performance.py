@@ -21,7 +21,7 @@ maxTaskNumber = args.maxTaskNumber
 title = args.title
 
 if __name__ == "__main__":
-    task_set_number_range = [5]
+    task_set_number_range = [5, 10, 20, 30]
     a, b = ReadOptResultsOneMethod("TOM_WSkip", "ReactionTime", task_set_number_range)
     print(a)
     print(b)

@@ -1,6 +1,5 @@
 import os
-
-ROOT_PATH = "/home/zephyr/Programming/LET_OPT/"
+from GlobalVariables import *
 
 
 class ScheduleResult:
@@ -46,6 +45,8 @@ def Average(res_vec, base_vec):
     total_case = len(res_vec)
     # for res in res_vec:
     for i in range(len(res_vec)):
+        if (float(res_vec[i].obj) / base_vec[i].obj > 1.1):
+            print("Find an error result!")
         average_obj += float(res_vec[i].obj) / base_vec[i].obj
         average_runtime += res_vec[i].runtime
     return average_obj / total_case, average_runtime / total_case

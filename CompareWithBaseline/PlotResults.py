@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 sys.path.insert(1, '~/programming/LET_OPT/CompareWithBaseline')
 from Read_ScheduleRes import *
-from baseline_methods_name import *
+from GlobalVariables import *
 
 
 def plot_Obj_results(task_set_number_range, method_names, obj):
@@ -21,7 +21,7 @@ def plot_Obj_results(task_set_number_range, method_names, obj):
     splot.set_ylim([0.2, 1.05])
     plt.legend()
     plt.grid(linestyle="--")
-    plt.savefig("Compare_Performance_" + obj + ".pdf", format='pdf')
+    plt.savefig(ROOT_CompareWithBaseline_PATH + obj + "/Compare_Performance_" + obj + ".pdf", format='pdf')
     plt.show(block=False)
     plt.pause(3)
 
@@ -40,7 +40,7 @@ def plot_Runtime_results(task_set_number_range, method_names, obj):
     splot.set(yscale="log")
     plt.legend()
     plt.grid(linestyle="--")
-    plt.savefig("Compare_RunTime_" + obj + ".pdf", format='pdf')
+    plt.savefig(ROOT_CompareWithBaseline_PATH + obj + "/Compare_RunTime_" + obj + ".pdf", format='pdf')
     plt.show(block=False)
     plt.pause(3)
 
