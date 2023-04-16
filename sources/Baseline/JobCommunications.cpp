@@ -28,8 +28,9 @@ JobCEC GetPossibleReadingJobs(
   int period_prev = tasks_info.GetTask(task_prev.id).period;
   JobCEC possible_read_job(task_prev.id,
                            std::floor(float(job_start_curr) / period_prev) - 1);
-  bool find_success = false;
-  for (int job_id = possible_read_job.jobId; job_id < 10; job_id++) {
+  int job_id_try_upper_bound = possible_read_job.jobId + 10;
+  for (int job_id = possible_read_job.jobId; job_id < job_id_try_upper_bound;
+       job_id++) {
     JobCEC job_curr_try(task_prev.id, job_id);
     int prev_job_finish = GetDeadline(job_curr_try, variable_od, tasks_info);
     if (prev_job_finish <= job_start_curr) {
