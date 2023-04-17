@@ -1,5 +1,6 @@
 #pragma once
 #include "sources/Baseline/Martinez18.h"
+#include "sources/Baseline/OptSortedBound.h"
 #include "sources/Optimization/TaskSetOptEnumWSkip.h"
 #include "sources/Optimization/TaskSetOptEnumerate.h"
 #include "sources/Optimization/TaskSetOptSorted.h"
@@ -69,4 +70,17 @@ ScheduleResult PerformTOM_OPT_Sort(const DAG_Model& dag_tasks) {
   return res;
 }
 
+template <typename ObjectiveFunction>
+ScheduleResult PerformTOM_OPT_SortBound(const DAG_Model& dag_tasks,
+                                        const ScheduleResult& res_of_sort) {
+  auto start = std::chrono::high_resolution_clock::now();
+  ScheduleResult res;
+  res.obj_ = GetApproximatedObjBound<ObjectiveFunction>(
+      dag_tasks, dag_tasks.chains_, res_of_sort.obj_);
+  res.schedulable_ = res_of_sort.schedulable_;
+  auto stop = std::chrono::high_resolution_clock::now();
+  res.timeTaken_ = GetTimeTaken(start, stop) + res_of_sort.timeTaken_;
+
+  return res;
+}
 }  // namespace DAG_SPACE
