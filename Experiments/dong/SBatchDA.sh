@@ -10,7 +10,7 @@
 #SBATCH --mail-type=END    # send email when job ends
 #SBATCH --mail-type=FAIL   # send email when job aborts
 
-
+echo "Current job id is: $SLURM_JOB_ID"
 
 ## change directory and load modules ##
 ROOT_PATH=/projects/rtss_let/LET_OPT
