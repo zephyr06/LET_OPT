@@ -26,8 +26,8 @@ inline int GetPossibleHeadTailFluctuation(const DAG_Model& dag_tasks,
                                           const std::vector<int>& chain) {
   std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
   VariableRange variable_range = FindVariableRange(dag_tasks, rta);
-  variable_range.upper_bound.print();
-  variable_range.lower_bound.print();
+  //   variable_range.upper_bound.print();
+  //   variable_range.lower_bound.print();
   return GetHeadTailFluctuationFromVariableRange(chain, variable_range);
 }
 
