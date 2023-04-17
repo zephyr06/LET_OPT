@@ -65,6 +65,7 @@ ScheduleResult PerformTOM_OPT_Sort(const DAG_Model& dag_tasks) {
   res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
   auto stop = std::chrono::high_resolution_clock::now();
   res.timeTaken_ = GetTimeTaken(start, stop);
+  res.variable_opt_ = task_sets_perms.best_yet_variable_od_;
 
   PrintResultAnalysis(task_sets_perms, res);
   return res;
@@ -77,6 +78,21 @@ ScheduleResult PerformTOM_OPT_SortBound(const DAG_Model& dag_tasks,
   ScheduleResult res;
   res.obj_ = GetApproximatedObjBound<ObjectiveFunction>(
       dag_tasks, dag_tasks.chains_, res_of_sort.obj_);
+  res.schedulable_ = res_of_sort.schedulable_;
+  auto stop = std::chrono::high_resolution_clock::now();
+  res.timeTaken_ = GetTimeTaken(start, stop) + res_of_sort.timeTaken_;
+
+  return res;
+}
+
+template <typename ObjectiveFunction>
+ScheduleResult PerformTOM_OPT_SortBoundImproved(
+    const DAG_Model& dag_tasks, const ScheduleResult& res_of_sort) {
+  auto start = std::chrono::high_resolution_clock::now();
+  ScheduleResult res;
+  res.obj_ = GetApproximatedObjBoundImproved<ObjectiveFunction>(
+      dag_tasks, dag_tasks.chains_, res_of_sort.obj_,
+      res_of_sort.variable_opt_);
   res.schedulable_ = res_of_sort.schedulable_;
   auto stop = std::chrono::high_resolution_clock::now();
   res.timeTaken_ = GetTimeTaken(start, stop) + res_of_sort.timeTaken_;

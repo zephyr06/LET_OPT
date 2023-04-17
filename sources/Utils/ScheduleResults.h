@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "sources/BatchOptimize/BaselineMethods.h"
+#include "sources/Optimization/Variable.h"
 #include "sources/Utils/DeclareDAG.h"
 #include "sources/Utils/VariadicTable.h"
 
@@ -11,6 +12,7 @@ struct ScheduleResult {
   bool schedulable_;
   double obj_;
   double timeTaken_;
+  VariableOD variable_opt_;  // optional
 };
 
 struct BatchResult {
