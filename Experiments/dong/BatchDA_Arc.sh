@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 task_number_list=( 5 10 20 30 )
-files_per_node_list=( 500 250 100 50 )
+files_per_node_list=( 500 100 100 50 )
 TOTAL_TASK_NUMBER=3 # remember to -1
 
 MinFileIndex=0
