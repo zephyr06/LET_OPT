@@ -117,7 +117,8 @@ std::unordered_map<DAG_SPACE::BASELINEMETHODS, BatchResult> BatchOptimizeOrder(
                 << std::endl;
       std::cout << "res.timeTaken_: " << res.timeTaken_ << "\n\n";
 
-      if (!res.schedulable_ || res.obj_ >= 1e8) errorFiles.push_back(file);
+      if ((!res.schedulable_ && batchTestMethod == TOM_Sort) || res.obj_ >= 1e8)
+        errorFiles.push_back(file);
 
       WriteToResultFile(pathDataset, file, res, batchTestMethod,
                         ObjectiveFunctionBase::type_trait);
