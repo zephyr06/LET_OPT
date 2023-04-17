@@ -22,6 +22,7 @@ Visualize/currGraph.gv
 # ignore slurm log
 **/slurm-*.out
 **/Batch*.out
+**/ARC_Backup-*/
 
 # ignore temporary batch results
 CompareWithBaseline_deprecated/
