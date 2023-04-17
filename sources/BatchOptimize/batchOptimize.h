@@ -20,7 +20,8 @@ void ClearResultFiles(std::string dataSetFolder);
 
 template <typename ObjectiveFunctionBase>
 DAG_SPACE::ScheduleResult PerformSingleScheduling(
-    DAG_Model &dag_tasks, BASELINEMETHODS batchTestMethod) {
+    DAG_Model &dag_tasks, BASELINEMETHODS batchTestMethod,
+    const char *pathDataset, const std::string &file) {
   ScheduleResult res;
   switch (batchTestMethod) {
     case InitialMethod:
@@ -40,6 +41,17 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
       break;
     case TOM_Sort_Offset:
       res = PerformTOM_OPTOffset_Sort(dag_tasks);
+      break;
+    case TOM_Sort_Bound:
+      DAG_SPACE::ScheduleResult res_sort;
+      if (VerifyResFileExist(pathDataset, file, TOM_Sort,
+                             ObjectiveFunctionBase::type_trait))
+        res_sort = ReadFromResultFile(pathDataset, file, TOM_Sort,
+                                      ObjectiveFunctionBase::type_trait);
+      else
+        res_sort = PerformTOM_OPT_Sort<ObjectiveFunctionBase>(dag_tasks);
+      res =
+          PerformTOM_OPT_SortBound<ObjectiveFunctionBase>(dag_tasks, res_sort);
       break;
 
     default:
@@ -109,8 +121,8 @@ std::unordered_map<DAG_SPACE::BASELINEMETHODS, BatchResult> BatchOptimizeOrder(
         res = ReadFromResultFile(pathDataset, file, batchTestMethod,
                                  ObjectiveFunctionBase::type_trait);
       } else {
-        res = PerformSingleScheduling<ObjectiveFunctionBase>(dag_tasks,
-                                                             batchTestMethod);
+        res = PerformSingleScheduling<ObjectiveFunctionBase>(
+            dag_tasks, batchTestMethod, pathDataset, file);
       }
       std::cout << "Schedulable? " << res.schedulable_ << std::endl;
       std::cout << Color::green << "Objective: " << res.obj_ << Color::def

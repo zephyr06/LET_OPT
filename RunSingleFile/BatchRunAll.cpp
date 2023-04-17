@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 
   std::vector<DAG_SPACE::BASELINEMETHODS> baselineMethods = {
       DAG_SPACE::InitialMethod, DAG_SPACE::TOM_BF, DAG_SPACE::TOM_WSkip,
-      DAG_SPACE::TOM_Sort};
+      DAG_SPACE::TOM_Sort, DAG_SPACE::TOM_Sort_Bound};
 
   if (obj_type == "RT") {
     DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTime>(
