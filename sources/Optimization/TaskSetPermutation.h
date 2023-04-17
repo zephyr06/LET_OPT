@@ -31,6 +31,12 @@ class TaskSetPermutation {
   void PrintSinglePermIndex(const ChainsPermutation& chains_perm,
                             const std::vector<Edge>& edges) const;
 
+  template <typename ObjectiveFunction>
+  inline std::vector<double> GetOptObjPerChain() const {
+    return ObjectiveFunction::ObjPerChain(
+        dag_tasks_, tasks_info_, best_yet_chain_, best_yet_variable_od_,
+        graph_of_all_ca_chains_.chains_);
+  }
   // The following functions more related to optimization
 
   // data members

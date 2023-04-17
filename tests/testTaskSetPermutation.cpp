@@ -1,7 +1,7 @@
 #include "gmock/gmock.h"  // Brings in gMock.
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
-#include "sources/OptimizeMain.h"
 #include "sources/Optimization/Variable.h"
+#include "sources/OptimizeMain.h"
 #include "sources/Permutations/ChainsPermutation.h"
 #include "sources/Permutations/PermutationInequality.h"
 #include "sources/Permutations/TwoTaskPermutations.h"
@@ -762,6 +762,29 @@ TEST_F(PermutationTest6, IsPermConflicted_CheckAllSerialConnectDA) {
       variable_od_range, *perm43[3], graph_of_all_ca_chains, rta));
 }
 
+class PermutationTest18_n3 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n3_v18");
+    dag_tasks.chains_ = {{0, 1, 2}};
+    dag_tasks.chains_.push_back({0, 2});
+    type_trait = "ReactionTime";
+  }
+
+ public:
+  std::string type_trait;
+};
+
+TEST_F(PermutationTest18_n3, GetOptObjPerChain) {
+  TaskSetOptEnumerate task_sets_perms =
+      TaskSetOptEnumerate(dag_tasks, dag_tasks.chains_, "ReactionTime");
+  task_sets_perms.adjacent_two_task_permutations_[0].print();
+  task_sets_perms.adjacent_two_task_permutations_[1].print();
+  task_sets_perms.PerformOptimizationBF<ObjReactionTime>();
+  std::vector<double> objs_expected = {20, 20};
+  std::vector<double> objs_actual =
+      task_sets_perms.GetOptObjPerChain<ObjReactionTime>();
+  EXPECT_EQ(objs_expected, objs_actual);
+}
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
