@@ -1,5 +1,5 @@
 baseline_method_names = ["InitialMethod", "TOM_BF", "TOM_WSkip",
-                         "TOM_Sort", "Martinez18", "TOM_Sort_Offset"]
+                         "TOM_Sort", "Martinez18", "TOM_Sort_Offset", "TOM_Sort_Bound"]
 
 marker_list = ["o", "D", "^", "s", "D", "+"]
 markersize_list = [8, 10, 12, 8, 8, 8]
