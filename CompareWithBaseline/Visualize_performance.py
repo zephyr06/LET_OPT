@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from PlotResults import *
 
 sys.path.insert(1, '~/programming/LET_OPT/CompareWithBaseline')
+sys.path.insert(1, '~/workspace/LET_OPT/CompareWithBaseline')
 from Read_ScheduleRes import *
 
 parser = argparse.ArgumentParser()
@@ -26,3 +27,4 @@ if __name__ == "__main__":
     print(a)
     print(b)
     draw_RT_results(task_set_number_range)
+    draw_DA_results(task_set_number_range)

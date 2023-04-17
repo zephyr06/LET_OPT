@@ -1,3 +1,4 @@
+import pathlib
 baseline_method_names = ["InitialMethod", "TOM_BF", "TOM_WSkip",
                          "TOM_Sort", "Martinez18", "TOM_Sort_Offset"]
 
@@ -8,3 +9,6 @@ color_list = ["#0084DB", "r", "y", "limegreen", "purple", "k"]
 
 ROOT_PATH = "/home/zephyr/Programming/LET_OPT/"
 ROOT_CompareWithBaseline_PATH = "/home/zephyr/Programming/LET_OPT/CompareWithBaseline/"
+
+ROOT_PATH = str(pathlib.Path(__file__).parent.resolve().parent.resolve()) + "/"
+ROOT_CompareWithBaseline_PATH = ROOT_PATH + "CompareWithBaseline/"
