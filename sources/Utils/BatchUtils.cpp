@@ -61,7 +61,8 @@ DAG_SPACE::ScheduleResult ReadFromResultFile(const std::string &pathDataset,
   result.schedulable_ = node["Schedulable"].as<bool>();
   result.obj_ = node["Obj_Overall"].as<double>();
   result.timeTaken_ = node["TimeTaken"].as<double>();
-  result.obj_per_chain_ = node["Obj_Per_chain"].as<std::vector<double>>();
+  if (node["Obj_Per_chain"])
+    result.obj_per_chain_ = node["Obj_Per_chain"].as<std::vector<double>>();
   return result;
 }
 
