@@ -4,3 +4,7 @@
 #include "sources/ObjectiveFunction/ObjReactionTime.h"
 #include "sources/ObjectiveFunction/ObjReactionTimeApprox.h"
 #include "sources/ObjectiveFunction/ObjSensorFusion.h"
+
+inline bool IfRT_Trait(const std::string trait) {
+  return trait == "ReactionTime" || trait == "ReactionTimeApprox";
+}
