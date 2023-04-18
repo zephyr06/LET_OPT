@@ -161,6 +161,25 @@ TEST_F(PermutationTest1, data_age) {
   EXPECT_EQ(20, ObjDataAge::Obj(dag_tasks, tasks_info, chains_perm, variable_od,
                                 dag_tasks.chains_));
 }
+TEST_F(PermutationTest1, data_age_ObjPerChain) {
+  // chain is 0 -> 1 -> 2
+  std::vector<int> chain = {0, 1, 2};
+  dag_tasks.chains_ = {chain, {0, 1}};
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
+
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[2]);
+  chains_perm.push_back(perm12[1]);
+  chains_perm.print();
+  variable_od.print();
+  std::vector<double> obj_per_chain = ObjDataAge::ObjPerChain(
+      dag_tasks, tasks_info, chains_perm, variable_od, dag_tasks.chains_);
+  std::vector<double> obj_per_chain_expected = {50, 20 + 10};
+  EXPECT_EQ(obj_per_chain_expected.size(), obj_per_chain.size());
+  EXPECT_EQ(obj_per_chain_expected[0], obj_per_chain[0]);
+  EXPECT_EQ(obj_per_chain_expected[1], obj_per_chain[1]);
+}
 
 TEST_F(PermutationTest1, GetPossibleReactingJobs) {
   // chain is 0 -> 1 -> 2
