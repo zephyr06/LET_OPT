@@ -31,26 +31,6 @@ inline int GetPossibleHeadTailFluctuation(const DAG_Model& dag_tasks,
   return GetHeadTailFluctuationFromVariableRange(chain, variable_range);
 }
 
-inline VariableRange FindVariableRangeImproved(const DAG_Model& dag_tasks,
-                                               const std::vector<int>& rta,
-                                               const VariableOD& variable_od) {
-  VariableRange variable_range = FindVariableRange(dag_tasks, rta);
-  for (uint i = 0; i < dag_tasks.GetTaskSet().size(); i++) {
-    variable_range.lower_bound[i].offset = variable_od.at(i).offset;
-    variable_range.upper_bound[i].deadline = variable_od.at(i).deadline;
-  }
-  return variable_range;
-}
-
-// inline int GetPossibleHeadTailFluctuationImproved(
-//     const DAG_Model& dag_tasks, const std::vector<int>& chain,
-//     const VariableOD& variable_od) {
-//   std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
-//   VariableRange variable_range =
-//       FindVariableRangeImproved(dag_tasks, rta, variable_od);
-//   return GetHeadTailFluctuationFromVariableRange(chain, variable_range);
-// }
-
 template <typename ObjectiveFunction>
 int GetObjLowerBound(const DAG_Model& dag_tasks,
                      const std::vector<std::vector<int>>& chains) {
@@ -103,20 +83,5 @@ int GetApproximatedObjBound(const DAG_Model& dag_tasks,
   }
   return obj_lb;
 }
-
-// template <typename ObjectiveFunction>
-// int GetApproximatedObjBoundImproved(const DAG_Model& dag_tasks,
-//                                     const std::vector<std::vector<int>>&
-//                                     chains, int prev_obj, const VariableOD&
-//                                     variable_od) {
-//   int obj_lb = prev_obj;
-//   for (const auto& chain : chains) {
-//     obj_lb -=
-//         GetPossibleHeadTailFluctuationImproved(dag_tasks, chain,
-//         variable_od);
-//   }
-//   return std::max(obj_lb,
-//                   GetObjLowerBound<ObjectiveFunction>(dag_tasks, chains));
-// }
 
 }  // namespace DAG_SPACE

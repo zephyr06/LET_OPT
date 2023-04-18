@@ -76,6 +76,8 @@ ScheduleResult PerformTOM_OPT_SortBound(const DAG_Model& dag_tasks,
                                         const ScheduleResult& res_of_sort) {
   auto start = std::chrono::high_resolution_clock::now();
   ScheduleResult res;
+  
+  
   res.obj_ = GetApproximatedObjBound<ObjectiveFunction>(
       dag_tasks, dag_tasks.chains_, res_of_sort.obj_per_chain_);
   res.schedulable_ = res_of_sort.schedulable_;
@@ -85,18 +87,5 @@ ScheduleResult PerformTOM_OPT_SortBound(const DAG_Model& dag_tasks,
   return res;
 }
 
-// template <typename ObjectiveFunction>
-// ScheduleResult PerformTOM_OPT_SortBoundImproved(
-//     const DAG_Model& dag_tasks, const ScheduleResult& res_of_sort) {
-//   auto start = std::chrono::high_resolution_clock::now();
-//   ScheduleResult res;
-//   res.obj_ = GetApproximatedObjBoundImproved<ObjectiveFunction>(
-//       dag_tasks, dag_tasks.chains_, res_of_sort.obj_,
-//       res_of_sort.variable_opt_);
-//   res.schedulable_ = res_of_sort.schedulable_;
-//   auto stop = std::chrono::high_resolution_clock::now();
-//   res.timeTaken_ = GetTimeTaken(start, stop) + res_of_sort.timeTaken_;
 
-//   return res;
-// }
 }  // namespace DAG_SPACE
