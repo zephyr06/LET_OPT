@@ -59,11 +59,12 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
                              ObjectiveFunctionBase::type_trait))
         res_sort = ReadFromResultFile(pathDataset, file, TOM_Sort,
                                       ObjectiveFunctionBase::type_trait);
-      else
-        res_sort = PerformTOM_OPT_Sort<ObjectiveFunctionBase>(dag_tasks);
-      res = PerformTOM_OPT_SortBoundImproved<ObjectiveFunctionBase>(dag_tasks,
-                                                                    res_sort);
-      break;
+      // else
+      //   res_sort = PerformTOM_OPT_Sort<ObjectiveFunctionBase>(dag_tasks);
+      // res =
+      // PerformTOM_OPT_SortBoundImproved<ObjectiveFunctionBase>(dag_tasks,
+      //                                                               res_sort);
+      // break;
 
     default:
       CoutError("Please provide batchTestMethod implementation!");

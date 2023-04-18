@@ -38,9 +38,9 @@ int main(int argc, char *argv[]) {
       N, begin_index, end_index, "TaskData/N" + std::to_string(N) + "/");
 
   std::vector<DAG_SPACE::BASELINEMETHODS> baselineMethods = {
-      DAG_SPACE::InitialMethod,  DAG_SPACE::TOM_BF,
-      DAG_SPACE::TOM_WSkip,      DAG_SPACE::TOM_Sort,
-      DAG_SPACE::TOM_Sort_Bound, DAG_SPACE::TOM_Sort_ImpBound};
+      DAG_SPACE::InitialMethod, DAG_SPACE::TOM_BF, DAG_SPACE::TOM_WSkip,
+      DAG_SPACE::TOM_Sort,
+      DAG_SPACE::TOM_Sort_Bound};  // , DAG_SPACE::TOM_Sort_ImpBound
 
   if (obj_type == "RT") {
     DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTime>(

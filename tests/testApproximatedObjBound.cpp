@@ -23,32 +23,56 @@ TEST_F(PermutationTest18_n3, GetObjLowerBound) {
 
 TEST_F(PermutationTest18_n3, GetApproximatedObjBound) {
   EXPECT_EQ(1 + 2 + 3, GetApproximatedObjBound<ObjReactionTime>(
-                           dag_tasks, dag_tasks.chains_, 6));
+                           dag_tasks, dag_tasks.chains_, {6}));
 
   EXPECT_EQ(1 + 2 + 3, GetApproximatedObjBound<ObjReactionTime>(
-                           dag_tasks, dag_tasks.chains_, 20));
+                           dag_tasks, dag_tasks.chains_, {20}));
 
   EXPECT_EQ(100 - 9 - 14, GetApproximatedObjBound<ObjReactionTime>(
-                              dag_tasks, dag_tasks.chains_, 100));
+                              dag_tasks, dag_tasks.chains_, {100}));
 }
+class PermutationTest18_n3_2chain : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n3_v18");
+    dag_tasks.chains_ = {{0, 1, 2}};
+    dag_tasks.chains_.push_back({0, 1});
+    type_trait = "DataAge";
+  }
 
-TEST_F(PermutationTest18_n3, PerformTOM_OPT_SortBoundImproved) {
-  VariableOD variable(dag_tasks.GetTaskSet());
-  variable[0].offset = 3;
-  variable[0].deadline = 4;
-  variable[1].offset = 0;
-  variable[1].deadline = 20;
-  variable[2].offset = 14;
-  variable[2].deadline = 20;
-  std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
-  VariableRange variable_range =
-      FindVariableRangeImproved(dag_tasks, rta, variable);
-  variable_range.lower_bound.print();
-  variable_range.upper_bound.print();
+ public:
+  std::string type_trait;
+};
+TEST_F(PermutationTest18_n3_2chain, GetApproximatedObjBound) {
+  EXPECT_EQ(1 + 2 + 3 + 3, GetApproximatedObjBound<ObjReactionTime>(
+                               dag_tasks, dag_tasks.chains_, {6, 3}));
 
-  EXPECT_EQ(100 - 6 - 14, GetApproximatedObjBoundImproved<ObjReactionTime>(
-                              dag_tasks, dag_tasks.chains_, 100, variable));
+  EXPECT_EQ(1 + 2 + 3 + 3, GetApproximatedObjBound<ObjReactionTime>(
+                               dag_tasks, dag_tasks.chains_, {20, 3}));
+
+  EXPECT_EQ(100 - 9 - 14 + 100 - 9 - 17,
+            GetApproximatedObjBound<ObjReactionTime>(
+                dag_tasks, dag_tasks.chains_, {100, 100}));
+
+  EXPECT_EQ(100 - 9 - 14 + 3, GetApproximatedObjBound<ObjReactionTime>(
+                                  dag_tasks, dag_tasks.chains_, {100, 5}));
 }
+// TEST_F(PermutationTest18_n3, PerformTOM_OPT_SortBoundImproved) {
+//   VariableOD variable(dag_tasks.GetTaskSet());
+//   variable[0].offset = 3;
+//   variable[0].deadline = 4;
+//   variable[1].offset = 0;
+//   variable[1].deadline = 20;
+//   variable[2].offset = 14;
+//   variable[2].deadline = 20;
+//   std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+//   VariableRange variable_range =
+//       FindVariableRangeImproved(dag_tasks, rta, variable);
+//   variable_range.lower_bound.print();
+//   variable_range.upper_bound.print();
+
+//   EXPECT_EQ(100 - 6 - 14, GetApproximatedObjBoundImproved<ObjReactionTime>(
+//                               dag_tasks, dag_tasks.chains_, 100, variable));
+// }
 
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);

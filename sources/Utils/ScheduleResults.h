@@ -12,7 +12,8 @@ struct ScheduleResult {
   bool schedulable_;
   double obj_;
   double timeTaken_;
-  VariableOD variable_opt_;  // optional
+  VariableOD variable_opt_;            // optional
+  std::vector<double> obj_per_chain_;  // optional
 };
 
 struct BatchResult {
