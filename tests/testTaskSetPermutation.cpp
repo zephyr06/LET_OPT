@@ -785,6 +785,21 @@ TEST_F(PermutationTest18_n3, GetOptObjPerChain) {
       task_sets_perms.GetOptObjPerChain<ObjReactionTime>();
   EXPECT_EQ(objs_expected, objs_actual);
 }
+
+TEST_F(PermutationTest18_n3, ReadWriteResults) {
+  ScheduleResult res_sched = PerformTOM_OPT_Sort<ObjReactionTime>(dag_tasks);
+  std::string dataSetFolder = GlobalVariablesDAGOpt::PROJECT_PATH + "build/";
+  std::string file_name = "test_n3_v18_io.txt";
+  const char* pathDataset = dataSetFolder.c_str();
+  WriteToResultFile(pathDataset, file_name, res_sched, TOM_Sort,
+                    "ReactionTime");
+  ScheduleResult res_read =
+      ReadFromResultFile(pathDataset, file_name, TOM_Sort, "ReactionTime");
+  ASSERT_EQ(res_sched.obj_per_chain_.size(), res_read.obj_per_chain_.size());
+  EXPECT_EQ(res_sched.obj_per_chain_[0], res_read.obj_per_chain_[0]);
+  EXPECT_EQ(res_sched.obj_per_chain_[1], res_read.obj_per_chain_[1]);
+}
+
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);

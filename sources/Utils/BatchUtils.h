@@ -5,6 +5,7 @@
 #include "sources/TaskModel/DAG_Model.h"
 #include "sources/Utils/Parameters.h"
 #include "sources/Utils/ScheduleResults.h"
+#include "yaml-cpp/yaml.h"
 
 namespace DAG_SPACE {
 
