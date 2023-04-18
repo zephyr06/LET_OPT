@@ -7,7 +7,7 @@ TEST(average_performance, v1) {
 
   std::vector<DAG_SPACE::BASELINEMETHODS> baselineMethods = {
       DAG_SPACE::InitialMethod, DAG_SPACE::BASELINEMETHODS::TOM_Sort};
-  ClearResultFiles(GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/PerfTest");
+  ClearResultFiles(GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/PerfTest/");
   BatchSettings batch_test_settings(5, 0, 300, "TaskData/PerfTest/");
   auto res = DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTime>(
       baselineMethods, batch_test_settings);
