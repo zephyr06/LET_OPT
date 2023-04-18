@@ -1,6 +1,7 @@
 
 #include "sources/Permutations/PermutationInequality.h"
 
+#include "sources/ObjectiveFunction/ObjTraitEval.h"
 namespace DAG_SPACE {
 
 bool ExamConfliction(const PermutationInequality& perm1,
@@ -64,7 +65,7 @@ PermutationInequality MergeTwoSinglePermutations(
 PermutationInequality GenerateBoxPermutationConstraints(
     int task_curr_id, int task_match_id, const VariableRange& variable_range,
     const std::string& type_trait) {
-  if (type_trait == "ReactionTime") {
+  if (IfRT_Trait(type_trait)) {
     int task_prev_id = task_curr_id;
     int task_next_id = task_match_id;
     return PermutationInequality(
@@ -75,7 +76,7 @@ PermutationInequality GenerateBoxPermutationConstraints(
         variable_range.upper_bound.at(task_prev_id).deadline -
             variable_range.lower_bound.at(task_next_id).offset,
         true, type_trait);
-  } else if (type_trait == "DataAge") {
+  } else if (IfDA_Trait(type_trait)) {
     int task_prev_id = task_match_id;
     int task_next_id = task_curr_id;
     return PermutationInequality(

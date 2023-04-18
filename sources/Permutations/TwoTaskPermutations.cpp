@@ -1,6 +1,8 @@
 
 #include "sources/Permutations/TwoTaskPermutations.h"
 
+#include "sources/ObjectiveFunction/ObjTraitEval.h"
+
 namespace DAG_SPACE {
 std::vector<JobCEC> GetPossibleReactingJobs(
     const JobCEC& job_curr, const Task& task_next, int superperiod,
@@ -73,10 +75,10 @@ void TwoTaskPermutations::InsertNewPermSingle(
 
 std::vector<JobCEC> TwoTaskPermutations::GetPossibleMatchJobs(
     const JobCEC& job_curr) {
-  if (type_trait_ == "ReactionTime") {
+  if (IfRT_Trait(type_trait_)) {
     return GetPossibleReactingJobs(job_curr, tasks_info_.GetTask(task_next_id_),
                                    superperiod_, tasks_info_);
-  } else if (type_trait_ == "DataAge") {
+  } else if (IfDA_Trait(type_trait_)) {
     return GetPossibleReadingJobs(job_curr, tasks_info_.GetTask(task_prev_id_),
                                   superperiod_, tasks_info_);
   } else
@@ -113,13 +115,13 @@ void TwoTaskPermutations::AppendAllPermutations(
 }
 
 void TwoTaskPermutations::FindAllPermutations() {
-  if (type_trait_ == "ReactionTime") {
+  if (IfRT_Trait(type_trait_)) {
     JobCEC job_curr(task_prev_id_, 0);
     PermutationInequality perm_ineq(task_prev_id_, task_next_id_, type_trait_);
     SinglePairPermutation single_permutation(perm_ineq, tasks_info_,
                                              type_trait_);
     AppendAllPermutations(job_curr, single_permutation);
-  } else if (type_trait_ == "DataAge") {
+  } else if (IfDA_Trait(type_trait_)) {
     JobCEC job_curr(task_next_id_, 0);
     PermutationInequality perm_ineq(task_prev_id_, task_next_id_, type_trait_);
     SinglePairPermutation single_permutation(perm_ineq, tasks_info_,

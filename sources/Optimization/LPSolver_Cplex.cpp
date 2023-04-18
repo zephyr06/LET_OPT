@@ -89,7 +89,7 @@ void LPOptimizer::AddConstantDeadlineConstraint() {
 }
 
 void LPOptimizer::AddArtificialVariables() {
-  if (obj_trait_ == "ReactionTime" || obj_trait_ == "DataAge")
+  if (IfRT_Trait(obj_trait_) || IfDA_Trait(obj_trait_))
     varArray_art_ =
         IloNumVarArray(env_, static_cast<int>(dag_tasks_.chains_.size()), 0,
                        IloInfinity, IloNumVar::Float);
@@ -107,7 +107,7 @@ void LPOptimizer::AddPermutationInequalityConstraints(
     const PermutationInequality &ineq = chains_perm[edge_curr]->inequality_;
     // std::string const_name1 = GetPermuIneqConstraintNamePrev(i);
     // std::string const_name2 = GetPermuIneqConstraintNameNext(i);
-    if (ineq.type_trait_ == "ReactionTime") {
+    if (IfRT_Trait(ineq.type_trait_)) {
       // model_.add(
       //     varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] +
       //         ineq.lower_bound_ <=
@@ -133,7 +133,7 @@ void LPOptimizer::AddPermutationInequalityConstraints(
           ineq.upper_bound_);  // , const_name2.c_str()
       model_.add(myConstraint2);
       // name2ilo_const_[const_name2] = myConstraint2;
-    } else if (ineq.type_trait_ == "DataAge") {
+    } else if (IfDA_Trait(ineq.type_trait_)) {
       IloRange myConstraint1(
           env_, ineq.lower_bound_,
           varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] -
@@ -219,7 +219,7 @@ void LPOptimizer::AddObjectiveFunctions(const ChainsPermutation &chains_perm) {
   int chain_count = 0;
   for (auto chain : dag_tasks_.chains_) {
     int hyper_period = GetHyperPeriod(tasks_info_, chain);
-    if (obj_trait_ == "ReactionTime") {
+    if (IfRT_Trait(obj_trait_)) {
       LLint total_start_jobs =
           hyper_period / dag_tasks_.GetTask(chain[0]).period + 1;
       for (LLint start_instance_index = 0;
@@ -230,10 +230,14 @@ void LPOptimizer::AddObjectiveFunctions(const ChainsPermutation &chains_perm) {
             GetFirstReactJob(start_job, chains_perm, chain, tasks_info_);
         std::string const_name =
             GetReactConstraintName(chain_count, start_instance_index);
-        AddTwoJobLengthConstraint(start_job, first_react_job, chain_count,
-                                  start_instance_index);
+        if (obj_trait_ == "ReactionTime")
+          AddTwoJobLengthConstraint(start_job, first_react_job, chain_count,
+                                    start_instance_index);
+        else
+          AddTwoJobApproxLengthConstraint(start_job, first_react_job,
+                                          chain_count, start_instance_index);
       }
-    } else if (obj_trait_ == "DataAge") {
+    } else if (IfDA_Trait(obj_trait_)) {
       LLint total_start_jobs =
           hyper_period / dag_tasks_.GetTask(chain.back()).period + 1;
       for (LLint start_instance_index = 0;
@@ -243,9 +247,12 @@ void LPOptimizer::AddObjectiveFunctions(const ChainsPermutation &chains_perm) {
             GetLastReadJob(start_job, chains_perm, chain, tasks_info_);
         std::string const_name =
             GetReactConstraintName(chain_count, start_instance_index);
-
-        AddTwoJobLengthConstraint(last_read_job, start_job, chain_count,
-                                  start_instance_index);
+        if (obj_trait_ == "DataAge")
+          AddTwoJobLengthConstraint(last_read_job, start_job, chain_count,
+                                    start_instance_index);
+        else
+          AddTwoJobApproxLengthConstraint(last_read_job, start_job, chain_count,
+                                          start_instance_index);
       }
     }
 

@@ -1,4 +1,5 @@
 #pragma once
+#include "sources/ObjectiveFunction/ObjTraitEval.h"
 #include "sources/Optimization/Variable.h"
 #include "sources/TaskModel/DAG_Model.h"
 #include "sources/Utils/Interval.h"
@@ -46,7 +47,7 @@ class PermutationInequality {
                         const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
                         const std::string& type_trait)
       : type_trait_(type_trait) {
-    if (type_trait == "ReactionTime") {
+    if (IfRT_Trait(type_trait)) {
       task_prev_id_ = job_curr.taskId;
       task_next_id_ = job_match.taskId;
       JobCEC job_match_prev_job(job_match.taskId, job_match.jobId - 1);
@@ -57,7 +58,7 @@ class PermutationInequality {
                      GetActivationTime(job_curr, tasks_info);
       upper_bound_valid_ = true;
 
-    } else if (type_trait == "DataAge") {
+    } else if (IfDA_Trait(type_trait)) {
       task_prev_id_ = job_match.taskId;
       task_next_id_ = job_curr.taskId;
       lower_bound_ = GetActivationTime(job_match, tasks_info) -

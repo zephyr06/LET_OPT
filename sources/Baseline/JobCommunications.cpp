@@ -1,5 +1,6 @@
 #include "sources/Baseline/JobCommunications.h"
 
+#include "sources/ObjectiveFunction/ObjectiveFunction.h"
 namespace DAG_SPACE {
 
 PermutationInequality GetPermIneq(const DAG_Model& dag_tasks,
@@ -53,14 +54,14 @@ std::unordered_map<JobCEC, JobCEC> GetJobMatch(
   int super_period = GetSuperPeriod(task_prev, task_next);
 
   std::unordered_map<JobCEC, JobCEC> job_matches;
-  if (type_trait == "ReactionTime") {
+  if (IfRT_Trait(type_trait)) {
     for (int i = 0; i < super_period / task_prev.period; i++) {
       JobCEC job_curr(prev_task_id, i);
       JobCEC jobs_possible_match = GetPossibleReactingJobs(
           job_curr, task_next, super_period, tasks_info, variable_od);
       job_matches[job_curr] = jobs_possible_match;
     }
-  } else if (type_trait == "DataAge") {
+  } else if (IfDA_Trait(type_trait)) {
     for (int i = 0; i < super_period / task_next.period; i++) {
       JobCEC job_curr(next_task_id, i);
       JobCEC jobs_possible_match = GetPossibleReadingJobs(

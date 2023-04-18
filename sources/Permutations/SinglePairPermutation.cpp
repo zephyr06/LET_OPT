@@ -1,6 +1,7 @@
 
 #include "sources/Permutations/SinglePairPermutation.h"
 
+#include "sources/ObjectiveFunction/ObjTraitEval.h"
 namespace DAG_SPACE {
 
 SinglePairPermutation::SinglePairPermutation(
@@ -144,9 +145,11 @@ bool IfSkipAnotherPerm(const SinglePairPermutation& perm_base,
   // however, in experiments, the Sorted method could only optimize the
   // approximated RT/DA, therefore, we assume that the objective function is
   // always the approximated RT/DA if the *Sorted* method is used
-  if (obj_trait == "ReactionTime")
+  // Correction again: we added *Approx back for the convenience of
+  // PerformTOM_OPT_SortBound
+  if (IfRT_Trait(obj_trait))
     return IfSkipAnotherPermRT(perm_base, perm_another);
-  else if (obj_trait == "DataAge")
+  else if (IfRT_Trait(obj_trait))
     return IfSkipAnotherPermDA(perm_base, perm_another);
   else
     return false;

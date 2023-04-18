@@ -2,6 +2,7 @@
 
 #include "sources/Permutations/ChainsPermutation.h"
 
+#include "sources/ObjectiveFunction/ObjTraitEval.h"
 #include "sources/Utils/Interval.h"
 
 namespace DAG_SPACE {
@@ -95,12 +96,12 @@ bool IsTwoPermConflicted_SameSource(const VariableRange& variable_od_range,
                                     const SinglePairPermutation& perm_curr) {
   Interval deadline_range_from_prev;
   Interval deadline_range_from_curr;
-  if (perm_prev.type_trait_ == "ReactionTime") {
+  if (IfRT_Trait(perm_prev.type_trait_)) {
     deadline_range_from_prev =
         GetDeadlineRange_RTPerm(variable_od_range, perm_prev.inequality_);
     deadline_range_from_curr =
         GetDeadlineRange_RTPerm(variable_od_range, perm_curr.inequality_);
-  } else if (perm_prev.type_trait_ == "DataAge") {
+  } else if (IfDA_Trait(perm_prev.type_trait_)) {
     deadline_range_from_prev =
         GetDeadlineRange_DAPerm(variable_od_range, perm_prev.inequality_);
     deadline_range_from_curr =
@@ -117,12 +118,12 @@ bool IsTwoPermConflicted_SameSink(const VariableRange& variable_od_range,
                                   const SinglePairPermutation& perm_prev,
                                   const SinglePairPermutation& perm_curr) {
   Interval offset_range_from_prev, offset_range_from_curr;
-  if (perm_prev.type_trait_ == "ReactionTime") {
+  if (IfRT_Trait(perm_prev.type_trait_)) {
     offset_range_from_prev =
         GetOffsetRange_RTPerm(variable_od_range, perm_prev.inequality_);
     offset_range_from_curr =
         GetOffsetRange_RTPerm(variable_od_range, perm_curr.inequality_);
-  } else if (perm_prev.type_trait_ == "DataAge") {
+  } else if (IfDA_Trait(perm_prev.type_trait_)) {
     offset_range_from_prev =
         GetOffsetRange_DAPerm(variable_od_range, perm_prev.inequality_);
     offset_range_from_curr =
@@ -144,13 +145,13 @@ bool IsTwoPermConflicted_SerialConnect(const VariableRange& variable_od_range,
   Interval deadline_curr_range;
   int rta_curr = rta[perm_curr.GetPrevTaskId()];
   if (perm_prev.GetNextTaskId() == perm_curr.GetPrevTaskId()) {
-    if (perm_prev.type_trait_ == "ReactionTime") {
+    if (IfRT_Trait(perm_prev.type_trait_)) {
       offset_curr_range =
           GetOffsetRange_RTPerm(variable_od_range, perm_prev.inequality_);
       deadline_curr_range =
           GetDeadlineRange_RTPerm(variable_od_range, perm_curr.inequality_);
 
-    } else if (perm_prev.type_trait_ == "DataAge") {
+    } else if (IfDA_Trait(perm_prev.type_trait_)) {
       offset_curr_range =
           GetOffsetRange_DAPerm(variable_od_range, perm_prev.inequality_);
       deadline_curr_range =
@@ -315,7 +316,7 @@ void UpdateVariablesRangePrevDeadline(VariableRange& variable_range,
                                       int prev_id, int next_id,
                                       bool& whether_changed,
                                       const PermutationInequality& ineq) {
-  if (ineq.type_trait_ == "ReactionTime") {
+  if (IfRT_Trait(ineq.type_trait_)) {
     UpdateVariableSafeMin(
         variable_range.lower_bound[prev_id].deadline,
         variable_range.lower_bound[next_id].offset + ineq.lower_bound_ + 1,
@@ -324,7 +325,7 @@ void UpdateVariablesRangePrevDeadline(VariableRange& variable_range,
         variable_range.upper_bound[prev_id].deadline,
         variable_range.upper_bound[next_id].offset + ineq.upper_bound_,
         whether_changed);
-  } else if (ineq.type_trait_ == "DataAge") {
+  } else if (IfDA_Trait(ineq.type_trait_)) {
     UpdateVariableSafeMin(
         variable_range.lower_bound[prev_id].deadline,
         variable_range.lower_bound[next_id].offset - ineq.upper_bound_ + 1,
@@ -340,7 +341,7 @@ void UpdateVariablesRangePrevDeadline(VariableRange& variable_range,
 void UpdateVariablesRangeNextOffset(VariableRange& variable_range, int prev_id,
                                     int next_id, bool& whether_changed,
                                     const PermutationInequality& ineq) {
-  if (ineq.type_trait_ == "ReactionTime") {
+  if (IfRT_Trait(ineq.type_trait_)) {
     UpdateVariableSafeMax(
         variable_range.upper_bound[next_id].offset,
         variable_range.upper_bound[prev_id].deadline - ineq.lower_bound_ - 1,
@@ -349,7 +350,7 @@ void UpdateVariablesRangeNextOffset(VariableRange& variable_range, int prev_id,
         variable_range.lower_bound[next_id].offset,
         variable_range.lower_bound[prev_id].deadline - ineq.upper_bound_,
         whether_changed);
-  } else if (ineq.type_trait_ == "DataAge") {
+  } else if (IfDA_Trait(ineq.type_trait_)) {
     UpdateVariableSafeMax(
         variable_range.upper_bound[next_id].offset,
         variable_range.upper_bound[prev_id].deadline + ineq.upper_bound_ - 1,
