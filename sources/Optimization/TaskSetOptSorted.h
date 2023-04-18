@@ -138,10 +138,10 @@ class TaskSetOptSorted : public TaskSetPermutation {
       const std::vector<std::vector<int>>& sub_chains) {
     VariableOD best_possible_variable_od =
         FindBestPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm);
-    if (ObjectiveFunction::type_trait == "ReactionTime")
+    if (IfRT_Trait(ObjectiveFunction::type_trait))
       return ObjReactionTimeApprox::Obj(dag_tasks_, tasks_info_, chains_perm,
                                         best_possible_variable_od, sub_chains);
-    else if (ObjectiveFunction::type_trait == "DataAge")
+    else if (IfDA_Trait(ObjectiveFunction::type_trait))
       return ObjDataAgeApprox::Obj(dag_tasks_, tasks_info_, chains_perm,
                                    best_possible_variable_od, sub_chains);
     else
