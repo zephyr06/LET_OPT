@@ -44,14 +44,7 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
       res = PerformTOM_OPTOffset_Sort(dag_tasks);
       break;
     case TOM_Sort_Bound:
-      if (VerifyResFileExist(pathDataset, file, TOM_Sort,
-                             ObjectiveFunctionBase::type_trait))
-        res_sort = ReadFromResultFile(pathDataset, file, TOM_Sort,
-                                      ObjectiveFunctionBase::type_trait);
-      else
-        res_sort = PerformTOM_OPT_Sort<ObjectiveFunctionBase>(dag_tasks);
-      res =
-          PerformTOM_OPT_SortBound<ObjectiveFunctionBase>(dag_tasks, res_sort);
+      res = PerformTOM_OPT_SortBound<ObjectiveFunctionBase>(dag_tasks);
       break;
     case TOM_Sort_ImpBound:  // TODO: Need ReadFromResultFile and Write to save
                              // Variable_OD

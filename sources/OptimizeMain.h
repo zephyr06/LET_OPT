@@ -72,20 +72,23 @@ ScheduleResult PerformTOM_OPT_Sort(const DAG_Model& dag_tasks) {
 }
 
 template <typename ObjectiveFunction>
-ScheduleResult PerformTOM_OPT_SortBound(const DAG_Model& dag_tasks,
-                                        const ScheduleResult& res_of_sort) {
+ScheduleResult PerformTOM_OPT_SortBound(const DAG_Model& dag_tasks) {
   auto start = std::chrono::high_resolution_clock::now();
-  ScheduleResult res;
-  
-  
-  res.obj_ = GetApproximatedObjBound<ObjectiveFunction>(
+  ScheduleResult res_of_sort;
+
+  if (ObjectiveFunction::type_trait == "ReactionTime")
+    res_of_sort = PerformTOM_OPT_Sort<ObjReactionTimeApprox>(dag_tasks);
+  else if (ObjectiveFunction::type_trait == "DataAge")
+    res_of_sort = PerformTOM_OPT_Sort<ObjDataAgeApprox>(dag_tasks);
+  else
+    CoutError("TypeTrait not recognized in PerformTOM_OPT_SortBound");
+
+  res_of_sort.obj_ = GetApproximatedObjBound<ObjectiveFunction>(
       dag_tasks, dag_tasks.chains_, res_of_sort.obj_per_chain_);
-  res.schedulable_ = res_of_sort.schedulable_;
   auto stop = std::chrono::high_resolution_clock::now();
-  res.timeTaken_ = GetTimeTaken(start, stop) + res_of_sort.timeTaken_;
+  res_of_sort.timeTaken_ = GetTimeTaken(start, stop);
 
-  return res;
+  return res_of_sort;
 }
-
 
 }  // namespace DAG_SPACE

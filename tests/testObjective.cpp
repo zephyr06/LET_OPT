@@ -536,6 +536,14 @@ TEST_F(PermutationTest_2chain_v1, Obj_RTApprox) {
   EXPECT_EQ(200 + 200 + 200,
             ObjReactionTimeApprox::Obj(dag_tasks, tasks_info, chains_perm,
                                        variable_od, dag_tasks.chains_));
+
+  std::vector<double> obj_per_chain = ObjReactionTimeApprox::ObjPerChain(
+      dag_tasks, tasks_info, chains_perm, variable_od, dag_tasks.chains_);
+  std::vector<double> obj_per_chain_expected = {200, 200, 200};
+  ASSERT_EQ(obj_per_chain_expected.size(), obj_per_chain.size());
+  EXPECT_EQ(obj_per_chain_expected[0], obj_per_chain[0]);
+  EXPECT_EQ(obj_per_chain_expected[1], obj_per_chain[1]);
+  EXPECT_EQ(obj_per_chain_expected[2], obj_per_chain[2]);
 }
 TEST_F(PermutationTest_2chain_v1, data_age) {
   // chain is 0 -> 3 -> 4
