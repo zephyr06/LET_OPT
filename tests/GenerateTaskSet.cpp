@@ -27,10 +27,18 @@ int main(int argc, char *argv[]) {
       .default_value(2)
       .help("the NumberOfProcessor of tasks in DAG")
       .scan<'i', int>();
-  program.add_argument("--per_core_utilization")
+  program.add_argument("--per_core_utilization_min")
       .default_value(0.4)
       .help(
-          "the total utilization of each task set divided by the numerb of "
+          "lower bound, the total utilization of each task set divided by the "
+          "numerb of "
+          "processors")
+      .scan<'f', double>();
+  program.add_argument("--per_core_utilization_max")
+      .default_value(0.4)
+      .help(
+          "upper bound, the total utilization of each task set divided by the "
+          "numerb of "
           "processors")
       .scan<'f', double>();
   program.add_argument("--taskType")
@@ -92,7 +100,10 @@ int main(int argc, char *argv[]) {
   int task_number_in_tasksets = program.get<int>("--task_number_in_tasksets");
   int DAG_taskSetNumber = program.get<int>("--taskSetNumber");
   int numberOfProcessor = program.get<int>("--NumberOfProcessor");
-  double per_core_utilization = program.get<double>("--per_core_utilization");
+  double per_core_utilization_min =
+      program.get<double>("--per_core_utilization_min");
+  double per_core_utilization_max =
+      program.get<double>("--per_core_utilization_max");
   int taskType = program.get<int>("--taskType");
   int deadlineType = program.get<int>("--deadlineType");
   int period_generation_type = program.get<int>("--period_generation_type");
@@ -111,7 +122,8 @@ int main(int argc, char *argv[]) {
     srand(randomSeed);
   }
 
-  double totalUtilization = per_core_utilization * numberOfProcessor;
+  double totalUtilization_min = per_core_utilization_min * numberOfProcessor;
+  double totalUtilization_max = per_core_utilization_max * numberOfProcessor;
 
   std::cout
       << "Task configuration: " << std::endl
@@ -121,8 +133,10 @@ int main(int argc, char *argv[]) {
       << std::endl
       << "NumberOfProcessor(--NumberOfProcessor): " << numberOfProcessor
       << std::endl
-      << "totalUtilization(--totalUtilization): " << totalUtilization
-      << std::endl
+      << "totalUtilization_min(--totalUtilization_min): "
+      << totalUtilization_min << std::endl
+      << "totalUtilization_max(--totalUtilization_max): "
+      << totalUtilization_max << std::endl
       << "parallelismFactor (--parallelismFactor): " << parallelismFactor
       << std::endl
       << "taskType(--taskType), 0 means normal, 1 means DAG: " << taskType
@@ -154,13 +168,22 @@ int main(int argc, char *argv[]) {
   std::string outDirectory = GlobalVariablesDAGOpt::PROJECT_PATH + outDir;
   deleteDirectoryContents(outDirectory);
 
+  double totalUtilization = totalUtilization_min;
   for (int i = 0; i < DAG_taskSetNumber; i++) {
     if (taskType == 1)  // DAG task set
     {
-      DAG_Model dag_tasks = GenerateDAG(
-          task_number_in_tasksets, totalUtilization, numberOfProcessor, 1,
-          parallelismFactor, period_generation_type, deadlineType,
-          GlobalVariablesDAGOpt::CHAIN_NUMBER, chainLength);
+      TaskSetGenerationParameters tasks_params;
+      tasks_params.N = task_number_in_tasksets;
+      tasks_params.totalUtilization_min = totalUtilization_min;
+      tasks_params.totalUtilization_max = totalUtilization_max;
+      tasks_params.numberOfProcessor = numberOfProcessor;
+      tasks_params.coreRequireMax = 1;
+      tasks_params.parallelismFactor = parallelismFactor;
+      tasks_params.period_generation_type = period_generation_type;
+      tasks_params.deadlineType = deadlineType;
+      tasks_params.numCauseEffectChain = GlobalVariablesDAGOpt::CHAIN_NUMBER;
+      tasks_params.chain_length = chainLength;
+      DAG_Model dag_tasks = GenerateDAG(tasks_params);
 
       if (excludeDAGWithWongChainNumber == 1) {
         // TaskSet t = dag_tasks.GetTaskSet();

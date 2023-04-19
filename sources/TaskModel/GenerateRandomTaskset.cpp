@@ -66,41 +66,25 @@ void WriteTaskSets(std::ofstream &file, const TaskSet &tasks) {
 }
 
 using namespace DAG_SPACE;
-DAG_Model GenerateDAG(int N, double totalUtilization, int numberOfProcessor,
-                      int coreRequireMax, double parallelismFactor,
-                      int period_generation_type, int deadlineType,
-                      int numCauseEffectChain, int chain_length) {
-  TaskSet tasks =
-      GenerateTaskSet(N, totalUtilization, numberOfProcessor, coreRequireMax,
-                      period_generation_type, deadlineType);
+DAG_Model GenerateDAG(const TaskSetGenerationParameters &tasks_params) {
+  double totalUtilization = RandRange(tasks_params.totalUtilization_min,
+                                      tasks_params.totalUtilization_max);
+  TaskSet tasks = GenerateTaskSet(
+      tasks_params.N, totalUtilization, tasks_params.numberOfProcessor,
+      tasks_params.coreRequireMax, tasks_params.period_generation_type,
+      tasks_params.deadlineType);
   MAP_Prev mapPrev;
   DAG_Model dagModel(tasks, mapPrev, 0);
   // add edges randomly
-  for (int i = 0; i < N; i++) {
-    for (int j = i + 1; j < N; j++) {
-      if (double(rand()) / RAND_MAX < parallelismFactor) {
+  for (int i = 0; i < tasks_params.N; i++) {
+    for (int j = i + 1; j < tasks_params.N; j++) {
+      if (double(rand()) / RAND_MAX < tasks_params.parallelismFactor) {
         dagModel.addEdge(i, j);
       }
     }
   }
-  // set SF bound and RTDA bound randomly
-  // TaskSetInfoDerived tasksInfo(tasks);
-  // double max_execution_time_in_task_set = 0;
-  // for (auto &task : tasks) {
-  //     if (task.executionTime > max_execution_time_in_task_set) {
-  //         max_execution_time_in_task_set = task.executionTime;
-  //     }
-  // }
-  // double min_sf_bound = max_execution_time_in_task_set;
-  // double min_rtda_bound = max_execution_time_in_task_set;
-  // double sf_range = N * max_execution_time_in_task_set;
-  // double rtda_range = N * tasksInfo.hyper_period;
-  // dagModel.setSfBound(
-  //     std::floor(min_sf_bound + (double(rand()) / RAND_MAX) * sf_range));
-  // dagModel.setRtdaBound(
-  //     std::floor(min_rtda_bound + (double(rand()) / RAND_MAX) *
-  //     rtda_range));
-  return DAG_Model(tasks, dagModel.mapPrev, numCauseEffectChain, chain_length);
+  return DAG_Model(tasks, dagModel.mapPrev, tasks_params.numCauseEffectChain,
+                   tasks_params.chain_length);
 }
 
 void WriteDAG(std::ofstream &file, DAG_Model &dag_tasks) {
@@ -118,6 +102,4 @@ void WriteDAG(std::ofstream &file, DAG_Model &dag_tasks) {
     for (uint i = 0; i < itr->second.size(); i++)
       file << "*" << ((itr->second)[i].id) << "," << (itr->first) << "\n";
   }
-  // file << "@SF_Bound:" << dag_tasks.GetSfBound() << "\n";
-  // file << "@RTDA_Bound:" << dag_tasks.GetRtdaBound() << "\n";
 }

@@ -21,6 +21,20 @@ static const std::vector<int> PeriodCDFWaters = {3,  5,  7,  32, 57,
 
 std::vector<double> Uunifast(int N, double utilAll, bool boundU = true);
 
+struct TaskSetGenerationParameters {
+  // data members
+  int N;
+  double totalUtilization_min;
+  double totalUtilization_max;
+  int numberOfProcessor;
+  int coreRequireMax;
+  double parallelismFactor;
+  int period_generation_type;
+  int deadlineType;
+  int numCauseEffectChain;
+  int chain_length;
+};
+
 TaskSet GenerateTaskSet(int N, double totalUtilization, int numberOfProcessor,
                         int coreRequireMax, int taskSetType = 1,
                         int deadlineType = 0);
@@ -28,11 +42,6 @@ TaskSet GenerateTaskSet(int N, double totalUtilization, int numberOfProcessor,
 void WriteTaskSets(std::ofstream &file, TaskSet &tasks);
 
 using namespace DAG_SPACE;
-DAG_Model GenerateDAG(
-    int N, double totalUtilization, int numberOfProcessor, int coreRequireMax,
-    double parallelismFactor, int period_generation_type = 1,
-    int deadlineType = 0,
-    int numCauseEffectChain = GlobalVariablesDAGOpt::CHAIN_NUMBER,
-    int chain_length = 0);
+DAG_Model GenerateDAG(const TaskSetGenerationParameters &tasks_gene_param);
 
 void WriteDAG(std::ofstream &file, DAG_Model &tasksDAG);
