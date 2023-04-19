@@ -129,7 +129,8 @@ std::vector<int> DAG_Model::FindSinkTaskIds() const {
   return res;
 }
 
-std::vector<std::vector<int>> DAG_Model::GetRandomChains(int numOfChains) {
+std::vector<std::vector<int>> DAG_Model::GetRandomChains(int numOfChains,
+                                                         int chain_length) {
   std::vector<std::vector<int>> chains;
   chains.reserve(numOfChains);
   int chainCount = 0;

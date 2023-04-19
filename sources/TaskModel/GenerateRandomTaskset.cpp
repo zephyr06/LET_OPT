@@ -1,124 +1,123 @@
 #include "sources/TaskModel/GenerateRandomTaskset.h"
 
 std::vector<double> Uunifast(int N, double utilAll, bool boundU) {
-    double sumU = utilAll;
-    std::vector<double> utilVec(N, 0);
+  double sumU = utilAll;
+  std::vector<double> utilVec(N, 0);
 
-    double nextU = 0;
-    for (int i = 1; i < N; i++) {
-        nextU = sumU * pow(double(rand()) / RAND_MAX, 1.0 / (N - 1));
-        if (boundU) {
-            utilVec[i - 1] = std::min(1.0, sumU - nextU);
-            nextU += std::max(0.0, sumU - nextU - 1.0);
-        } else {
-            utilVec[i - 1] = sumU - nextU;
-        }
-        sumU = nextU;
+  double nextU = 0;
+  for (int i = 1; i < N; i++) {
+    nextU = sumU * pow(double(rand()) / RAND_MAX, 1.0 / (N - 1));
+    if (boundU) {
+      utilVec[i - 1] = std::min(1.0, sumU - nextU);
+      nextU += std::max(0.0, sumU - nextU - 1.0);
+    } else {
+      utilVec[i - 1] = sumU - nextU;
     }
-    utilVec[N - 1] = nextU;
-    return utilVec;
+    sumU = nextU;
+  }
+  utilVec[N - 1] = nextU;
+  return utilVec;
 }
 
 TaskSet GenerateTaskSet(int N, double totalUtilization, int numberOfProcessor,
                         int coreRequireMax, int taskSetType, int deadlineType) {
-    std::vector<double> utilVec = Uunifast(N, totalUtilization);
-    TaskSet tasks;
+  std::vector<double> utilVec = Uunifast(N, totalUtilization);
+  TaskSet tasks;
 
-    for (int i = 0; i < N; i++) {
-        int periodCurr = 0;
-        int processorId = rand() % numberOfProcessor;
-        int coreRequire = 1 + rand() % (coreRequireMax);
+  for (int i = 0; i < N; i++) {
+    int periodCurr = 0;
+    int processorId = rand() % numberOfProcessor;
+    int coreRequire = 1 + rand() % (coreRequireMax);
 
-        // automobile periods with WATERS distribution
-        int probability = rand() % PeriodCDFWaters.back();
-        int period_idx = 0;
-        while (probability > PeriodCDFWaters[period_idx]) {
-            period_idx++;
-        }
-        periodCurr = int(PeriodSetWaters[period_idx] *
-                         GlobalVariablesDAGOpt::TIME_SCALE_FACTOR);
-        double deadline = periodCurr;
-        if (deadlineType == 1)
-            deadline = round(RandRange(
-                std::max(1.0, ceil(periodCurr * utilVec[i])), periodCurr));
-        Task task(0, periodCurr, 0,
-                  std::max(1.0, ceil(periodCurr * utilVec[i])), deadline, i,
-                  processorId, coreRequire);
-        tasks.push_back(task);
+    // automobile periods with WATERS distribution
+    int probability = rand() % PeriodCDFWaters.back();
+    int period_idx = 0;
+    while (probability > PeriodCDFWaters[period_idx]) {
+      period_idx++;
     }
-    return tasks;
+    periodCurr = int(PeriodSetWaters[period_idx] *
+                     GlobalVariablesDAGOpt::TIME_SCALE_FACTOR);
+    double deadline = periodCurr;
+    if (deadlineType == 1)
+      deadline = round(
+          RandRange(std::max(1.0, ceil(periodCurr * utilVec[i])), periodCurr));
+    Task task(0, periodCurr, 0, std::max(1.0, ceil(periodCurr * utilVec[i])),
+              deadline, i, processorId, coreRequire);
+    tasks.push_back(task);
+  }
+  return tasks;
 }
 void WriteTaskSets(std::ofstream &file, const TaskSet &tasks) {
-    int N = tasks.size();
-    file << "JobID,Period,ExecutionTime,DeadLine,processorId"
-            "\n";
-    for (int i = 0; i < N; i++) {
-        file << tasks[i].id
-             // << "," << tasks[i].offset
-             << ","
-             << tasks[i].period
-             //  << "," << tasks[i].overhead
-             << "," << tasks[i].executionTime << "," << tasks[i].deadline << ","
-             << tasks[i].processorId
+  int N = tasks.size();
+  file << "JobID,Period,ExecutionTime,DeadLine,processorId"
+          "\n";
+  for (int i = 0; i < N; i++) {
+    file << tasks[i].id
+         // << "," << tasks[i].offset
+         << ","
+         << tasks[i].period
+         //  << "," << tasks[i].overhead
+         << "," << tasks[i].executionTime << "," << tasks[i].deadline << ","
+         << tasks[i].processorId
 
-             // << "," << tasks[i].coreRequire
-             << "\n";
-    }
+         // << "," << tasks[i].coreRequire
+         << "\n";
+  }
 }
 
 using namespace DAG_SPACE;
 DAG_Model GenerateDAG(int N, double totalUtilization, int numberOfProcessor,
                       int coreRequireMax, double parallelismFactor,
                       int period_generation_type, int deadlineType,
-                      int numCauseEffectChain) {
-    TaskSet tasks =
-        GenerateTaskSet(N, totalUtilization, numberOfProcessor, coreRequireMax,
-                        period_generation_type, deadlineType);
-    MAP_Prev mapPrev;
-    DAG_Model dagModel(tasks, mapPrev);
-    // add edges randomly
-    for (int i = 0; i < N; i++) {
-        for (int j = i + 1; j < N; j++) {
-            if (double(rand()) / RAND_MAX < parallelismFactor) {
-                dagModel.addEdge(i, j);
-            }
-        }
+                      int chain_length, int numCauseEffectChain) {
+  TaskSet tasks =
+      GenerateTaskSet(N, totalUtilization, numberOfProcessor, coreRequireMax,
+                      period_generation_type, deadlineType);
+  MAP_Prev mapPrev;
+  DAG_Model dagModel(tasks, mapPrev);
+  // add edges randomly
+  for (int i = 0; i < N; i++) {
+    for (int j = i + 1; j < N; j++) {
+      if (double(rand()) / RAND_MAX < parallelismFactor) {
+        dagModel.addEdge(i, j);
+      }
     }
-    // set SF bound and RTDA bound randomly
-    // TaskSetInfoDerived tasksInfo(tasks);
-    // double max_execution_time_in_task_set = 0;
-    // for (auto &task : tasks) {
-    //     if (task.executionTime > max_execution_time_in_task_set) {
-    //         max_execution_time_in_task_set = task.executionTime;
-    //     }
-    // }
-    // double min_sf_bound = max_execution_time_in_task_set;
-    // double min_rtda_bound = max_execution_time_in_task_set;
-    // double sf_range = N * max_execution_time_in_task_set;
-    // double rtda_range = N * tasksInfo.hyper_period;
-    // dagModel.setSfBound(
-    //     std::floor(min_sf_bound + (double(rand()) / RAND_MAX) * sf_range));
-    // dagModel.setRtdaBound(
-    //     std::floor(min_rtda_bound + (double(rand()) / RAND_MAX) *
-    //     rtda_range));
-    return DAG_Model(tasks, dagModel.mapPrev, numCauseEffectChain);
+  }
+  // set SF bound and RTDA bound randomly
+  // TaskSetInfoDerived tasksInfo(tasks);
+  // double max_execution_time_in_task_set = 0;
+  // for (auto &task : tasks) {
+  //     if (task.executionTime > max_execution_time_in_task_set) {
+  //         max_execution_time_in_task_set = task.executionTime;
+  //     }
+  // }
+  // double min_sf_bound = max_execution_time_in_task_set;
+  // double min_rtda_bound = max_execution_time_in_task_set;
+  // double sf_range = N * max_execution_time_in_task_set;
+  // double rtda_range = N * tasksInfo.hyper_period;
+  // dagModel.setSfBound(
+  //     std::floor(min_sf_bound + (double(rand()) / RAND_MAX) * sf_range));
+  // dagModel.setRtdaBound(
+  //     std::floor(min_rtda_bound + (double(rand()) / RAND_MAX) *
+  //     rtda_range));
+  return DAG_Model(tasks, dagModel.mapPrev, chain_length, numCauseEffectChain);
 }
 
 void WriteDAG(std::ofstream &file, DAG_Model &dag_tasks) {
-    WriteTaskSets(file, dag_tasks.GetTaskSet());
-    file << "Note: "
-         << "*a,b"
-         << " means a->b, i.e., a writes data and b reads data from it\n";
-    for (const auto &chain : dag_tasks.chains_) {
-        file << "@Chain:";
-        for (int x : chain) file << x << ", ";
-        file << "\n";
-    }
-    for (auto itr = dag_tasks.mapPrev.begin(); itr != dag_tasks.mapPrev.end();
-         itr++) {
-        for (uint i = 0; i < itr->second.size(); i++)
-            file << "*" << ((itr->second)[i].id) << "," << (itr->first) << "\n";
-    }
-    // file << "@SF_Bound:" << dag_tasks.GetSfBound() << "\n";
-    // file << "@RTDA_Bound:" << dag_tasks.GetRtdaBound() << "\n";
+  WriteTaskSets(file, dag_tasks.GetTaskSet());
+  file << "Note: "
+       << "*a,b"
+       << " means a->b, i.e., a writes data and b reads data from it\n";
+  for (const auto &chain : dag_tasks.chains_) {
+    file << "@Chain:";
+    for (int x : chain) file << x << ", ";
+    file << "\n";
+  }
+  for (auto itr = dag_tasks.mapPrev.begin(); itr != dag_tasks.mapPrev.end();
+       itr++) {
+    for (uint i = 0; i < itr->second.size(); i++)
+      file << "*" << ((itr->second)[i].id) << "," << (itr->first) << "\n";
+  }
+  // file << "@SF_Bound:" << dag_tasks.GetSfBound() << "\n";
+  // file << "@RTDA_Bound:" << dag_tasks.GetRtdaBound() << "\n";
 }

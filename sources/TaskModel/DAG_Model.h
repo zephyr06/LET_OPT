@@ -32,7 +32,7 @@ typedef boost::property_map<Graph, boost::edge_name_t>::type edge_name_map_t;
 typedef std::unordered_map<LLint, Vertex> indexVertexMap;
 
 struct first_name_t {
-    typedef boost::vertex_property_tag kind;
+  typedef boost::vertex_property_tag kind;
 };
 
 namespace DAG_SPACE {
@@ -49,79 +49,91 @@ void PrintChains(const std::vector<std::vector<int>> &chains);
 typedef std::map<int, RegularTaskSystem::TaskSet> MAP_Prev;
 using namespace RegularTaskSystem;
 class DAG_Model {
-   public:
-    DAG_Model() : sfBound_(-1), rtdaBound_(-1) {}
-    DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, int numCauseEffectChain = 1)
-        : tasks(tasks), mapPrev(mapPrev) {
-        RecordTaskPosition();
-        std::tie(graph_, indexesBGL_) = GenerateGraphForTaskSet();
-        chains_ = GetRandomChains(numCauseEffectChain);
-        sfBound_ = -1;
-        rtdaBound_ = -1;
-        CategorizeTaskSet();
-    }
+ public:
+  DAG_Model() : sfBound_(-1), rtdaBound_(-1) {}
+  DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, int numCauseEffectChain = 1)
+      : tasks(tasks), mapPrev(mapPrev) {
+    RecordTaskPosition();
+    std::tie(graph_, indexesBGL_) = GenerateGraphForTaskSet();
+    chains_ = GetRandomChains(numCauseEffectChain);
+    sfBound_ = -1;
+    rtdaBound_ = -1;
+    CategorizeTaskSet();
+  }
 
-    DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, double sfBound,
-              double rtdaBound, int numCauseEffectChain = 1)
-        : tasks(tasks), mapPrev(mapPrev) {
-        tasks = tasks;
-        mapPrev = mapPrev;
-        RecordTaskPosition();
-        std::tie(graph_, indexesBGL_) = GenerateGraphForTaskSet();
-        chains_ = GetRandomChains(numCauseEffectChain);
-        sfBound_ = sfBound;
-        rtdaBound_ = rtdaBound;
-        CategorizeTaskSet();
-    }
+  DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, int chain_length,
+            int numCauseEffectChain = 1)
+      : tasks(tasks), mapPrev(mapPrev) {
+    RecordTaskPosition();
+    std::tie(graph_, indexesBGL_) = GenerateGraphForTaskSet();
+    chains_ = GetRandomChains(numCauseEffectChain);
+    sfBound_ = -1;
+    rtdaBound_ = -1;
+    CategorizeTaskSet();
+  }
 
-    std::pair<Graph, indexVertexMap> GenerateGraphForTaskSet() const;
+  DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, double sfBound, double rtdaBound,
+            int numCauseEffectChain = 1)
+      : tasks(tasks), mapPrev(mapPrev) {
+    tasks = tasks;
+    mapPrev = mapPrev;
+    RecordTaskPosition();
+    std::tie(graph_, indexesBGL_) = GenerateGraphForTaskSet();
+    chains_ = GetRandomChains(numCauseEffectChain);
+    sfBound_ = sfBound;
+    rtdaBound_ = rtdaBound;
+    CategorizeTaskSet();
+  }
 
-    void addEdge(int prevIndex, int nextIndex) {
-        mapPrev[nextIndex].push_back(GetTask(prevIndex));
-    }
+  std::pair<Graph, indexVertexMap> GenerateGraphForTaskSet() const;
 
-    void print();
+  void addEdge(int prevIndex, int nextIndex) {
+    mapPrev[nextIndex].push_back(GetTask(prevIndex));
+  }
 
-    void printChains();
+  void print();
 
-    inline double GetSfBound() { return sfBound_; }
-    inline void setSfBound(double sfBound) { sfBound_ = sfBound; }
-    inline double GetRtdaBound() { return rtdaBound_; }
-    inline void setRtdaBound(double rtdaBound) { rtdaBound_ = rtdaBound; }
+  void printChains();
 
-    int edgeNumber();
+  inline double GetSfBound() { return sfBound_; }
+  inline void setSfBound(double sfBound) { sfBound_ = sfBound; }
+  inline double GetRtdaBound() { return rtdaBound_; }
+  inline void setRtdaBound(double rtdaBound) { rtdaBound_ = rtdaBound; }
 
-    std::vector<std::vector<int>> GetRandomChains(int numOfChains);
-    void SetChains(std::vector<std::vector<int>> &chains) { chains_ = chains; }
-    std::vector<int> FindSourceTaskIds() const;
-    std::vector<int> FindSinkTaskIds() const;
+  int edgeNumber();
 
-    void CategorizeTaskSet();
-    void RecordTaskPosition();
+  std::vector<std::vector<int>> GetRandomChains(int numOfChains,
+                                                int chain_length = 0);
+  void SetChains(std::vector<std::vector<int>> &chains) { chains_ = chains; }
+  std::vector<int> FindSourceTaskIds() const;
+  std::vector<int> FindSinkTaskIds() const;
 
-    inline const TaskSet &GetTaskSet() const { return tasks; }
+  void CategorizeTaskSet();
+  void RecordTaskPosition();
 
-    inline int GetTaskIndex(int task_id) const {
-        return task_id2position_.at(task_id);
-    }
-    inline const Task &GetTask(int task_id) const {
-        return tasks[GetTaskIndex(task_id)];
-    }
+  inline const TaskSet &GetTaskSet() const { return tasks; }
 
-    // data member
-   private:
-    double sfBound_;
-    double rtdaBound_;
-    TaskSet tasks;
+  inline int GetTaskIndex(int task_id) const {
+    return task_id2position_.at(task_id);
+  }
+  inline const Task &GetTask(int task_id) const {
+    return tasks[GetTaskIndex(task_id)];
+  }
 
-   public:
-    MAP_Prev mapPrev;
-    Graph graph_;
-    indexVertexMap indexesBGL_;
-    std::vector<std::vector<int>> chains_;
-    std::unordered_map<int, TaskSet> processor2taskset_;
-    std::unordered_map<int, uint> task_id2task_index_within_processor_;
-    std::unordered_map<int, int> task_id2position_;
+  // data member
+ private:
+  double sfBound_;
+  double rtdaBound_;
+  TaskSet tasks;
+
+ public:
+  MAP_Prev mapPrev;
+  Graph graph_;
+  indexVertexMap indexesBGL_;
+  std::vector<std::vector<int>> chains_;
+  std::unordered_map<int, TaskSet> processor2taskset_;
+  std::unordered_map<int, uint> task_id2task_index_within_processor_;
+  std::unordered_map<int, int> task_id2position_;
 };
 
 DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType = "orig",
@@ -130,9 +142,9 @@ DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType = "orig",
 bool WhetherDAGChainsShareNodes(const DAG_Model &dag_tasks);
 
 inline std::string GetTaskSetName(int file_index, int N) {
-    return "dag-set-N" + std::to_string(N) + "-" +
-           std::string(3 - std::to_string(file_index).size(), '0') +
-           std::to_string(file_index) + "-syntheticJobs" + ".csv";
+  return "dag-set-N" + std::to_string(N) + "-" +
+         std::string(3 - std::to_string(file_index).size(), '0') +
+         std::to_string(file_index) + "-syntheticJobs" + ".csv";
 }
 
 }  // namespace DAG_SPACE
