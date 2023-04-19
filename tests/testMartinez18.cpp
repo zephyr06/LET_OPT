@@ -50,7 +50,32 @@ TEST_F(PermutationTest18_n3, GetPossibleReadingJobs) {
   EXPECT_EQ(JobCEC(0, 0), GetPossibleReadingJobs(JobCEC(1, 0), task0, 20,
                                                  tasks_info, variable_od));
 }
+TEST_F(PermutationTest18_n3, GetPossibleReadingJobsv2) {
+  VariableOD variable_od(tasks);
+  variable_od[0].offset = 1;
+  variable_od[1].offset = 10;
+  variable_od[2].offset = 10;
+  std::vector<int> chain = {0, 1, 2};
+  Martinez18Perm mart_perm;
+  mart_perm.push_back(1);
+  mart_perm.push_back(10);
+  mart_perm.push_back(10);
+  EXPECT_EQ(JobCEC(0, -1), GetPossibleReadingJobs(JobCEC(1, 0), task0, 20,
+                                                  tasks_info, variable_od));
+}
+TEST_F(PermutationTest18_n3, GetPossibleReadingJobsv3) {
+  VariableOD variable_od(tasks);
 
+  variable_od[1].offset = 10;
+  variable_od[2].offset = 3;
+  std::vector<int> chain = {0, 1, 2};
+  Martinez18Perm mart_perm;
+  mart_perm.push_back(0);
+  mart_perm.push_back(10);
+  mart_perm.push_back(3);
+  EXPECT_EQ(JobCEC(1, -2), GetPossibleReadingJobs(JobCEC(2, 0), task1, 20,
+                                                  tasks_info, variable_od));
+}
 TEST_F(PermutationTest18_n3, Obj_v1) {
   VariableOD variable_od(tasks);
   variable_od[1].offset = 1;
@@ -67,13 +92,22 @@ TEST_F(PermutationTest18_n3, Obj_v1) {
 TEST_F(PermutationTest18_n3, Obj_v2) {
   VariableOD variable_od(tasks);
   variable_od[1].offset = 10;
-  variable_od[2].offset = 10;
+  variable_od[2].offset = 3;
   std::vector<int> chain = {0, 1, 2};
   Martinez18Perm mart_perm;
   mart_perm.push_back(0);
   mart_perm.push_back(10);
   mart_perm.push_back(3);
-  EXPECT_EQ(40,
+  EXPECT_EQ(60,
+            ObjDataAgeFromVariable(mart_perm, dag_tasks, tasks_info, chain));
+}
+TEST_F(PermutationTest18_n3, Obj_v3) {
+  std::vector<int> chain = {0, 1, 2};
+  Martinez18Perm mart_perm;
+  mart_perm.push_back(1);
+  mart_perm.push_back(10);
+  mart_perm.push_back(10);
+  EXPECT_EQ(49,
             ObjDataAgeFromVariable(mart_perm, dag_tasks, tasks_info, chain));
 }
 TEST_F(PermutationTest18_n3, EvaluateMartSchedulability) {

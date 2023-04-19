@@ -5,6 +5,14 @@
 #include "sources/Utils/BatchUtils.h"
 namespace DAG_SPACE {
 
+inline int GetDeadlineMart(const JobCEC& job_curr,
+                           const VariableOD& variable_od,
+                           const TaskSetInfoDerived& tasks_info) {
+  return variable_od.at(job_curr.taskId).offset +
+         variable_od.at(job_curr.taskId).deadline +
+         tasks_info.GetTask(job_curr.taskId).period * job_curr.jobId;
+}
+
 PermutationInequality GetPermIneq(const DAG_Model& dag_tasks,
                                   const TaskSetInfoDerived& tasks_info,
                                   int prev_task_id, int next_task_id,

@@ -27,17 +27,23 @@ JobCEC GetPossibleReadingJobs(
   int job_start_curr = GetActivationTime(job_curr, tasks_info) +
                        variable_od.at(job_curr.taskId).offset;
   int period_prev = tasks_info.GetTask(task_prev.id).period;
-  JobCEC possible_read_job(task_prev.id,
-                           std::floor(float(job_start_curr) / period_prev) - 1);
+  JobCEC possible_read_job(
+      task_prev.id, std::floor(float(job_start_curr) / period_prev) - 1 - 1);
   int job_id_try_upper_bound = possible_read_job.jobId + 10;
   for (int job_id = possible_read_job.jobId; job_id < job_id_try_upper_bound;
        job_id++) {
     JobCEC job_curr_try(task_prev.id, job_id);
-    int prev_job_finish = GetDeadline(job_curr_try, variable_od, tasks_info);
+    int prev_job_finish =
+        GetDeadlineMart(job_curr_try, variable_od, tasks_info);
     if (prev_job_finish <= job_start_curr) {
       possible_read_job = job_curr_try;
-    } else
-      return possible_read_job;
+    } else {
+      if (GetDeadlineMart(possible_read_job, variable_od, tasks_info) <=
+          job_start_curr)
+        return possible_read_job;
+      else
+        CoutError("Didn't find reading job in GetPossibleReadingJobs!");
+    }
   }
   CoutError("didn't find reading job!");
   return possible_read_job;
