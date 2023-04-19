@@ -9,7 +9,7 @@ implementation plan:
 ```
 make GenerateTaskSet
 N=5
-./tests/GenerateTaskSet --taskSetNumber 1000 --task_number_in_tasksets $N --per_core_utilization_min 0.5 --per_core_utilization_min 0.9 --outDir "TaskData/N$N/" --parallelismFactor 0.4 --chainLength 2
+./tests/GenerateTaskSet --taskSetNumber 1000 --task_number_in_tasksets $N --per_core_utilization_min 0.1 --per_core_utilization_max 0.9 --outDir "TaskData/N$N/" --parallelismFactor 0.4 --chainLength 2
 
 make BatchRunSingle -j8
 
