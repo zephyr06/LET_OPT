@@ -30,7 +30,7 @@ class PermutationTest1 : public ::testing::Test {
 
     perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info, "ReactionTime");
     perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info, "ReactionTime");
-    dag_tasks.chains_[0] = {0, 1, 2};
+    dag_tasks.chains_ = {{0, 1, 2}};
     // task_sets_perms = TaskSetPermutation(dag_tasks, {task_chain});
   };
 
@@ -479,7 +479,7 @@ class PermutationTest_2chain_v1 : public ::testing::Test {
     perm13 = TwoTaskPermutations(1, 3, dag_tasks, tasks_info, "ReactionTime");
 
     variable_od = VariableOD(tasks);
-    dag_tasks.chains_[0] = {0, 3, 4};
+    dag_tasks.chains_ = {{0, 3, 4}};
     dag_tasks.chains_.push_back({1, 3, 4});
   };
 
@@ -508,13 +508,13 @@ TEST_F(PermutationTest_2chain_v1, GetUnvisitedFutureEdges) {
   EXPECT_EQ(Edge(3, 4), task_sets_perms.GetUnvisitedFutureEdges(0)[1]);
 }
 TEST_F(PermutationTest_2chain_v1, TaskSetPermutation) {
-  // dag_tasks.chains_[0] = {0, 3, 4};
+  // dag_tasks.chains_ ={{0, 3,4}};
   // dag_tasks.chains_.push_back({1, 3, 4});
   auto res = PerformTOM_OPT_EnumW_Skip<ObjReactionTime>(dag_tasks);
   EXPECT_THAT(res.obj_, testing::Le(128 + 28));
 }
 TEST_F(PermutationTest_2chain_v1, TaskSetPermutation_sort) {
-  // dag_tasks.chains_[0] = {0, 3, 4};
+  // dag_tasks.chains_ ={{0, 3,4}};
   // dag_tasks.chains_.push_back({1, 3, 4});
   auto res = PerformTOM_OPT_Sort<ObjReactionTime>(dag_tasks);
   EXPECT_THAT(res.obj_, testing::Le(128 + 28));

@@ -146,7 +146,8 @@ std::vector<std::vector<int>> DAG_Model::GetRandomChains(int numOfChains,
       if (chainCount >= numOfChains) break;
       auto path = shortest_paths(sourceId, sinkId, graph_);
       if (path.size() > 1) {
-        if (chain_length > 0 && path.size() == chain_length)
+        if (chain_length == 0 ||
+            (chain_length > 0 && path.size() == chain_length))
           chains.push_back(path);
         chainCount++;
       }

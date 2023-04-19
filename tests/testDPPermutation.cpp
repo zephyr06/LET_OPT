@@ -1,8 +1,8 @@
 #include "gmock/gmock.h"  // Brings in gMock.
 #include "sources/ObjectiveFunction/ObjDataAge.h"
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
-#include "sources/OptimizeMain.h"
 #include "sources/Optimization/Variable.h"
+#include "sources/OptimizeMain.h"
 #include "sources/Permutations/ChainsPermutation.h"
 #include "sources/Permutations/PermutationInequality.h"
 #include "sources/Permutations/TwoTaskPermutations.h"
@@ -33,7 +33,7 @@ class PermutationTest18 : public ::testing::Test {
 
     perm01 = TwoTaskPermutations(0, 1, dag_tasks, tasks_info, "ReactionTime");
     perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info, "ReactionTime");
-    dag_tasks.chains_[0] = {0, 1, 2};
+    dag_tasks.chains_ = {{0, 1, 2}};
   };
 
   DAG_Model dag_tasks;
@@ -61,7 +61,7 @@ TEST_F(PermutationTest18, GetFirstReactJob) {
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm01[0]);
   chains_perm.push_back(perm12[0]);
-  dag_tasks.chains_[0] = {0, 1, 2};
+  dag_tasks.chains_ = {{0, 1, 2}};
   EXPECT_EQ(JobCEC(2, 0), GetFirstReactJob(JobCEC(0, 0), chains_perm,
                                            dag_tasks.chains_[0], tasks_info));
   EXPECT_EQ(JobCEC(2, 0), GetFirstReactJob(JobCEC(0, 1), chains_perm,
@@ -98,7 +98,7 @@ class PermutationTest_2chain_v1 : public ::testing::Test {
     perm34 = TwoTaskPermutations(3, 4, dag_tasks, tasks_info, "ReactionTime");
     perm13 = TwoTaskPermutations(1, 3, dag_tasks, tasks_info, "ReactionTime");
     variable_od = VariableOD(tasks);
-    dag_tasks.chains_[0] = {0, 3, 4};
+    dag_tasks.chains_ = {{0, 3, 4}};
     dag_tasks.chains_.push_back({1, 3, 4});
   };
 

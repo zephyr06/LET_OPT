@@ -29,7 +29,7 @@ class PermutationTest1 : public ::testing::Test {
     perm12 = TwoTaskPermutations(1, 2, dag_tasks, tasks_info, "ReactionTime");
 
     variable_od = VariableOD(tasks);
-    dag_tasks.chains_[0] = {0, 1, 2};
+    dag_tasks.chains_ = {{0, 1, 2}};
   };
 
   DAG_Model dag_tasks;
@@ -209,14 +209,14 @@ TEST_F(PermutationTest1, GetJobMatch) {
 
 TEST_F(PermutationTest1, PerformStandardLETAnalysis) {
   // chain is 0 -> 1 -> 2
-  dag_tasks.chains_[0] = {0, 1, 2};
+  dag_tasks.chains_ = {{0, 1, 2}};
   ScheduleResult res = PerformStandardLETAnalysis<ObjReactionTime>(dag_tasks);
   EXPECT_EQ(60, res.obj_);
 }
 
 TEST_F(PermutationTest1, PerformStandardLETAnalysisDA) {
   // chain is 0 -> 1 -> 2
-  dag_tasks.chains_[0] = {0, 1, 2};
+  dag_tasks.chains_ = {{0, 1, 2}};
   ScheduleResult res = PerformStandardLETAnalysis<ObjDataAge>(dag_tasks);
   EXPECT_EQ(50, res.obj_);
 }
@@ -234,7 +234,7 @@ class PermutationTest_Non_Har : public ::testing::Test {
     task2 = tasks[2];
 
     variable_od = VariableOD(tasks);
-    dag_tasks.chains_[0] = {0, 1, 2};
+    dag_tasks.chains_ = {{0, 1, 2}};
   };
 
   DAG_Model dag_tasks;
@@ -387,7 +387,7 @@ TEST_F(PermutationTest_Non_Har, GetPossibleReactingJobs) {
 
 TEST_F(PermutationTest_Non_Har, PerformStandardLETAnalysis) {
   // chain is 0 -> 1 -> 2
-  dag_tasks.chains_[0] = {0, 1, 2};
+  dag_tasks.chains_ = {{0, 1, 2}};
   ScheduleResult res = PerformStandardLETAnalysis<ObjReactionTime>(dag_tasks);
   EXPECT_EQ(50, res.obj_);
 }
@@ -418,7 +418,7 @@ TEST_F(PermutationTest_Non_Har, GetPossibleReadingJobs_v2) {
 
 TEST_F(PermutationTest_Non_Har, PerformStandardLETAnalysisDA) {
   // chain is 0 -> 1 -> 2
-  dag_tasks.chains_[0] = {0, 1, 2};
+  dag_tasks.chains_ = {{0, 1, 2}};
   ScheduleResult res = PerformStandardLETAnalysis<ObjDataAge>(dag_tasks);
   EXPECT_EQ(45, res.obj_);
 }
@@ -436,7 +436,7 @@ class PermutationTest_Non_Har2 : public ::testing::Test {
     task2 = tasks[2];
 
     variable_od = VariableOD(tasks);
-    dag_tasks.chains_[0] = {0, 1, 2};
+    dag_tasks.chains_ = {{0, 1, 2}};
   };
 
   DAG_Model dag_tasks;
@@ -460,13 +460,13 @@ TEST_F(PermutationTest_Non_Har2, GetPossibleReactingJobs) {
 }
 TEST_F(PermutationTest_Non_Har2, PerformStandardLETAnalysis) {
   // chain is 0 -> 1 -> 2
-  dag_tasks.chains_[0] = {0, 1, 2};
+  dag_tasks.chains_ = {{0, 1, 2}};
   ScheduleResult res = PerformStandardLETAnalysis<ObjReactionTime>(dag_tasks);
   EXPECT_EQ(40, res.obj_);
 }
 TEST_F(PermutationTest_Non_Har2, PerformStandardLETAnalysisDA) {
   // chain is 0 -> 1 -> 2
-  dag_tasks.chains_[0] = {0, 1, 2};
+  dag_tasks.chains_ = {{0, 1, 2}};
   ScheduleResult res = PerformStandardLETAnalysis<ObjDataAge>(dag_tasks);
   EXPECT_EQ(45, res.obj_);
 }
@@ -499,7 +499,7 @@ class PermutationTest_2chain_v1 : public ::testing::Test {
     // perm12[1].print();
 
     variable_od = VariableOD(tasks);
-    dag_tasks.chains_[0] = {0, 3, 4};
+    dag_tasks.chains_ = {{0, 3, 4}};
     dag_tasks.chains_.push_back({1, 3, 4});
   };
 
