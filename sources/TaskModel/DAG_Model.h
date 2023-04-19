@@ -50,38 +50,21 @@ typedef std::map<int, RegularTaskSystem::TaskSet> MAP_Prev;
 using namespace RegularTaskSystem;
 class DAG_Model {
  public:
-  DAG_Model() : sfBound_(-1), rtdaBound_(-1) {}
-  DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, int numCauseEffectChain = 1)
+  DAG_Model() {}
+  DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, int numCauseEffectChain)
       : tasks(tasks), mapPrev(mapPrev) {
     RecordTaskPosition();
     std::tie(graph_, indexesBGL_) = GenerateGraphForTaskSet();
     chains_ = GetRandomChains(numCauseEffectChain);
-    sfBound_ = -1;
-    rtdaBound_ = -1;
     CategorizeTaskSet();
   }
 
   DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, int chain_length,
-            int numCauseEffectChain = 1)
+            int numCauseEffectChain)
       : tasks(tasks), mapPrev(mapPrev) {
     RecordTaskPosition();
     std::tie(graph_, indexesBGL_) = GenerateGraphForTaskSet();
     chains_ = GetRandomChains(numCauseEffectChain);
-    sfBound_ = -1;
-    rtdaBound_ = -1;
-    CategorizeTaskSet();
-  }
-
-  DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, double sfBound, double rtdaBound,
-            int numCauseEffectChain = 1)
-      : tasks(tasks), mapPrev(mapPrev) {
-    tasks = tasks;
-    mapPrev = mapPrev;
-    RecordTaskPosition();
-    std::tie(graph_, indexesBGL_) = GenerateGraphForTaskSet();
-    chains_ = GetRandomChains(numCauseEffectChain);
-    sfBound_ = sfBound;
-    rtdaBound_ = rtdaBound;
     CategorizeTaskSet();
   }
 
@@ -94,11 +77,6 @@ class DAG_Model {
   void print();
 
   void printChains();
-
-  inline double GetSfBound() { return sfBound_; }
-  inline void setSfBound(double sfBound) { sfBound_ = sfBound; }
-  inline double GetRtdaBound() { return rtdaBound_; }
-  inline void setRtdaBound(double rtdaBound) { rtdaBound_ = rtdaBound; }
 
   int edgeNumber();
 
@@ -122,8 +100,6 @@ class DAG_Model {
 
   // data member
  private:
-  double sfBound_;
-  double rtdaBound_;
   TaskSet tasks;
 
  public:

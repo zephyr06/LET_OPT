@@ -207,8 +207,6 @@ DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType,
   file.open(path, ios::in);
   if (file.is_open()) {
     std::string line;
-    double sf_bound = 0;
-    double rtda_bound = 0;
     while (getline(file, line)) {
       if (line[0] != '*' && line[0] != '@') continue;
       if (line[0] == '*') {
@@ -230,7 +228,7 @@ DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType,
       }
     }
 
-    DAG_Model ttt(tasks, mapPrev, sf_bound, rtda_bound, chainNum);
+    DAG_Model ttt(tasks, mapPrev, chainNum);
     if (chains.size() > 0) ttt.chains_ = chains;
     if (chainNum < chains.size()) ttt.chains_.resize(chainNum);
     return ttt;

@@ -74,7 +74,7 @@ DAG_Model GenerateDAG(int N, double totalUtilization, int numberOfProcessor,
       GenerateTaskSet(N, totalUtilization, numberOfProcessor, coreRequireMax,
                       period_generation_type, deadlineType);
   MAP_Prev mapPrev;
-  DAG_Model dagModel(tasks, mapPrev);
+  DAG_Model dagModel(tasks, mapPrev, 0);
   // add edges randomly
   for (int i = 0; i < N; i++) {
     for (int j = i + 1; j < N; j++) {
