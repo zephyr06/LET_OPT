@@ -51,22 +51,18 @@ using namespace RegularTaskSystem;
 class DAG_Model {
  public:
   DAG_Model() {}
-  DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, int numCauseEffectChain)
+
+  DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, int numCauseEffectChain,
+            int chain_length)
       : tasks(tasks), mapPrev(mapPrev) {
     RecordTaskPosition();
     std::tie(graph_, indexesBGL_) = GenerateGraphForTaskSet();
-    chains_ = GetRandomChains(numCauseEffectChain);
+    chains_ = GetRandomChains(numCauseEffectChain, chain_length);
     CategorizeTaskSet();
   }
 
-  DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, int chain_length,
-            int numCauseEffectChain)
-      : tasks(tasks), mapPrev(mapPrev) {
-    RecordTaskPosition();
-    std::tie(graph_, indexesBGL_) = GenerateGraphForTaskSet();
-    chains_ = GetRandomChains(numCauseEffectChain);
-    CategorizeTaskSet();
-  }
+  DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, int numCauseEffectChain)
+      : DAG_Model(tasks, mapPrev, numCauseEffectChain, 0) {}
 
   std::pair<Graph, indexVertexMap> GenerateGraphForTaskSet() const;
 

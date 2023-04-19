@@ -31,7 +31,8 @@ using namespace DAG_SPACE;
 DAG_Model GenerateDAG(
     int N, double totalUtilization, int numberOfProcessor, int coreRequireMax,
     double parallelismFactor, int period_generation_type = 1,
-    int deadlineType = 0, int chain_length = 0,
-    int numCauseEffectChain = GlobalVariablesDAGOpt::CHAIN_NUMBER);
+    int deadlineType = 0,
+    int numCauseEffectChain = GlobalVariablesDAGOpt::CHAIN_NUMBER,
+    int chain_length = 0);
 
 void WriteDAG(std::ofstream &file, DAG_Model &tasksDAG);

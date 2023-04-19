@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
   program.add_argument("--chainLength")
       .default_value(0)
       .help("the length of random cause-effect chains ")
-      .scan<'f', double>();
+      .scan<'i', int>();
 
   try {
     program.parse_args(argc, argv);
@@ -143,6 +143,9 @@ int main(int argc, char *argv[]) {
       << "randomSeed, negative will use current time, otherwise use the "
          "given seed(--randomSeed): "
       << randomSeed << std::endl
+      << "outDir, directory to save task sets, only within the root folder "
+         "(--outDir): "
+      << outDir << std::endl
       << "chainLength, the length of random cause-effect "
          "chains, 0 means no length requirements (--chainLength): "
       << chainLength << std::endl
@@ -157,7 +160,7 @@ int main(int argc, char *argv[]) {
       DAG_Model dag_tasks = GenerateDAG(
           task_number_in_tasksets, totalUtilization, numberOfProcessor, 1,
           parallelismFactor, period_generation_type, deadlineType,
-          chainLength GlobalVariablesDAGOpt::CHAIN_NUMBER);
+          GlobalVariablesDAGOpt::CHAIN_NUMBER, chainLength);
 
       if (excludeDAGWithWongChainNumber == 1) {
         // TaskSet t = dag_tasks.GetTaskSet();

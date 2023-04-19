@@ -69,7 +69,7 @@ using namespace DAG_SPACE;
 DAG_Model GenerateDAG(int N, double totalUtilization, int numberOfProcessor,
                       int coreRequireMax, double parallelismFactor,
                       int period_generation_type, int deadlineType,
-                      int chain_length, int numCauseEffectChain) {
+                      int numCauseEffectChain, int chain_length) {
   TaskSet tasks =
       GenerateTaskSet(N, totalUtilization, numberOfProcessor, coreRequireMax,
                       period_generation_type, deadlineType);
@@ -100,7 +100,7 @@ DAG_Model GenerateDAG(int N, double totalUtilization, int numberOfProcessor,
   // dagModel.setRtdaBound(
   //     std::floor(min_rtda_bound + (double(rand()) / RAND_MAX) *
   //     rtda_range));
-  return DAG_Model(tasks, dagModel.mapPrev, chain_length, numCauseEffectChain);
+  return DAG_Model(tasks, dagModel.mapPrev, numCauseEffectChain, chain_length);
 }
 
 void WriteDAG(std::ofstream &file, DAG_Model &dag_tasks) {
