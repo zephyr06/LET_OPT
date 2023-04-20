@@ -1,6 +1,7 @@
 #include <sys/stat.h>
 
 #include <iostream>
+#include <cmath>
 
 #include "sources/RTA/RTA_LL.h"
 #include "sources/TaskModel/GenerateRandomTaskset.h"
@@ -88,6 +89,10 @@ int main(int argc, char *argv[]) {
       .default_value(0)
       .help("the length of random cause-effect chains ")
       .scan<'i', int>();
+  program.add_argument("--chainLengthRatio")
+      .default_value(0.0)
+      .help("the ratio of the length of random cause-effect chains over total number of tasks. will overwrite chainLength if greater than 0.")
+      .scan<'f', double>();
 
   try {
     program.parse_args(argc, argv);
@@ -115,6 +120,10 @@ int main(int argc, char *argv[]) {
   int randomSeed = program.get<int>("--randomSeed");
   double parallelismFactor = program.get<double>("--parallelismFactor");
   int chainLength = program.get<int>("--chainLength");
+  double chainLengthRatio = program.get<double>("--chainLengthRatio");
+  if (chainLengthRatio >= 0.001) {
+    chainLength = std::ceil(chainLengthRatio * task_number_in_tasksets);
+  }
   std::string outDir = program.get<std::string>("--outDir");
   if (randomSeed < 0) {
     srand(time(0));
@@ -163,6 +172,10 @@ int main(int argc, char *argv[]) {
       << "chainLength, the length of random cause-effect "
          "chains, 0 means no length requirements (--chainLength): "
       << chainLength << std::endl
+      << "chainLengthRatio, the ratio of random cause-effect chains length "
+         "over the number of tasks in DAG, a value greater than 0 will overwrite "
+         "chainLength. (--chainLengthRatio): "
+      << chainLengthRatio << std::endl
       << std::endl;
 
   std::string outDirectory = GlobalVariablesDAGOpt::PROJECT_PATH + outDir;
