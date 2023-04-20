@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 
-task_number_list=( 5 10 20 30 )
-files_per_node_list=( 1000 500 100 100)
-TOTAL_TASK_NUMBER=3 # remember to -1
+task_number_list=( 5 10 15 20 25 30 35 40 45 50 )
+files_per_node_list=( 1000 500 100 100 100 100 100 100 100 100 )
+TOTAL_TASK_NUMBER=9 # the max index that start from 0
 
 MinFileIndex=0
 MaxFileIndex=999
