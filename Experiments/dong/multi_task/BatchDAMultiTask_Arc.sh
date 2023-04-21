@@ -1,9 +1,9 @@
 #!/usr/bin/bash
 
-task_number_list=( 5 10 20 30 )
-files_per_task_list=( 500 100 100 50 )
-time_per_node_list=( 1 8 9 10) # in hour
-TOTAL_TASK_NUMBER=3 # remember to -1
+task_number_list=( 5 10 15 20 25 30 35 40 45 50 )
+files_per_task_list=( 500 100 36 36 36 36 36 36 36 36 )
+time_per_node_list=( 6 8 12 12 12 12 12 12 12 12 ) # in hour
+TOTAL_TASK_NUMBER=9 # the max index start from 0
 
 MinFileIndex=0
 MaxFileIndex=999
@@ -14,11 +14,11 @@ perform_optimization() {
 	files_per_task=$2
 	time_per_node=$3
 	output_file_name=log/BatchDA_${task_number}-$(date +"%Y%m%d%H%M%S").out
-	echo "sbatch -J BatchDA_${task_number} --nodes=1 --ntasks-per-node=$(((MaxFileIndex+1)/files_per_task)) --cpus-per-task=1 --time=${time_per_node}:0:0 --output=${output_file_name} SBatchDAMultiTask.sh $1 $MinFileIndex $files_per_task $MaxFileIndex"
+	echo "sbatch -J BatchDA_${task_number} --nodes=1 --ntasks-per-node=$(((MaxFileIndex+files_per_task)/files_per_task)) --cpus-per-task=1 --time=${time_per_node}:0:0 --output=${output_file_name} SBatchDAMultiTask.sh $1 $MinFileIndex $files_per_task $MaxFileIndex"
 	## test in local
 	# bash SBatchDAMultiTask.sh $1 $MinFileIndex $files_per_task $MaxFileIndex
 	## launc on ARC
-	sbatch -J BatchDA_${task_number} --nodes=1 --ntasks-per-node=$(((MaxFileIndex+1)/files_per_task)) --cpus-per-task=1 --time=${time_per_node}:0:0 --output=${output_file_name} SBatchDAMultiTask.sh $1 $MinFileIndex $files_per_task $MaxFileIndex
+	sbatch -J BatchDA_${task_number} --nodes=1 --ntasks-per-node=$(((MaxFileIndex+files_per_task)/files_per_task)) --cpus-per-task=1 --time=${time_per_node}:0:0 --output=${output_file_name} SBatchDAMultiTask.sh $1 $MinFileIndex $files_per_task $MaxFileIndex
 }
 
 

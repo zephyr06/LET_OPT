@@ -1,11 +1,11 @@
 #!/usr/bin/bash
 
-task_number_list=( 40 30 35 40 45 50 )
-files_per_node_list=( 5 50 50 50 50 50 )
-TOTAL_TASK_NUMBER=0 # the max index that start from 0
+task_number_list=( 5 10 15 20 25 30 35 40 45 50 )
+files_per_task_list=( 1000 250 36 36 36 36 36 36 36 36 )
+TOTAL_TASK_NUMBER=9 # the max index that start from 0
 
-MinFileIndex=350
-MaxFileIndex=399
+MinFileIndex=0
+MaxFileIndex=999
 
 
 perform_optimization() {
