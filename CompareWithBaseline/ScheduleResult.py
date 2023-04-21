@@ -16,7 +16,7 @@ class ScheduleResult:
 def ReadScheduleResult(file_path):
     file = open(file_path, 'r')
     lines = file.readlines()
-    return ScheduleResult(int(lines[0]), int(lines[1]), float(lines[2]), file_path)
+    return ScheduleResult(lines[0][lines[0].find(":")+2:], int(lines[1][lines[1].find(":")+2:]), float(lines[2][lines[2].find(":")+2:]), file_path)
 
 
 def PrintResultVec(res_vec):
