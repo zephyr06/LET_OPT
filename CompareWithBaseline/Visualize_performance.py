@@ -27,4 +27,4 @@ if __name__ == "__main__":
     # print(a)
     # print(b)
     draw_RT_results(task_set_number_range)
-    # draw_DA_results(task_set_number_range)
+    draw_DA_results(task_set_number_range)

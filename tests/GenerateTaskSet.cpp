@@ -14,7 +14,7 @@ void deleteDirectoryContents(const std::string &dir_path) {
 int main(int argc, char *argv[]) {
   using namespace std;
   argparse::ArgumentParser program("program name");
-  program.add_argument("-v", "--verbose");  // parameter packing
+  program.add_argument("-v", "--verbose"); // parameter packing
 
   program.add_argument("--task_number_in_tasksets")
       .default_value(5)
@@ -23,6 +23,10 @@ int main(int argc, char *argv[]) {
   program.add_argument("--taskSetNumber")
       .default_value(10)
       .help("the number DAGs to create")
+      .scan<'i', int>();
+  program.add_argument("--taskSetNameStartIndex")
+      .default_value(0)
+      .help("the start index of DAG's name to create")
       .scan<'i', int>();
   program.add_argument("--NumberOfProcessor")
       .default_value(2)
@@ -85,6 +89,10 @@ int main(int argc, char *argv[]) {
       .default_value(0.4)
       .help("the parallelismFactor when generating random DAGs")
       .scan<'f', double>();
+  program.add_argument("--numCauseEffectChain")
+      .default_value(0)
+      .help("the number of random cause-effect chains, default value will read from config.yaml")
+      .scan<'i', int>();
   program.add_argument("--chainLength")
       .default_value(0)
       .help("the length of random cause-effect chains ")
@@ -104,6 +112,7 @@ int main(int argc, char *argv[]) {
 
   int task_number_in_tasksets = program.get<int>("--task_number_in_tasksets");
   int DAG_taskSetNumber = program.get<int>("--taskSetNumber");
+  int DAG_taskSetNameStartIndex = program.get<int>("--taskSetNameStartIndex");
   int numberOfProcessor = program.get<int>("--NumberOfProcessor");
   double per_core_utilization_min =
       program.get<double>("--per_core_utilization_min");
@@ -119,6 +128,7 @@ int main(int argc, char *argv[]) {
       program.get<int>("--examChainsWithSharedNodes");
   int randomSeed = program.get<int>("--randomSeed");
   double parallelismFactor = program.get<double>("--parallelismFactor");
+  int numCauseEffectChain = program.get<int>("--numCauseEffectChain");
   int chainLength = program.get<int>("--chainLength");
   double chainLengthRatio = program.get<double>("--chainLengthRatio");
   if (chainLengthRatio >= 0.001) {
@@ -126,10 +136,12 @@ int main(int argc, char *argv[]) {
   }
   std::string outDir = program.get<std::string>("--outDir");
   if (randomSeed < 0) {
-    srand(time(0));
+    srand(time(0) + (int64_t)&chainLength);
   } else {
     srand(randomSeed);
   }
+  if (numCauseEffectChain <= 0)
+    numCauseEffectChain = GlobalVariablesDAGOpt::CHAIN_NUMBER;
 
   double totalUtilization_min = per_core_utilization_min * numberOfProcessor;
   double totalUtilization_max = per_core_utilization_max * numberOfProcessor;
@@ -139,6 +151,8 @@ int main(int argc, char *argv[]) {
       << "the number of tasks in DAG(--task_number_in_tasksets): "
       << task_number_in_tasksets << std::endl
       << "DAG_taskSetNumber(--taskSetNumber): " << DAG_taskSetNumber
+      << std::endl
+      << "DAG_taskSetNameStartIndex(--taskSetNameStartIndex): " << DAG_taskSetNameStartIndex
       << std::endl
       << "NumberOfProcessor(--NumberOfProcessor): " << numberOfProcessor
       << std::endl
@@ -169,6 +183,9 @@ int main(int argc, char *argv[]) {
       << "outDir, directory to save task sets, only within the root folder "
          "(--outDir): "
       << outDir << std::endl
+      << "numCauseEffectChain, the number of random cause-effect chains,"
+         "default value will read from config.yaml (--numCauseEffectChain): "
+      << numCauseEffectChain << std::endl
       << "chainLength, the length of random cause-effect "
          "chains, 0 means no length requirements (--chainLength): "
       << chainLength << std::endl
@@ -182,8 +199,8 @@ int main(int argc, char *argv[]) {
   deleteDirectoryContents(outDirectory);
 
   double totalUtilization = totalUtilization_min;
-  for (int i = 0; i < DAG_taskSetNumber; i++) {
-    if (taskType == 1)  // DAG task set
+  for (int i = DAG_taskSetNameStartIndex; i < DAG_taskSetNumber; i++) {
+    if (taskType == 1) // DAG task set
     {
       TaskSetGenerationParameters tasks_params;
       tasks_params.N = task_number_in_tasksets;
@@ -194,20 +211,19 @@ int main(int argc, char *argv[]) {
       tasks_params.parallelismFactor = parallelismFactor;
       tasks_params.period_generation_type = period_generation_type;
       tasks_params.deadlineType = deadlineType;
-      tasks_params.numCauseEffectChain = GlobalVariablesDAGOpt::CHAIN_NUMBER;
+      tasks_params.numCauseEffectChain = numCauseEffectChain;
       tasks_params.chain_length = chainLength;
       DAG_Model dag_tasks = GenerateDAG(tasks_params);
 
       if (excludeDAGWithWongChainNumber == 1) {
         // TaskSet t = dag_tasks.GetTaskSet();
         // DAG_Model ttt(t, dag_tasks.mapPrev, 1e9, 1e9,
-        //               GlobalVariablesDAGOpt::CHAIN_NUMBER);
-        if (dag_tasks.chains_.size() != GlobalVariablesDAGOpt::CHAIN_NUMBER) {
+        //               numCauseEffectChain);
+        if (dag_tasks.chains_.size() != numCauseEffectChain) {
           i--;
           continue;
         }
-        if (examChainsWithSharedNodes &&
-            GlobalVariablesDAGOpt::CHAIN_NUMBER != 1) {
+        if (examChainsWithSharedNodes && numCauseEffectChain != 1) {
           if (!WhetherDAGChainsShareNodes(dag_tasks)) {
             i--;
             continue;

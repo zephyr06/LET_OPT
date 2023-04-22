@@ -30,7 +30,7 @@ cd $ROOT_PATH/Experiments/dong
 midir log
 
 for task_number_index in $(seq 0 1 $TOTAL_TASK_NUMBER); do
-echo ${task_number_list[task_number_index]} ${files_per_node_list[task_number_index]}
-echo "Processing N=${task_number_list[task_number_index]}:"
-	perform_optimization ${task_number_list[task_number_index]} ${files_per_node_list[task_number_index]}
+	echo ${task_number_list[task_number_index]} ${files_per_task_list[task_number_index]}
+	echo "Processing N=${task_number_list[task_number_index]}:"
+	perform_optimization ${task_number_list[task_number_index]} ${files_per_task_list[task_number_index]}
 done
