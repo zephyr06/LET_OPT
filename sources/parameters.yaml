@@ -19,7 +19,7 @@ priorityMode: RM
 # test_n5_v27 is a long case
 testDataSetName: test_n3_v18
 TIME_SCALE_FACTOR: 10
-CHAIN_NUMBER: 2
+CHAIN_NUMBER: 3
 
 
 #*************************************************************

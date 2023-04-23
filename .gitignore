@@ -19,11 +19,12 @@ Visualize/currGraph.gv
 **/currGraph.gv.pdf
 **/currGraph.gv
 
-# ignore slurm log
+# ignore batch logs
 **/slurm-*.out
 **/Batch*.out
 **/ARC_Backup-*/
 **/ARC_Results_Backup-*/
+TaskData/configs.log
 
 # ignore temporary batch results
 CompareWithBaseline_deprecated/

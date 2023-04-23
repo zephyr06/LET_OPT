@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 task_number_list=( 5 10 15 20 25 30 35 40 45 50 )
-files_per_task_list=( 500 100 36 36 36 36 36 36 36 36 )
+files_per_task_list=( 500 50 12 12 12 12 12 12 12 12 )
 TOTAL_TASK_NUMBER=9 # remember to -1
 
 MinFileIndex=0
