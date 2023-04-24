@@ -2,14 +2,14 @@
 
 # ************** Adjust settings there **************
 N=(5 10 15 20 25 30 35 40 45 50)
-numPerThread=(1000 1000 1000 1000 1000 125 125 125 125 125)
+numPerThread=(1000 1000 1000 200 200 200 200 200 200 200)
 # ROOT_PATH="/home/zephyr/Programming/LET_OPT"
 taskSetNumber=1000
 per_core_utilization_min=0.1
 per_core_utilization_max=0.9
 outDir="generatedNewTaskset"
 parallelismFactor=0.4
-chainLengthRatio=0.3
+chainLengthRatio=0.35
 numCauseEffectChain=3
 # ***************************************************
 cd ../release
