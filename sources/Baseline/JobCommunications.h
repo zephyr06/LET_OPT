@@ -34,11 +34,6 @@ std::unordered_map<JobCEC, JobCEC> GetJobMatch(
     int prev_task_id, int next_task_id, const std::string& type_trait,
     const VariableOD& variable_od);
 
-std::unordered_map<JobCEC, JobCEC> GetJobMatch(
-    const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,
-    int prev_task_id, int next_task_id, const std::string& type_trait,
-    const VariableOD& variable_od);
-
 SinglePairPermutation GetSinglePermFromVariable(
     const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,
     int prev_task_id, int next_task_id, const std::string& type_trait,
