@@ -1,5 +1,5 @@
 #pragma once
-#include "sources/Baseline/ImplicitCommunication/JobScheduleInfo.h"
+#include "sources/Baseline/JobScheduleInfo.h"
 namespace DAG_SPACE {
 
 class RunQueue {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "sources/Baseline/JobScheduleInfo.h"
 #include "sources/Permutations/ChainsPermutation.h"
 #include "sources/Permutations/TwoTaskPermutations.h"
 #include "sources/Utils/BatchUtils.h"

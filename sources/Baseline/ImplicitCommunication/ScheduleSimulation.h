@@ -1,5 +1,4 @@
 #pragma once
-#include "sources/Baseline/ImplicitCommunication/JobScheduleInfo.h"
 #include "sources/Baseline/ImplicitCommunication/RunQueue.h"
 #include "sources/TaskModel/DAG_Model.h"
 #include "sources/Utils/JobCEC.h"
