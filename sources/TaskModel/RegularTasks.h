@@ -105,7 +105,7 @@ class Task {
 
   // modify public member priorityType_ to change how to calculate the value:
   // priority_
-  double priority() {
+  double priority() const {
     if (CompareStringNoCase(priorityType_, "RM")) {
       if (period > 0)
         return 1.0 / period;
