@@ -3,12 +3,14 @@
 
 namespace DAG_SPACE {
 
-void AddTasksToRunQueue(RunQueue &run_queue, const TaskSet &tasks,
+void AddTasksToRunQueue(RunQueue &run_queue, const DAG_Model &dag_tasks,
                         int processor_id, LLint time_now) {
-  for (uint i = 0; i < tasks.size(); i++) {
-    if (tasks[i].processorId == processor_id &&
-        time_now % tasks[i].period == 0) {
-      JobCEC job_curr(i, time_now / tasks[i].period);
+  for (int task_id = 0;
+       task_id < static_cast<int>(dag_tasks.GetTaskSet().size()); task_id++) {
+    Task task_curr = dag_tasks.GetTask(task_id);
+    if (task_curr.processorId == processor_id &&
+        time_now % task_curr.period == 0) {
+      JobCEC job_curr(task_id, time_now / task_curr.period);
       run_queue.insert(job_curr);
     }
   }
@@ -24,7 +26,7 @@ Schedule SimulatedFTP_SingleCore(const DAG_Model &dag_tasks,
     run_queue.RemoveFinishedJob(time_now);
 
     // check whether to add new instances
-    AddTasksToRunQueue(run_queue, tasks, processor_id, time_now);
+    AddTasksToRunQueue(run_queue, dag_tasks, processor_id, time_now);
 
     // Run jobs with highest priority
     run_queue.RunJobHigestPriority(time_now);

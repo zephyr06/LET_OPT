@@ -121,8 +121,15 @@ class RunQueue {
     processor_free_ = false;
     JobScheduleInfo &job_info = job_queue_[job_info_index_in_queue];
     job_info.StartRun(time_now);
-    JobStartFinish job_sf(time_now, -1);
-    schedule_[job_info.job] = job_sf;
+
+    auto itr = schedule_.find(job_info.job);
+    if (itr ==
+        schedule_
+            .end()) {  // record the start time only when first accessing it
+      JobStartFinish job_sf(time_now, -1);
+      schedule_[job_info.job] = job_sf;
+    }
+
     next_free_time_ = time_now +
                       tasks_info_.GetTask(job_info.job.taskId).executionTime -
                       job_info.accum_run_time;
@@ -210,7 +217,7 @@ class RunQueue {
   Schedule schedule_;
 };
 
-void AddTasksToRunQueue(RunQueue &run_queue, const TaskSet &tasks,
+void AddTasksToRunQueue(RunQueue &run_queue, const DAG_Model &dag_tasks,
                         int processor_id, LLint time_now);
 
 Schedule SimulatedFTP_SingleCore(const DAG_Model &dag_tasks,
