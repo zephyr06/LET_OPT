@@ -117,6 +117,26 @@ TEST_F(PermutationTest26_n3, FTP_Schedule) {
   EXPECT_EQ(schedule_expected[JobCEC(2, 2)], schedule_actual[JobCEC(2, 2)]);
 }
 
+class PermutationTest27_n3 : public PermutationTestBase {
+  void SetUp() override { SetUpBase("test_n3_v27"); }
+};
+
+TEST_F(PermutationTest27_n3, FTP_Schedule) {
+  Schedule schedule_actual = SimulatedFTP_SingleCore(dag_tasks, tasks_info, 1);
+
+  EXPECT_EQ(JobStartFinish(7, 69), schedule_actual[JobCEC(0, 0)]);
+  EXPECT_EQ(JobStartFinish(0, 1), schedule_actual[JobCEC(1, 0)]);
+  EXPECT_EQ(JobStartFinish(5, 6), schedule_actual[JobCEC(1, 1)]);
+  EXPECT_EQ(JobStartFinish(1, 7), schedule_actual[JobCEC(2, 0)]);
+
+  EXPECT_EQ(JobStartFinish(10, 11), schedule_actual[JobCEC(1, 2)]);
+  EXPECT_EQ(JobStartFinish(15, 16), schedule_actual[JobCEC(1, 3)]);
+  EXPECT_EQ(JobStartFinish(11, 17), schedule_actual[JobCEC(2, 1)]);
+
+  EXPECT_EQ(JobStartFinish(20, 21), schedule_actual[JobCEC(1, 4)]);
+  EXPECT_EQ(JobStartFinish(25, 26), schedule_actual[JobCEC(1, 5)]);
+  EXPECT_EQ(JobStartFinish(21, 27), schedule_actual[JobCEC(2, 2)]);
+}
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
