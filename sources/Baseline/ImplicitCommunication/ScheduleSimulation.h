@@ -15,8 +15,7 @@ Schedule SimulatedFTP_SingleCore(const DAG_Model &dag_tasks,
                                  const TaskSetInfoDerived &tasks_info,
                                  int processor_id);
 
-VectorDynamic SimulateFixedPrioritySched(const DAG_Model &dag_tasks,
-                                         const TaskSetInfoDerived &tasks_info,
-                                         LLint timeInitial = 0);
+Schedule SimulateFixedPrioritySched(const DAG_Model &dag_tasks,
+                                    const TaskSetInfoDerived &tasks_info);
 
 }  // namespace DAG_SPACE

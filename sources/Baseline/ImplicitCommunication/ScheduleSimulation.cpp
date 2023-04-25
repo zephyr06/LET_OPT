@@ -34,47 +34,32 @@ Schedule SimulatedFTP_SingleCore(const DAG_Model &dag_tasks,
   return run_queue.GetSchedule();
 }
 
-VectorDynamic SimulateFixedPrioritySched(const DAG_Model &dag_tasks,
-                                         const TaskSetInfoDerived &tasks_info,
-                                         LLint timeInitial) {
-  VectorDynamic initial = GenerateVectorDynamic(tasks_info.variableDimension);
+std::vector<int> GetProcessorIds(const DAG_Model &dag_tasks) {
+  std::vector<int> processor_ids;
+  std::unordered_set<int> id_record;
+  processor_ids.reserve(dag_tasks.GetTaskSet().size());
+  for (uint task_id = 0; task_id < dag_tasks.GetTaskSet().size(); task_id++) {
+    int processor_id = dag_tasks.GetTask(task_id).processorId;
+    if (id_record.find(processor_id) == id_record.end()) {
+      id_record.insert(processor_id);
+      processor_ids.push_back(processor_id);
+    }
+  }
+  return processor_ids;
+}
 
-  // ProcessorTaskSet processorTaskSet =
-  // ExtractProcessorTaskSet(dag_tasks.tasks); int processorNum =
-  // processorTaskSet.size();
-  // // it maps from tasks[i].processorId to index in runQueues&busy&nextFree
-  // ProcessorId2Index processorId2Index = CreateProcessorId2Index(tasks);
-  // // contains the index of tasks to run
+Schedule SimulateFixedPrioritySched(const DAG_Model &dag_tasks,
+                                    const TaskSetInfoDerived &tasks_info) {
+  Schedule schedule_all;
+  schedule_all.reserve(tasks_info.length);
+  std::vector<int> processor_ids = GetProcessorIds(dag_tasks);
+  for (int processor_id : processor_ids) {
+    Schedule schedule_curr =
+        SimulatedFTP_SingleCore(dag_tasks, tasks_info, processor_id);
+    schedule_all.insert(schedule_curr.begin(), schedule_curr.end());
+  }
 
-  // std::vector<RunQueue> runQueues;
-  // runQueues.reserve(processorNum);
-  // for (int i = 0; i < processorNum; i++) {
-  //   runQueues.push_back(RunQueue(tasks));
-  // }
-
-  // std::vector<bool> busy(processorNum, false);
-  // std::vector<LLint> nextFree(processorNum, -1);
-  // // LLint nextFree;
-
-  // for (LLint time_now = timeInitial; time_now < tasks_info.hyperPeriod;
-  //      time_now++) {
-  //   // check whether to add new instances
-  //   AddTasksToRunQueues(runQueues, tasks, processorId2Index, time_now);
-
-  //   for (int i = 0; i < processorNum; i++) {
-  //     if (time_now >= nextFree[i]) {
-  //       busy[i] = false;
-  //     }
-  //     if (time_now >= nextFree[i] && (!runQueues[i].empty())) {
-  //       auto sth = runQueues[i].pop();
-  //       UpdateSTVAfterPopTask(sth, initial, time_now, nextFree, tasks, busy,
-  //       i,
-  //                             tasks_info.sizeOfVariables);
-  //     }
-  //   }
-  // }
-
-  return initial;
+  return schedule_all;
 }
 
 }  // namespace DAG_SPACE
