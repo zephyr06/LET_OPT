@@ -46,12 +46,16 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
     case TOM_Sort_Bound:
       res = PerformTOM_OPT_SortBound<ObjectiveFunctionBase>(dag_tasks);
       break;
-    case TOM_Sort_ImpBound:  // TODO: Need ReadFromResultFile and Write to save
-                             // Variable_OD
-      if (VerifyResFileExist(pathDataset, file, TOM_Sort,
-                             ObjectiveFunctionBase::type_trait))
-        res_sort = ReadFromResultFile(pathDataset, file, TOM_Sort,
-                                      ObjectiveFunctionBase::type_trait);
+    // case TOM_Sort_ImpBound:  // TODO: Need ReadFromResultFile and Write to
+    // save
+    //                          // Variable_OD
+    //   if (VerifyResFileExist(pathDataset, file, TOM_Sort,
+    //                          ObjectiveFunctionBase::type_trait))
+    //     res_sort = ReadFromResultFile(pathDataset, file, TOM_Sort,
+    //                                   ObjectiveFunctionBase::type_trait);
+    case ImplicitCommunication:
+      res = PerformImplicitCommuAnalysis<ObjectiveFunctionBase>(dag_tasks);
+      break;
 
     default:
       CoutError("Please provide batchTestMethod implementation!");
