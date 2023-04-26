@@ -182,28 +182,31 @@ TEST_F(PermutationTest1, data_age_ObjPerChain) {
 }
 
 TEST_F(PermutationTest1, GetPossibleReactingJobs) {
+  Schedule schedule_actual = Variable2Schedule(tasks_info, variable_od);
   // chain is 0 -> 1 -> 2
   EXPECT_EQ(1, GetPossibleReactingJobs(JobCEC(0, 0), tasks[1], 20, tasks_info,
-                                       variable_od)
+                                       schedule_actual)
                    .jobId);
 
   EXPECT_EQ(1, GetPossibleReactingJobs(JobCEC(0, 1), tasks[1], 20, tasks_info,
-                                       variable_od)
+                                       schedule_actual)
                    .jobId);
 
   EXPECT_EQ(1, GetPossibleReactingJobs(JobCEC(1, 0), tasks[2], 20, tasks_info,
-                                       variable_od)
+                                       schedule_actual)
                    .jobId);
 }
 
 TEST_F(PermutationTest1, GetJobMatch) {
   // chain is 0 -> 1 -> 2
+  Schedule schedule_actual = Variable2Schedule(tasks_info, variable_od);
+
   auto job_match_map01 =
-      GetJobMatch(dag_tasks, tasks_info, 0, 1, "ReactionTime", variable_od);
+      GetJobMatch(dag_tasks, tasks_info, 0, 1, "ReactionTime", schedule_actual);
   EXPECT_EQ(1, job_match_map01[JobCEC(0, 0)].jobId);
   EXPECT_EQ(1, job_match_map01[JobCEC(0, 1)].jobId);
   auto job_match_map10 =
-      GetJobMatch(dag_tasks, tasks_info, 1, 2, "ReactionTime", variable_od);
+      GetJobMatch(dag_tasks, tasks_info, 1, 2, "ReactionTime", schedule_actual);
   EXPECT_EQ(1, job_match_map10[JobCEC(1, 0)].jobId);
 }
 
@@ -371,17 +374,18 @@ TEST_F(PermutationTest_Non_Har, diff_deadline_from_variable) {
 
 TEST_F(PermutationTest_Non_Har, GetPossibleReactingJobs) {
   // chain is 0 -> 1 -> 2
+  Schedule schedule_actual = Variable2Schedule(tasks_info, variable_od);
   EXPECT_EQ(1, GetPossibleReactingJobs(JobCEC(0, 0), tasks[1], 30, tasks_info,
-                                       variable_od)
+                                       schedule_actual)
                    .jobId);
   EXPECT_EQ(2, GetPossibleReactingJobs(JobCEC(0, 1), tasks[1], 30, tasks_info,
-                                       variable_od)
+                                       schedule_actual)
                    .jobId);
   EXPECT_EQ(2, GetPossibleReactingJobs(JobCEC(0, 2), tasks[1], 30, tasks_info,
-                                       variable_od)
+                                       schedule_actual)
                    .jobId);
   EXPECT_EQ(1, GetPossibleReactingJobs(JobCEC(1, 0), tasks[2], 15, tasks_info,
-                                       variable_od)
+                                       schedule_actual)
                    .jobId);
 }
 
@@ -394,25 +398,27 @@ TEST_F(PermutationTest_Non_Har, PerformStandardLETAnalysis) {
 
 TEST_F(PermutationTest_Non_Har, GetPossibleReadingJobs) {
   // chain is 0 -> 1 -> 2
+  Schedule schedule_actual = Variable2Schedule(tasks_info, variable_od);
   EXPECT_EQ(-1, GetPossibleReadingJobs(JobCEC(1, 0), task0, 30, tasks_info,
-                                       variable_od)
+                                       schedule_actual)
                     .jobId);
   EXPECT_EQ(-3, GetPossibleReadingJobs(JobCEC(1, -1), task0, 30, tasks_info,
-                                       variable_od)
+                                       schedule_actual)
                     .jobId);
   EXPECT_EQ(-4, GetPossibleReadingJobs(JobCEC(1, -2), task0, 30, tasks_info,
-                                       variable_od)
+                                       schedule_actual)
                     .jobId);
 }
 
 TEST_F(PermutationTest_Non_Har, GetPossibleReadingJobs_v2) {
   // chain is 0 -> 1 -> 2
   variable_od[1].offset = 10;
+  Schedule schedule_actual = Variable2Schedule(tasks_info, variable_od);
   EXPECT_EQ(0, GetPossibleReadingJobs(JobCEC(1, 0), task0, 30, tasks_info,
-                                      variable_od)
+                                      schedule_actual)
                    .jobId);
   EXPECT_EQ(1, GetPossibleReadingJobs(JobCEC(1, 1), task0, 30, tasks_info,
-                                      variable_od)
+                                      schedule_actual)
                    .jobId);
 }
 
@@ -450,12 +456,13 @@ class PermutationTest_Non_Har2 : public ::testing::Test {
 
 TEST_F(PermutationTest_Non_Har2, GetPossibleReactingJobs) {
   // chain is 0 -> 1 -> 2
+  Schedule schedule_actual = Variable2Schedule(tasks_info, variable_od);
   EXPECT_EQ(2, GetPossibleReactingJobs(JobCEC(0, 0), tasks[1], 30, tasks_info,
-                                       variable_od)
+                                       schedule_actual)
                    .jobId);
 
   EXPECT_EQ(3, GetPossibleReactingJobs(JobCEC(0, 1), tasks[1], 30, tasks_info,
-                                       variable_od)
+                                       schedule_actual)
                    .jobId);
 }
 TEST_F(PermutationTest_Non_Har2, PerformStandardLETAnalysis) {

@@ -14,9 +14,11 @@ ScheduleResult PerformStandardLETAnalysis(const DAG_Model& dag_tasks) {
   const TaskSet& tasks = dag_tasks.GetTaskSet();
   TaskSetInfoDerived tasks_info(tasks);
   VariableOD variable_od_let(tasks);
+  Schedule schedule_actual = Variable2Schedule(tasks_info, variable_od_let);
+
   ChainsPermutation chains_perm = GetChainsPermFromVariable(
       dag_tasks, tasks_info, dag_tasks.chains_,
-      ObjectiveFunctionBase::type_trait, variable_od_let);
+      ObjectiveFunctionBase::type_trait, schedule_actual);
   //   chains_perm.print();
   VariableOD variable_od = VariableOD(tasks);
   res.obj_ = ObjectiveFunctionBase::Obj(dag_tasks, tasks_info, chains_perm,
