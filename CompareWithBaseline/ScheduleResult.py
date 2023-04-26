@@ -16,7 +16,7 @@ class ScheduleResult:
 def ReadScheduleResult(file_path):
     file = open(file_path, 'r')
     lines = file.readlines()
-    return ScheduleResult(int(lines[0]), int(lines[1]), float(lines[2]), file_path)
+    return ScheduleResult(lines[0][lines[0].find(":")+2:], int(lines[1][lines[1].find(":")+2:]), float(lines[2][lines[2].find(":")+2:]), file_path)
 
 
 def PrintResultVec(res_vec):
@@ -31,13 +31,8 @@ def ReadOptResults(method_name="TOM_Sort", obj_type="DataAge", task_set_number=5
     files_all = os.listdir(data_set_folder)
     files_all.sort()
     for filename in files_all:
-<<<<<<< HEAD
         file_signature = method_name + "_" + obj_type
         if (filename.find(file_signature) != -1):
-=======
-        # if (filename.find(obj_type) != -1 and filename.find(method_name) != -1):
-        if (filename.find(method_name+"_"+obj_type) != -1):
->>>>>>> 41240ffa75ad260bb05807e3491908b91100d00c
             file_path = os.path.join(data_set_folder, filename)
             res_vec.append(ReadScheduleResult(file_path))
     if (len(res_vec) == 0):
