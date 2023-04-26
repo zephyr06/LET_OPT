@@ -22,9 +22,20 @@ struct JobStartFinish {
 
 typedef std::unordered_map<JobCEC, JobStartFinish> Schedule;
 
-Schedule Variable2Schedule(const DAG_Model &dag_tasks,
-                           const TaskSetInfoDerived &tasks_info,
+Schedule Variable2Schedule(const TaskSetInfoDerived &tasks_info,
                            const VariableOD &variable_od);
+
+inline int GetDeadlineMart(const JobCEC &job_curr,
+                           const VariableOD &variable_od,
+                           const TaskSetInfoDerived &tasks_info) {
+  return variable_od.at(job_curr.taskId).offset +
+         variable_od.at(job_curr.taskId).deadline +
+         tasks_info.GetTask(job_curr.taskId).period * job_curr.jobId;
+}
+
+Schedule VariableMart2Schedule(const TaskSetInfoDerived &tasks_info,
+                               const VariableOD &variable_od);
+
 struct JobScheduleInfo {
   JobScheduleInfo(JobCEC job) : job(job), accum_run_time(0) {}
 
@@ -51,5 +62,44 @@ struct JobScheduleInfo {
   int accum_run_time;
   bool running = false;
 };
+
+struct IndexInfoMultiHp {
+  IndexInfoMultiHp(int hp_index, int job_index_within_hp)
+      : hp_index(hp_index), job_index_within_hp(job_index_within_hp) {}
+  int hp_index;
+  int job_index_within_hp;
+};
+
+inline IndexInfoMultiHp GetIndexInfoMultiHp(
+    const JobCEC &job_curr, const TaskSetInfoDerived &tasks_info) {
+  int jobs_per_hp =
+      tasks_info.hyper_period / tasks_info.GetTask(job_curr.taskId).period;
+  int hp_index = std::floor(float(job_curr.jobId) / jobs_per_hp);
+  int job_index_within_hp =
+      (job_curr.jobId % jobs_per_hp + jobs_per_hp) % jobs_per_hp;
+  return IndexInfoMultiHp(hp_index, job_index_within_hp);
+}
+
+inline int GetStartTime(const JobCEC &job_curr, const Schedule &schedule,
+                        const TaskSetInfoDerived &tasks_info) {
+  IndexInfoMultiHp info = GetIndexInfoMultiHp(job_curr, tasks_info);
+  JobCEC job_mapped_hp(job_curr.taskId, info.job_index_within_hp);
+  if (schedule.find(job_mapped_hp) == schedule.end()) {
+    CoutError("Schedule didn't find job!");
+  }
+  return schedule.at(job_mapped_hp).start +
+         info.hp_index * tasks_info.hyper_period;
+}
+
+inline int GetFinishTime(const JobCEC &job_curr, const Schedule &schedule,
+                         const TaskSetInfoDerived &tasks_info) {
+  IndexInfoMultiHp info = GetIndexInfoMultiHp(job_curr, tasks_info);
+  JobCEC job_mapped_hp(job_curr.taskId, info.job_index_within_hp);
+  if (schedule.find(job_mapped_hp) == schedule.end()) {
+    CoutError("Schedule didn't find job!");
+  }
+  return schedule.at(job_mapped_hp).finish +
+         info.hp_index * tasks_info.hyper_period;
+}
 
 }  // namespace DAG_SPACE

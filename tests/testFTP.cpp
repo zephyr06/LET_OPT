@@ -35,8 +35,7 @@ TEST_F(PermutationTest18_n3, Variable2Schedule) {
   VariableOD variable_od(dag_tasks.GetTaskSet());
   variable_od[0].offset = 1;
   variable_od[2].deadline = 19;
-  Schedule schedule_actual =
-      Variable2Schedule(dag_tasks, tasks_info, variable_od);
+  Schedule schedule_actual = Variable2Schedule(tasks_info, variable_od);
 
   EXPECT_EQ(JobStartFinish(1, 10), schedule_actual[JobCEC(0, 0)]);
   EXPECT_EQ(JobStartFinish(11, 20), schedule_actual[JobCEC(0, 1)]);
@@ -44,6 +43,36 @@ TEST_F(PermutationTest18_n3, Variable2Schedule) {
   EXPECT_EQ(JobStartFinish(0, 19), schedule_actual[JobCEC(2, 0)]);
 }
 
+TEST_F(PermutationTest18_n3, GetStartTime) {
+  VariableOD variable_od(dag_tasks.GetTaskSet());
+  variable_od[0].offset = 1;
+  variable_od[2].deadline = 19;
+  Schedule schedule_actual = Variable2Schedule(tasks_info, variable_od);
+  // EXPECT_EQ(JobStartFinish(1, 10), schedule_actual[JobCEC(0, 0)]);
+  // EXPECT_EQ(JobStartFinish(11, 20), schedule_actual[JobCEC(0, 1)]);
+  // EXPECT_EQ(JobStartFinish(0, 20), schedule_actual[JobCEC(1, 0)]);
+  // EXPECT_EQ(JobStartFinish(0, 19), schedule_actual[JobCEC(2, 0)]);
+  EXPECT_EQ(1, GetStartTime(JobCEC(0, 0), schedule_actual, tasks_info));
+  EXPECT_EQ(1 - 10, GetStartTime(JobCEC(0, -1), schedule_actual, tasks_info));
+  EXPECT_EQ(1 - 20, GetStartTime(JobCEC(0, -2), schedule_actual, tasks_info));
+
+  EXPECT_EQ(20, GetStartTime(JobCEC(1, 1), schedule_actual, tasks_info));
+  EXPECT_EQ(-20, GetStartTime(JobCEC(1, -1), schedule_actual, tasks_info));
+  EXPECT_EQ(-40, GetStartTime(JobCEC(1, -2), schedule_actual, tasks_info));
+}
+TEST_F(PermutationTest18_n3, GetFinishTime) {
+  VariableOD variable_od(dag_tasks.GetTaskSet());
+  variable_od[0].offset = 1;
+  variable_od[2].deadline = 19;
+  Schedule schedule_actual = Variable2Schedule(tasks_info, variable_od);
+  // EXPECT_EQ(JobStartFinish(1, 10), schedule_actual[JobCEC(0, 0)]);
+  // EXPECT_EQ(JobStartFinish(11, 20), schedule_actual[JobCEC(0, 1)]);
+  // EXPECT_EQ(JobStartFinish(0, 20), schedule_actual[JobCEC(1, 0)]);
+  // EXPECT_EQ(JobStartFinish(0, 19), schedule_actual[JobCEC(2, 0)]);
+  EXPECT_EQ(19, GetFinishTime(JobCEC(2, 0), schedule_actual, tasks_info));
+  EXPECT_EQ(19 - 20, GetFinishTime(JobCEC(2, -1), schedule_actual, tasks_info));
+  EXPECT_EQ(19 - 40, GetFinishTime(JobCEC(2, -2), schedule_actual, tasks_info));
+}
 TEST_F(PermutationTest18_n3, FTP_Schedule) {
   Schedule schedule_expected;
   schedule_expected[JobCEC(0, 0)] = JobStartFinish(0, 1);
@@ -188,7 +217,7 @@ TEST_F(PermutationTest28_n3, SimulateFixedPrioritySched) {
   EXPECT_EQ(JobStartFinish(25, 26), schedule_actual[JobCEC(1, 5)]);
   EXPECT_EQ(JobStartFinish(20, 25), schedule_actual[JobCEC(2, 2)]);
 }
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
   return RUN_ALL_TESTS();

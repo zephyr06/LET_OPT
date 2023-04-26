@@ -16,7 +16,7 @@ int ObjDataAgeFromVariable(const Martinez18Perm& mart_perm,
                            const TaskSetInfoDerived& tasks_info,
                            const std::vector<int>& chain) {
   VariableOD variable_od = GetVariable(mart_perm, dag_tasks);
-  ChainsPermutation chains_perm = GetChainsPermFromVariable(
+  ChainsPermutation chains_perm = GetChainsPermFromMartVariable(
       dag_tasks, tasks_info, {chain}, "DataAge", variable_od);
   return ObjDataAge::Obj(dag_tasks, tasks_info, chains_perm, variable_od,
                          {chain});

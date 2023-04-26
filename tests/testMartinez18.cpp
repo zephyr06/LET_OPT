@@ -47,8 +47,8 @@ TEST_F(PermutationTest18_n3, GetPossibleReadingJobs) {
   mart_perm.push_back(0);
   mart_perm.push_back(1);
   mart_perm.push_back(3);
-  EXPECT_EQ(JobCEC(0, 0), GetPossibleReadingJobs(JobCEC(1, 0), task0, 20,
-                                                 tasks_info, variable_od));
+  EXPECT_EQ(JobCEC(0, 0), GetPossibleReadingJobsMart(JobCEC(1, 0), task0, 20,
+                                                     tasks_info, variable_od));
 }
 TEST_F(PermutationTest18_n3, GetPossibleReadingJobsv2) {
   VariableOD variable_od(tasks);
@@ -60,8 +60,8 @@ TEST_F(PermutationTest18_n3, GetPossibleReadingJobsv2) {
   mart_perm.push_back(1);
   mart_perm.push_back(10);
   mart_perm.push_back(10);
-  EXPECT_EQ(JobCEC(0, -1), GetPossibleReadingJobs(JobCEC(1, 0), task0, 20,
-                                                  tasks_info, variable_od));
+  EXPECT_EQ(JobCEC(0, -1), GetPossibleReadingJobsMart(JobCEC(1, 0), task0, 20,
+                                                      tasks_info, variable_od));
 }
 TEST_F(PermutationTest18_n3, GetPossibleReadingJobsv3) {
   VariableOD variable_od(tasks);
@@ -73,8 +73,8 @@ TEST_F(PermutationTest18_n3, GetPossibleReadingJobsv3) {
   mart_perm.push_back(0);
   mart_perm.push_back(10);
   mart_perm.push_back(3);
-  EXPECT_EQ(JobCEC(1, -2), GetPossibleReadingJobs(JobCEC(2, 0), task1, 20,
-                                                  tasks_info, variable_od));
+  EXPECT_EQ(JobCEC(1, -2), GetPossibleReadingJobsMart(JobCEC(2, 0), task1, 20,
+                                                      tasks_info, variable_od));
 }
 TEST_F(PermutationTest18_n3, Obj_v1) {
   VariableOD variable_od(tasks);
