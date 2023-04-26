@@ -31,6 +31,19 @@ TEST_F(PermutationTest18_n3, RemoveFinishedJob) {
   EXPECT_TRUE(run_queue.front().running);
 }
 
+TEST_F(PermutationTest18_n3, Variable2Schedule) {
+  VariableOD variable_od(dag_tasks.GetTaskSet());
+  variable_od[0].offset = 1;
+  variable_od[2].deadline = 19;
+  Schedule schedule_actual =
+      Variable2Schedule(dag_tasks, tasks_info, variable_od);
+
+  EXPECT_EQ(JobStartFinish(1, 10), schedule_actual[JobCEC(0, 0)]);
+  EXPECT_EQ(JobStartFinish(11, 20), schedule_actual[JobCEC(0, 1)]);
+  EXPECT_EQ(JobStartFinish(0, 20), schedule_actual[JobCEC(1, 0)]);
+  EXPECT_EQ(JobStartFinish(0, 19), schedule_actual[JobCEC(2, 0)]);
+}
+
 TEST_F(PermutationTest18_n3, FTP_Schedule) {
   Schedule schedule_expected;
   schedule_expected[JobCEC(0, 0)] = JobStartFinish(0, 1);

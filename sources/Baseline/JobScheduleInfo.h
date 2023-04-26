@@ -1,4 +1,5 @@
 #pragma once
+#include "sources/Optimization/Variable.h"
 #include "sources/TaskModel/DAG_Model.h"
 #include "sources/Utils/JobCEC.h"
 #include "unordered_map"
@@ -21,6 +22,9 @@ struct JobStartFinish {
 
 typedef std::unordered_map<JobCEC, JobStartFinish> Schedule;
 
+Schedule Variable2Schedule(const DAG_Model &dag_tasks,
+                           const TaskSetInfoDerived &tasks_info,
+                           const VariableOD &variable_od);
 struct JobScheduleInfo {
   JobScheduleInfo(JobCEC job) : job(job), accum_run_time(0) {}
 
@@ -47,4 +51,5 @@ struct JobScheduleInfo {
   int accum_run_time;
   bool running = false;
 };
+
 }  // namespace DAG_SPACE
