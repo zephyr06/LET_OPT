@@ -42,5 +42,8 @@ for (( idx = 0 ; idx < ${#N[@]}; idx++ )); do
     wait
 done
 
+echo "TaskSet Creation Time: $(date +"%Y%m%d")" | cat - configs.log > temp && mv temp configs.log
+echo "numCauseEffectChain: $numCauseEffectChain" >> configs.log
+
 wait
 exit 0
