@@ -1,8 +1,10 @@
 #!/usr/bin/bash
 
 # ************** Adjust settings there **************
-N=(5 10 15 20 25 30 35 40 45 50)
-numPerThread=(1000 1000 1000 200 200 200 200 200 200 200)
+# N=(5 10 15 20 25 30 35 40 45 50)
+# numPerThread=(1000 1000 1000 200 200 200 200 200 200 200)
+N=(4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50)
+numPerThread=(200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200)
 # ROOT_PATH="/home/zephyr/Programming/LET_OPT"
 taskSetNumber=1000
 per_core_utilization_min=0.1
