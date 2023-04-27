@@ -9,8 +9,8 @@ per_core_utilization_min=0.1
 per_core_utilization_max=0.9
 outDir="generatedNewTaskset"
 parallelismFactor=0.4
-chainLengthRatio=0.35
-numCauseEffectChain=3
+chainLengthRatio=0.25
+numCauseEffectChain=4
 # ***************************************************
 cd ../release
 cmake -DCMAKE_BUILD_TYPE=Release ..
