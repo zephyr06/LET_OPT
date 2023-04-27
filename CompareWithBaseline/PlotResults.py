@@ -46,13 +46,13 @@ def plot_Runtime_results(task_set_number_range, method_names, obj):
 
 
 def draw_RT_results(task_set_number_range):
-    method_names = ["InitialMethod", "TOM_BF", "TOM_WSkip", "TOM_Sort"] # "TOM_Sort_Bound"
+    method_names = ["InitialMethod", "ImplicitCommunication", "TOM_BF", "TOM_WSkip", "TOM_Sort"] # "TOM_Sort_Bound"
     plot_Obj_results(task_set_number_range, method_names, "ReactionTime")
     plot_Runtime_results(task_set_number_range, method_names, "ReactionTime")
 
 
 def draw_DA_results(task_set_number_range):
-    method_names = ["InitialMethod", "TOM_BF", "TOM_WSkip",
+    method_names = ["InitialMethod", "ImplicitCommunication", "TOM_BF", "TOM_WSkip",
                     "TOM_Sort", "Martinez18", "TOM_Sort_Offset"]
     plot_Obj_results(task_set_number_range, method_names, "DataAge")
     plot_Runtime_results(task_set_number_range, method_names, "DataAge")
