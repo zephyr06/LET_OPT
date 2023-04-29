@@ -9,7 +9,12 @@ JobCEC GetPossibleReactingJobs(
     const Schedule& schedule) {
   int job_finish_curr = GetFinishTime(job_curr, schedule, tasks_info);
   int period_next = tasks_info.GetTask(task_next.id).period;
-  return JobCEC(task_next.id, std::ceil(float(job_finish_curr) / period_next));
+  JobCEC react_job_prev(task_next.id,
+                        std::floor(float(job_finish_curr) / period_next));
+  if (GetStartTime(react_job_prev, schedule, tasks_info) >= job_finish_curr)
+    return react_job_prev;
+  else
+    return JobCEC(task_next.id, react_job_prev.jobId + 1);
 }
 
 JobCEC GetPossibleReadingJobs(

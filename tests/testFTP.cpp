@@ -85,6 +85,46 @@ TEST_F(PermutationTest18_n3, FTP_Schedule) {
   EXPECT_EQ(schedule_expected[JobCEC(1, 0)], schedule_actual[JobCEC(1, 0)]);
   EXPECT_EQ(schedule_expected[JobCEC(2, 0)], schedule_actual[JobCEC(2, 0)]);
 }
+TEST_F(PermutationTest18_n3, PerformImplicitCommuAnalysis_DA) {
+  Schedule schedule = SimulateFixedPrioritySched(dag_tasks, tasks_info);
+  ChainsPermutation chains_perm =
+      GetChainsPermFromVariable(dag_tasks, tasks_info, dag_tasks.chains_,
+                                ObjDataAge::type_trait, schedule);
+  int obj_actual = ObjDataAge::Obj(dag_tasks, tasks_info, chains_perm, schedule,
+                                   dag_tasks.chains_);
+  EXPECT_EQ(24, obj_actual);
+}
+
+TEST_F(PermutationTest18_n3, GetPossibleReactingJobs) {
+  Schedule schedule = SimulateFixedPrioritySched(dag_tasks, tasks_info);
+  EXPECT_EQ(
+      0, GetPossibleReactingJobs(JobCEC(0, 0), task1, 20, tasks_info, schedule)
+             .jobId);
+  EXPECT_EQ(
+      1, GetPossibleReactingJobs(JobCEC(0, 1), task1, 20, tasks_info, schedule)
+             .jobId);
+
+  EXPECT_EQ(-1, GetPossibleReactingJobs(JobCEC(0, -3), task1, 20, tasks_info,
+                                        schedule)
+                    .jobId);
+  EXPECT_EQ(-2, GetPossibleReactingJobs(JobCEC(0, -4), task1, 20, tasks_info,
+                                        schedule)
+                    .jobId);
+  EXPECT_EQ(
+      4, GetPossibleReactingJobs(JobCEC(1, 3), task1, 20, tasks_info, schedule)
+             .jobId);
+}
+
+TEST_F(PermutationTest18_n3, PerformImplicitCommuAnalysis_RT) {
+  Schedule schedule = SimulateFixedPrioritySched(dag_tasks, tasks_info);
+  ChainsPermutation chains_perm =
+      GetChainsPermFromVariable(dag_tasks, tasks_info, dag_tasks.chains_,
+                                ObjReactionTime::type_trait, schedule);
+  int obj_actual = ObjReactionTime::Obj(dag_tasks, tasks_info, chains_perm,
+                                        schedule, dag_tasks.chains_);
+  EXPECT_EQ(44 - 10, obj_actual);
+}
+
 TEST_F(PermutationTest18_n3, PerformImplicitCommuAnalysis) {
   auto res = PerformImplicitCommuAnalysis<ObjDataAge>(dag_tasks);
   EXPECT_EQ(24, res.obj_);
