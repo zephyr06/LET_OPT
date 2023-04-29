@@ -261,6 +261,7 @@ TEST_F(PermutationTest28_n3, SimulateFixedPrioritySched) {
   EXPECT_EQ(JobStartFinish(25, 26), schedule_actual[JobCEC(1, 5)]);
   EXPECT_EQ(JobStartFinish(20, 25), schedule_actual[JobCEC(2, 2)]);
 }
+
 int main(int argc, char **argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);

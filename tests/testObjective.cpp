@@ -7,6 +7,7 @@
 #include "sources/TaskModel/DAG_Model.h"
 #include "sources/Utils/Interval.h"
 #include "sources/Utils/JobCEC.h"
+#include "testEnv.cpp"
 using namespace DAG_SPACE;
 
 class PermutationTest1 : public ::testing::Test {
@@ -696,19 +697,15 @@ TEST_F(PermutationTest42, GetSubChains) {
   std::vector<std::vector<int>> expected_sub_chains = {{1, 4}, {0, 2, 3}};
   EXPECT_TRUE(expected_sub_chains == chains_sub);
 }
-// TEST_F(PermutationTest_2chain_v1, sensor_fusion) {
-//     // chain is 0 -> 3 -> 4
-//     // chain is 1 -> 3 -> 4
-//     ChainsPermutation chains_perm;
-//     chains_perm.push_back(perm03[0]);
-//     chains_perm.push_back(perm34[0]);
-//     chains_perm.push_back(perm13[0]);
-//     perm03[0].print();
-//     perm34[0].print();
-//     perm13[0].print();
-//     EXPECT_EQ(0, ObjSF(dag_tasks, tasks_info, chains_perm, variable_od));
-// }
 
+class PermutationTestExample : public PermutationTestBase {
+  void SetUp() override { SetUpBase("test_PaperExample"); }
+};
+TEST_F(PermutationTestExample, PerformStandardLETAnalysisDA) {
+  // chain is 0 -> 3 -> 4
+  ScheduleResult res = PerformStandardLETAnalysis<ObjDataAge>(dag_tasks);
+  EXPECT_EQ(45, res.obj_);
+}
 int main(int argc, char **argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);

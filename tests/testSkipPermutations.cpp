@@ -370,6 +370,15 @@ TEST_F(PermutationTest18_n3, skip_worse_perm2) {
   EXPECT_EQ(1, iterator12.size());
 }
 
+class PermutationTestExample : public PermutationTestBase {
+  void SetUp() override { SetUpBase("test_PaperExample"); }
+};
+TEST_F(PermutationTestExample, PerformStandardLETAnalysisDA) {
+  // chain is 0 -> 3 -> 4
+  ScheduleResult res = PerformTOM_OPT_Sort<ObjReactionTime>(dag_tasks);
+  EXPECT_EQ(24, res.obj_);  // NOT 20, because of the pessimistism introduced by
+                            // schedulability analysis
+}
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
