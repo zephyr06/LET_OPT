@@ -76,4 +76,25 @@ double ObjReactionTimeIntermediate::ObjSingleChain(
   return max_reaction_time;
 }
 
+double ObjReactionTimeIntermediate::ObjSingleChain(
+    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+    const ChainsPermutation &chains_perm, const std::vector<int> &chain,
+    const Schedule &schedule) {
+  int max_reaction_time = 0;
+  int hyper_period = GetHyperPeriod(tasks_info, chain);
+  for (uint j = 0; j < hyper_period / tasks_info.GetTask(chain[0]).period;
+       j++)  // iterate each source job within a hyper-period
+  {
+    JobCEC job_source(chain[0], j);
+    JobCEC job_react =
+        GetFirstReactJob(job_source, chains_perm, chain, tasks_info);
+    // *************** Unique code compared from above
+    int deadline_curr = GetFinishTime(job_react, schedule, tasks_info);
+    max_reaction_time = std::max(
+        max_reaction_time,
+        int(deadline_curr - GetStartTime(job_source, schedule, tasks_info)));
+    // ***************
+  }
+  return max_reaction_time;
+}
 }  // namespace DAG_SPACE

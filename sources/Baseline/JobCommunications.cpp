@@ -3,10 +3,10 @@
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
 namespace DAG_SPACE {
 
-JobCEC GetPossibleReactingJobs(
-    const JobCEC& job_curr, const Task& task_next, int superperiod,
-    const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
-    const Schedule& schedule) {
+JobCEC GetReactingJob(const JobCEC& job_curr, const Task& task_next,
+                      int superperiod,
+                      const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
+                      const Schedule& schedule) {
   int job_finish_curr = GetFinishTime(job_curr, schedule, tasks_info);
   int period_next = tasks_info.GetTask(task_next.id).period;
   JobCEC react_job_prev(task_next.id,
@@ -17,10 +17,10 @@ JobCEC GetPossibleReactingJobs(
     return JobCEC(task_next.id, react_job_prev.jobId + 1);
 }
 
-JobCEC GetPossibleReadingJobs(
-    const JobCEC& job_curr, const Task& task_prev, int superperiod,
-    const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
-    const Schedule& schedule) {
+JobCEC GetReadingJob(const JobCEC& job_curr, const Task& task_prev,
+                     int superperiod,
+                     const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
+                     const Schedule& schedule) {
   int job_start_curr = GetStartTime(job_curr, schedule, tasks_info);
   int period_prev = tasks_info.GetTask(task_prev.id).period;
   JobCEC possible_read_job(
@@ -58,14 +58,14 @@ std::unordered_map<JobCEC, JobCEC> GetJobMatch(
   if (IfRT_Trait(type_trait)) {
     for (int i = 0; i < super_period / task_prev.period; i++) {
       JobCEC job_curr(prev_task_id, i);
-      JobCEC jobs_possible_match = GetPossibleReactingJobs(
+      JobCEC jobs_possible_match = GetReactingJob(
           job_curr, task_next, super_period, tasks_info, schedule);
       job_matches[job_curr] = jobs_possible_match;
     }
   } else if (IfDA_Trait(type_trait)) {
     for (int i = 0; i < super_period / task_next.period; i++) {
       JobCEC job_curr(next_task_id, i);
-      JobCEC jobs_possible_match = GetPossibleReadingJobs(
+      JobCEC jobs_possible_match = GetReadingJob(
           job_curr, task_prev, super_period, tasks_info, schedule);
       job_matches[job_curr] = jobs_possible_match;
     }

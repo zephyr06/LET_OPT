@@ -39,7 +39,7 @@ TEST_F(PermutationTest18_n3, Martinez18Perm) {
   EXPECT_EQ(3, mart_perm[2]);
 }
 
-TEST_F(PermutationTest18_n3, GetPossibleReadingJobs) {
+TEST_F(PermutationTest18_n3, GetReadingJob) {
   std::vector<int> chain = {0, 1, 2};
   Martinez18Perm mart_perm;
   mart_perm.push_back(0);
@@ -47,10 +47,10 @@ TEST_F(PermutationTest18_n3, GetPossibleReadingJobs) {
   mart_perm.push_back(10);
   VariableOD variable_od = MartPerm2VariableOD(mart_perm, dag_tasks);
   Schedule schedule_actual = VariableMart2Schedule(tasks_info, variable_od);
-  EXPECT_EQ(JobCEC(0, 0), GetPossibleReadingJobs(JobCEC(1, 0), task0, 20,
-                                                 tasks_info, schedule_actual));
+  EXPECT_EQ(JobCEC(0, 0), GetReadingJob(JobCEC(1, 0), task0, 20, tasks_info,
+                                        schedule_actual));
 }
-TEST_F(PermutationTest18_n3, GetPossibleReadingJobsv2) {
+TEST_F(PermutationTest18_n3, GetReadingJobv2) {
   std::vector<int> chain = {0, 1, 2};
   Martinez18Perm mart_perm;
   mart_perm.push_back(1);
@@ -58,10 +58,10 @@ TEST_F(PermutationTest18_n3, GetPossibleReadingJobsv2) {
   mart_perm.push_back(10);
   VariableOD variable_od = MartPerm2VariableOD(mart_perm, dag_tasks);
   Schedule schedule_actual = VariableMart2Schedule(tasks_info, variable_od);
-  EXPECT_EQ(JobCEC(0, -1), GetPossibleReadingJobs(JobCEC(1, 0), task0, 20,
-                                                  tasks_info, schedule_actual));
+  EXPECT_EQ(JobCEC(0, -1), GetReadingJob(JobCEC(1, 0), task0, 20, tasks_info,
+                                         schedule_actual));
 }
-TEST_F(PermutationTest18_n3, GetPossibleReadingJobs_v3) {
+TEST_F(PermutationTest18_n3, GetReadingJob_v3) {
   std::vector<int> chain = {0, 1, 2};
   Martinez18Perm mart_perm;
   mart_perm.push_back(0);
@@ -69,14 +69,14 @@ TEST_F(PermutationTest18_n3, GetPossibleReadingJobs_v3) {
   mart_perm.push_back(3);
   VariableOD variable_od = MartPerm2VariableOD(mart_perm, dag_tasks);
   Schedule schedule_actual = VariableMart2Schedule(tasks_info, variable_od);
-  EXPECT_EQ(JobCEC(0, -1), GetPossibleReadingJobs(JobCEC(1, 0), task0, 20,
-                                                  tasks_info, schedule_actual));
-  EXPECT_EQ(JobCEC(0, -3), GetPossibleReadingJobs(JobCEC(1, -1), task0, 20,
-                                                  tasks_info, schedule_actual));
-  EXPECT_EQ(JobCEC(1, -2), GetPossibleReadingJobs(JobCEC(2, -1), task1, 20,
-                                                  tasks_info, schedule_actual));
+  EXPECT_EQ(JobCEC(0, -1), GetReadingJob(JobCEC(1, 0), task0, 20, tasks_info,
+                                         schedule_actual));
+  EXPECT_EQ(JobCEC(0, -3), GetReadingJob(JobCEC(1, -1), task0, 20, tasks_info,
+                                         schedule_actual));
+  EXPECT_EQ(JobCEC(1, -2), GetReadingJob(JobCEC(2, -1), task1, 20, tasks_info,
+                                         schedule_actual));
 }
-TEST_F(PermutationTest18_n3, GetPossibleReadingJobsv3) {
+TEST_F(PermutationTest18_n3, GetReadingJobv3) {
   std::vector<int> chain = {0, 1, 2};
   Martinez18Perm mart_perm;
   mart_perm.push_back(0);
@@ -84,8 +84,8 @@ TEST_F(PermutationTest18_n3, GetPossibleReadingJobsv3) {
   mart_perm.push_back(3);
   VariableOD variable_od = MartPerm2VariableOD(mart_perm, dag_tasks);
   Schedule schedule_actual = VariableMart2Schedule(tasks_info, variable_od);
-  EXPECT_EQ(JobCEC(1, -2), GetPossibleReadingJobs(JobCEC(2, 0), task1, 20,
-                                                  tasks_info, schedule_actual));
+  EXPECT_EQ(JobCEC(1, -2), GetReadingJob(JobCEC(2, 0), task1, 20, tasks_info,
+                                         schedule_actual));
 }
 
 TEST_F(PermutationTest18_n3, GetVariable) {
@@ -188,14 +188,13 @@ class PermutationTest51_n5 : public PermutationTestBase {
   std::string type_trait;
 };
 
-TEST_F(PermutationTest51_n5, GetPossibleReadingJobs) {
+TEST_F(PermutationTest51_n5, GetReadingJob) {
   VariableOD variable_od(tasks);
   variable_od[4].offset = 100;
   variable_od[2].offset = 0;
   Schedule schedule_actual = Variable2Schedule(tasks_info, variable_od);
-  EXPECT_EQ(JobCEC(2, 9),
-            GetPossibleReadingJobs(JobCEC(4, 0), dag_tasks.GetTask(2), 200,
-                                   tasks_info, schedule_actual));
+  EXPECT_EQ(JobCEC(2, 9), GetReadingJob(JobCEC(4, 0), dag_tasks.GetTask(2), 200,
+                                        tasks_info, schedule_actual));
 }
 
 class PermutationTest29_n3 : public PermutationTestBase {
@@ -207,7 +206,7 @@ class PermutationTest29_n3 : public PermutationTestBase {
  public:
   std::string type_trait;
 };
-TEST_F(PermutationTest29_n3, GetPossibleReadingJobs) {
+TEST_F(PermutationTest29_n3, GetReadingJob) {
   std::vector<int> chain = {0, 1, 2};
   Martinez18Perm mart_perm;
   mart_perm.push_back(0);
@@ -216,8 +215,8 @@ TEST_F(PermutationTest29_n3, GetPossibleReadingJobs) {
   VariableOD variable_od = MartPerm2VariableOD(mart_perm, dag_tasks);
   Schedule schedule_actual = VariableMart2Schedule(tasks_info, variable_od);
   EXPECT_EQ(JobStartFinish(3, 8), schedule_actual[JobCEC(1, 0)]);
-  EXPECT_EQ(JobCEC(1, -2), GetPossibleReadingJobs(JobCEC(2, 0), task1, 10,
-                                                  tasks_info, schedule_actual));
+  EXPECT_EQ(JobCEC(1, -2), GetReadingJob(JobCEC(2, 0), task1, 10, tasks_info,
+                                         schedule_actual));
 }
 
 TEST_F(PermutationTest29_n3, base) {

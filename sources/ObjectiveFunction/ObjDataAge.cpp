@@ -81,4 +81,27 @@ double ObjDataAgeIntermediate::ObjSingleChain(
   return max_data_age;
 }
 
+double ObjDataAgeIntermediate::ObjSingleChain(
+    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+    const ChainsPermutation &chains_perm, const std::vector<int> &chain,
+    const Schedule &schedule) {
+  int max_data_age = -1;
+  int hyper_period = GetHyperPeriod(tasks_info, chain);
+  int job_num_in_hyper_period =
+      hyper_period / tasks_info.GetTask(chain.back()).period;
+  for (int j = 0; j <= job_num_in_hyper_period;
+       j++)  // iterate each source job within a hyper-period
+  {
+    JobCEC job_source(chain.back(), j);
+    JobCEC job_last_read =
+        GetLastReadJob(job_source, chains_perm, chain, tasks_info);
+
+    // *************** Unique code compared from above
+    max_data_age = std::max(
+        max_data_age, int(GetFinishTime(job_source, schedule, tasks_info) -
+                          GetStartTime(job_last_read, schedule, tasks_info)));
+    // ***************
+  }
+  return max_data_age;
+}
 }  // namespace DAG_SPACE

@@ -95,24 +95,19 @@ TEST_F(PermutationTest18_n3, PerformImplicitCommuAnalysis_DA) {
   EXPECT_EQ(24, obj_actual);
 }
 
-TEST_F(PermutationTest18_n3, GetPossibleReactingJobs) {
+TEST_F(PermutationTest18_n3, GetReactingJob) {
   Schedule schedule = SimulateFixedPrioritySched(dag_tasks, tasks_info);
   EXPECT_EQ(
-      0, GetPossibleReactingJobs(JobCEC(0, 0), task1, 20, tasks_info, schedule)
-             .jobId);
+      0, GetReactingJob(JobCEC(0, 0), task1, 20, tasks_info, schedule).jobId);
   EXPECT_EQ(
-      1, GetPossibleReactingJobs(JobCEC(0, 1), task1, 20, tasks_info, schedule)
-             .jobId);
+      1, GetReactingJob(JobCEC(0, 1), task1, 20, tasks_info, schedule).jobId);
 
-  EXPECT_EQ(-1, GetPossibleReactingJobs(JobCEC(0, -3), task1, 20, tasks_info,
-                                        schedule)
-                    .jobId);
-  EXPECT_EQ(-2, GetPossibleReactingJobs(JobCEC(0, -4), task1, 20, tasks_info,
-                                        schedule)
-                    .jobId);
   EXPECT_EQ(
-      4, GetPossibleReactingJobs(JobCEC(1, 3), task1, 20, tasks_info, schedule)
-             .jobId);
+      -1, GetReactingJob(JobCEC(0, -3), task1, 20, tasks_info, schedule).jobId);
+  EXPECT_EQ(
+      -2, GetReactingJob(JobCEC(0, -4), task1, 20, tasks_info, schedule).jobId);
+  EXPECT_EQ(
+      4, GetReactingJob(JobCEC(1, 3), task1, 20, tasks_info, schedule).jobId);
 }
 
 TEST_F(PermutationTest18_n3, PerformImplicitCommuAnalysis_RT) {

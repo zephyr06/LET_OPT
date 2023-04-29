@@ -26,6 +26,11 @@ class ObjReactionTimeIntermediate : public ObjectiveFunctionBaseIntermediate {
                         const ChainsPermutation &chains_perm,
                         const std::vector<int> &chain,
                         const VariableOD &variable_od) override;
+  double ObjSingleChain(const DAG_Model &dag_tasks,
+                        const TaskSetInfoDerived &tasks_info,
+                        const ChainsPermutation &chains_perm,
+                        const std::vector<int> &chain,
+                        const Schedule &schedule) override;
 };
 
 class ObjReactionTime {
@@ -38,6 +43,15 @@ class ObjReactionTime {
                     const std::vector<std::vector<int>> &chains_to_analyze) {
     ObjReactionTimeIntermediate obj;
     return obj.Obj(dag_tasks, tasks_info, chains_perm, variable_od,
+                   chains_to_analyze);
+  }
+  static double Obj(const DAG_Model &dag_tasks,
+                    const TaskSetInfoDerived &tasks_info,
+                    const ChainsPermutation &chains_perm,
+                     const Schedule &schedule,
+                    const std::vector<std::vector<int>> &chains_to_analyze) {
+    ObjReactionTimeIntermediate obj;
+    return obj.Obj(dag_tasks, tasks_info, chains_perm, schedule,
                    chains_to_analyze);
   }
   static std::vector<double> ObjPerChain(
