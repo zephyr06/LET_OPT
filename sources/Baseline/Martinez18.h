@@ -23,8 +23,8 @@ class Martinez18Perm : public std::vector<int> {
   }
 };
 
-VariableOD GetVariable(const Martinez18Perm& mart_perm,
-                       const DAG_Model& dag_tasks);
+VariableOD MartPerm2VariableOD(const Martinez18Perm& mart_perm,
+                               const DAG_Model& dag_tasks);
 
 int ObjDataAgeFromVariable(const Martinez18Perm& mart_perm,
                            const DAG_Model& dag_tasks,

@@ -48,6 +48,9 @@ inline ChainsPermutation GetChainsPermFromMartVariable(
     const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,
     const std::vector<std::vector<int>>& task_chains,
     const std::string& type_trait, const VariableOD& variable_od) {
+  if (variable_od.at(0).offset == 0 && variable_od.at(1).offset == 3) {
+    int a = 1;
+  }
   Schedule schedule_actual = VariableMart2Schedule(tasks_info, variable_od);
   return GetChainsPermFromVariable(dag_tasks, tasks_info, task_chains,
                                    type_trait, schedule_actual);

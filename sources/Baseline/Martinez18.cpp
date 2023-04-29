@@ -2,11 +2,13 @@
 
 namespace DAG_SPACE {
 
-VariableOD GetVariable(const Martinez18Perm& mart_perm,
+VariableOD MartPerm2VariableOD(const Martinez18Perm& mart_perm,
                        const DAG_Model& dag_tasks) {
   VariableOD variable_od(dag_tasks.GetTaskSet());
   for (uint i = 0; i < variable_od.size(); i++) {
     variable_od[i].offset = mart_perm[i];
+    variable_od[i].deadline =
+        variable_od[i].offset + dag_tasks.GetTask(i).period;
   }
   return variable_od;
 }
@@ -15,7 +17,7 @@ int ObjDataAgeFromVariable(const Martinez18Perm& mart_perm,
                            const DAG_Model& dag_tasks,
                            const TaskSetInfoDerived& tasks_info,
                            const std::vector<int>& chain) {
-  VariableOD variable_od = GetVariable(mart_perm, dag_tasks);
+  VariableOD variable_od = MartPerm2VariableOD(mart_perm, dag_tasks);
   ChainsPermutation chains_perm = GetChainsPermFromMartVariable(
       dag_tasks, tasks_info, {chain}, "DataAge", variable_od);
   return ObjDataAge::Obj(dag_tasks, tasks_info, chains_perm, variable_od,
