@@ -129,13 +129,13 @@ TEST_F(PermutationTest18_n3, EvaluateMartSchedulability) {
   Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
   EXPECT_TRUE(mart_task_perms.EvaluateMartSchedulability(mart_perm));
   mart_perm[1] = 18;
-  EXPECT_FALSE(mart_task_perms.EvaluateMartSchedulability(mart_perm));
+  EXPECT_TRUE(mart_task_perms.EvaluateMartSchedulability(mart_perm));
 }
 
 TEST_F(PermutationTest18_n3, Iterate) {
   Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
-  EXPECT_EQ(40, mart_task_perms.PerformOptimization());
-  EXPECT_EQ(40, PerformOPT_Martinez18_DA(dag_tasks).obj_);
+  EXPECT_EQ(50, mart_task_perms.PerformOptimization());
+  EXPECT_EQ(50, PerformOPT_Martinez18_DA(dag_tasks).obj_);
   EXPECT_EQ(11 * 21, mart_task_perms.iteration_count_);
 }
 

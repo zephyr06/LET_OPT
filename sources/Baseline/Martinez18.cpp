@@ -82,9 +82,7 @@ void Martinez18TaskSetPerms::EvaluateMartPerm(Martinez18Perm& perms_offset) {
 bool Martinez18TaskSetPerms::EvaluateMartSchedulability(
     Martinez18Perm& perms_offset) {
   for (int task_id = 0; task_id < tasks_info_.N; task_id++) {
-    if (perms_offset[task_id] + rta_[task_id] >
-        dag_tasks_.GetTask(task_id).deadline)
-      return false;
+    if (rta_[task_id] > dag_tasks_.GetTask(task_id).deadline) return false;
     if (perms_offset[task_id] == -1) return false;
   }
 

@@ -58,6 +58,7 @@ class Martinez18TaskSetPerms {
 
   void EvaluateMartPerm(Martinez18Perm& perms_offset);
 
+  // Note: the static offset in Martinez18TCAD never makes schedulability worse
   bool EvaluateMartSchedulability(Martinez18Perm& perms_offset);
 
   bool ExamSchedulabilityOptSol() {
