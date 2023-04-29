@@ -13,15 +13,15 @@ inline PermutationInequality GetPermIneq(const DAG_Model& dag_tasks,
   return PermutationInequality(prev_task_id, next_task_id, type_trait);
 }
 
-JobCEC GetReactingJob(const JobCEC& job_curr, const Task& task_next,
+JobCEC GetFirstReactJob(const JobCEC& job_curr, const Task& task_next,
+                        int superperiod,
+                        const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
+                        const Schedule& schedule);
+
+JobCEC GetLastReadJob(const JobCEC& job_curr, const Task& task_prev,
                       int superperiod,
                       const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
                       const Schedule& schedule);
-
-JobCEC GetReadingJob(const JobCEC& job_curr, const Task& task_prev,
-                     int superperiod,
-                     const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
-                     const Schedule& schedule);
 
 std::unordered_map<JobCEC, JobCEC> GetJobMatch(
     const DAG_Model& dag_tasks, const TaskSetInfoDerived& tasks_info,

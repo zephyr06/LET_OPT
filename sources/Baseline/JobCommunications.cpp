@@ -2,11 +2,11 @@
 
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
 namespace DAG_SPACE {
-
-JobCEC GetReactingJob(const JobCEC& job_curr, const Task& task_next,
-                      int superperiod,
-                      const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
-                      const Schedule& schedule) {
+// assume no classical offset
+JobCEC GetFirstReactJob(const JobCEC& job_curr, const Task& task_next,
+                        int superperiod,
+                        const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
+                        const Schedule& schedule) {
   int job_finish_curr = GetFinishTime(job_curr, schedule, tasks_info);
   int period_next = tasks_info.GetTask(task_next.id).period;
   JobCEC react_job_prev(task_next.id,
@@ -16,32 +16,46 @@ JobCEC GetReactingJob(const JobCEC& job_curr, const Task& task_next,
   else
     return JobCEC(task_next.id, react_job_prev.jobId + 1);
 }
-
-JobCEC GetReadingJob(const JobCEC& job_curr, const Task& task_prev,
-                     int superperiod,
-                     const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
-                     const Schedule& schedule) {
+// this function looks complicated because of the special situation in
+// Martinez18TCAD
+JobCEC GetLastReadJob(const JobCEC& job_curr, const Task& task_prev,
+                      int superperiod,
+                      const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
+                      const Schedule& schedule) {
+  if (job_curr == JobCEC(2, 1)) {
+    int a = 1;
+  }
   int job_start_curr = GetStartTime(job_curr, schedule, tasks_info);
   int period_prev = tasks_info.GetTask(task_prev.id).period;
-  JobCEC possible_read_job(
-      task_prev.id, std::floor(float(job_start_curr) / period_prev) - 1 - 1);
-  int job_id_try_upper_bound = possible_read_job.jobId + 10;
-  for (int job_id = possible_read_job.jobId; job_id < job_id_try_upper_bound;
-       job_id++) {
+  int min_possible_read_job_index =
+      std::floor(float(job_start_curr -
+                       tasks_info.GetTask(job_curr.taskId).period -
+                       period_prev) /
+                 period_prev) -
+      1;  // -1 because this is last reading job
+  // if (GetFinishTime(possible_read_job, schedule, tasks_info) <=
+  // job_start_curr)
+  //   return possible_read_job;
+  // else
+  //   return JobCEC(task_prev.id, possible_read_job.jobId - 1);
+  int job_id_try_upper_bound = min_possible_read_job_index + 1e3;
+  JobCEC job_last_read(task_prev.id, job_id_try_upper_bound);
+  // TODO: consider use binary search there?
+  for (int job_id = min_possible_read_job_index;
+       job_id < job_id_try_upper_bound; job_id++) {
     JobCEC job_curr_try(task_prev.id, job_id);
-    int prev_job_finish = GetFinishTime(job_curr_try, schedule, tasks_info);
-    if (prev_job_finish <= job_start_curr) {
-      possible_read_job = job_curr_try;
+    int job_curr_try_finish = GetFinishTime(job_curr_try, schedule, tasks_info);
+    if (job_curr_try_finish <= job_start_curr) {
+      job_last_read = job_curr_try;
     } else {
-      if (GetFinishTime(possible_read_job, schedule, tasks_info) <=
-          job_start_curr)
-        return possible_read_job;
+      if (GetFinishTime(job_last_read, schedule, tasks_info) <= job_start_curr)
+        return job_last_read;
       else
-        CoutError("Didn't find reading job in GetPossibleReadingJobs!");
+        CoutError("Didn't find reading job in GetLastReadJob!");
     }
   }
   CoutError("didn't find reading job!");
-  return possible_read_job;
+  return job_last_read;
 }
 
 std::unordered_map<JobCEC, JobCEC> GetJobMatch(
@@ -58,14 +72,14 @@ std::unordered_map<JobCEC, JobCEC> GetJobMatch(
   if (IfRT_Trait(type_trait)) {
     for (int i = 0; i < super_period / task_prev.period; i++) {
       JobCEC job_curr(prev_task_id, i);
-      JobCEC jobs_possible_match = GetReactingJob(
+      JobCEC jobs_possible_match = GetFirstReactJob(
           job_curr, task_next, super_period, tasks_info, schedule);
       job_matches[job_curr] = jobs_possible_match;
     }
   } else if (IfDA_Trait(type_trait)) {
     for (int i = 0; i < super_period / task_next.period; i++) {
       JobCEC job_curr(next_task_id, i);
-      JobCEC jobs_possible_match = GetReadingJob(
+      JobCEC jobs_possible_match = GetLastReadJob(
           job_curr, task_prev, super_period, tasks_info, schedule);
       job_matches[job_curr] = jobs_possible_match;
     }
