@@ -4,6 +4,7 @@
 #include "gmock/gmock.h"  // Brings in gMock.
 #include "sources/Baseline/JobCommunications.h"
 #include "sources/Baseline/Martinez18.h"
+#include "sources/Baseline/StandardLET.h"
 #include "sources/Optimization/Variable.h"
 #include "testEnv.cpp"
 using namespace DAG_SPACE;
@@ -221,11 +222,18 @@ TEST_F(PermutationTest29_n3, GetPossibleReadingJobs) {
   EXPECT_EQ(JobCEC(1, -2), GetPossibleReadingJobs(JobCEC(2, 0), task1, 10,
                                                   tasks_info, schedule_actual));
 }
-// TEST_F(PermutationTest29_n3, Iterate) {
-//   dag_tasks.chains_[0] = {0, 1, 2};
-//   Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
-//   EXPECT_EQ(25, mart_task_perms.PerformOptimization());
-// }
+
+TEST_F(PermutationTest29_n3, base) {
+  dag_tasks.chains_[0] = {0, 1, 2};
+  auto res = PerformStandardLETAnalysis<ObjDataAge>(dag_tasks);
+  EXPECT_EQ(26, res.obj_);
+}
+TEST_F(PermutationTest29_n3, Iterate) {
+  dag_tasks.chains_[0] = {0, 1, 2};
+  Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
+  EXPECT_EQ(25, mart_task_perms.PerformOptimization());
+  EXPECT_EQ(25, PerformOPT_Martinez18_DA(dag_tasks).obj_);
+}
 // class PermutationTest9_n10 : public PermutationTestBase {
 //   void SetUp() override {
 //     SetUpBase("test_n10_v9");
