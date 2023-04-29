@@ -28,9 +28,8 @@ ScheduleResult PerformImplicitCommuAnalysis(const DAG_Model& dag_tasks) {
       GetChainsPermFromVariable(dag_tasks, tasks_info, dag_tasks.chains_,
                                 ObjectiveFunctionBase::type_trait, schedule);
   //   chains_perm.print();
-  VariableOD variable_od = VariableOD(tasks);
   res.obj_ = ObjectiveFunctionBase::Obj(dag_tasks, tasks_info, chains_perm,
-                                        variable_od, dag_tasks.chains_);
+                                        schedule, dag_tasks.chains_);
   res.schedulable_ = CheckSchedulability(dag_tasks);
 
   auto stop = std::chrono::high_resolution_clock::now();

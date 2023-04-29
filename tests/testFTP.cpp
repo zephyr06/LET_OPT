@@ -120,6 +120,8 @@ TEST_F(PermutationTest18_n3, PerformImplicitCommuAnalysis_RT) {
   int obj_actual = ObjReactionTime::Obj(dag_tasks, tasks_info, chains_perm,
                                         schedule, dag_tasks.chains_);
   EXPECT_EQ(44 - 10, obj_actual);
+  EXPECT_EQ(44 - 10,
+            PerformImplicitCommuAnalysis<ObjReactionTime>(dag_tasks).obj_);
 }
 
 TEST_F(PermutationTest18_n3, PerformImplicitCommuAnalysis) {
