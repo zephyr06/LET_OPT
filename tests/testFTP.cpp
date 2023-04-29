@@ -1,6 +1,7 @@
 
 #include "gmock/gmock.h"  // Brings in gMock.
 #include "sources/Baseline/ImplicitCommunication/ScheduleSimulation.h"
+#include "sources/ObjectiveFunction/ObjectiveFunction.h"
 #include "testEnv.cpp"
 using namespace DAG_SPACE;
 
@@ -83,6 +84,10 @@ TEST_F(PermutationTest18_n3, FTP_Schedule) {
   EXPECT_EQ(schedule_expected[JobCEC(0, 0)], schedule_actual[JobCEC(0, 0)]);
   EXPECT_EQ(schedule_expected[JobCEC(1, 0)], schedule_actual[JobCEC(1, 0)]);
   EXPECT_EQ(schedule_expected[JobCEC(2, 0)], schedule_actual[JobCEC(2, 0)]);
+}
+TEST_F(PermutationTest18_n3, PerformImplicitCommuAnalysis) {
+  auto res = PerformImplicitCommuAnalysis<ObjDataAge>(dag_tasks);
+  EXPECT_EQ(24, res.obj_);
 }
 
 class PermutationTest26_n3 : public PermutationTestBase {
