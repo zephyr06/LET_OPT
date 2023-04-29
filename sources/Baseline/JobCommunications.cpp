@@ -22,9 +22,6 @@ JobCEC GetLastReadJob(const JobCEC& job_curr, const Task& task_prev,
                       int superperiod,
                       const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
                       const Schedule& schedule) {
-  if (job_curr == JobCEC(2, 1)) {
-    int a = 1;
-  }
   int job_start_curr = GetStartTime(job_curr, schedule, tasks_info);
   int period_prev = tasks_info.GetTask(task_prev.id).period;
   int min_possible_read_job_index =
