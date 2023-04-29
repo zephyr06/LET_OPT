@@ -28,7 +28,7 @@ Schedule VariableMart2Schedule(const TaskSetInfoDerived &tasks_info,
       JobStartFinish jsf(
           GetStartTime(job_curr, variable_od,
                        tasks_info),  // GetStartTime equals GetStartMart
-          GetDeadlineMart(job_curr, variable_od, tasks_info));
+          GetDeadline(job_curr, variable_od, tasks_info));
       schedule_all[job_curr] = jsf;
     }
   }
