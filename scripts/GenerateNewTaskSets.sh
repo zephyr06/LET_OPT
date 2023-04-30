@@ -12,7 +12,7 @@ per_core_utilization_max=0.9
 outDir="generatedNewTaskset"
 parallelismFactor=0.4
 chainLengthRatio=0.25
-numCauseEffectChain=4
+numCauseEffectChain=3
 # ***************************************************
 cd ../release
 cmake -DCMAKE_BUILD_TYPE=Release ..
@@ -39,7 +39,7 @@ for (( idx = 0 ; idx < ${#N[@]}; idx++ )); do
         ../tests/GenerateTaskSet --taskSetNameStartIndex $taskSetStartNumber --taskSetNumber $(($taskSetStartNumber + ${numPerThread[idx]})) --task_number_in_tasksets $taskNumber \
             --per_core_utilization_min $per_core_utilization_min --per_core_utilization_max $per_core_utilization_max \
             --outDir "release/$outDir/N$taskNumber/" --parallelismFactor $parallelismFactor --chainLengthRatio $chainLengthRatio \
-            --numCauseEffectChain $numCauseEffectChain &
+            --numCauseEffectChain $numCauseEffectChain --clearOutputDir 0 &
     done
     wait
 done

@@ -84,7 +84,10 @@ int main(int argc, char *argv[]) {
   program.add_argument("--outDir")
       .default_value(std::string("TaskData/dagTasks/"))
       .help("directory to save task sets, only within the root folder");
-
+  program.add_argument("--clearOutputDir")
+      .default_value(1)
+      .help("whether clean the output directory")
+      .scan<'i', int>();
   program.add_argument("--parallelismFactor")
       .default_value(0.4)
       .help("the parallelismFactor when generating random DAGs")
@@ -135,6 +138,7 @@ int main(int argc, char *argv[]) {
     chainLength = std::ceil(chainLengthRatio * task_number_in_tasksets);
   }
   std::string outDir = program.get<std::string>("--outDir");
+  int clearOutputDir = program.get<int>("--clearOutputDir");
   if (randomSeed < 0) {
     srand(time(0) + (int64_t)&chainLength);
   } else {
@@ -183,6 +187,9 @@ int main(int argc, char *argv[]) {
       << "outDir, directory to save task sets, only within the root folder "
          "(--outDir): "
       << outDir << std::endl
+      << "clearOutputDir, whether clean the output directory "
+         "(--clearOutputDir): "
+      << clearOutputDir << std::endl
       << "numCauseEffectChain, the number of random cause-effect chains,"
          "default value will read from config.yaml (--numCauseEffectChain): "
       << numCauseEffectChain << std::endl
@@ -196,7 +203,9 @@ int main(int argc, char *argv[]) {
       << std::endl;
 
   std::string outDirectory = GlobalVariablesDAGOpt::PROJECT_PATH + outDir;
-  deleteDirectoryContents(outDirectory);
+  if (clearOutputDir > 0) {
+    deleteDirectoryContents(outDirectory);
+  }
 
   double totalUtilization = totalUtilization_min;
   for (int i = DAG_taskSetNameStartIndex; i < DAG_taskSetNumber; i++) {
