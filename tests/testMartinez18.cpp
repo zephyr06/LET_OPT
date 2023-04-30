@@ -246,11 +246,12 @@ TEST_F(PermutationTest52_n5, GetLastReadJob) {
   EXPECT_EQ(JobCEC(1, -1), GetLastReadJob(JobCEC(2, 0), dag_tasks.GetTask(1),
                                           200, tasks_info, schedule_actual));
 }
-// TEST_F(PermutationTest52_n5, Iterate) {
-//   Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
-//   EXPECT_EQ(25, mart_task_perms.PerformOptimization());
-//   EXPECT_EQ(25, PerformOPT_Martinez18_DA(dag_tasks).obj_);
-// }
+TEST_F(PermutationTest52_n5, Iterate) {  // test if dead
+  Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
+  mart_task_perms.PerformOptimization();
+  // EXPECT_EQ(25, PerformOPT_Martinez18_DA(dag_tasks).obj_);
+}
+
 // class PermutationTest9_n10 : public PermutationTestBase {
 //   void SetUp() override {
 //     SetUpBase("test_n10_v9");
