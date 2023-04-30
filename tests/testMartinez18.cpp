@@ -61,7 +61,7 @@ TEST_F(PermutationTest18_n3, GetLastReadJobv2) {
   EXPECT_EQ(JobCEC(0, -1), GetLastReadJob(JobCEC(1, 0), task0, 20, tasks_info,
                                           schedule_actual));
 }
-TEST_F(PermutationTest18_n3, GetLastReadJob_v3) {
+TEST_F(PermutationTest18_n3, GetLastReadJobv3) {
   std::vector<int> chain = {0, 1, 2};
   Martinez18Perm mart_perm;
   mart_perm.push_back(0);
@@ -76,7 +76,7 @@ TEST_F(PermutationTest18_n3, GetLastReadJob_v3) {
   EXPECT_EQ(JobCEC(1, -2), GetLastReadJob(JobCEC(2, -1), task1, 20, tasks_info,
                                           schedule_actual));
 }
-TEST_F(PermutationTest18_n3, GetLastReadJobv3) {
+TEST_F(PermutationTest18_n3, GetLastReadJobv4) {
   std::vector<int> chain = {0, 1, 2};
   Martinez18Perm mart_perm;
   mart_perm.push_back(0);
@@ -232,6 +232,25 @@ TEST_F(PermutationTest29_n3, Iterate) {
   EXPECT_EQ(25, mart_task_perms.PerformOptimization());
   EXPECT_EQ(25, PerformOPT_Martinez18_DA(dag_tasks).obj_);
 }
+
+class PermutationTest52_n5 : public PermutationTestBase {
+  void SetUp() override { SetUpBase("test_n5_v52"); }
+};
+TEST_F(PermutationTest52_n5, GetLastReadJob) {
+  Martinez18Perm mart_perm;
+  mart_perm.push_back(0);
+  mart_perm.push_back(0);
+  mart_perm.push_back(0);
+  VariableOD variable_od = MartPerm2VariableOD(mart_perm, dag_tasks);
+  Schedule schedule_actual = VariableMart2Schedule(tasks_info, variable_od);
+  EXPECT_EQ(JobCEC(1, -1), GetLastReadJob(JobCEC(2, 0), dag_tasks.GetTask(1),
+                                          200, tasks_info, schedule_actual));
+}
+// TEST_F(PermutationTest52_n5, Iterate) {
+//   Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
+//   EXPECT_EQ(25, mart_task_perms.PerformOptimization());
+//   EXPECT_EQ(25, PerformOPT_Martinez18_DA(dag_tasks).obj_);
+// }
 // class PermutationTest9_n10 : public PermutationTestBase {
 //   void SetUp() override {
 //     SetUpBase("test_n10_v9");

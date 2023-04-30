@@ -22,37 +22,49 @@ JobCEC GetLastReadJob(const JobCEC& job_curr, const Task& task_prev,
                       int superperiod,
                       const RegularTaskSystem::TaskSetInfoDerived& tasks_info,
                       const Schedule& schedule) {
+  int offset_prev = schedule.at(JobCEC(task_prev.id, 0)).start;
+  int offset_curr = schedule.at(JobCEC(job_curr.taskId, 0)).start;
+
   int job_start_curr = GetStartTime(job_curr, schedule, tasks_info);
+  int job_start_with_prev = job_start_curr - offset_prev;
+
   int period_prev = tasks_info.GetTask(task_prev.id).period;
-  int min_possible_read_job_index =
-      std::floor(float(job_start_curr -
-                       tasks_info.GetTask(job_curr.taskId).period -
-                       period_prev) /
-                 period_prev) -
-      1;  // -1 because this is last reading job
-  // if (GetFinishTime(possible_read_job, schedule, tasks_info) <=
-  // job_start_curr)
-  //   return possible_read_job;
-  // else
-  //   return JobCEC(task_prev.id, possible_read_job.jobId - 1);
-  int job_id_try_upper_bound = min_possible_read_job_index + 1e3;
-  JobCEC job_last_read(task_prev.id, job_id_try_upper_bound);
-  // TODO: consider use binary search there?
-  for (int job_id = min_possible_read_job_index;
-       job_id < job_id_try_upper_bound; job_id++) {
-    JobCEC job_curr_try(task_prev.id, job_id);
-    int job_curr_try_finish = GetFinishTime(job_curr_try, schedule, tasks_info);
-    if (job_curr_try_finish <= job_start_curr) {
-      job_last_read = job_curr_try;
-    } else {
-      if (GetFinishTime(job_last_read, schedule, tasks_info) <= job_start_curr)
-        return job_last_read;
-      else
-        CoutError("Didn't find reading job in GetLastReadJob!");
-    }
+  JobCEC possible_read(task_prev.id,
+                       std::floor(float(job_start_with_prev) / period_prev));
+  if (GetFinishTime(possible_read, schedule, tasks_info) <= job_start_curr)
+    return possible_read;
+  else {
+    possible_read.jobId--;
+    if (GetFinishTime(possible_read, schedule, tasks_info) <= job_start_curr)
+      return possible_read;
+    else
+      CoutError("didn't find reading job!");
   }
-  CoutError("didn't find reading job!");
-  return job_last_read;
+
+  // int min_possible_read_job_index =
+  //     std::floor(float(job_start_curr -
+  //                      tasks_info.GetTask(job_curr.taskId).period -
+  //                      period_prev) /
+  //                period_prev) -
+  //     1;  // -1 because this is last reading job
+  // int job_id_try_upper_bound = min_possible_read_job_index + 2e3;
+  // JobCEC job_last_read(task_prev.id, job_id_try_upper_bound);
+  // // TODO: consider use binary search there?
+  // for (int job_id = min_possible_read_job_index;
+  //      job_id < job_id_try_upper_bound; job_id++) {
+  //   JobCEC job_curr_try(task_prev.id, job_id);
+  //   int job_curr_try_finish = GetFinishTime(job_curr_try, schedule,
+  //   tasks_info); if (job_curr_try_finish <= job_start_curr) {
+  //     job_last_read = job_curr_try;
+  //   } else {
+  //     if (GetFinishTime(job_last_read, schedule, tasks_info) <=
+  //     job_start_curr)
+  //       return job_last_read;
+  //     else
+  //       CoutError("Didn't find reading job in GetLastReadJob!");
+  //   }
+  // }
+  return possible_read;
 }
 
 std::unordered_map<JobCEC, JobCEC> GetJobMatch(
