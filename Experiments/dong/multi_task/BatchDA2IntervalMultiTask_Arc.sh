@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
-task_number_list=( 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 )
-files_per_task_list=( 100 25 25 25 12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 )
+task_number_list=( 50 48 46 44 42 40 38 36 34 32 30 28 26 24 22 20 18 16 14 12 10 8 6 4 )
+files_per_task_list=( 12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 12 25 25 25 100)
 time_per_node_list=( 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 ) # in hour
 TOTAL_TASK_NUMBER=23 # the max index start from 0
 

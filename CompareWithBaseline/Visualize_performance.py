@@ -23,6 +23,7 @@ title = args.title
 
 if __name__ == "__main__":
     task_set_number_range = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+    # task_set_number_range = [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50]
     # a, b = ReadOptResultsOneMethod("TOM_WSkip", "ReactionTime", task_set_number_range)
     # print(a)
     # print(b)
