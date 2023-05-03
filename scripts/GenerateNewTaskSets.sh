@@ -11,7 +11,7 @@ per_core_utilization_min=0.1
 per_core_utilization_max=0.9
 outDir="generatedNewTaskset"
 parallelismFactor=0.4
-chainLengthRatio=0.25
+chainLengthRatio=0.3
 numCauseEffectChain=3
 # ***************************************************
 cd ../release

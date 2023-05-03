@@ -32,7 +32,7 @@ def plot_Runtime_results(task_set_number_range, method_names, obj):
     for i in range(len(method_names)):
         splot = sns.lineplot(data=dataset_pd_runtime, x="index", y=method_names[i], marker=marker_list[i],
                              color=color_list[i], label=method_names[i],
-                             markersize=8)
+                             markersize=markersize_list[i])
     font_size = 15
     plt.xlabel("Task Number", fontsize=font_size)
     plt.ylabel("Running time (seconds)", fontsize=font_size)
