@@ -56,23 +56,6 @@ class PermutationTest30_n3 : public PermutationTestBase {
  public:
   std::string type_trait;
 };
-std::vector<std::vector<int>> GetChainsForSF(
-    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info) {
-  std::vector<std::vector<int>> chains;
-  std::unordered_set<Edge> edge_record;
-  for (const auto &fork_curr : dag_tasks.sf_forks_) {
-    int sink_task_id = fork_curr.sink;
-    const std::vector<int> &source_tasks = fork_curr.source;
-    for (int source_id : source_tasks) {
-      Edge edge_curr(source_id, sink_task_id);
-      if (edge_record.find(edge_curr) == edge_record.end()) {
-        edge_record.insert(edge_curr);
-        chains.push_back({source_id, sink_task_id});
-      }
-    }
-  }
-  return chains;
-}
 TEST_F(PermutationTest33_n3, GetChainsForSF) {
   auto chains = GetChainsForSF(dag_tasks, tasks_info);
   EXPECT_EQ(2, chains.size());

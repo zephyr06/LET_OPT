@@ -4,14 +4,24 @@ namespace DAG_SPACE {
 
 const std::string ObjSensorFusion::type_trait("SensorFusion");
 
-struct SF_JobFork {
-  SF_JobFork() {}
-  SF_JobFork(JobCEC sink_job, std::vector<JobCEC> source_jobs)
-      : sink_job(sink_job), source_jobs(source_jobs) {}
-  // data members
-  JobCEC sink_job;
-  std::vector<JobCEC> source_jobs;
-};
+std::vector<std::vector<int>> GetChainsForSF(
+    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info) {
+  std::vector<std::vector<int>> chains;
+  std::unordered_set<Edge> edge_record;
+  for (const auto &fork_curr : dag_tasks.sf_forks_) {
+    int sink_task_id = fork_curr.sink;
+    const std::vector<int> &source_tasks = fork_curr.source;
+    for (int source_id : source_tasks) {
+      Edge edge_curr(source_id, sink_task_id);
+      if (edge_record.find(edge_curr) == edge_record.end()) {
+        edge_record.insert(edge_curr);
+        chains.push_back({source_id, sink_task_id});
+      }
+    }
+  }
+  return chains;
+}
+
 int GetSF_Diff(const SF_JobFork &job_forks, const Schedule &schedule,
                const TaskSetInfoDerived &tasks_info) {
   int finish_min = 1e9;
@@ -35,6 +45,7 @@ int GetSF_Diff(const SF_JobFork &job_forks, const VariableOD &variable_od,
   }
   return finish_max - finish_min;
 }
+
 SF_JobFork GetSF_JobFork(JobCEC sink_job, const std::vector<int> &source_tasks,
                          const TaskSetInfoDerived &tasks_info,
                          const ChainsPermutation &chains_perm) {
