@@ -19,15 +19,33 @@ class PermutationTest18_n3 : public PermutationTestBase {
  public:
   std::string type_trait;
 };
+class PermutationTest53_n5 : public PermutationTestBase {
+  void SetUp() override { SetUpBase("test_n5_v53"); }
+};
 
-TEST_F(PermutationTest18_n3, FindPossibleOffsets) {
-  Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
-  EXPECT_EQ(3, mart_task_perms.possible_offsets_map_.size());
-  EXPECT_EQ(1, mart_task_perms.possible_offsets_map_[0].size());
-  EXPECT_EQ(0, mart_task_perms.possible_offsets_map_[0][0]);
-  EXPECT_EQ(11, mart_task_perms.possible_offsets_map_[1].size());
-  EXPECT_EQ(9, mart_task_perms.possible_offsets_map_[1][9]);
-  EXPECT_EQ(21, mart_task_perms.possible_offsets_map_[2].size());
+TEST_F(PermutationTest53_n5, ReadSF_Fork) {
+  EXPECT_EQ(2, dag_tasks.sf_forks_.size());
+  EXPECT_EQ(0, dag_tasks.sf_forks_[0].source[0]);
+  EXPECT_EQ(1, dag_tasks.sf_forks_[0].source[1]);
+  EXPECT_EQ(2, dag_tasks.sf_forks_[0].sink);
+
+  EXPECT_EQ(0, dag_tasks.sf_forks_[1].source[0]);
+  EXPECT_EQ(1, dag_tasks.sf_forks_[1].source[1]);
+  EXPECT_EQ(3, dag_tasks.sf_forks_[1].sink);
+}
+class PermutationTest54_n5 : public PermutationTestBase {
+  void SetUp() override { SetUpBase("test_n5_v54"); }
+};
+
+TEST_F(PermutationTest54_n5, ReadSF_Fork) {
+  EXPECT_EQ(2, dag_tasks.sf_forks_.size());
+  EXPECT_EQ(1, dag_tasks.sf_forks_[0].source[0]);
+  EXPECT_EQ(2, dag_tasks.sf_forks_[0].source[1]);
+  EXPECT_EQ(3, dag_tasks.sf_forks_[0].sink);
+
+  EXPECT_EQ(0, dag_tasks.sf_forks_[1].source[0]);
+  EXPECT_EQ(3, dag_tasks.sf_forks_[1].source[1]);
+  EXPECT_EQ(4, dag_tasks.sf_forks_[1].sink);
 }
 
 int main(int argc, char** argv) {

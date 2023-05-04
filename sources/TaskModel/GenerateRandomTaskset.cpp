@@ -101,7 +101,7 @@ void WriteDAG(std::ofstream &file, DAG_Model &dag_tasks) {
     file << "@Fork_source:";
     for (int x : sf_fork.source) file << x << ", ";
     file << "\n";
-    file << "@Fork_sink:" << sf_fork.sink << "\n";
+    file << "@Fork_sink:" << sf_fork.sink << ", \n";
   }
   for (auto itr = dag_tasks.mapPrev.begin(); itr != dag_tasks.mapPrev.end();
        itr++) {

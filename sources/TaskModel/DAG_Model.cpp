@@ -258,6 +258,7 @@ DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType,
     DAG_Model ttt(tasks, mapPrev, chainNum);
     if (chains.size() > 0) ttt.chains_ = chains;
     if (chainNum < chains.size()) ttt.chains_.resize(chainNum);
+    ttt.sf_forks_ = sf_forks;
     return ttt;
   } else {
     std::cout << Color::red << "The path does not exist in ReadTaskSet!"
