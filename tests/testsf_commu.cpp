@@ -38,9 +38,9 @@ TEST_F(PermutationTest54_n5, ReadSF_Fork) {
   EXPECT_EQ(4, dag_tasks.sf_forks_[1].sink);
 }
 
-class PermutationTest29_n3 : public PermutationTestBase {
+class PermutationTest33_n3 : public PermutationTestBase {
   void SetUp() override {
-    SetUpBase("test_n3_v29");
+    SetUpBase("test_n3_v33");
     type_trait = "SensorFusion";
   }
 
@@ -73,7 +73,7 @@ std::vector<std::vector<int>> GetChainsForSF(
   }
   return chains;
 }
-TEST_F(PermutationTest29_n3, GetChainsForSF) {
+TEST_F(PermutationTest33_n3, GetChainsForSF) {
   auto chains = GetChainsForSF(dag_tasks, tasks_info);
   EXPECT_EQ(2, chains.size());
   EXPECT_EQ(1, chains[0][0]);
@@ -95,7 +95,7 @@ TEST_F(PermutationTest30_n3, GetChainsForSF) {
   EXPECT_EQ(4, chains[3][1]);
 }
 
-TEST_F(PermutationTest29_n3, SF_Obj_Implicit) {
+TEST_F(PermutationTest33_n3, SF_Obj_Implicit) {
   Schedule schedule = SimulateFixedPrioritySched(dag_tasks, tasks_info);
   ChainsPermutation chains_perm = GetChainsPermFromVariable(
       dag_tasks, tasks_info, GetChainsForSF(dag_tasks, tasks_info), "DataAge",
@@ -104,7 +104,7 @@ TEST_F(PermutationTest29_n3, SF_Obj_Implicit) {
             ObjSensorFusion::Obj(dag_tasks, tasks_info, chains_perm, schedule));
 }
 
-TEST_F(PermutationTest29_n3, SF_Obj_StanLET) {
+TEST_F(PermutationTest33_n3, SF_Obj_StanLET) {
   VariableOD variable_od_let(tasks);
   Schedule schedule_actual = Variable2Schedule(tasks_info, variable_od_let);
   ChainsPermutation chains_perm = GetChainsPermFromVariable(
