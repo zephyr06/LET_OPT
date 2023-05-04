@@ -84,7 +84,7 @@ DAG_Model GenerateDAG(const TaskSetGenerationParameters &tasks_params) {
     }
   }
   return DAG_Model(tasks, dagModel.mapPrev, tasks_params.numCauseEffectChain,
-                   tasks_params.chain_length);
+                   tasks_params.chain_length, tasks_params.SF_ForkNum);
 }
 
 void WriteDAG(std::ofstream &file, DAG_Model &dag_tasks) {
@@ -96,6 +96,12 @@ void WriteDAG(std::ofstream &file, DAG_Model &dag_tasks) {
     file << "@Chain:";
     for (int x : chain) file << x << ", ";
     file << "\n";
+  }
+  for (const auto &sf_fork : dag_tasks.sf_forks_) {
+    file << "@Fork_source:";
+    for (int x : sf_fork.source) file << x << ", ";
+    file << "\n";
+    file << "@Fork_sink:" << sf_fork.sink << "\n";
   }
   for (auto itr = dag_tasks.mapPrev.begin(); itr != dag_tasks.mapPrev.end();
        itr++) {

@@ -1,7 +1,7 @@
 #include <sys/stat.h>
 
-#include <iostream>
 #include <cmath>
+#include <iostream>
 
 #include "sources/RTA/RTA_LL.h"
 #include "sources/TaskModel/GenerateRandomTaskset.h"
@@ -14,7 +14,7 @@ void deleteDirectoryContents(const std::string &dir_path) {
 int main(int argc, char *argv[]) {
   using namespace std;
   argparse::ArgumentParser program("program name");
-  program.add_argument("-v", "--verbose"); // parameter packing
+  program.add_argument("-v", "--verbose");  // parameter packing
 
   program.add_argument("--task_number_in_tasksets")
       .default_value(5)
@@ -94,7 +94,9 @@ int main(int argc, char *argv[]) {
       .scan<'f', double>();
   program.add_argument("--numCauseEffectChain")
       .default_value(0)
-      .help("the number of random cause-effect chains, default value will read from config.yaml")
+      .help(
+          "the number of random cause-effect chains, default value will read "
+          "from config.yaml")
       .scan<'i', int>();
   program.add_argument("--chainLength")
       .default_value(0)
@@ -102,8 +104,16 @@ int main(int argc, char *argv[]) {
       .scan<'i', int>();
   program.add_argument("--chainLengthRatio")
       .default_value(0.0)
-      .help("the ratio of the length of random cause-effect chains over total number of tasks. will overwrite chainLength if greater than 0.")
+      .help(
+          "the ratio of the length of random cause-effect chains over total "
+          "number of tasks. will overwrite chainLength if greater than 0.")
       .scan<'f', double>();
+  program.add_argument("--SF_ForkNum")
+      .default_value(0)
+      .help(
+          "the number of forks that constitute sensor fusion objective "
+          "functions")
+      .scan<'i', int>();
 
   try {
     program.parse_args(argc, argv);
@@ -139,6 +149,7 @@ int main(int argc, char *argv[]) {
   }
   std::string outDir = program.get<std::string>("--outDir");
   int clearOutputDir = program.get<int>("--clearOutputDir");
+  int SF_ForkNum = program.get<int>("--SF_ForkNum");
   if (randomSeed < 0) {
     srand(time(0) + (int64_t)&chainLength);
   } else {
@@ -156,8 +167,8 @@ int main(int argc, char *argv[]) {
       << task_number_in_tasksets << std::endl
       << "DAG_taskSetNumber(--taskSetNumber): " << DAG_taskSetNumber
       << std::endl
-      << "DAG_taskSetNameStartIndex(--taskSetNameStartIndex): " << DAG_taskSetNameStartIndex
-      << std::endl
+      << "DAG_taskSetNameStartIndex(--taskSetNameStartIndex): "
+      << DAG_taskSetNameStartIndex << std::endl
       << "NumberOfProcessor(--NumberOfProcessor): " << numberOfProcessor
       << std::endl
       << "totalUtilization_min(--totalUtilization_min): "
@@ -197,9 +208,12 @@ int main(int argc, char *argv[]) {
          "chains, 0 means no length requirements (--chainLength): "
       << chainLength << std::endl
       << "chainLengthRatio, the ratio of random cause-effect chains length "
-         "over the number of tasks in DAG, a value greater than 0 will overwrite "
+         "over the number of tasks in DAG, a value greater than 0 will "
+         "overwrite "
          "chainLength. (--chainLengthRatio): "
       << chainLengthRatio << std::endl
+      << "SF_FOrkNum, the number of forks (--SF_FOrkNum): " << SF_ForkNum
+      << std::endl
       << std::endl;
 
   std::string outDirectory = GlobalVariablesDAGOpt::PROJECT_PATH + outDir;
@@ -209,7 +223,7 @@ int main(int argc, char *argv[]) {
 
   double totalUtilization = totalUtilization_min;
   for (int i = DAG_taskSetNameStartIndex; i < DAG_taskSetNumber; i++) {
-    if (taskType == 1) // DAG task set
+    if (taskType == 1)  // DAG task set
     {
       TaskSetGenerationParameters tasks_params;
       tasks_params.N = task_number_in_tasksets;
@@ -222,6 +236,7 @@ int main(int argc, char *argv[]) {
       tasks_params.deadlineType = deadlineType;
       tasks_params.numCauseEffectChain = numCauseEffectChain;
       tasks_params.chain_length = chainLength;
+      tasks_params.SF_ForkNum = SF_ForkNum;
       DAG_Model dag_tasks = GenerateDAG(tasks_params);
 
       if (excludeDAGWithWongChainNumber == 1) {
@@ -246,6 +261,13 @@ int main(int argc, char *argv[]) {
         if (!CheckSchedulability(dag_tasks)) {
           i--;
           continue;  // re-generate a new task set
+        }
+      }
+
+      if (SF_ForkNum > 0) {
+        if (dag_tasks.sf_forks_.size() < SF_ForkNum) {
+          i--;
+          continue;
         }
       }
       string fileName = GetTaskSetName(i, task_number_in_tasksets);

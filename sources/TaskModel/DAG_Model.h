@@ -34,7 +34,15 @@ typedef std::unordered_map<LLint, Vertex> indexVertexMap;
 struct first_name_t {
   typedef boost::vertex_property_tag kind;
 };
+struct SF_Fork {
+  SF_Fork(){}
+  SF_Fork(const std::vector<int> &source, int sink)
+      : source(source), sink(sink) {}
 
+  // data member
+  std::vector<int> source;
+  int sink;
+};
 namespace DAG_SPACE {
 
 static constexpr Vertex NIL = -1;
@@ -53,16 +61,17 @@ class DAG_Model {
   DAG_Model() {}
 
   DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, int numCauseEffectChain,
-            int chain_length)
+            int chain_length, int num_fork)
       : tasks(tasks), mapPrev(mapPrev) {
     RecordTaskPosition();
     std::tie(graph_, indexesBGL_) = GenerateGraphForTaskSet();
     chains_ = GetRandomChains(numCauseEffectChain, chain_length);
     CategorizeTaskSet();
+    sf_forks_ = GetRandomForks(num_fork);
   }
 
   DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, int numCauseEffectChain)
-      : DAG_Model(tasks, mapPrev, numCauseEffectChain, 0) {}
+      : DAG_Model(tasks, mapPrev, numCauseEffectChain, 0, 0) {}
 
   std::pair<Graph, indexVertexMap> GenerateGraphForTaskSet() const;
 
@@ -78,6 +87,7 @@ class DAG_Model {
 
   std::vector<std::vector<int>> GetRandomChains(int numOfChains,
                                                 int chain_length = 0);
+  std::vector<SF_Fork> GetRandomForks(int num_fork);
   void SetChains(std::vector<std::vector<int>> &chains) { chains_ = chains; }
   std::vector<int> FindSourceTaskIds() const;
   std::vector<int> FindSinkTaskIds() const;
@@ -106,6 +116,7 @@ class DAG_Model {
   std::unordered_map<int, TaskSet> processor2taskset_;
   std::unordered_map<int, uint> task_id2task_index_within_processor_;
   std::unordered_map<int, int> task_id2position_;
+  std::vector<SF_Fork> sf_forks_;
 };
 
 DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType = "orig",

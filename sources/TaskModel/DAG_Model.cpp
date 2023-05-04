@@ -175,6 +175,18 @@ void DAG_Model::RecordTaskPosition() {
     task_id2position_[tasks[i].id] = i;
   }
 }
+
+std::vector<SF_Fork> DAG_Model::GetRandomForks(int num_fork) {
+  std::vector<SF_Fork> res;
+  res.reserve(num_fork);
+  for (const auto& [sink, source_tasks] : mapPrev) {
+    if (source_tasks.size() > 1 && res.size() < num_fork) {
+      res.push_back(SF_Fork(GetIDVec(source_tasks), sink));
+    }
+  }
+  return res;
+}
+
 // transform a string to a vectof of int
 std::vector<int> Str2VecInt(const std::string& str) {
   std::vector<int> vect;
@@ -187,7 +199,7 @@ std::vector<int> Str2VecInt(const std::string& str) {
 }
 
 DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType,
-                        int chainNum) {
+                        int chainNum) {  // , int fork_num
   using namespace std;
   TaskSet tasks = ReadTaskSet(path, priorityType);
 
@@ -204,6 +216,8 @@ DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType,
   MAP_Prev mapPrev;
 
   std::vector<std::vector<int>> chains;
+  std::vector<SF_Fork> sf_forks;
+  SF_Fork fork_temp;  // for read purpose
 
   fstream file;
   file.open(path, ios::in);
@@ -224,8 +238,19 @@ DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType,
         mapPrev[dataInLine[1]].push_back(
             tasks[task_id2position[dataInLine[0]]]);
       } else if (line[0] == '@') {
-        if (line.find("Chain") != std::string::npos) {
-          chains.push_back(Str2VecInt(line.substr(7, line.size() - 8)));
+        if (line.find("Chain:") != std::string::npos) {
+          int name_length = 7;
+          chains.push_back(Str2VecInt(
+              line.substr(name_length, line.size() - name_length - 1)));
+        } else if (line.find("Fork_source:") != std::string::npos) {
+          int name_length = 13;
+          fork_temp.source = Str2VecInt(
+              line.substr(name_length, line.size() - name_length - 1));
+        } else if (line.find("Fork_sink:") != std::string::npos) {
+          int name_length = 11;
+          fork_temp.sink = Str2VecInt(
+              line.substr(name_length, line.size() - name_length - 1))[0];
+          sf_forks.push_back(fork_temp);
         }
       }
     }

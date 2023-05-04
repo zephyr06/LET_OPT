@@ -157,6 +157,7 @@ inline void Print(TaskSet &tasks) {
   std::cout << "The task set is printed as follows" << std::endl;
   for (auto &task : tasks) task.print();
 }
+std::vector<int> GetIDVec(const TaskSet &tasks);
 
 template <typename T>
 std::vector<T> GetParameter(const TaskSet &taskset, std::string parameterType) {

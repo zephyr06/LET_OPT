@@ -33,6 +33,7 @@ struct TaskSetGenerationParameters {
   int deadlineType;
   int numCauseEffectChain;
   int chain_length;
+  int SF_ForkNum;
 };
 
 TaskSet GenerateTaskSet(int N, double totalUtilization, int numberOfProcessor,
