@@ -20,9 +20,9 @@ ScheduleResult PerformStandardLETAnalysis(const DAG_Model& dag_tasks) {
       dag_tasks, tasks_info, dag_tasks.chains_,
       ObjectiveFunctionBase::type_trait, schedule_actual);
   //   chains_perm.print();
-  VariableOD variable_od = VariableOD(tasks);
+  // VariableOD variable_od = VariableOD(tasks);
   res.obj_ = ObjectiveFunctionBase::Obj(dag_tasks, tasks_info, chains_perm,
-                                        variable_od, dag_tasks.chains_);
+                                        variable_od_let, dag_tasks.chains_);
   res.schedulable_ = CheckSchedulability(dag_tasks);
 
   auto stop = std::chrono::high_resolution_clock::now();
