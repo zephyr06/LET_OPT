@@ -148,6 +148,26 @@ TEST_F(PermutationTest31_n3, SF_Obj_Implicit) {
   EXPECT_EQ(1 - (3 - 20),
             ObjSensorFusion::Obj(dag_tasks, tasks_info, chains_perm, schedule));
 }
+
+// class PermutationTest32_n3 : public PermutationTestBase {
+//   void SetUp() override {
+//     SetUpBase("test_n3_v32");
+//     type_trait = "SensorFusion";
+//   }
+
+//  public:
+//   std::string type_trait;
+// };
+// TEST_F(PermutationTest32_n3, SF_Obj_StanLET) {
+//   VariableOD variable_od_let(tasks);
+//   Schedule schedule_actual = Variable2Schedule(tasks_info, variable_od_let);
+//   ChainsPermutation chains_perm = GetChainsPermFromVariable(
+//       dag_tasks, tasks_info, GetChainsForSF(dag_tasks, tasks_info),
+//       "DataAge", schedule_actual);
+//   std::cout << ObjSensorFusion::Obj(dag_tasks, tasks_info, chains_perm,
+//                                     variable_od_let)
+//             << "\n";
+// }
 int main(int argc, char **argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
