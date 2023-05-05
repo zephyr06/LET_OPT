@@ -46,14 +46,14 @@ ScheduleResult PerformTOM_OPT_BF(const DAG_Model& dag_tasks) {
   TaskSetOptEnumerate task_sets_perms(dag_tasks, dag_tasks.chains_,
                                       ObjectiveFunction::type_trait);
   res.obj_ = task_sets_perms.PerformOptimizationBF<ObjectiveFunction>();
+  res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
   if (res.obj_ >= 1e8) {
     res.obj_ = PerformStandardLETAnalysis<ObjectiveFunction>(dag_tasks).obj_;
   }
-  res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
   auto stop = std::chrono::high_resolution_clock::now();
   res.timeTaken_ = GetTimeTaken(start, stop);
 
-  PrintResultAnalysis(task_sets_perms, res);
+  // PrintResultAnalysis(task_sets_perms, res);
   return res;
 }
 
@@ -65,14 +65,14 @@ ScheduleResult PerformTOM_OPT_EnumW_Skip(const DAG_Model& dag_tasks) {
       dag_tasks, dag_tasks.chains_, ObjectiveFunction::type_trait);
   res.obj_ =
       task_sets_perms.PerformOptimizationSkipInfeasible<ObjectiveFunction>();
+  res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
   if (res.obj_ >= 1e8) {
     res.obj_ = PerformStandardLETAnalysis<ObjectiveFunction>(dag_tasks).obj_;
   }
-  res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
   auto stop = std::chrono::high_resolution_clock::now();
   res.timeTaken_ = GetTimeTaken(start, stop);
 
-  PrintResultAnalysis(task_sets_perms, res);
+  // PrintResultAnalysis(task_sets_perms, res);
   return res;
 }
 

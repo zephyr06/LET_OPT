@@ -78,7 +78,7 @@ std::vector<JobCEC> TwoTaskPermutations::GetPossibleMatchJobs(
   if (IfRT_Trait(type_trait_)) {
     return GetPossibleReactingJobs(job_curr, tasks_info_.GetTask(task_next_id_),
                                    superperiod_, tasks_info_);
-  } else if (IfDA_Trait(type_trait_)) {
+  } else if (IfDA_Trait(type_trait_) || IfSF_Trait(type_trait_)) {
     return GetPossibleReadingJobs(job_curr, tasks_info_.GetTask(task_prev_id_),
                                   superperiod_, tasks_info_);
   } else
@@ -121,7 +121,9 @@ void TwoTaskPermutations::FindAllPermutations() {
     SinglePairPermutation single_permutation(perm_ineq, tasks_info_,
                                              type_trait_);
     AppendAllPermutations(job_curr, single_permutation);
-  } else if (IfDA_Trait(type_trait_)) {
+  } else if (IfDA_Trait(type_trait_) ||
+             IfSF_Trait(type_trait_)) {  // SF also uses LastReadJob to record
+                                         // permutations
     JobCEC job_curr(task_next_id_, 0);
     PermutationInequality perm_ineq(task_prev_id_, task_next_id_, type_trait_);
     SinglePairPermutation single_permutation(perm_ineq, tasks_info_,

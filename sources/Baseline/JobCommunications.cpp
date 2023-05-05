@@ -85,7 +85,7 @@ std::unordered_map<JobCEC, JobCEC> GetJobMatch(
           job_curr, task_next, super_period, tasks_info, schedule);
       job_matches[job_curr] = jobs_possible_match;
     }
-  } else if (IfDA_Trait(type_trait)) {
+  } else if (IfDA_Trait(type_trait) || IfSF_Trait(type_trait)) {
     for (int i = 0; i < super_period / task_next.period; i++) {
       JobCEC job_curr(next_task_id, i);
       JobCEC jobs_possible_match = GetLastReadJob(

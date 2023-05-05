@@ -58,7 +58,7 @@ class PermutationInequality {
                      GetActivationTime(job_curr, tasks_info);
       upper_bound_valid_ = true;
 
-    } else if (IfDA_Trait(type_trait)) {
+    } else if (IfDA_Trait(type_trait) || IfSF_Trait(type_trait)) {
       task_prev_id_ = job_match.taskId;
       task_next_id_ = job_curr.taskId;
       lower_bound_ = GetActivationTime(job_match, tasks_info) -

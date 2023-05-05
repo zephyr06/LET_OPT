@@ -57,7 +57,7 @@ class PermutationTest30_n3 : public PermutationTestBase {
   std::string type_trait;
 };
 TEST_F(PermutationTest33_n3, GetChainsForSF) {
-  auto chains = GetChainsForSF(dag_tasks, tasks_info);
+  auto chains = GetChainsForSF(dag_tasks);
   EXPECT_EQ(2, chains.size());
   EXPECT_EQ(1, chains[0][0]);
   EXPECT_EQ(3, chains[0][1]);
@@ -65,7 +65,7 @@ TEST_F(PermutationTest33_n3, GetChainsForSF) {
   EXPECT_EQ(3, chains[1][1]);
 }
 TEST_F(PermutationTest30_n3, GetChainsForSF) {
-  auto chains = GetChainsForSF(dag_tasks, tasks_info);
+  auto chains = GetChainsForSF(dag_tasks);
   EXPECT_EQ(4, chains.size());
   EXPECT_EQ(1, chains[0][0]);
   EXPECT_EQ(3, chains[0][1]);
@@ -81,10 +81,9 @@ TEST_F(PermutationTest30_n3, GetChainsForSF) {
 TEST_F(PermutationTest33_n3, SF_Obj_Implicit) {
   Schedule schedule = SimulateFixedPrioritySched(dag_tasks, tasks_info);
   ChainsPermutation chains_perm = GetChainsPermFromVariable(
-      dag_tasks, tasks_info, GetChainsForSF(dag_tasks, tasks_info), "DataAge",
-      schedule);
-  EXPECT_EQ(1,
-            ObjSensorFusion::Obj(dag_tasks, tasks_info, chains_perm, schedule));
+      dag_tasks, tasks_info, GetChainsForSF(dag_tasks), "DataAge", schedule);
+  EXPECT_EQ(1, ObjSensorFusion::Obj(dag_tasks, tasks_info, chains_perm,
+                                    schedule, {{}}));
 }
 
 TEST_F(PermutationTest33_n3, SF_Obj_StanLET) {
@@ -93,26 +92,25 @@ TEST_F(PermutationTest33_n3, SF_Obj_StanLET) {
   ChainsPermutation chains_perm = GetChainsPermFromVariable(
       dag_tasks, tasks_info, dag_tasks.chains_, "DataAge", schedule_actual);
   EXPECT_EQ(0, ObjSensorFusion::Obj(dag_tasks, tasks_info, chains_perm,
-                                    variable_od_let));
+                                    variable_od_let, {{}}));
 }
 
 TEST_F(PermutationTest30_n3, SF_Obj_Implicit) {
   Schedule schedule = SimulateFixedPrioritySched(dag_tasks, tasks_info);
   ChainsPermutation chains_perm = GetChainsPermFromVariable(
-      dag_tasks, tasks_info, GetChainsForSF(dag_tasks, tasks_info), "DataAge",
-      schedule);
-  EXPECT_EQ(1 + 1,
-            ObjSensorFusion::Obj(dag_tasks, tasks_info, chains_perm, schedule));
+      dag_tasks, tasks_info, GetChainsForSF(dag_tasks), "DataAge", schedule);
+  EXPECT_EQ(1 + 1, ObjSensorFusion::Obj(dag_tasks, tasks_info, chains_perm,
+                                        schedule, {{}}));
 }
 
 TEST_F(PermutationTest30_n3, SF_Obj_StanLET) {
   VariableOD variable_od_let(tasks);
   Schedule schedule_actual = Variable2Schedule(tasks_info, variable_od_let);
   ChainsPermutation chains_perm = GetChainsPermFromVariable(
-      dag_tasks, tasks_info, GetChainsForSF(dag_tasks, tasks_info), "DataAge",
+      dag_tasks, tasks_info, GetChainsForSF(dag_tasks), "DataAge",
       schedule_actual);
   EXPECT_EQ(0, ObjSensorFusion::Obj(dag_tasks, tasks_info, chains_perm,
-                                    variable_od_let));
+                                    variable_od_let, {{}}));
 }
 class PermutationTest31_n3 : public PermutationTestBase {
   void SetUp() override {
@@ -126,10 +124,9 @@ class PermutationTest31_n3 : public PermutationTestBase {
 TEST_F(PermutationTest31_n3, SF_Obj_Implicit) {
   Schedule schedule = SimulateFixedPrioritySched(dag_tasks, tasks_info);
   ChainsPermutation chains_perm = GetChainsPermFromVariable(
-      dag_tasks, tasks_info, GetChainsForSF(dag_tasks, tasks_info), "DataAge",
-      schedule);
-  EXPECT_EQ(1 - (3 - 20),
-            ObjSensorFusion::Obj(dag_tasks, tasks_info, chains_perm, schedule));
+      dag_tasks, tasks_info, GetChainsForSF(dag_tasks), "DataAge", schedule);
+  EXPECT_EQ(1 - (3 - 20), ObjSensorFusion::Obj(dag_tasks, tasks_info,
+                                               chains_perm, schedule, {{}}));
 }
 
 class PermutationTest_n6_v1 : public PermutationTestBase {
@@ -164,10 +161,10 @@ TEST_F(PermutationTest_n6_v1, SF_Obj_StanLET) {
   VariableOD variable_od_let(tasks);
   Schedule schedule_actual = Variable2Schedule(tasks_info, variable_od_let);
   ChainsPermutation chains_perm = GetChainsPermFromVariable(
-      dag_tasks, tasks_info, GetChainsForSF(dag_tasks, tasks_info), "DataAge",
+      dag_tasks, tasks_info, GetChainsForSF(dag_tasks), "DataAge",
       schedule_actual);
   std::cout << ObjSensorFusion::Obj(dag_tasks, tasks_info, chains_perm,
-                                    variable_od_let)
+                                    variable_od_let, {{}})
             << "\n";
 }
 class PermutationTest_n3_v32 : public PermutationTestBase {

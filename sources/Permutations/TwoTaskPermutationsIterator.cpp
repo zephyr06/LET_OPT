@@ -6,9 +6,9 @@ namespace DAG_SPACE {
 PermIneqBound_Range GetEdgeIneqRange(const Edge& edge,
                                      const VariableRange& variable_range,
                                      const std::string& type_trait) {
-  if (type_trait == "ReactionTimeApprox" || type_trait == "ReactionTime") {
+  if (IfRT_Trait(type_trait)) {
     return GetEdgeIneqRangeRT(edge, variable_range);
-  } else if (type_trait == "DataAgeApprox" || type_trait == "DataAge") {
+  } else if (IfDA_Trait(type_trait) || IfSF_Trait(type_trait)) {
     return GetEdgeIneqRangeDA(edge, variable_range);
   } else
     CoutError("Unrecognized type_trait in GetEdgeIneqRange!");

@@ -4,8 +4,7 @@ namespace DAG_SPACE {
 
 const std::string ObjSensorFusion::type_trait("SensorFusion");
 
-std::vector<std::vector<int>> GetChainsForSF(
-    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info) {
+std::vector<std::vector<int>> GetChainsForSF(const DAG_Model &dag_tasks) {
   std::vector<std::vector<int>> chains;
   std::unordered_set<Edge> edge_record;
   for (const auto &fork_curr : dag_tasks.sf_forks_) {
@@ -63,7 +62,8 @@ SF_JobFork GetSF_JobFork(JobCEC sink_job, const std::vector<int> &source_tasks,
 double ObjSensorFusion::Obj(const DAG_Model &dag_tasks,
                             const TaskSetInfoDerived &tasks_info,
                             const ChainsPermutation &chains_perm,
-                            const VariableOD &variable_od) {
+                            const VariableOD &variable_od,
+                            const std::vector<std::vector<int>> /*unusedArg*/) {
   int diff_all_forks = 0;
   for (const auto &fork_curr : dag_tasks.sf_forks_) {
     int for_curr_max_diff = 0;
@@ -84,7 +84,8 @@ double ObjSensorFusion::Obj(const DAG_Model &dag_tasks,
 double ObjSensorFusion::Obj(const DAG_Model &dag_tasks,
                             const TaskSetInfoDerived &tasks_info,
                             const ChainsPermutation &chains_perm,
-                            const Schedule &schedule) {
+                            const Schedule &schedule,
+                            const std::vector<std::vector<int>> /*unusedArg*/) {
   int diff_all_forks = 0;
   for (const auto &fork_curr : dag_tasks.sf_forks_) {
     int for_curr_max_diff = 0;

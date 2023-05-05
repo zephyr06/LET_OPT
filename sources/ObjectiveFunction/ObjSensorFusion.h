@@ -4,7 +4,7 @@
 namespace DAG_SPACE {
 
 std::vector<std::vector<int>> GetChainsForSF(
-    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info);
+    const DAG_Model &dag_tasks);
 
 struct SF_JobFork {
   SF_JobFork() {}
@@ -29,11 +29,21 @@ class ObjSensorFusion {
   static double Obj(const DAG_Model &dag_tasks,
                     const TaskSetInfoDerived &tasks_info,
                     const ChainsPermutation &chains_perm,
-                    const VariableOD &variable_od);
+                    const VariableOD &variable_od,
+                    const std::vector<std::vector<int>> /*unusedArg*/);
   static double Obj(const DAG_Model &dag_tasks,
                     const TaskSetInfoDerived &tasks_info,
                     const ChainsPermutation &chains_perm,
-                    const Schedule &schedule);
+                    const Schedule &schedule,
+                    const std::vector<std::vector<int>> /*unusedArg*/);
+
+  static std::vector<double> ObjPerChain(
+      const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+      const ChainsPermutation &chains_perm, const VariableOD &variable_od,
+      const std::vector<std::vector<int>> &chains_to_analyze) {
+    CoutError("No implementation in ObjPerChain");
+    return {};
+  }
 };
 
 }  // namespace DAG_SPACE

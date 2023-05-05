@@ -137,7 +137,7 @@ void LPOptimizer::AddPermutationInequalityConstraints(
           ineq.upper_bound_);  // , const_name2.c_str()
       model_.add(myConstraint2);
       // name2ilo_const_[const_name2] = myConstraint2;
-    } else if (IfDA_Trait(ineq.type_trait_)) {
+    } else if (IfDA_Trait(ineq.type_trait_) || IfSF_Trait(ineq.type_trait_)) {
       IloRange myConstraint1(
           env_, ineq.lower_bound_,
           varArray_[GetVariableIndexVirtualOffset(ineq.task_next_id_)] -

@@ -76,7 +76,7 @@ PermutationInequality GenerateBoxPermutationConstraints(
         variable_range.upper_bound.at(task_prev_id).deadline -
             variable_range.lower_bound.at(task_next_id).offset,
         true, type_trait);
-  } else if (IfDA_Trait(type_trait)) {
+  } else if (IfDA_Trait(type_trait) || IfSF_Trait(type_trait)) {
     int task_prev_id = task_match_id;
     int task_next_id = task_curr_id;
     return PermutationInequality(
