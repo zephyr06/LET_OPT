@@ -53,7 +53,7 @@ ScheduleResult PerformTOM_OPT_BF(const DAG_Model& dag_tasks) {
   auto stop = std::chrono::high_resolution_clock::now();
   res.timeTaken_ = GetTimeTaken(start, stop);
 
-  // PrintResultAnalysis(task_sets_perms, res);
+  PrintResultAnalysis(task_sets_perms, res);
   return res;
 }
 
@@ -72,7 +72,7 @@ ScheduleResult PerformTOM_OPT_EnumW_Skip(const DAG_Model& dag_tasks) {
   auto stop = std::chrono::high_resolution_clock::now();
   res.timeTaken_ = GetTimeTaken(start, stop);
 
-  // PrintResultAnalysis(task_sets_perms, res);
+  PrintResultAnalysis(task_sets_perms, res);
   return res;
 }
 
