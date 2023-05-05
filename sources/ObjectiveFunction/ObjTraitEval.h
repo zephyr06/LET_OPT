@@ -11,4 +11,8 @@ inline bool IfDA_Trait(const std::string &trait) {
   return trait == "DataAge" || trait == "DataAgeApprox";
 }
 
+inline bool IfSF_Trait(const std::string &trait) {
+  return trait == "SensorFusion";
+}
+
 }  // namespace DAG_SPACE

@@ -54,6 +54,12 @@ class LPOptimizer {
 
   void AddObjectiveFunctions(const ChainsPermutation &chains_perm);  // RTDA obj
 
+  void AddSFObjectiveFunctions(
+      const ChainsPermutation &chains_perm);  // RTDA obj
+
+  void AddRTDAObjectiveFunctions(
+      const ChainsPermutation &chains_perm);  // RTDA obj
+
   void AddTwoJobLengthConstraint(const JobCEC &start_job,
                                  const JobCEC &finish_job, int chain_count,
                                  int job_pair_index);
@@ -61,6 +67,8 @@ class LPOptimizer {
                                        const JobCEC &finish_job,
                                        int chain_count, int job_pair_index);
 
+  void AddTwoJobDiffConstraint(const JobCEC &finish_job1,
+                               const JobCEC &finish_job2, int fork_count);
   inline IloExpr GetStartTimeExpression(const JobCEC &job) {
     IloExpr exp(env_);
     exp += varArray_[GetVariableIndexVirtualOffset(job)];

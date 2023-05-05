@@ -93,6 +93,10 @@ void LPOptimizer::AddArtificialVariables() {
     varArray_art_ =
         IloNumVarArray(env_, static_cast<int>(dag_tasks_.chains_.size()), 0,
                        IloInfinity, IloNumVar::Float);
+  else if (IfSF_Trait(obj_trait_))
+    varArray_art_ =
+        IloNumVarArray(env_, static_cast<int>(dag_tasks_.sf_forks_.size()), 0,
+                       IloInfinity, IloNumVar::Float);
   else
     CoutError("Unrecognized obj_trait in LPSolver!");
 }
@@ -214,6 +218,16 @@ void LPOptimizer::AddTwoJobApproxLengthConstraint(const JobCEC &start_job,
 }
 
 void LPOptimizer::AddObjectiveFunctions(const ChainsPermutation &chains_perm) {
+  if (IfRT_Trait(obj_trait_) || IfDA_Trait(obj_trait_)) {
+    AddRTDAObjectiveFunctions(chains_perm);
+  } else if (IfSF_Trait(obj_trait_)) {
+    AddSFObjectiveFunctions(chains_perm);
+  } else
+    CoutError("Unrecognized type trait in AddObjectiveFunctions!");
+}
+
+void LPOptimizer::AddRTDAObjectiveFunctions(
+    const ChainsPermutation &chains_perm) {
   BeginTimer("AddObjective");
   IloExpr rtda_expression(env_);
   int chain_count = 0;
@@ -263,6 +277,54 @@ void LPOptimizer::AddObjectiveFunctions(const ChainsPermutation &chains_perm) {
   }
   model_.add(IloMinimize(env_, rtda_expression));
   rtda_expression.end();
+  EndTimer("AddObjective");
+}
+
+void LPOptimizer::AddTwoJobDiffConstraint(const JobCEC &finish_job1,
+                                          const JobCEC &finish_job2,
+                                          int fork_count) {
+  IloExpr finish_expr1 = GetFinishTimeExpression(finish_job1);
+  IloExpr finish_expr2 = GetFinishTimeExpression(finish_job2);
+  IloRange myConstraint1(
+      env_, 0, varArray_art_[fork_count] - (finish_expr1 - finish_expr2),
+      IloInfinity);
+  IloRange myConstraint2(
+      env_, 0, varArray_art_[fork_count] - (finish_expr2 - finish_expr1),
+      IloInfinity);
+  if (GlobalVariablesDAGOpt::debugMode) {
+    std::cout << myConstraint1 << "\n"
+              << "\n";  //  << myConstraint2
+  }
+  model_.add(myConstraint1);
+  // model_.add(myConstraint2);
+  finish_expr1.end();
+  finish_expr2.end();
+}
+
+void LPOptimizer::AddSFObjectiveFunctions(
+    const ChainsPermutation &chains_perm) {
+  if (!(IfSF_Trait(obj_trait_))) return;
+  BeginTimer("AddObjective");
+  IloExpr sf_expression(env_);
+  int fork_count = 0;
+  for (const auto &fork_curr : dag_tasks_.sf_forks_) {
+    for (int job_id = 0; job_id < tasks_info_.hyper_period /
+                                      dag_tasks_.GetTask(fork_curr.sink).period;
+         job_id++) {
+      SF_JobFork job_forks =
+          GetSF_JobFork(JobCEC(fork_curr.sink, job_id), fork_curr.source,
+                        tasks_info_, chains_perm);
+      for (const auto &job1 : job_forks.source_jobs) {
+        for (const auto &job2 : job_forks.source_jobs) {
+          if (job1 != job2) AddTwoJobDiffConstraint(job1, job2, fork_count);
+        }
+      }
+    }
+    sf_expression += varArray_art_[fork_count];
+    fork_count++;
+  }
+  model_.add(IloMinimize(env_, sf_expression));
+  sf_expression.end();
   EndTimer("AddObjective");
 }
 

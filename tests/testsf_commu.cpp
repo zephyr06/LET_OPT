@@ -132,25 +132,71 @@ TEST_F(PermutationTest31_n3, SF_Obj_Implicit) {
             ObjSensorFusion::Obj(dag_tasks, tasks_info, chains_perm, schedule));
 }
 
-// class PermutationTest32_n3 : public PermutationTestBase {
-//   void SetUp() override {
-//     SetUpBase("test_n3_v32");
-//     type_trait = "SensorFusion";
-//   }
+class PermutationTest_n6_v1 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n6_v1");
+    type_trait = "SensorFusion";
+  }
 
-//  public:
-//   std::string type_trait;
-// };
-// TEST_F(PermutationTest32_n3, SF_Obj_StanLET) {
-//   VariableOD variable_od_let(tasks);
-//   Schedule schedule_actual = Variable2Schedule(tasks_info, variable_od_let);
-//   ChainsPermutation chains_perm = GetChainsPermFromVariable(
-//       dag_tasks, tasks_info, GetChainsForSF(dag_tasks, tasks_info),
-//       "DataAge", schedule_actual);
-//   std::cout << ObjSensorFusion::Obj(dag_tasks, tasks_info, chains_perm,
-//                                     variable_od_let)
-//             << "\n";
-// }
+ public:
+  std::string type_trait;
+};
+
+TEST_F(PermutationTest_n6_v1, Optimize) {
+  TwoTaskPermutations perm05(0, 5, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm45(4, 5, dag_tasks, tasks_info, "DataAge");
+
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm05[0]);
+  chains_perm.push_back(perm45[0]);
+  chains_perm.print();
+
+  GraphOfChains graph_chains(dag_tasks.chains_);
+
+  std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+  PrintRta(rta);
+  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "SensorFusion",
+                           rta);
+  auto res = lp_optimizer.Optimize(chains_perm);
+  EXPECT_EQ(0, res.second);
+}
+TEST_F(PermutationTest_n6_v1, SF_Obj_StanLET) {
+  VariableOD variable_od_let(tasks);
+  Schedule schedule_actual = Variable2Schedule(tasks_info, variable_od_let);
+  ChainsPermutation chains_perm = GetChainsPermFromVariable(
+      dag_tasks, tasks_info, GetChainsForSF(dag_tasks, tasks_info), "DataAge",
+      schedule_actual);
+  std::cout << ObjSensorFusion::Obj(dag_tasks, tasks_info, chains_perm,
+                                    variable_od_let)
+            << "\n";
+}
+class PermutationTest_n3_v32 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n3_v32");
+    type_trait = "SensorFusion";
+  }
+
+ public:
+  std::string type_trait;
+};
+TEST_F(PermutationTest_n3_v32, Optimize) {
+  TwoTaskPermutations perm02(0, 2, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
+
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm02[0]);
+  chains_perm.push_back(perm12[0]);
+  chains_perm.print();
+
+  GraphOfChains graph_chains(dag_tasks.chains_);
+
+  std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
+  PrintRta(rta);
+  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "SensorFusion",
+                           rta);
+  auto res = lp_optimizer.Optimize(chains_perm);
+  EXPECT_EQ(5, res.second);  // From Pycharm's Gurobi
+}
 int main(int argc, char **argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
