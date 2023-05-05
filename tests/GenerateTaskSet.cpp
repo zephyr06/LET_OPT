@@ -3,6 +3,8 @@
 #include <cmath>
 #include <iostream>
 
+#include "sources/Baseline/StandardLET.h"
+#include "sources/ObjectiveFunction/ObjSensorFusion.h"
 #include "sources/RTA/RTA_LL.h"
 #include "sources/TaskModel/GenerateRandomTaskset.h"
 #include "sources/Utils/argparse.hpp"
@@ -265,7 +267,9 @@ int main(int argc, char *argv[]) {
       }
 
       if (SF_ForkNum > 0) {
-        if (dag_tasks.sf_forks_.size() < SF_ForkNum) {
+        dag_tasks.chains_ = GetChainsForSF(dag_tasks);
+        if (dag_tasks.sf_forks_.size() < SF_ForkNum ||
+            PerformStandardLETAnalysis<ObjSensorFusion>(dag_tasks).obj_ == 0) {
           i--;
           continue;
         }
