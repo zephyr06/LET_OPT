@@ -116,6 +116,12 @@ int main(int argc, char *argv[]) {
           "the number of forks that constitute sensor fusion objective "
           "functions")
       .scan<'i', int>();
+  program.add_argument("--excludeSF_StanLET0")
+      .default_value(0)
+      .help(
+          "exclude cases where standard LET return 0"
+          "0")
+      .scan<'i', int>();
 
   try {
     program.parse_args(argc, argv);
@@ -152,6 +158,7 @@ int main(int argc, char *argv[]) {
   std::string outDir = program.get<std::string>("--outDir");
   int clearOutputDir = program.get<int>("--clearOutputDir");
   int SF_ForkNum = program.get<int>("--SF_ForkNum");
+  int excludeSF_StanLET0 = program.get<int>("--excludeSF_StanLET0");
   if (randomSeed < 0) {
     srand(time(0) + (int64_t)&chainLength);
   } else {
@@ -216,6 +223,7 @@ int main(int argc, char *argv[]) {
       << chainLengthRatio << std::endl
       << "SF_FOrkNum, the number of forks (--SF_FOrkNum): " << SF_ForkNum
       << std::endl
+      << "excludeSF_StanLET0, default: " << excludeSF_StanLET0 << std::endl
       << std::endl;
 
   std::string outDirectory = GlobalVariablesDAGOpt::PROJECT_PATH + outDir;
@@ -269,7 +277,9 @@ int main(int argc, char *argv[]) {
       if (SF_ForkNum > 0) {
         dag_tasks.chains_ = GetChainsForSF(dag_tasks);
         if (dag_tasks.sf_forks_.size() < SF_ForkNum ||
-            PerformStandardLETAnalysis<ObjSensorFusion>(dag_tasks).obj_ == 0) {
+            (excludeSF_StanLET0 &&
+             PerformStandardLETAnalysis<ObjSensorFusion>(dag_tasks).obj_ ==
+                 0)) {
           i--;
           continue;
         }
