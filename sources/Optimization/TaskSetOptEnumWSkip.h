@@ -31,6 +31,7 @@ class TaskSetOptEnumWSkip : public TaskSetOptEnumerate {
     PermIneqBound_Range perm_ineq_bound_range = GetEdgeIneqRange(
         adjacent_two_task_permutations_[position].GetEdge(),
         variable_range_w_chains, ObjectiveFunction::type_trait);
+    chains_perm.print();
     TwoTaskPermutationsIterator iterator(
         adjacent_two_task_permutations_[position], perm_ineq_bound_range);
 
@@ -45,6 +46,9 @@ class TaskSetOptEnumWSkip : public TaskSetOptEnumerate {
         IterateAllPermsWSkip<ObjectiveFunction>(position + 1, chains_perm);
 
         chains_perm.pop(perm_sing_curr);
+      } else {
+        std::cout << "An infeasible perm: \n";
+        chains_perm.print();
       }
     }
   }

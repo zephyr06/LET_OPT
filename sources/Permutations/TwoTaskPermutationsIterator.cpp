@@ -49,6 +49,10 @@ TwoTaskPermutationsIterator::TwoTaskPermutationsIterator(
     if (ptr->inequality_.lower_bound_ <= perm_range.lower_bound_s_upper_bound &&
         ptr->inequality_.upper_bound_ >= perm_range.upper_bound_s_lower_bound)
       single_perms_ite_record_.push_back(ptr);
+    else {
+      std::cout << "Perm skipped: \n";
+      ptr->print();
+    }
   }
 }
 

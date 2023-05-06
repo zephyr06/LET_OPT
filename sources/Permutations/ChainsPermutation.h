@@ -94,10 +94,12 @@ class ChainsPermutation {
       const std::vector<int> &rta) const;
 
   void print() const {
+    std::cout << "*****************************\n";
     for (auto itr = permutation_chain_map_.begin();
          itr != permutation_chain_map_.end(); itr++) {
       itr->second->print();
     }
+    std::cout << "*****************************\n";
   }
 
   std::vector<Edge> GetEdges() const {
