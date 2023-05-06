@@ -122,6 +122,12 @@ int main(int argc, char *argv[]) {
           "exclude cases where standard LET return 0"
           "0")
       .scan<'i', int>();
+  program.add_argument("--fork_sensor_num")
+      .default_value(0)
+      .help(
+          "the minimum number of sensor tasks for each fork in SF experiments"
+          "0")
+      .scan<'i', int>();
 
   try {
     program.parse_args(argc, argv);
@@ -159,6 +165,8 @@ int main(int argc, char *argv[]) {
   int clearOutputDir = program.get<int>("--clearOutputDir");
   int SF_ForkNum = program.get<int>("--SF_ForkNum");
   int excludeSF_StanLET0 = program.get<int>("--excludeSF_StanLET0");
+  int fork_sensor_num = program.get<int>("--fork_sensor_num");
+
   if (randomSeed < 0) {
     srand(time(0) + (int64_t)&chainLength);
   } else {
@@ -223,7 +231,8 @@ int main(int argc, char *argv[]) {
       << chainLengthRatio << std::endl
       << "SF_FOrkNum, the number of forks (--SF_FOrkNum): " << SF_ForkNum
       << std::endl
-      << "excludeSF_StanLET0, default: " << excludeSF_StanLET0 << std::endl
+      << "excludeSF_StanLET0: " << excludeSF_StanLET0 << std::endl
+      << "fork_sensor_num: " << fork_sensor_num << std::endl
       << std::endl;
 
   std::string outDirectory = GlobalVariablesDAGOpt::PROJECT_PATH + outDir;
@@ -247,6 +256,7 @@ int main(int argc, char *argv[]) {
       tasks_params.numCauseEffectChain = numCauseEffectChain;
       tasks_params.chain_length = chainLength;
       tasks_params.SF_ForkNum = SF_ForkNum;
+      tasks_params.fork_sensor_num = fork_sensor_num;
       DAG_Model dag_tasks = GenerateDAG(tasks_params);
 
       if (excludeDAGWithWongChainNumber == 1) {

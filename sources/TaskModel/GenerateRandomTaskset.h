@@ -34,6 +34,7 @@ struct TaskSetGenerationParameters {
   int numCauseEffectChain;
   int chain_length;
   int SF_ForkNum;
+  int fork_sensor_num;
 };
 
 TaskSet GenerateTaskSet(int N, double totalUtilization, int numberOfProcessor,

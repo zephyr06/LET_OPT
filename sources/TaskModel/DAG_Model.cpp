@@ -176,11 +176,13 @@ void DAG_Model::RecordTaskPosition() {
   }
 }
 
-std::vector<SF_Fork> DAG_Model::GetRandomForks(int num_fork) {
+std::vector<SF_Fork> DAG_Model::GetRandomForks(int num_fork,
+                                               int fork_sensor_num) {
   std::vector<SF_Fork> res;
   res.reserve(num_fork);
   for (const auto& [sink, source_tasks] : mapPrev) {
-    if (source_tasks.size() > 1 && res.size() < num_fork) {
+    if (source_tasks.size() > 1 && source_tasks.size() >= fork_sensor_num &&
+        res.size() < num_fork) {
       res.push_back(SF_Fork(GetIDVec(source_tasks), sink));
     }
   }
