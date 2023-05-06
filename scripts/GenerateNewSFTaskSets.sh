@@ -13,7 +13,7 @@ outDir="generatedNewTaskset"
 parallelismFactor=0.4
 chainLengthRatio=0
 numCauseEffectChain=1
-SF_ForkNum=2
+SF_ForkNum=3
 excludeSF_StanLET0=1
 # ***************************************************
 cd ../release
