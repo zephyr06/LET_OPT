@@ -2,7 +2,7 @@ import pathlib
 baseline_method_names = ["InitialMethod", "ImplicitCommunication", "TOM_BF", "TOM_WSkip",
                          "TOM_Sort", "Martinez18", "TOM_Sort_Offset", "TOM_Sort_Bound"]
 baseline_method_labels = {"InitialMethod": "StanLET",
-                          "ImplicitCommunication": "ImplicitCommunication",
+                          "ImplicitCommunication": "Implicit",
                           "TOM_BF": "eLET_BF",
                           "TOM_WSkip": "eLET_WSkip",
                           "TOM_Sort": "eLET_Sort",
