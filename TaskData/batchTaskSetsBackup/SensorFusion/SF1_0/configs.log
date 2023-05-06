@@ -1,0 +1,12 @@
+TaskSet Creation Time: 20230505
+Sensor Fusion Only
+New TaskSet Configs:
+taskNumber_list: 5 10 20 30 40
+taskSetNumber: 1000
+per_core_utilization_min: 0.1
+per_core_utilization_max: 0.9
+parallelismFactor: 0.4
+chainLengthRatio: 0
+numCauseEffectChain: 1
+SF_ForkNum: 1
+excludeSF_StanLET0: 0

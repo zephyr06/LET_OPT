@@ -23,7 +23,7 @@ def ReadOptResultsOneMethod(method_name="TOM_Sort", obj_type="DataAge", task_set
     for task_num in task_set_number_range:
         obj_base = ReadOptResults("InitialMethod", obj_type, int(task_num), root_path)
         res_vec = ReadOptResults(method_name, obj_type, int(task_num), root_path)
-        obj_curr, time_curr = Average(res_vec, obj_base)
+        obj_curr, time_curr = Average(res_vec, obj_base, obj_type, task_num)
         res_obj_per_task_number.append(obj_curr)
         res_runtime_per_task_number.append(time_curr)
     return res_obj_per_task_number, res_runtime_per_task_number

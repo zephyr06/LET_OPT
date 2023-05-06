@@ -13,12 +13,16 @@ def plot_Obj_results(task_set_number_range, method_names, obj):
     plt.figure()
     for i in range(len(method_names)):
         splot = sns.lineplot(data=dataset_pd_obj, x="index", y=method_names[i], marker=marker_list[i],
-                             color=color_list[i], label=method_names[i],
+                             color=color_list[i], label=baseline_method_labels[method_names[i]],
                              markersize=markersize_list[i])  # , alpha=alpha_list[i]
     font_size = 15
     plt.xlabel("Task Number", fontsize=font_size)
     plt.ylabel("Relative performance gap(%)", fontsize=font_size)
-    splot.set_ylim([0.2, 1.05])
+    if obj != "SensorFusion":
+        splot.set_ylim([0.15, 1.05])
+    # else:
+    #     TODO set a suitable range for sensor fusion
+    #     splot.set_ylim([0.15, 2.05]) 
     plt.legend()
     plt.grid(linestyle="--")
     plt.savefig(ROOT_CompareWithBaseline_PATH + obj + "/Compare_Performance_" + obj + ".pdf", format='pdf')
@@ -31,7 +35,7 @@ def plot_Runtime_results(task_set_number_range, method_names, obj):
     plt.figure()
     for i in range(len(method_names)):
         splot = sns.lineplot(data=dataset_pd_runtime, x="index", y=method_names[i], marker=marker_list[i],
-                             color=color_list[i], label=method_names[i],
+                             color=color_list[i], label=baseline_method_labels[method_names[i]],
                              markersize=markersize_list[i])
     font_size = 15
     plt.xlabel("Task Number", fontsize=font_size)
@@ -56,3 +60,8 @@ def draw_DA_results(task_set_number_range):
                     "TOM_Sort", "Martinez18", "TOM_Sort_Offset"]
     plot_Obj_results(task_set_number_range, method_names, "DataAge")
     plot_Runtime_results(task_set_number_range, method_names, "DataAge")
+    
+def draw_SF_results(task_set_number_range):
+    method_names = ["InitialMethod", "ImplicitCommunication", "TOM_BF", "TOM_WSkip"]
+    plot_Obj_results(task_set_number_range, method_names, "SensorFusion")
+    plot_Runtime_results(task_set_number_range, method_names, "SensorFusion")

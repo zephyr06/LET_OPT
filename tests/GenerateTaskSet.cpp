@@ -118,9 +118,7 @@ int main(int argc, char *argv[]) {
       .scan<'i', int>();
   program.add_argument("--excludeSF_StanLET0")
       .default_value(0)
-      .help(
-          "exclude cases where standard LET return 0"
-          "0")
+      .help("exclude cases where standard LET return 0")
       .scan<'i', int>();
   program.add_argument("--fork_sensor_num")
       .default_value(0)
@@ -229,9 +227,10 @@ int main(int argc, char *argv[]) {
          "overwrite "
          "chainLength. (--chainLengthRatio): "
       << chainLengthRatio << std::endl
-      << "SF_FOrkNum, the number of forks (--SF_FOrkNum): " << SF_ForkNum
+      << "SF_ForkNum, the number of forks (--SF_ForkNum): " << SF_ForkNum
       << std::endl
-      << "excludeSF_StanLET0: " << excludeSF_StanLET0 << std::endl
+      << "exclude cases where standard LET return 0: " << excludeSF_StanLET0
+      << std::endl
       << "fork_sensor_num: " << fork_sensor_num << std::endl
       << std::endl;
 
@@ -293,6 +292,8 @@ int main(int argc, char *argv[]) {
           i--;
           continue;
         }
+        dag_tasks.chains_
+            .clear();  // no need to write chains to the task set file
       }
       string fileName = GetTaskSetName(i, task_number_in_tasksets);
       //  "dag-set-N" + to_string(task_number_in_tasksets) +
