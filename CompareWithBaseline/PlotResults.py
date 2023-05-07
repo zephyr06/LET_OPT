@@ -1,14 +1,15 @@
+from GlobalVariables import *
+from Read_ScheduleRes import *
 import sys
 import seaborn as sns
 import matplotlib.pyplot as plt
 
 sys.path.insert(1, '~/programming/LET_OPT/CompareWithBaseline')
-from Read_ScheduleRes import *
-from GlobalVariables import *
 
 
-def plot_Obj_results(task_set_number_range, method_names, obj):
-    dataset_pd_obj, dataset_pd_runtime = ReadOptResultsAllMethod(method_names, obj, task_set_number_range)
+def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=False):
+    dataset_pd_obj, dataset_pd_runtime = ReadOptResultsAllMethod(
+        method_names, obj, task_set_number_range, exclude_time_out)
 
     plt.figure()
     for i in range(len(method_names)):
@@ -22,16 +23,18 @@ def plot_Obj_results(task_set_number_range, method_names, obj):
         splot.set_ylim([0.15, 1.05])
     # else:
     #     TODO set a suitable range for sensor fusion
-    #     splot.set_ylim([0.15, 2.05]) 
+    #     splot.set_ylim([0.15, 2.05])
     plt.legend()
     plt.grid(linestyle="--")
-    plt.savefig(ROOT_CompareWithBaseline_PATH + obj + "/Compare_Performance_" + obj + ".pdf", format='pdf')
+    plt.savefig(ROOT_CompareWithBaseline_PATH + obj +
+                "/Compare_Performance_" + obj + ".pdf", format='pdf')
     plt.show(block=False)
     plt.pause(3)
 
 
-def plot_Runtime_results(task_set_number_range, method_names, obj):
-    dataset_pd_obj, dataset_pd_runtime = ReadOptResultsAllMethod(method_names, obj, task_set_number_range)
+def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_out=False):
+    dataset_pd_obj, dataset_pd_runtime = ReadOptResultsAllMethod(
+        method_names, obj, task_set_number_range, exclude_time_out)
     plt.figure()
     for i in range(len(method_names)):
         splot = sns.lineplot(data=dataset_pd_runtime, x="index", y=method_names[i], marker=marker_list[i],
@@ -44,13 +47,15 @@ def plot_Runtime_results(task_set_number_range, method_names, obj):
     splot.set(yscale="log")
     plt.legend()
     plt.grid(linestyle="--")
-    plt.savefig(ROOT_CompareWithBaseline_PATH + obj + "/Compare_RunTime_" + obj + ".pdf", format='pdf')
+    plt.savefig(ROOT_CompareWithBaseline_PATH + obj +
+                "/Compare_RunTime_" + obj + ".pdf", format='pdf')
     plt.show(block=False)
     plt.pause(3)
 
 
 def draw_RT_results(task_set_number_range):
-    method_names = ["InitialMethod", "ImplicitCommunication", "TOM_BF", "TOM_WSkip", "TOM_Sort"] # "TOM_Sort_Bound"
+    method_names = ["InitialMethod", "ImplicitCommunication",
+                    "TOM_BF", "TOM_WSkip", "TOM_Sort"]  # "TOM_Sort_Bound"
     plot_Obj_results(task_set_number_range, method_names, "ReactionTime")
     plot_Runtime_results(task_set_number_range, method_names, "ReactionTime")
 
@@ -60,8 +65,10 @@ def draw_DA_results(task_set_number_range):
                     "TOM_Sort", "Martinez18", "TOM_Sort_Offset"]
     plot_Obj_results(task_set_number_range, method_names, "DataAge")
     plot_Runtime_results(task_set_number_range, method_names, "DataAge")
-    
-def draw_SF_results(task_set_number_range):
-    method_names = ["InitialMethod", "ImplicitCommunication", "TOM_BF", "TOM_WSkip"]
-    plot_Obj_results(task_set_number_range, method_names, "SensorFusion")
-    plot_Runtime_results(task_set_number_range, method_names, "SensorFusion")
+
+
+def draw_SF_results(task_set_number_range, exclude_time_out = False):
+    method_names = ["InitialMethod",
+                    "ImplicitCommunication", "TOM_BF", "TOM_WSkip"]
+    plot_Obj_results(task_set_number_range, method_names, "SensorFusion", exclude_time_out)
+    plot_Runtime_results(task_set_number_range, method_names, "SensorFusion", exclude_time_out)

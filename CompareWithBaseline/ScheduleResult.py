@@ -41,13 +41,17 @@ def ReadOptResults(method_name="TOM_Sort", obj_type="DataAge", task_set_number=5
     return res_vec
 
 
-def Average(res_vec, base_vec, obj_type="DataAge", task_num=5):
+def Average(res_vec, base_vec, obj_type="DataAge", task_num=5, exclude_time_out=False, excluded_table=[]):
     global sensor_fusion_info_print_list
     average_obj = 0
     average_runtime = 0
     total_case = len(res_vec)
     # for res in res_vec:
     for i in range(len(res_vec)):
+        if exclude_time_out and excluded_table[i]:
+            # print("Exclude one time out case")
+            total_case -= 1
+            continue
         if obj_type != "SensorFusion":
             if (float(res_vec[i].obj) / base_vec[i].obj > 1.1):
                 print("Find an error result!")
@@ -57,10 +61,10 @@ def Average(res_vec, base_vec, obj_type="DataAge", task_num=5):
             if (base_vec[i].obj > 0):
                 average_obj += float(res_vec[i].obj) / base_vec[i].obj
             else:
-                total_case = total_case - 1
+                total_case -= 1
             average_runtime += res_vec[i].runtime
 
-    if (obj_type == "SensorFusion") and (task_num not in sensor_fusion_info_print_list):
-        print("Sensor Fusion non-zero cases for N", task_num, "is", total_case)
-        sensor_fusion_info_print_list.append(task_num)
+    # if (obj_type == "SensorFusion") and (task_num not in sensor_fusion_info_print_list):
+    #     print("Sensor Fusion non-zero cases for N", task_num, "is", total_case)
+    #     sensor_fusion_info_print_list.append(task_num)
     return average_obj / total_case, average_runtime / total_case
