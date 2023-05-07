@@ -41,14 +41,14 @@ def ReadOptResults(method_name="TOM_Sort", obj_type="DataAge", task_set_number=5
     return res_vec
 
 
-def Average(res_vec, base_vec, obj_type="DataAge", task_num=5, exclude_time_out = False):
+def Average(res_vec, base_vec, obj_type="DataAge", task_num=5, exclude_time_out=False, excluded_table=[]):
     global sensor_fusion_info_print_list
     average_obj = 0
     average_runtime = 0
     total_case = len(res_vec)
     # for res in res_vec:
     for i in range(len(res_vec)):
-        if exclude_time_out and res_vec[i].runtime >= 600:
+        if exclude_time_out and excluded_table[i]:
             # print("Exclude one time out case")
             total_case -= 1
             continue
