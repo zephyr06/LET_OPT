@@ -41,29 +41,6 @@ JobCEC GetLastReadJob(const JobCEC& job_curr, const Task& task_prev,
       CoutError("didn't find reading job!");
   }
 
-  // int min_possible_read_job_index =
-  //     std::floor(float(job_start_curr -
-  //                      tasks_info.GetTask(job_curr.taskId).period -
-  //                      period_prev) /
-  //                period_prev) -
-  //     1;  // -1 because this is last reading job
-  // int job_id_try_upper_bound = min_possible_read_job_index + 2e3;
-  // JobCEC job_last_read(task_prev.id, job_id_try_upper_bound);
-  // // TODO: consider use binary search there?
-  // for (int job_id = min_possible_read_job_index;
-  //      job_id < job_id_try_upper_bound; job_id++) {
-  //   JobCEC job_curr_try(task_prev.id, job_id);
-  //   int job_curr_try_finish = GetFinishTime(job_curr_try, schedule,
-  //   tasks_info); if (job_curr_try_finish <= job_start_curr) {
-  //     job_last_read = job_curr_try;
-  //   } else {
-  //     if (GetFinishTime(job_last_read, schedule, tasks_info) <=
-  //     job_start_curr)
-  //       return job_last_read;
-  //     else
-  //       CoutError("Didn't find reading job in GetLastReadJob!");
-  //   }
-  // }
   return possible_read;
 }
 
