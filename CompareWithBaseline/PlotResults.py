@@ -12,19 +12,33 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
         method_names, obj, task_set_number_range, exclude_time_out)
 
     plt.figure()
+    ax = plt.subplot(111)
     for i in range(len(method_names)):
         splot = sns.lineplot(data=dataset_pd_obj, x="index", y=method_names[i], marker=marker_list[i],
                              color=color_list[i], label=baseline_method_labels[method_names[i]],
-                             markersize=markersize_list[i])  # , alpha=alpha_list[i]
+                             markersize=markersize_list[i]) #, alpha=alpha_list[i])
     font_size = 15
     plt.xlabel("Task Number", fontsize=font_size)
     plt.ylabel("Relative performance gap(%)", fontsize=font_size)
-    if obj != "SensorFusion":
-        splot.set_ylim([0.15, 1.05])
+    # if obj != "SensorFusion":
+    #     splot.set_ylim([0.15, 1.05])
     # else:
     #     TODO set a suitable range for sensor fusion
     #     splot.set_ylim([0.15, 2.05])
-    plt.legend()
+    
+    if obj == "DataAge":
+        # Shrink current axis's height by 5% on the top
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0, # + box.height * 0.1,
+                        box.width, box.height * 0.95])
+        plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.2),
+            fancybox=False, shadow=False, ncol=4)
+    elif obj == "ReactionTime":
+        plt.legend(loc='upper center', bbox_to_anchor=(0.15, 0.8),
+            fancybox=False, shadow=False, ncol=1)
+    else:
+        plt.legend()
+        
     plt.grid(linestyle="--")
     plt.savefig(ROOT_CompareWithBaseline_PATH + obj +
                 "/Compare_Performance_" + obj + ".pdf", format='pdf')
@@ -36,16 +50,29 @@ def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_
     dataset_pd_obj, dataset_pd_runtime = ReadOptResultsAllMethod(
         method_names, obj, task_set_number_range, exclude_time_out)
     plt.figure()
+    ax = plt.subplot(111)
     for i in range(len(method_names)):
         splot = sns.lineplot(data=dataset_pd_runtime, x="index", y=method_names[i], marker=marker_list[i],
                              color=color_list[i], label=baseline_method_labels[method_names[i]],
-                             markersize=markersize_list[i])
+                             markersize=markersize_list[i]) #, alpha=alpha_list[i])
     font_size = 15
     plt.xlabel("Task Number", fontsize=font_size)
     plt.ylabel("Running time (seconds)", fontsize=font_size)
     splot.set_ylim([1e-6, 1e3])
     splot.set(yscale="log")
-    plt.legend()
+    
+    if obj == "DataAge":
+        # Shrink current axis's height by 5% on the top
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0, # + box.height * 0.1,
+                        box.width, box.height * 0.95])
+        plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.2),
+            fancybox=False, shadow=False, ncol=4)
+    elif obj == "ReactionTime":
+        plt.legend(loc='upper center', bbox_to_anchor=(0.85, 0.8),
+            fancybox=False, shadow=False, ncol=1)
+    else:
+        plt.legend()
     plt.grid(linestyle="--")
     plt.savefig(ROOT_CompareWithBaseline_PATH + obj +
                 "/Compare_RunTime_" + obj + ".pdf", format='pdf')
@@ -62,7 +89,7 @@ def draw_RT_results(task_set_number_range):
 
 def draw_DA_results(task_set_number_range):
     method_names = ["InitialMethod", "ImplicitCommunication", "TOM_BF", "TOM_WSkip",
-                    "TOM_Sort", "Martinez18", "TOM_Sort_Offset"]
+                    "TOM_Sort", "Martinez18", "TOM_Sort_Offset", "Bardatsch16"]
     plot_Obj_results(task_set_number_range, method_names, "DataAge")
     plot_Runtime_results(task_set_number_range, method_names, "DataAge")
 

@@ -20,6 +20,7 @@ def ReadOptResultsOneMethod(method_name="TOM_Sort", obj_type="DataAge", task_set
                             method_name_vec=[], root_path=ROOT_PATH):
     res_obj_per_task_number = []
     res_runtime_per_task_number = []
+    excluded_table = []
 
     for task_num in task_set_number_range:
         if exclude_time_out:
@@ -56,5 +57,6 @@ def ReadOptResultsAllMethod(method_name_vec, obj_type="ReactionTime", task_set_n
             method, obj_type, task_set_number_range, exclude_time_out, method_name_vec)
         dataset_pd_obj.insert(0, method, obj_vec)
         dataset_pd_runtime.insert(0, method, runtime_vec)
-        print(method, "has objs :", obj_vec)
+        if verbose_mode:
+            print(method, "has objs :", obj_vec)
     return dataset_pd_obj, dataset_pd_runtime
