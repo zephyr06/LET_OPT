@@ -9,13 +9,17 @@
 
 namespace DAG_SPACE {
 void LPOptimizer::Init() {
+#ifdef PROFILE_CODE
   BeginTimer("Init");
+#endif
   env_ = IloEnv();
   model_ = IloModel(env_);
   cplexSolver_ = IloCplex(env_);
   cplexSolver_.setOut(env_.getNullStream());
   // constraint_array_(env_);
+#ifdef PROFILE_CODE
   EndTimer("Init");
+#endif
 }
 
 void LPOptimizer::ClearCplexMemory() {

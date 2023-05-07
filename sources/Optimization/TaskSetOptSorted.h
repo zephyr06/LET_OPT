@@ -50,23 +50,31 @@ class TaskSetOptSorted : public TaskSetPermutation {
     PermIneqBound_Range perm_ineq_bound_range = GetEdgeIneqRange(
         adjacent_two_task_permutations_[position].GetEdge(),
         variable_range_w_chains, ObjectiveFunction::type_trait);
+#ifdef PROFILE_CODE
     BeginTimer("iterator_constructor");
+#endif
     TwoTaskPermutationsIterator iterator(
         adjacent_two_task_permutations_[position], perm_ineq_bound_range);
+#ifdef PROFILE_CODE
     EndTimer("iterator_constructor");
+#endif
 
     int count = iterator.size();
     std::vector<Edge> unvisited_future_edges =
         GetUnvisitedFutureEdges(position);
     while (!iterator.empty()) {
       if (ifTimeout(start_time_)) break;
+#ifdef PROFILE_CODE
       BeginTimer("RemoveCandidates_related");
+#endif
       iterator.RemoveCandidates(chains_perm, feasible_chains_.chain_man_vec_,
                                 unvisited_future_edges);
       iterator.RemoveCandidates(chains_perm,
                                 feasible_chains_.chain_man_vec_incomplete_,
                                 unvisited_future_edges);
+#ifdef PROFILE_CODE
       EndTimer("RemoveCandidates_related");
+#endif
       if (iterator.empty()) break;
 
       const auto& perm_sing_curr = iterator.pop_front();
