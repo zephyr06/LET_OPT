@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
       .default_value(0.0)
       .help(
           "the ratio of the length of random cause-effect chains over total "
-          "number of tasks. will overwrite chainLength if greater than 0.")
+          "number of tasks. will overwrite chainLength if greater than 0")
       .scan<'f', double>();
   program.add_argument("--SF_ForkNum")
       .default_value(0)
@@ -122,9 +122,7 @@ int main(int argc, char *argv[]) {
       .scan<'i', int>();
   program.add_argument("--fork_sensor_num")
       .default_value(0)
-      .help(
-          "the minimum number of sensor tasks for each fork in SF experiments"
-          "0")
+      .help("the minimum number of sensor tasks for each fork in SF experiments")
       .scan<'i', int>();
 
   try {
@@ -229,9 +227,10 @@ int main(int argc, char *argv[]) {
       << chainLengthRatio << std::endl
       << "SF_ForkNum, the number of forks (--SF_ForkNum): " << SF_ForkNum
       << std::endl
-      << "exclude cases where standard LET return 0: " << excludeSF_StanLET0
-      << std::endl
-      << "fork_sensor_num: " << fork_sensor_num << std::endl
+      << "exclude cases where standard LET return 0 (--excludeSF_StanLET0): "
+      << excludeSF_StanLET0 << std::endl
+      << "the minimum number of sensor tasks for each fork in SF experiments "
+         "(--fork_sensor_num): " << fork_sensor_num << std::endl
       << std::endl;
 
   std::string outDirectory = GlobalVariablesDAGOpt::PROJECT_PATH + outDir;
