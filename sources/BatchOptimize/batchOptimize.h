@@ -56,7 +56,9 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
     case ImplicitCommunication:
       res = PerformImplicitCommuAnalysis<ObjectiveFunctionBase>(dag_tasks);
       break;
-
+    case Bardatsch16:
+      res = PerformBradatsch16LETAnalysis<ObjectiveFunctionBase>(dag_tasks);
+      break;
     default:
       CoutError("Please provide batchTestMethod implementation!");
   }

@@ -1,4 +1,5 @@
 #pragma once
+#include "sources/Baseline/Bradatsch16.h"
 #include "sources/Baseline/ImplicitCommunication/ScheduleSimulation.h"
 #include "sources/Baseline/Martinez18.h"
 #include "sources/Baseline/OptSortedBound.h"
