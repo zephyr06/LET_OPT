@@ -1,6 +1,6 @@
 #include "sources/BatchOptimize/batchOptimize.h"
 #include "sources/Utils/argparse.hpp"
-
+// TODO: consider to run standard LET before optimization
 int main(int argc, char *argv[]) {
   argparse::ArgumentParser program("program name");
   program.add_argument("-v", "--verbose");  // parameter packing
