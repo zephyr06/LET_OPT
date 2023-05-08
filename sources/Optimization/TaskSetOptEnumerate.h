@@ -25,6 +25,7 @@ class TaskSetOptEnumerate : public TaskSetPermutation {
       EvaluateChainsPermutation<ObjectiveFunction>(chains_perm);
       return;
     }
+    if (found_optimal_) return;
 
     TwoTaskPermutationsIterator iterator(
         adjacent_two_task_permutations_[position]);
@@ -51,6 +52,7 @@ class TaskSetOptEnumerate : public TaskSetPermutation {
         best_yet_obj_ = res.second;
         best_yet_chain_ = chains_perm;
         best_yet_variable_od_ = res.first;
+        if (best_yet_obj_ == 0) found_optimal_ = true;
       }
     } else {
       infeasible_iteration_++;

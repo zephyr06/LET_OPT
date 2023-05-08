@@ -53,6 +53,7 @@ class TaskSetPermutation {
   VariableRange variable_range_od_;
   std::string type_trait_;
   int infeasible_iteration_ = 0;
+  bool found_optimal_ = false;
 };
 
 //   bool WhetherContainInfeasibleSubChains(

@@ -25,6 +25,7 @@ class TaskSetOptEnumWSkip : public TaskSetOptEnumerate {
       EvaluateChainsPermutation<ObjectiveFunction>(chains_perm);
       return;
     }
+    if (found_optimal_) return;
 
     VariableRange variable_range_w_chains =
         FindPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm);
