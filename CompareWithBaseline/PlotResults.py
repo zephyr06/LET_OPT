@@ -29,13 +29,18 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
     if obj == "DataAge":
         # Shrink current axis's height by 5% on the top
         box = ax.get_position()
-        ax.set_position([box.x0, box.y0, # + box.height * 0.1,
-                        box.width, box.height * 0.95])
-        plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.2),
-            fancybox=False, shadow=False, ncol=4)
+        ax.set_position([box.x0, box.y0 + box.height * 0.21,
+                        box.width, box.height * 0.9])
+        plt.legend(loc='lower center', bbox_to_anchor=(0.5, -0.39), ncol=3)
     elif obj == "ReactionTime":
-        plt.legend(loc='upper center', bbox_to_anchor=(0.15, 0.8),
-            fancybox=False, shadow=False, ncol=1)
+        # plt.legend(loc='upper center', bbox_to_anchor=(0.15, 0.8),
+        #     fancybox=False, shadow=False, ncol=1)
+        
+        # Shrink current axis's height by 5% on the top
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0 + box.height * 0.15,
+                        box.width, box.height * 0.92])
+        plt.legend(loc='lower center', bbox_to_anchor=(0.5, -0.3), ncol=3)
     else:
         plt.legend()
         
@@ -64,13 +69,18 @@ def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_
     if obj == "DataAge":
         # Shrink current axis's height by 5% on the top
         box = ax.get_position()
-        ax.set_position([box.x0, box.y0, # + box.height * 0.1,
-                        box.width, box.height * 0.95])
-        plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.2),
-            fancybox=False, shadow=False, ncol=4)
+        ax.set_position([box.x0, box.y0 + box.height * 0.21,
+                        box.width, box.height * 0.9])
+        plt.legend(loc='lower center', bbox_to_anchor=(0.5, -0.39), ncol=3)
     elif obj == "ReactionTime":
-        plt.legend(loc='upper center', bbox_to_anchor=(0.85, 0.8),
-            fancybox=False, shadow=False, ncol=1)
+        # plt.legend(loc='upper center', bbox_to_anchor=(0.15, 0.8),
+        #     fancybox=False, shadow=False, ncol=1)
+        
+        # Shrink current axis's height by 5% on the top
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0 + box.height * 0.15,
+                        box.width, box.height * 0.92])
+        plt.legend(loc='lower center', bbox_to_anchor=(0.5, -0.3), ncol=3)
     else:
         plt.legend()
     plt.grid(linestyle="--")
