@@ -53,13 +53,17 @@ SinglePairPermutation::SinglePairPermutation(
 // copy constructor
 SinglePairPermutation::SinglePairPermutation(
     const SinglePairPermutation& other) {
+#ifdef PROFILE_CODE
   BeginTimer("SinglePairPermutation_copy");
+#endif
   inequality_ = other.inequality_;
   job_matches_ = other.job_matches_;
   index_global_ = other.index_global_;
   index_local_ = other.index_local_;
   type_trait_ = other.type_trait_;
+#ifdef PROFILE_CODE
   EndTimer("SinglePairPermutation_copy");
+#endif
 }
 
 void SinglePairPermutation::print() const {

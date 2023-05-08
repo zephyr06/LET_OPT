@@ -9,13 +9,17 @@
 
 namespace DAG_SPACE {
 void LPOptimizer::Init() {
+#ifdef PROFILE_CODE
   BeginTimer("Init");
+#endif
   env_ = IloEnv();
   model_ = IloModel(env_);
   cplexSolver_ = IloCplex(env_);
   cplexSolver_.setOut(env_.getNullStream());
   // constraint_array_(env_);
+#ifdef PROFILE_CODE
   EndTimer("Init");
+#endif
 }
 
 void LPOptimizer::ClearCplexMemory() {
@@ -40,20 +44,29 @@ std::pair<VariableOD, int> LPOptimizer::Optimize(
 
 std::pair<VariableOD, int> LPOptimizer::OptimizeWithoutClear(
     const ChainsPermutation &chains_perm, bool optimize_offset_only) {
+#ifdef PROFILE_CODE
   BeginTimer("Build_LP_Model");
+#endif
   AddVariables();  // must be called first
   if (optimize_offset_only) AddConstantDeadlineConstraint();
   AddSchedulabilityConstraints();
   AddPermutationInequalityConstraints(chains_perm);
   AddObjectiveFunctions(chains_perm);
   cplexSolver_.extract(model_);
+#ifdef PROFILE_CODE
   EndTimer("Build_LP_Model");
-
+#endif
+#ifdef PROFILE_CODE
   BeginTimer("Solve_LP");
+#endif
   bool found_feasible_solution = cplexSolver_.solve();
+#ifdef PROFILE_CODE
   EndTimer("Solve_LP");
+#endif
 
+#ifdef PROFILE_CODE
   BeginTimer("AfterSolve_LP");
+#endif
   IloNumArray values_optimized(env_, numVariables_);
   if (found_feasible_solution) {
     auto status = cplexSolver_.getStatus();
@@ -67,7 +80,9 @@ std::pair<VariableOD, int> LPOptimizer::OptimizeWithoutClear(
     optimal_obj_ = cplexSolver_.getObjValue();
   } else if (GlobalVariablesDAGOpt::debugMode)
     std::cout << "No feasible solution found!\n";
+#ifdef PROFILE_CODE
   EndTimer("AfterSolve_LP");
+#endif
   return std::make_pair(variable_od_opt_, optimal_obj_);
 }
 
@@ -103,8 +118,9 @@ void LPOptimizer::AddArtificialVariables() {
 
 void LPOptimizer::AddPermutationInequalityConstraints(
     const ChainsPermutation &chains_perm, bool allow_partial_edges) {
+#ifdef PROFILE_CODE
   BeginTimer("AddPermutationInequalityConstraints");
-
+#endif
   for (uint i = 0; i < graph_of_all_ca_chains_.edge_vec_ordered_.size(); i++) {
     const Edge &edge_curr = graph_of_all_ca_chains_.edge_vec_ordered_[i];
     if (allow_partial_edges && !chains_perm.exist(edge_curr)) continue;
@@ -161,11 +177,15 @@ void LPOptimizer::AddPermutationInequalityConstraints(
       ineq.print();
     }
   }
+#ifdef PROFILE_CODE
   EndTimer("AddPermutationInequalityConstraints");
+#endif
 }
 
 void LPOptimizer::AddSchedulabilityConstraints() {
+#ifdef PROFILE_CODE
   BeginTimer("AddSchedulabilityConstraints");
+#endif
   for (int task_id = 0; task_id < tasks_info_.N; task_id++) {
     model_.add(varArray_[GetVariableIndexVirtualOffset(task_id)] +
                    rta_[task_id] <=
@@ -181,7 +201,9 @@ void LPOptimizer::AddSchedulabilityConstraints() {
                 << " <= " << dag_tasks_.GetTask(task_id).deadline << "\n";
     }
   }
+#ifdef PROFILE_CODE
   EndTimer("AddSchedulabilityConstraints");
+#endif
 }
 
 void LPOptimizer::AddTwoJobLengthConstraint(const JobCEC &start_job,
@@ -228,7 +250,9 @@ void LPOptimizer::AddObjectiveFunctions(const ChainsPermutation &chains_perm) {
 
 void LPOptimizer::AddRTDAObjectiveFunctions(
     const ChainsPermutation &chains_perm) {
+#ifdef PROFILE_CODE
   BeginTimer("AddObjective");
+#endif
   IloExpr rtda_expression(env_);
   int chain_count = 0;
   for (auto chain : dag_tasks_.chains_) {
@@ -277,7 +301,9 @@ void LPOptimizer::AddRTDAObjectiveFunctions(
   }
   model_.add(IloMinimize(env_, rtda_expression));
   rtda_expression.end();
+#ifdef PROFILE_CODE
   EndTimer("AddObjective");
+#endif
 }
 
 void LPOptimizer::AddTwoJobDiffConstraint(const JobCEC &finish_job1,
@@ -304,7 +330,9 @@ void LPOptimizer::AddTwoJobDiffConstraint(const JobCEC &finish_job1,
 void LPOptimizer::AddSFObjectiveFunctions(
     const ChainsPermutation &chains_perm) {
   if (!(IfSF_Trait(obj_trait_))) return;
+#ifdef PROFILE_CODE
   BeginTimer("AddObjective");
+#endif
   IloExpr sf_expression(env_);
   int fork_count = 0;
   for (const auto &fork_curr : dag_tasks_.sf_forks_) {
@@ -325,7 +353,9 @@ void LPOptimizer::AddSFObjectiveFunctions(
   }
   model_.add(IloMinimize(env_, sf_expression));
   sf_expression.end();
+#ifdef PROFILE_CODE
   EndTimer("AddObjective");
+#endif
 }
 
 VariableOD LPOptimizer::ExtratOptSolution(IloNumArray &values_optimized) {
