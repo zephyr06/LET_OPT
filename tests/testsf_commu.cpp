@@ -42,6 +42,7 @@ class PermutationTest33_n3 : public PermutationTestBase {
   void SetUp() override {
     SetUpBase("test_n3_v33");
     type_trait = "SensorFusion";
+    dag_tasks.chains_ = GetChainsForSF(dag_tasks);
   }
 
  public:
@@ -51,6 +52,7 @@ class PermutationTest30_n3 : public PermutationTestBase {
   void SetUp() override {
     SetUpBase("test_n3_v30");
     type_trait = "SensorFusion";
+    dag_tasks.chains_ = GetChainsForSF(dag_tasks);
   }
 
  public:
@@ -133,6 +135,7 @@ class PermutationTest_n6_v1 : public PermutationTestBase {
   void SetUp() override {
     SetUpBase("test_n6_v1");
     type_trait = "SensorFusion";
+    dag_tasks.chains_ = GetChainsForSF(dag_tasks);
   }
 
  public:
@@ -171,6 +174,7 @@ class PermutationTest_n3_v32 : public PermutationTestBase {
   void SetUp() override {
     SetUpBase("test_n3_v32");
     type_trait = "SensorFusion";
+    dag_tasks.chains_ = GetChainsForSF(dag_tasks);
   }
 
  public:
@@ -194,6 +198,95 @@ TEST_F(PermutationTest_n3_v32, Optimize) {
   auto res = lp_optimizer.Optimize(chains_perm);
   EXPECT_EQ(5, res.second);  // From Pycharm's Gurobi
 }
+
+TEST_F(PermutationTest_n3_v32, SF_Obj_StanLET) {
+  ScheduleResult res;
+  res = PerformStandardLETAnalysis<DAG_SPACE::ObjSensorFusion>(dag_tasks);
+  EXPECT_EQ(10, res.obj_);
+}
+TEST_F(PermutationTest_n3_v32, SF_Obj_Implicit) {
+  ScheduleResult res;
+  res = PerformImplicitCommuAnalysis<DAG_SPACE::ObjSensorFusion>(dag_tasks);
+  EXPECT_EQ(9, res.obj_);
+}
+TEST_F(PermutationTest_n3_v32, SF_Obj_TOM_OPT_BF) {
+  ScheduleResult res;
+  res = PerformTOM_OPT_BF<DAG_SPACE::ObjSensorFusion>(dag_tasks);
+  EXPECT_EQ(5, res.obj_);
+}
+TEST_F(PermutationTest_n3_v32, SF_Obj_TOM_OPT_EnumW_Skip) {
+  ScheduleResult res;
+  res = PerformTOM_OPT_EnumW_Skip<DAG_SPACE::ObjSensorFusion>(dag_tasks);
+  EXPECT_EQ(5, res.obj_);
+}
+
+class PermutationTest_n3_v34 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n3_v34");
+    type_trait = "SensorFusion";
+    dag_tasks.chains_ = GetChainsForSF(dag_tasks);
+  }
+
+ public:
+  std::string type_trait;
+};
+TEST_F(PermutationTest_n3_v34, SF_Obj_StanLET) {
+  ScheduleResult res;
+  res = PerformStandardLETAnalysis<DAG_SPACE::ObjSensorFusion>(dag_tasks);
+  EXPECT_EQ(10, res.obj_);
+}
+TEST_F(PermutationTest_n3_v34, SF_Obj_Implicit) {
+  ScheduleResult res;
+  res = PerformImplicitCommuAnalysis<DAG_SPACE::ObjSensorFusion>(dag_tasks);
+  EXPECT_EQ(1, res.obj_);
+}
+TEST_F(PermutationTest_n3_v34, SF_Obj_TOM_OPT_BF) {
+  ScheduleResult res;
+  res = PerformTOM_OPT_BF<DAG_SPACE::ObjSensorFusion>(dag_tasks);
+  EXPECT_EQ(5, res.obj_);
+}
+TEST_F(PermutationTest_n3_v34, SF_Obj_TOM_OPT_EnumW_Skip) {
+  ScheduleResult res;
+  res = PerformTOM_OPT_EnumW_Skip<DAG_SPACE::ObjSensorFusion>(dag_tasks);
+  EXPECT_EQ(5, res.obj_);
+}
+
+
+class PermutationTest_n4_v2 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n4_v2");
+    type_trait = "SensorFusion";
+    dag_tasks.chains_ = GetChainsForSF(dag_tasks);
+  }
+
+ public:
+  std::string type_trait;
+};
+TEST_F(PermutationTest_n4_v2, SF_Obj_StanLET) {
+  ScheduleResult res;
+  res = PerformStandardLETAnalysis<DAG_SPACE::ObjSensorFusion>(dag_tasks);
+  EXPECT_EQ(20, res.obj_);
+}
+TEST_F(PermutationTest_n4_v2, SF_Obj_Implicit) {
+  ScheduleResult res;
+  res = PerformImplicitCommuAnalysis<DAG_SPACE::ObjSensorFusion>(dag_tasks);
+  EXPECT_EQ(14, res.obj_);
+}
+TEST_F(PermutationTest_n4_v2, SF_Obj_TOM_OPT_BF) {
+  ScheduleResult res;
+  res = PerformTOM_OPT_BF<DAG_SPACE::ObjSensorFusion>(dag_tasks);
+  // TODO: check if 11 is correct and smallest
+  std::cout<<"SF_Obj_TOM_OPT_BF on n4_v2: " <<res.obj_<<std::endl;
+  EXPECT_EQ(11, res.obj_);
+}
+TEST_F(PermutationTest_n4_v2, SF_Obj_TOM_OPT_EnumW_Skip) {
+  ScheduleResult res;
+  res = PerformTOM_OPT_EnumW_Skip<DAG_SPACE::ObjSensorFusion>(dag_tasks);
+  // TODO: check if 11 is correct and smallest
+  std::cout<<"SF_Obj_TOM_OPT_EnumW_Skip on n4_v2: " <<res.obj_<<std::endl;
+  EXPECT_EQ(11, res.obj_);
+}
+
 int main(int argc, char **argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);

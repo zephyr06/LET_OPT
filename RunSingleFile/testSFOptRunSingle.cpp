@@ -12,6 +12,8 @@ int main(int argc, char** argv) {
       GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/" +
           GlobalVariablesDAGOpt::testDataSetName + ".csv",
       GlobalVariablesDAGOpt::priorityMode, GlobalVariablesDAGOpt::CHAIN_NUMBER);
+
+  dag_tasks.chains_ = GetChainsForSF(dag_tasks);
   const TaskSet& tasks = dag_tasks.GetTaskSet();
   TaskSetInfoDerived tasks_info(tasks);
 
