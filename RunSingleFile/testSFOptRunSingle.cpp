@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
   std::cout << "Schedulable? " << CheckSchedulability(dag_tasks) << "\n";
 
   TaskSetOptEnumWSkip task_sets_perms =
-      TaskSetOptEnumWSkip(dag_tasks, {dag_tasks.chains_}, "DataAge");
+      TaskSetOptEnumWSkip(dag_tasks, GetChainsForSF(dag_tasks), "DataAge");
   int obj_find =
       task_sets_perms.PerformOptimizationSkipInfeasible<ObjSensorFusion>();
 
