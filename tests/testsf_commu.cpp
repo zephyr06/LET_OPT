@@ -231,6 +231,12 @@ class PermutationTest_n3_v34 : public PermutationTestBase {
   std::string type_trait;
 };
 
+TEST_F(PermutationTest_n3_v34, GetSF_JobFork) {
+  Schedule schedule = SimulateFixedPrioritySched(dag_tasks, tasks_info);
+  SF_JobFork fork = GetSF_JobFork(JobCEC(2, 0), {0, 1}, tasks_info, schedule);
+  EXPECT_EQ(JobCEC(0, 0), fork.source_jobs[0]);
+  EXPECT_EQ(JobCEC(1, 1), fork.source_jobs[1]);
+}
 class PermutationTest_n3_v35 : public PermutationTestBase {
   void SetUp() override {
     SetUpBase("test_n3_v35");

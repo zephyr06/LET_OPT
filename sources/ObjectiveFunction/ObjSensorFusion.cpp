@@ -44,7 +44,27 @@ int GetSF_Diff(const SF_JobFork &job_forks, const VariableOD &variable_od,
   }
   return finish_max - finish_min;
 }
-
+// TODO: imprvoe efficiency there
+JobCEC GetLastReadJob(JobCEC sink_job, int source_task_id,
+                      const TaskSetInfoDerived &tasks_info,
+                      const Schedule &schedule) {
+  int start_sink = GetStartTime(sink_job, schedule, tasks_info);
+  int min_source_id =
+      -1 * tasks_info.hyper_period / tasks_info.GetTask(source_task_id).period;
+  int max_source =
+      tasks_info.hyper_period / tasks_info.GetTask(source_task_id).period;
+  for (int job_id = min_source_id; job_id <= max_source; job_id++) {
+    JobCEC job_curr(source_task_id, job_id);
+    int finish_curr = GetFinishTime(job_curr, schedule, tasks_info);
+    int finish_next =
+        GetFinishTime(JobCEC(source_task_id, job_id + 1), schedule, tasks_info);
+    if (finish_curr <= start_sink && finish_next > start_sink) {
+      return job_curr;
+    }
+  }
+  CoutError("Didn't find source job");
+  return JobCEC(0, 0);
+}
 SF_JobFork GetSF_JobFork(JobCEC sink_job, const std::vector<int> &source_tasks,
                          const TaskSetInfoDerived &tasks_info,
                          const ChainsPermutation &chains_perm) {
@@ -54,6 +74,19 @@ SF_JobFork GetSF_JobFork(JobCEC sink_job, const std::vector<int> &source_tasks,
     Edge edge_curr(source_id, sink_job.taskId);
     JobCEC last_read_job =
         GetLastReadJob(sink_job, *chains_perm[edge_curr], tasks_info);
+    job_forks.source_jobs.push_back(last_read_job);
+  }
+  return job_forks;
+}
+
+SF_JobFork GetSF_JobFork(JobCEC sink_job, const std::vector<int> &source_tasks,
+                         const TaskSetInfoDerived &tasks_info,
+                         const Schedule &schedule) {
+  SF_JobFork job_forks;
+  job_forks.sink_job = sink_job;
+  for (int source_id : source_tasks) {
+    JobCEC last_read_job =
+        GetLastReadJob(sink_job, source_id, tasks_info, schedule);
     job_forks.source_jobs.push_back(last_read_job);
   }
   return job_forks;
@@ -83,7 +116,7 @@ double ObjSensorFusion::Obj(const DAG_Model &dag_tasks,
 
 double ObjSensorFusion::Obj(const DAG_Model &dag_tasks,
                             const TaskSetInfoDerived &tasks_info,
-                            const ChainsPermutation &chains_perm,
+                            const ChainsPermutation & /*unusedArg*/,
                             const Schedule &schedule,
                             const std::vector<std::vector<int>> /*unusedArg*/) {
   int diff_all_forks = 0;
@@ -94,7 +127,7 @@ double ObjSensorFusion::Obj(const DAG_Model &dag_tasks,
          job_id++) {
       SF_JobFork job_forks =
           GetSF_JobFork(JobCEC(fork_curr.sink, job_id), fork_curr.source,
-                        tasks_info, chains_perm);
+                        tasks_info, schedule);
       for_curr_max_diff = std::max(for_curr_max_diff,
                                    GetSF_Diff(job_forks, schedule, tasks_info));
     }

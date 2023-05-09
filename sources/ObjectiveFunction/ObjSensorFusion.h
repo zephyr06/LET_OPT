@@ -3,8 +3,7 @@
 
 namespace DAG_SPACE {
 
-std::vector<std::vector<int>> GetChainsForSF(
-    const DAG_Model &dag_tasks);
+std::vector<std::vector<int>> GetChainsForSF(const DAG_Model &dag_tasks);
 
 struct SF_JobFork {
   SF_JobFork() {}
@@ -23,6 +22,10 @@ int GetSF_Diff(const SF_JobFork &job_forks, const VariableOD &variable_od,
 SF_JobFork GetSF_JobFork(JobCEC sink_job, const std::vector<int> &source_tasks,
                          const TaskSetInfoDerived &tasks_info,
                          const ChainsPermutation &chains_perm);
+                         
+SF_JobFork GetSF_JobFork(JobCEC sink_job, const std::vector<int> &source_tasks,
+                         const TaskSetInfoDerived &tasks_info,
+                         const Schedule &schedule);
 class ObjSensorFusion {
  public:
   static const std::string type_trait;
@@ -33,7 +36,7 @@ class ObjSensorFusion {
                     const std::vector<std::vector<int>> /*unusedArg*/);
   static double Obj(const DAG_Model &dag_tasks,
                     const TaskSetInfoDerived &tasks_info,
-                    const ChainsPermutation &chains_perm,
+                    const ChainsPermutation & /*unusedArg*/,
                     const Schedule &schedule,
                     const std::vector<std::vector<int>> /*unusedArg*/);
 
