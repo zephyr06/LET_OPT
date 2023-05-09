@@ -47,7 +47,7 @@ class ObjReactionTime {
   }
   static double Obj(const DAG_Model &dag_tasks,
                     const TaskSetInfoDerived &tasks_info,
-                    const ChainsPermutation &chains_perm,
+                    const ChainsPermutation & /* not used*/,
                     const Schedule &schedule,
                     const std::vector<std::vector<int>> &chains_to_analyze) {
     return ObjReactionTimeFromSChedule(dag_tasks, tasks_info, chains_to_analyze,
