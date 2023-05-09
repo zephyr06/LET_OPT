@@ -35,6 +35,8 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
         plt.legend(loc='lower center', bbox_to_anchor=(0.5, -0.39), ncol=3)
     elif obj == "ReactionTime":
         plt.legend(loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
+    elif obj == "SensorFusion":
+        plt.legend(loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
     else:
         plt.legend()
         
@@ -67,6 +69,8 @@ def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_
     if obj == "DataAge":
         plt.legend(loc='lower center', bbox_to_anchor=(0.5, -0.39), ncol=3)
     elif obj == "ReactionTime":
+        plt.legend(loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
+    elif obj == "SensorFusion":
         plt.legend(loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
     else:
         plt.legend()
