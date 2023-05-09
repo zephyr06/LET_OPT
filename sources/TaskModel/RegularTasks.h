@@ -246,6 +246,8 @@ class TaskSetInfoDerived {
   inline const Task &GetTask(uint task_id) const {
     return tasks[task_id2position_.at(task_id)];
   }
+  inline const TaskSet &GetTaskSet() const { return tasks; }
+
   void RecordTaskPosition() {
     for (int i = 0; i < static_cast<int>(tasks.size()); i++) {
       task_id2position_[tasks[i].id] = i;
