@@ -230,6 +230,21 @@ class PermutationTest_n3_v34 : public PermutationTestBase {
  public:
   std::string type_trait;
 };
+
+class PermutationTest_n3_v35 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n3_v35");
+    dag_tasks.chains_ = {{0, 1, 2}};
+  }
+
+ public:
+  std::string type_trait;
+};
+TEST_F(PermutationTest_n3_v35, DataAgeObj) {
+  ScheduleResult res;
+  res = PerformImplicitCommuAnalysis<DAG_SPACE::ObjDataAge>(dag_tasks);
+  EXPECT_EQ(36, res.obj_);
+}
 TEST_F(PermutationTest_n3_v34, SF_Obj_StanLET) {
   ScheduleResult res;
   res = PerformStandardLETAnalysis<DAG_SPACE::ObjSensorFusion>(dag_tasks);
@@ -250,7 +265,6 @@ TEST_F(PermutationTest_n3_v34, SF_Obj_TOM_OPT_EnumW_Skip) {
   res = PerformTOM_OPT_EnumW_Skip<DAG_SPACE::ObjSensorFusion>(dag_tasks);
   EXPECT_EQ(5, res.obj_);
 }
-
 
 class PermutationTest_n4_v2 : public PermutationTestBase {
   void SetUp() override {
@@ -276,14 +290,14 @@ TEST_F(PermutationTest_n4_v2, SF_Obj_TOM_OPT_BF) {
   ScheduleResult res;
   res = PerformTOM_OPT_BF<DAG_SPACE::ObjSensorFusion>(dag_tasks);
   // TODO: check if 11 is correct and smallest
-  std::cout<<"SF_Obj_TOM_OPT_BF on n4_v2: " <<res.obj_<<std::endl;
+  std::cout << "SF_Obj_TOM_OPT_BF on n4_v2: " << res.obj_ << std::endl;
   EXPECT_EQ(11, res.obj_);
 }
 TEST_F(PermutationTest_n4_v2, SF_Obj_TOM_OPT_EnumW_Skip) {
   ScheduleResult res;
   res = PerformTOM_OPT_EnumW_Skip<DAG_SPACE::ObjSensorFusion>(dag_tasks);
   // TODO: check if 11 is correct and smallest
-  std::cout<<"SF_Obj_TOM_OPT_EnumW_Skip on n4_v2: " <<res.obj_<<std::endl;
+  std::cout << "SF_Obj_TOM_OPT_EnumW_Skip on n4_v2: " << res.obj_ << std::endl;
   EXPECT_EQ(11, res.obj_);
 }
 
