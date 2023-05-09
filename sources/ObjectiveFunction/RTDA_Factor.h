@@ -34,14 +34,17 @@ std::vector<RTDA> GetMaxRTDAs(const std::vector<std::vector<RTDA>> &rtdaVec);
 
 std::vector<std::vector<RTDA>> GetRTDAFromAllChains(
     const DAG_Model &dagTasks, const TaskSetInfoDerived &tasksInfo,
+    const std::vector<std::vector<int>> &chains_to_analyze,
     const Schedule &shcedule_jobs);
 
-double ObjDataAgeFromSChedule(const DAG_Model &dagTasks,
-                              const TaskSetInfoDerived &tasksInfo,
-                              const Schedule &shcedule_jobs);
+double ObjDataAgeFromSChedule(
+    const DAG_Model &dagTasks, const TaskSetInfoDerived &tasksInfo,
+    const std::vector<std::vector<int>> &chains_to_analyze,
+    const Schedule &shcedule_jobs);
 
-double ObjReactionTimeFromSChedule(const DAG_Model &dagTasks,
-                                   const TaskSetInfoDerived &tasksInfo,
-                                   const Schedule &shcedule_jobs);
+double ObjReactionTimeFromSChedule(
+    const DAG_Model &dagTasks, const TaskSetInfoDerived &tasksInfo,
+    const std::vector<std::vector<int>> &chains_to_analyze,
+    const Schedule &shcedule_jobs);
 
 }  // namespace DAG_SPACE

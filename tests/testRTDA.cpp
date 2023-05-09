@@ -24,13 +24,15 @@ class PermutationTest_n3_v35 : public PermutationTestBase {
 TEST_F(PermutationTest_n3_v35, SF_Obj_Implicit_DA) {
   Schedule schedule = SimulateFixedPrioritySched(dag_tasks, tasks_info);
 
-  EXPECT_EQ(36, ObjDataAgeFromSChedule(dag_tasks, tasks_info, schedule));
+  EXPECT_EQ(36, ObjDataAgeFromSChedule(dag_tasks, tasks_info, dag_tasks.chains_,
+                                       schedule));
 }
 
 TEST_F(PermutationTest_n3_v35, SF_Obj_Implicit_RT) {
   Schedule schedule = SimulateFixedPrioritySched(dag_tasks, tasks_info);
 
-  EXPECT_EQ(56, ObjReactionTimeFromSChedule(dag_tasks, tasks_info, schedule));
+  EXPECT_EQ(56, ObjReactionTimeFromSChedule(dag_tasks, tasks_info,
+                                            dag_tasks.chains_, schedule));
 }
 
 // TEST_F(PermutationTest_n3_v35, SF_Obj_Implicit) {

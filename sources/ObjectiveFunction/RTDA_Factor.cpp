@@ -97,21 +97,23 @@ std::vector<RTDA> GetMaxRTDAs(const std::vector<std::vector<RTDA>> &rtdaVec) {
 }
 std::vector<std::vector<RTDA>> GetRTDAFromAllChains(
     const DAG_Model &dagTasks, const TaskSetInfoDerived &tasksInfo,
+    const std::vector<std::vector<int>> &chains_to_analyze,
     const Schedule &shcedule_jobs) {
   std::vector<std::vector<RTDA>> rtdaVec;
-  for (uint i = 0; i < dagTasks.chains_.size(); i++) {
+  for (uint i = 0; i < chains_to_analyze.size(); i++) {
     auto rtdaVecTemp =
-        GetRTDAFromSingleJob(tasksInfo, dagTasks.chains_[i], shcedule_jobs);
+        GetRTDAFromSingleJob(tasksInfo, chains_to_analyze[i], shcedule_jobs);
     rtdaVec.push_back(rtdaVecTemp);
   }
   return rtdaVec;
 }
 
-double ObjDataAgeFromSChedule(const DAG_Model &dagTasks,
-                              const TaskSetInfoDerived &tasksInfo,
-                              const Schedule &shcedule_jobs) {
-  std::vector<std::vector<RTDA>> rtdaVec =
-      GetRTDAFromAllChains(dagTasks, tasksInfo, shcedule_jobs);
+double ObjDataAgeFromSChedule(
+    const DAG_Model &dagTasks, const TaskSetInfoDerived &tasksInfo,
+    const std::vector<std::vector<int>> &chains_to_analyze,
+    const Schedule &shcedule_jobs) {
+  std::vector<std::vector<RTDA>> rtdaVec = GetRTDAFromAllChains(
+      dagTasks, tasksInfo, chains_to_analyze, shcedule_jobs);
   std::vector<RTDA> maxRtda = GetMaxRTDAs(rtdaVec);
 
   double res = 0;
@@ -120,11 +122,12 @@ double ObjDataAgeFromSChedule(const DAG_Model &dagTasks,
   }
   return res;
 }
-double ObjReactionTimeFromSChedule(const DAG_Model &dagTasks,
-                                   const TaskSetInfoDerived &tasksInfo,
-                                   const Schedule &shcedule_jobs) {
-  std::vector<std::vector<RTDA>> rtdaVec =
-      GetRTDAFromAllChains(dagTasks, tasksInfo, shcedule_jobs);
+double ObjReactionTimeFromSChedule(
+    const DAG_Model &dagTasks, const TaskSetInfoDerived &tasksInfo,
+    const std::vector<std::vector<int>> &chains_to_analyze,
+    const Schedule &shcedule_jobs) {
+  std::vector<std::vector<RTDA>> rtdaVec = GetRTDAFromAllChains(
+      dagTasks, tasksInfo, chains_to_analyze, shcedule_jobs);
   std::vector<RTDA> maxRtda = GetMaxRTDAs(rtdaVec);
 
   double res = 0;

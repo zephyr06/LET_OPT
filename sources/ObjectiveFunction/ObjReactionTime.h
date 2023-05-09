@@ -1,6 +1,6 @@
 #pragma once
 #include "sources/ObjectiveFunction/ObjectiveFunctionBase.h"
-
+#include "sources/ObjectiveFunction/RTDA_Factor.h"
 namespace DAG_SPACE {
 
 // task_index_in_chain: the index of a task in a cause-effect chain
@@ -48,11 +48,10 @@ class ObjReactionTime {
   static double Obj(const DAG_Model &dag_tasks,
                     const TaskSetInfoDerived &tasks_info,
                     const ChainsPermutation &chains_perm,
-                     const Schedule &schedule,
+                    const Schedule &schedule,
                     const std::vector<std::vector<int>> &chains_to_analyze) {
-    ObjReactionTimeIntermediate obj;
-    return obj.Obj(dag_tasks, tasks_info, chains_perm, schedule,
-                   chains_to_analyze);
+    return ObjReactionTimeFromSChedule(dag_tasks, tasks_info, chains_to_analyze,
+                                       schedule);
   }
   static std::vector<double> ObjPerChain(
       const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
