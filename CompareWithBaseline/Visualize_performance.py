@@ -29,5 +29,5 @@ if __name__ == "__main__":
 
     # draw_RT_results(task_set_number_range)
     # draw_DA_results(task_set_number_range)
-    draw_SF_results(task_set_number_range, exclude_time_out=True)
-    # draw_SF_results(task_set_number_range, exclude_time_out=False)
+    # draw_SF_results(task_set_number_range, exclude_time_out=True)
+    draw_SF_results(task_set_number_range, exclude_time_out=False)

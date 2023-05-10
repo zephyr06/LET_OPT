@@ -8,7 +8,7 @@ baseline_method_labels = {"InitialMethod": "StanLET",
                           "TOM_Sort": "eLET_Sort",
                           "Martinez18": "Martinez18",
                           "TOM_Sort_Offset": "eLET_Sort_Offset",
-                          "Bardatsch16": "Bardatsch16"}
+                          "Bardatsch16": "Bradatsch16"}
 
 marker_list = ["o", "*", "D", "^", "s", "D", "P", "X"]
 markersize_list = [8, 12, 10, 12, 8, 8, 8, 4]
