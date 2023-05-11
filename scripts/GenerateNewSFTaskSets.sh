@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 
 # ************** Adjust settings there **************
-N=(5 10 20 30 40)
-numPerThread=(200 200 200 200 200)
+N=(5 10 15 20 25 30 35 40 45 50)
+numPerThread=(200 200 200 200 200 200 200 200 200 200)
 # N=(4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50)
 # numPerThread=(200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200)
 # ROOT_PATH="/home/zephyr/Programming/LET_OPT"
@@ -13,7 +13,7 @@ outDir="generatedNewTaskset"
 parallelismFactor=0.4
 chainLengthRatio=0
 numCauseEffectChain=1
-SF_ForkNum=3
+SF_ForkNum=1
 excludeSF_StanLET0=1
 fork_sensor_num=2
 # ***************************************************
