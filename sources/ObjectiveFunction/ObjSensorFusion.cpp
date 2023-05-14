@@ -136,4 +136,62 @@ double ObjSensorFusion::Obj(const DAG_Model &dag_tasks,
   return diff_all_forks;
 }
 
+bool ForkIntersect(const SF_Fork &fork1, const SF_Fork &fork2) {
+  std::unordered_set<int> id_record1;
+  id_record1.reserve(fork1.source.size() + 1);
+  id_record1.insert(fork1.sink);
+  for (int id : fork1.source) id_record1.insert(id);
+  if (id_record1.find(fork2.sink) != id_record1.end()) return true;
+  for (int id : fork2.source)
+    if (id_record1.find(id) != id_record1.end()) return true;
+  return false;
+}
+bool ForkIntersect(const std::vector<SF_Fork> &forks1,
+                   const std::vector<SF_Fork> &forks2) {
+  for (const auto &fork1 : forks1) {
+    for (const auto &fork2 : forks2) {
+      if (ForkIntersect(fork1, fork2)) return true;
+    }
+  }
+  return false;
+}
+void Merge_j2i(std::vector<std::vector<SF_Fork>> &decoupled_sf_forks, uint i,
+               uint j) {
+  std::vector<SF_Fork> forks_j = decoupled_sf_forks[j];
+  decoupled_sf_forks.erase(decoupled_sf_forks.begin() + j);
+  if (i > j) i--;
+  for (const auto &fork : forks_j) decoupled_sf_forks[i].push_back(fork);
+}
+std::vector<std::vector<SF_Fork>> ExtractDecoupledForks(
+    const std::vector<SF_Fork> &sf_forks_all) {
+  std::vector<std::vector<SF_Fork>> decoupled_sf_forks;
+  for (uint i = 0; i < sf_forks_all.size(); i++)
+    decoupled_sf_forks.push_back({sf_forks_all[i]});
+
+  for (uint i = 0; i < decoupled_sf_forks.size(); i++) {
+    for (uint j = 0; j < decoupled_sf_forks.size(); j++) {
+      if (i == j) continue;
+      if (ForkIntersect(decoupled_sf_forks[i], decoupled_sf_forks[j])) {
+        Merge_j2i(decoupled_sf_forks, i, j);
+        j--;
+      }
+    }
+  }
+  return decoupled_sf_forks;
+}
+
+std::vector<DAG_Model> ExtractIndividualForks(const DAG_Model &dag_tasks) {
+  if (dag_tasks.sf_forks_.size() <= 1) return {dag_tasks};
+  std::vector<std::vector<SF_Fork>> decoupled_sf_forks =
+      ExtractDecoupledForks(dag_tasks.sf_forks_);
+  std::vector<DAG_Model> dag_tasks_decoupled_forks;
+  dag_tasks_decoupled_forks.reserve(decoupled_sf_forks.size());
+  for (uint i = 0; i < decoupled_sf_forks.size(); i++) {
+    DAG_Model dags = dag_tasks;
+    dags.sf_forks_ = decoupled_sf_forks[i];
+    dag_tasks_decoupled_forks.push_back(dags);
+  }
+  return dag_tasks_decoupled_forks;
+}
+
 }  // namespace DAG_SPACE

@@ -22,7 +22,7 @@ int GetSF_Diff(const SF_JobFork &job_forks, const VariableOD &variable_od,
 SF_JobFork GetSF_JobFork(JobCEC sink_job, const std::vector<int> &source_tasks,
                          const TaskSetInfoDerived &tasks_info,
                          const ChainsPermutation &chains_perm);
-                         
+
 SF_JobFork GetSF_JobFork(JobCEC sink_job, const std::vector<int> &source_tasks,
                          const TaskSetInfoDerived &tasks_info,
                          const Schedule &schedule);
@@ -48,5 +48,17 @@ class ObjSensorFusion {
     return {};
   }
 };
+
+// *********************** Get Individual SF Forks
+bool ForkIntersect(const SF_Fork &fork1, const SF_Fork &fork2);
+bool ForkIntersect(const std::vector<SF_Fork> &forks1,
+                   const std::vector<SF_Fork> &forks2);
+void Merge_j2i(std::vector<std::vector<SF_Fork>> &decoupled_sf_forks, uint i,
+               uint j);
+std::vector<std::vector<SF_Fork>> ExtractDecoupledForks(
+    const std::vector<SF_Fork> &sf_forks_all);
+
+std::vector<DAG_Model> ExtractIndividualForks(const DAG_Model &dag_tasks);
+// Get Individual SF Forks ***********************
 
 }  // namespace DAG_SPACE
