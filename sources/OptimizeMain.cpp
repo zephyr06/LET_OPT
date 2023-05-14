@@ -1,8 +1,8 @@
 #include "sources/OptimizeMain.h"
 
 namespace DAG_SPACE {
- void PrintResultAnalysis(const TaskSetPermutation& task_sets_perms,
-                                const ScheduleResult& res) {
+void PrintResultAnalysis(const TaskSetPermutation& task_sets_perms,
+                         const ScheduleResult& res) {
   std::cout << "The total number of permutation iterations is: "
             << task_sets_perms.iteration_count_ << "\n";
   if (GlobalVariablesDAGOpt::debugMode == 1) {
@@ -29,7 +29,6 @@ ScheduleResult PerformOPT_Martinez18_DA(const DAG_Model& dag_tasks) {
   return res;
 }
 
-
 ScheduleResult PerformTOM_OPTOffset_Sort(const DAG_Model& dag_tasks) {
   auto start = std::chrono::high_resolution_clock::now();
   ScheduleResult res;
@@ -46,4 +45,32 @@ ScheduleResult PerformTOM_OPTOffset_Sort(const DAG_Model& dag_tasks) {
   return res;
 }
 
+ScheduleResult PerformTOM_OPT_BF_SF(const DAG_Model& dag_tasks) {
+  auto dags = ExtractDAGsWithIndependentForks(dag_tasks);
+  ScheduleResult res;
+  res.obj_ = 0;
+  for (const auto& dag : dags) {
+    TaskSetOptEnumerate task_sets_perms =
+        TaskSetOptEnumerate(dag, GetChainsForSF(dag), "SensorFusion");
+    res.obj_ += task_sets_perms.PerformOptimizationBF<ObjSensorFusion>();
+    res.schedulable_ =
+        res.schedulable_ && task_sets_perms.ExamSchedulabilityOptSol();
+  }
+  return res;
+}
+
+ScheduleResult PerformTOM_OPT_EnumW_Skip_SF(const DAG_Model& dag_tasks) {
+  auto dags = ExtractDAGsWithIndependentForks(dag_tasks);
+  ScheduleResult res;
+  res.obj_ = 0;
+  for (const auto& dag : dags) {
+    TaskSetOptEnumWSkip task_sets_perms =
+        TaskSetOptEnumWSkip(dag, GetChainsForSF(dag), "SensorFusion");
+    res.obj_ +=
+        task_sets_perms.PerformOptimizationSkipInfeasible<ObjSensorFusion>();
+    res.schedulable_ =
+        res.schedulable_ && task_sets_perms.ExamSchedulabilityOptSol();
+  }
+  return res;
+}
 }  // namespace DAG_SPACE

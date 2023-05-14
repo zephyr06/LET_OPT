@@ -40,39 +40,32 @@ ScheduleResult PerformImplicitCommuAnalysis(const DAG_Model& dag_tasks) {
   return res;
 }
 
+ScheduleResult PerformTOM_OPT_BF_SF(const DAG_Model& dag_tasks);
+
 template <typename ObjectiveFunction>
 ScheduleResult PerformTOM_OPT_BF(const DAG_Model& dag_tasks) {
   auto start = std::chrono::high_resolution_clock::now();
   ScheduleResult res;
-  TaskSetOptEnumerate task_sets_perms(dag_tasks, dag_tasks.chains_,
-                                      ObjectiveFunction::type_trait);
-  res.obj_ = task_sets_perms.PerformOptimizationBF<ObjectiveFunction>();
-  res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
+
+  if (IfSF_Trait(ObjectiveFunction::type_trait))
+    res = PerformTOM_OPT_BF_SF(dag_tasks);
+  else {
+    TaskSetOptEnumerate task_sets_perms(dag_tasks, dag_tasks.chains_,
+                                        ObjectiveFunction::type_trait);
+    res.obj_ = task_sets_perms.PerformOptimizationBF<ObjectiveFunction>();
+    res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
+  }
   if (res.obj_ >= 1e8) {
     res.obj_ = PerformStandardLETAnalysis<ObjectiveFunction>(dag_tasks).obj_;
   }
   auto stop = std::chrono::high_resolution_clock::now();
   res.timeTaken_ = GetTimeTaken(start, stop);
 
-  PrintResultAnalysis(task_sets_perms, res);
+  // PrintResultAnalysis(task_sets_perms, res);
   return res;
 }
 
-// TODO: move the inline
-inline ScheduleResult PerformTOM_OPT_EnumW_Skip_SF(const DAG_Model& dag_tasks) {
-  auto dags = ExtractDAGsWithIndependentForks(dag_tasks);
-  ScheduleResult res;
-  res.obj_ = 0;
-  for (const auto& dag : dags) {
-    TaskSetOptEnumWSkip task_sets_perms =
-        TaskSetOptEnumWSkip(dag, GetChainsForSF(dag), "SensorFusion");
-    res.obj_ +=
-        task_sets_perms.PerformOptimizationSkipInfeasible<ObjSensorFusion>();
-    res.schedulable_ =
-        res.schedulable_ && task_sets_perms.ExamSchedulabilityOptSol();
-  }
-  return res;
-}
+ScheduleResult PerformTOM_OPT_EnumW_Skip_SF(const DAG_Model& dag_tasks);
 
 template <typename ObjectiveFunction>
 ScheduleResult PerformTOM_OPT_EnumW_Skip(const DAG_Model& dag_tasks) {
