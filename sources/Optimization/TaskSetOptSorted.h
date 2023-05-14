@@ -15,8 +15,8 @@ class TaskSetOptSorted : public TaskSetPermutation {
   // ONLY for TaskSetOptSorted_Offset's constructor;
   // the only difference between this constructor and the base is that this
   // one doesn't call FindPairPermutations()
-  TaskSetOptSorted(const DAG_Model& dag_tasks, const std::vector<int>& chains)
-      : TaskSetPermutation(dag_tasks, {chains}) {
+  TaskSetOptSorted(const DAG_Model& dag_tasks, const std::vector<std::vector<int>>& chains)
+      : TaskSetPermutation(dag_tasks, chains) {
     feasible_chains_ =
         FeasiblieChainsManagerVec(adjacent_two_task_permutations_.size());
     type_trait_ = "DataAge";

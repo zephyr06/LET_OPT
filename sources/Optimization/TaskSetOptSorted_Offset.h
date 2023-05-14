@@ -33,8 +33,9 @@ class TwoTaskPermutations_OnlyOffset : public TwoTaskPermutations {
 class TaskSetOptSorted_Offset : public TaskSetOptSorted {
  public:
   TaskSetOptSorted_Offset(const DAG_Model& dag_tasks,
-                          const std::vector<int>& chain)
-      : TaskSetOptSorted(dag_tasks, chain) {
+                          const std::vector<std::vector<int>>& chains)
+      // : TaskSetOptSorted(dag_tasks, {chain}, "DataAge") {
+      : TaskSetOptSorted(dag_tasks, chains) {
     optimize_offset_only_ = true;
     FindPairPermutations();
   }

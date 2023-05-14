@@ -19,7 +19,7 @@ class PermutationTest18_n3 : public PermutationTestBase {
 };
 
 TEST_F(PermutationTest18_n3, TaskSetOptSorted_Offset) {
-  TaskSetOptSorted_Offset task_set_perms_off(dag_tasks, dag_tasks.chains_[0]);
+  TaskSetOptSorted_Offset task_set_perms_off(dag_tasks, {dag_tasks.chains_[0]});
   EXPECT_EQ(2, task_set_perms_off.adjacent_two_task_permutations_[0].size());
   TwoTaskPermutations perm01 =
       task_set_perms_off.adjacent_two_task_permutations_[0];
@@ -42,7 +42,7 @@ TEST_F(PermutationTest18_n3, optimize) {
   Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
   int obj_mart = mart_task_perms.PerformOptimization();
 
-  TaskSetOptSorted_Offset task_sets_perms(dag_tasks, dag_tasks.chains_[0]);
+  TaskSetOptSorted_Offset task_sets_perms(dag_tasks, {dag_tasks.chains_[0]});
   int obj = task_sets_perms.PerformOptimizationSort<ObjDataAge>();
   task_sets_perms.best_yet_chain_[Edge(0, 1)]->print();
   task_sets_perms.best_yet_chain_[Edge(1, 2)]->print();
@@ -66,7 +66,7 @@ class PermutationTest4_n3 : public PermutationTestBase {
 };
 
 TEST_F(PermutationTest4_n3, TaskSetOptSorted_Offset) {
-  TaskSetOptSorted_Offset task_set_perms_off(dag_tasks, dag_tasks.chains_[0]);
+  TaskSetOptSorted_Offset task_set_perms_off(dag_tasks, {dag_tasks.chains_[0]});
   EXPECT_EQ(2, task_set_perms_off.adjacent_two_task_permutations_[0].size());
   TwoTaskPermutations perm01 =
       task_set_perms_off.adjacent_two_task_permutations_[0];
