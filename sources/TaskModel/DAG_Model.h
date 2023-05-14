@@ -119,6 +119,7 @@ class DAG_Model {
   std::vector<SF_Fork> sf_forks_;
 };
 
+// the number of cause-effect chains read into the DAG will be chainNum
 DAG_Model ReadDAG_Tasks(std::string path, std::string priorityType = "orig",
                         int chainNum = 1);
 
