@@ -55,6 +55,7 @@ ScheduleResult PerformTOM_OPT_BF_SF(const DAG_Model& dag_tasks) {
     res.obj_ += task_sets_perms.PerformOptimizationBF<ObjSensorFusion>();
     res.schedulable_ =
         res.schedulable_ && task_sets_perms.ExamSchedulabilityOptSol();
+    std::cout << "\n";
   }
   return res;
 }
@@ -70,6 +71,7 @@ ScheduleResult PerformTOM_OPT_EnumW_Skip_SF(const DAG_Model& dag_tasks) {
         task_sets_perms.PerformOptimizationSkipInfeasible<ObjSensorFusion>();
     res.schedulable_ =
         res.schedulable_ && task_sets_perms.ExamSchedulabilityOptSol();
+    std::cout << "\n";
   }
   return res;
 }
