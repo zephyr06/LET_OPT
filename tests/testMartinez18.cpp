@@ -151,33 +151,6 @@ TEST_F(PermutationTest18_n3, Iterate) {
   EXPECT_EQ(11 * 21, mart_task_perms.iteration_count_);
 }
 
-class PermutationTest4_n3 : public PermutationTestBase {
-  void SetUp() override {
-    SetUpBase("test_n3_v4");
-    dag_tasks.chains_ = {{0, 1, 2}};
-    type_trait = "DataAge";
-  }
-
- public:
-  std::string type_trait;
-};
-
-TEST_F(PermutationTest4_n3, Obj_v1) {
-  std::vector<int> chain = {0, 1, 2};
-  Martinez18Perm mart_perm;
-  mart_perm.push_back(0);
-  mart_perm.push_back(5);
-  mart_perm.push_back(9);
-  EXPECT_EQ(24 - (-30),
-            ObjDataAgeFromVariable(mart_perm, dag_tasks, tasks_info, chain));
-}
-TEST_F(PermutationTest4_n3, Iterate) {
-  Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
-  EXPECT_EQ(45, mart_task_perms.PerformOptimization());
-  EXPECT_EQ(45, PerformOPT_Martinez18_DA(dag_tasks).obj_);
-  EXPECT_EQ((5 + 1) * (15 + 1), mart_task_perms.iteration_count_);
-}
-
 class PermutationTest51_n5 : public PermutationTestBase {
   void SetUp() override {
     SetUpBase("test_n5_v51");
@@ -267,7 +240,32 @@ TEST_F(PermutationTest52_n5, Iterate) {  // test if dead
 //               ::testing::Le(INFEASIBLE_OBJ - 1));
 //   EXPECT_EQ(201 * 201 * 21, mart_task_perms.iteration_count_);
 // }
+class PermutationTest4_n3 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n3_v4");
+    dag_tasks.chains_ = {{0, 1, 2}};
+    type_trait = "DataAge";
+  }
 
+ public:
+  std::string type_trait;
+};
+
+TEST_F(PermutationTest4_n3, Obj_v1) {
+  std::vector<int> chain = {0, 1, 2};
+  Martinez18Perm mart_perm;
+  mart_perm.push_back(0);
+  mart_perm.push_back(5);
+  mart_perm.push_back(9);
+  EXPECT_EQ(24 - (-30),
+            ObjDataAgeFromVariable(mart_perm, dag_tasks, tasks_info, chain));
+}
+TEST_F(PermutationTest4_n3, Iterate) {
+  Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
+  EXPECT_EQ(45, mart_task_perms.PerformOptimization());
+  EXPECT_EQ(45, PerformOPT_Martinez18_DA(dag_tasks).obj_);
+  EXPECT_EQ((5 + 1) * (15 + 1), mart_task_perms.iteration_count_);
+}
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);

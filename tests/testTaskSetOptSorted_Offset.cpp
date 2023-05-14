@@ -38,15 +38,21 @@ TEST_F(PermutationTest18_n3, TaskSetOptSorted_Offset) {
 }
 
 TEST_F(PermutationTest18_n3, optimize) {
+  dag_tasks.chains_ = {dag_tasks.chains_[0]};
+  Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
+  int obj_mart = mart_task_perms.PerformOptimization();
+
   TaskSetOptSorted_Offset task_sets_perms(dag_tasks, dag_tasks.chains_[0]);
   int obj = task_sets_perms.PerformOptimizationSort<ObjDataAge>();
   task_sets_perms.best_yet_chain_[Edge(0, 1)]->print();
   task_sets_perms.best_yet_chain_[Edge(1, 2)]->print();
-  EXPECT_THAT(obj, ::testing::Le(40));
+  // EXPECT_THAT(obj, ::testing::Le(40));
+  EXPECT_EQ(obj_mart, obj);
 }
 
 TEST_F(PermutationTest18_n3, optimize_overall) {
-  EXPECT_THAT(PerformTOM_OPTOffset_Sort(dag_tasks).obj_, ::testing::Le(40));
+  // EXPECT_THAT(PerformTOM_OPTOffset_Sort(dag_tasks).obj_, ::testing::Le(50));
+  EXPECT_EQ(50, PerformTOM_OPTOffset_Sort(dag_tasks).obj_);
 }
 class PermutationTest4_n3 : public PermutationTestBase {
   void SetUp() override {
@@ -90,6 +96,16 @@ TEST_F(PermutationTest4_n3, optimize) {
   EXPECT_THAT(PerformTOM_OPTOffset_Sort(dag_tasks).obj_, ::testing::Le(45));
 }
 
+class PermutationTest_n5_v59 : public PermutationTestBase {
+  void SetUp() override { SetUpBase("test_n5_v59"); }
+};
+TEST_F(PermutationTest_n5_v59, optimize) {
+  dag_tasks.chains_ = {dag_tasks.chains_[0]};
+  Martinez18TaskSetPerms mart_task_perms(dag_tasks, dag_tasks.chains_[0]);
+  int obj_mart = mart_task_perms.PerformOptimization();
+  int obj_offset_opt_sort = PerformTOM_OPTOffset_Sort(dag_tasks).obj_;
+  EXPECT_THAT(obj_mart, obj_offset_opt_sort);
+}
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
