@@ -180,7 +180,8 @@ std::vector<std::vector<SF_Fork>> ExtractDecoupledForks(
   return decoupled_sf_forks;
 }
 
-std::vector<DAG_Model> ExtractIndividualForks(const DAG_Model &dag_tasks) {
+std::vector<DAG_Model> ExtractDAGsWithIndependentForks(
+    const DAG_Model &dag_tasks) {
   if (dag_tasks.sf_forks_.size() <= 1) return {dag_tasks};
   std::vector<std::vector<SF_Fork>> decoupled_sf_forks =
       ExtractDecoupledForks(dag_tasks.sf_forks_);

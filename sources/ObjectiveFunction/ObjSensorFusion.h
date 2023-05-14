@@ -58,7 +58,8 @@ void Merge_j2i(std::vector<std::vector<SF_Fork>> &decoupled_sf_forks, uint i,
 std::vector<std::vector<SF_Fork>> ExtractDecoupledForks(
     const std::vector<SF_Fork> &sf_forks_all);
 
-std::vector<DAG_Model> ExtractIndividualForks(const DAG_Model &dag_tasks);
+std::vector<DAG_Model> ExtractDAGsWithIndependentForks(
+    const DAG_Model &dag_tasks);
 // Get Individual SF Forks ***********************
 
 }  // namespace DAG_SPACE

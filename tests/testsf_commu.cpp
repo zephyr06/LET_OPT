@@ -330,7 +330,7 @@ TEST_F(PermutationTest_n10_v10, ExtractDecoupledForks) {
 }
 
 TEST_F(PermutationTest_n10_v10, extractIndependentMerge) {
-  auto dags = ExtractIndividualForks(dag_tasks);
+  auto dags = ExtractDAGsWithIndependentForks(dag_tasks);
   EXPECT_EQ(2, dags.size());
   EXPECT_EQ(2, dags[0].sf_forks_[0].sink);
   EXPECT_EQ(5, dags[1].sf_forks_[0].sink);
@@ -344,7 +344,7 @@ class PermutationTest_n10_v11 : public PermutationTestBase {
 };
 
 TEST_F(PermutationTest_n10_v11, extractIndependentMerge) {
-  auto dags = ExtractIndividualForks(dag_tasks);
+  auto dags = ExtractDAGsWithIndependentForks(dag_tasks);
   EXPECT_EQ(1, dags.size());
   EXPECT_EQ(3, dags[0].sf_forks_.size());
 }
@@ -354,7 +354,7 @@ class PermutationTest_n10_v12 : public PermutationTestBase {
 };
 
 TEST_F(PermutationTest_n10_v12, extractIndependentMerge) {
-  auto dags = ExtractIndividualForks(dag_tasks);
+  auto dags = ExtractDAGsWithIndependentForks(dag_tasks);
   EXPECT_EQ(1, dags.size());
   EXPECT_EQ(3, dags[0].sf_forks_.size());
 }
@@ -363,7 +363,7 @@ class PermutationTest_n10_v13 : public PermutationTestBase {
 };
 
 TEST_F(PermutationTest_n10_v13, extractIndependentMerge) {
-  auto dags = ExtractIndividualForks(dag_tasks);
+  auto dags = ExtractDAGsWithIndependentForks(dag_tasks);
   EXPECT_EQ(1, dags.size());
   EXPECT_EQ(3, dags[0].sf_forks_.size());
 }
