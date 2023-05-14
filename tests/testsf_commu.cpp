@@ -367,6 +367,15 @@ TEST_F(PermutationTest_n10_v13, extractIndependentMerge) {
   EXPECT_EQ(1, dags.size());
   EXPECT_EQ(3, dags[0].sf_forks_.size());
 }
+class PermutationTest_n10_v14 : public PermutationTestBase {
+  void SetUp() override { SetUpBase("test_n10_v14"); }
+};
+
+TEST_F(PermutationTest_n10_v14, extractIndependentMerge) {
+  ScheduleResult res =
+      PerformTOM_OPT_EnumW_Skip<DAG_SPACE::ObjSensorFusion>(dag_tasks);
+  EXPECT_EQ(801, res.obj_);
+}
 
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
