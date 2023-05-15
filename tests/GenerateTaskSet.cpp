@@ -120,9 +120,15 @@ int main(int argc, char *argv[]) {
       .default_value(0)
       .help("exclude cases where standard LET return 0")
       .scan<'i', int>();
-  program.add_argument("--fork_sensor_num")
+  program.add_argument("--fork_sensor_num_min")
       .default_value(0)
-      .help("the minimum number of sensor tasks for each fork in SF experiments")
+      .help(
+          "the minimum number of sensor tasks for each fork in SF experiments")
+      .scan<'i', int>();
+  program.add_argument("--fork_sensor_num_max")
+      .default_value(0)
+      .help(
+          "the maximum number of sensor tasks for each fork in SF experiments")
       .scan<'i', int>();
 
   try {
@@ -161,7 +167,8 @@ int main(int argc, char *argv[]) {
   int clearOutputDir = program.get<int>("--clearOutputDir");
   int SF_ForkNum = program.get<int>("--SF_ForkNum");
   int excludeSF_StanLET0 = program.get<int>("--excludeSF_StanLET0");
-  int fork_sensor_num = program.get<int>("--fork_sensor_num");
+  int fork_sensor_num_min = program.get<int>("--fork_sensor_num_min");
+  int fork_sensor_num_max = program.get<int>("--fork_sensor_num_max");
 
   if (randomSeed < 0) {
     srand(time(0) + (int64_t)&chainLength);
@@ -230,7 +237,11 @@ int main(int argc, char *argv[]) {
       << "exclude cases where standard LET return 0 (--excludeSF_StanLET0): "
       << excludeSF_StanLET0 << std::endl
       << "the minimum number of sensor tasks for each fork in SF experiments "
-         "(--fork_sensor_num): " << fork_sensor_num << std::endl
+         "(--fork_sensor_num_min): "
+      << fork_sensor_num_min << std::endl
+      << "the minimum number of sensor tasks for each fork in SF experiments "
+         "(--fork_sensor_num_max): "
+      << fork_sensor_num_max << std::endl
       << std::endl;
 
   std::string outDirectory = GlobalVariablesDAGOpt::PROJECT_PATH + outDir;
@@ -254,7 +265,8 @@ int main(int argc, char *argv[]) {
       tasks_params.numCauseEffectChain = numCauseEffectChain;
       tasks_params.chain_length = chainLength;
       tasks_params.SF_ForkNum = SF_ForkNum;
-      tasks_params.fork_sensor_num = fork_sensor_num;
+      tasks_params.fork_sensor_num_min = fork_sensor_num_min;
+      tasks_params.fork_sensor_num_max = fork_sensor_num_max;
       DAG_Model dag_tasks = GenerateDAG(tasks_params);
 
       if (excludeDAGWithWongChainNumber == 1) {

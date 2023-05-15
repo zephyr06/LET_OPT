@@ -85,7 +85,8 @@ DAG_Model GenerateDAG(const TaskSetGenerationParameters &tasks_params) {
   }
   return DAG_Model(tasks, dagModel.mapPrev, tasks_params.numCauseEffectChain,
                    tasks_params.chain_length, tasks_params.SF_ForkNum,
-                   tasks_params.fork_sensor_num);
+                   tasks_params.fork_sensor_num_min,
+                   tasks_params.fork_sensor_num_max);
 }
 
 void WriteDAG(std::ofstream &file, DAG_Model &dag_tasks) {
