@@ -83,19 +83,16 @@ TEST(DAG_Model, mapPrev) {
 
 TEST(DAG_MODEL, generate_chains) {
   string path = GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v4.csv";
-  DAG_Model dag_tasks =
-      ReadDAG_Tasks(path, "RM", GlobalVariablesDAGOpt::CHAIN_NUMBER);
-  dag_tasks.chains_ =
-      dag_tasks.GetRandomChains(GlobalVariablesDAGOpt::CHAIN_NUMBER);
+  DAG_Model dag_tasks = ReadDAG_Tasks(path, "RM", 3);
+  dag_tasks.chains_ = dag_tasks.GetRandomChains(3);
   EXPECT_TRUE(dag_tasks.chains_.size() > 0);
-  EXPECT_TRUE(GlobalVariablesDAGOpt::CHAIN_NUMBER > 0);
-  EXPECT_EQ(GlobalVariablesDAGOpt::CHAIN_NUMBER, dag_tasks.chains_.size());
+  EXPECT_TRUE(3 > 0);
+  EXPECT_EQ(3, dag_tasks.chains_.size());
 }
 
 TEST(DAG_MODEL, WhetherDAGChainsShareNodes) {
   string path = GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v4.csv";
-  DAG_Model dag_tasks =
-      ReadDAG_Tasks(path, "RM", GlobalVariablesDAGOpt::CHAIN_NUMBER);
+  DAG_Model dag_tasks = ReadDAG_Tasks(path, "RM", 3);
   dag_tasks.chains_ = {{0, 1}, {2, 3}};
   EXPECT_TRUE(!WhetherDAGChainsShareNodes(dag_tasks));
 
@@ -109,8 +106,7 @@ TEST(DAG_MODEL, WhetherDAGChainsShareNodes) {
 TEST(DAG_Model, read_chains) {
   string path =
       GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v20.csv";
-  DAG_Model dag_tasks =
-      ReadDAG_Tasks(path, "RM", GlobalVariablesDAGOpt::CHAIN_NUMBER);
+  DAG_Model dag_tasks = ReadDAG_Tasks(path, "RM", 3);
   std::vector<int> chain0 = {0, 1, 4};
   std::vector<int> chain1 = {0, 1, 3, 2};
   AssertEqualVectorExact<int>(chain0, dag_tasks.chains_[0], 0, __LINE__);
@@ -121,8 +117,7 @@ TEST(DAG_Model, read_chains) {
 TEST(DAG_Model, GetHyperPeriod) {
   string path =
       GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n5_v20.csv";
-  DAG_Model dag_tasks =
-      ReadDAG_Tasks(path, "RM", GlobalVariablesDAGOpt::CHAIN_NUMBER);
+  DAG_Model dag_tasks = ReadDAG_Tasks(path, "RM", 3);
   const TaskSetInfoDerived tasks_info(dag_tasks.GetTaskSet());
   EXPECT_EQ(100, GetHyperPeriod(tasks_info, {0}));
   EXPECT_EQ(500, GetHyperPeriod(tasks_info, {0, 1}));
