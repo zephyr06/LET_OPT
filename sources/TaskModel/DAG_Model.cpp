@@ -185,9 +185,9 @@ std::vector<SF_Fork> DAG_Model::GetRandomForks(int num_fork,
       res.push_back(SF_Fork(GetIDVec(source_tasks), sink));
     }
   }
-auto rng = std::default_random_engine {};
-std::shuffle(std::begin(res), std::end(res), rng);
-res.resize(fork_sensor_num);
+  auto rng = std::default_random_engine{};
+  std::shuffle(std::begin(res), std::end(res), rng);
+  if (fork_sensor_num < res.size()) res.resize(fork_sensor_num);
   return res;
 }
 
