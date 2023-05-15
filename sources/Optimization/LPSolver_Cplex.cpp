@@ -36,20 +36,20 @@ void LPOptimizer::ClearCplexMemory() {
 }
 
 std::pair<VariableOD, int> LPOptimizer::Optimize(
-    const ChainsPermutation &chains_perm, bool optimize_offset_only) {
-  auto res = OptimizeWithoutClear(chains_perm, optimize_offset_only);
+    const ChainsPermutation &chains_perm) {
+  auto res = OptimizeWithoutClear(chains_perm);
   ClearCplexMemory();
   return res;
 }
 
 std::pair<VariableOD, int> LPOptimizer::OptimizeWithoutClear(
-    const ChainsPermutation &chains_perm, bool optimize_offset_only) {
+    const ChainsPermutation &chains_perm) {
 #ifdef PROFILE_CODE
   BeginTimer("Build_LP_Model");
 #endif
   AddVariables();  // must be called first
-  if (optimize_offset_only) AddConstantDeadlineConstraint();
-  if (!optimize_offset_only) AddSchedulabilityConstraints();
+  if (optimize_offset_only_) AddConstantDeadlineConstraint();
+  if (!optimize_offset_only_) AddSchedulabilityConstraints();
   AddPermutationInequalityConstraints(chains_perm);
   AddObjectiveFunctions(chains_perm);
   cplexSolver_.extract(model_);
@@ -81,8 +81,11 @@ std::pair<VariableOD, int> LPOptimizer::OptimizeWithoutClear(
     }
     variable_od_opt_ = ExtratOptSolution(values_optimized);
     optimal_obj_ = cplexSolver_.getObjValue();
-  } else if (GlobalVariablesDAGOpt::debugMode)
-    std::cout << "No feasible solution found!\n";
+  } else {
+    if (GlobalVariablesDAGOpt::debugMode)
+      std::cout << "No feasible solution found!\n";
+    variable_od_opt_.valid_ = false;
+  }
 #ifdef PROFILE_CODE
   EndTimer("AfterSolve_LP");
 #endif
@@ -369,9 +372,17 @@ VariableOD LPOptimizer::ExtratOptSolution(IloNumArray &values_optimized) {
   for (int task_id = 0; task_id < tasks_info_.N; task_id++) {
     variable_od_opt.SetOffset(
         task_id, values_optimized[GetVariableIndexVirtualOffset(task_id)]);
-    variable_od_opt.SetDeadline(
-        task_id, values_optimized[GetVariableIndexVirtualDeadline(task_id)]);
+    if (optimize_offset_only_)
+      variable_od_opt.SetDeadlineOnly(
+          task_id, values_optimized[GetVariableIndexVirtualDeadline(task_id)]);
+    else
+      variable_od_opt.SetDeadline(
+          task_id, values_optimized[GetVariableIndexVirtualDeadline(task_id)]);
   }
+  // if (optimize_offset_only_)
+  //   variable_od_opt.valid_ =
+  //       true;  // TODO: always schedulable in Mart model unless the LP is
+  //       not!!!
   return variable_od_opt;
 }
 

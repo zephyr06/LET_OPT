@@ -16,13 +16,15 @@ class LPOptimizer {
   LPOptimizer(const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
               // const ChainsPermutation &chains_perm,
               const GraphOfChains &graph_of_all_ca_chains,
-              const std::string &obj_trait, const std::vector<int> &rta)
+              const std::string &obj_trait, const std::vector<int> &rta,
+              bool optimize_offset_only = false)
       : dag_tasks_(dag_tasks),
         tasks_info_(tasks_info),
         //   chains_perm_(chains_perm),
         graph_of_all_ca_chains_(graph_of_all_ca_chains),
         obj_trait_(obj_trait),
         rta_(rta),
+        optimize_offset_only_(optimize_offset_only),
         // cplex's environments
         env_(IloEnv()),
         model_(env_),
@@ -35,10 +37,9 @@ class LPOptimizer {
 
   void Init();
   void ClearCplexMemory();
-  std::pair<VariableOD, int> Optimize(const ChainsPermutation &chains_perm,
-                                      bool optimize_offset_only = false);
+  std::pair<VariableOD, int> Optimize(const ChainsPermutation &chains_perm);
   std::pair<VariableOD, int> OptimizeWithoutClear(
-      const ChainsPermutation &chains_perm, bool optimize_offset_only = false);
+      const ChainsPermutation &chains_perm);
 
   inline void AddVariables() {
     AddVariablesOD(tasks_info_.N);
@@ -145,6 +146,7 @@ class LPOptimizer {
   int numVariables_;
   std::string obj_trait_;
   const std::vector<int> &rta_;
+  bool optimize_offset_only_;
 
   IloEnv env_;
   IloModel model_;
@@ -163,8 +165,8 @@ inline std::pair<VariableOD, int> FindODWithLP(
     const GraphOfChains &graph_of_all_ca_chains, const std::string &obj_trait,
     const std::vector<int> &rta, bool optimize_offset_only = false) {
   LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_of_all_ca_chains,
-                           obj_trait, rta);
-  return lp_optimizer.Optimize(chains_perm, optimize_offset_only);
+                           obj_trait, rta, optimize_offset_only);
+  return lp_optimizer.Optimize(chains_perm);
 }
 
 // inline int GetMinOffSet(int task_id, const DAG_Model &dag_tasks,

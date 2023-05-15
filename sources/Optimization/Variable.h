@@ -51,6 +51,11 @@ class VariableOD {
       return false;
     }
   }
+  void SetDeadlineOnly(uint task_id, int value) {
+    if (value <= variables_[task_id].deadline) {
+      variables_[task_id].deadline = value;
+    }
+  }
 
   // assume offset is already set
   bool SetMinDeadline(uint task_id, const DAG_Model& dag_tasks,
