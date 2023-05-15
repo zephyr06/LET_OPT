@@ -3,7 +3,7 @@
 namespace DAG_SPACE {
 
 VariableOD MartPerm2VariableOD(const Martinez18Perm& mart_perm,
-                       const DAG_Model& dag_tasks) {
+                               const DAG_Model& dag_tasks) {
   VariableOD variable_od(dag_tasks.GetTaskSet());
   for (uint i = 0; i < variable_od.size(); i++) {
     variable_od[i].offset = mart_perm[i];
@@ -27,7 +27,8 @@ int ObjDataAgeFromVariable(const Martinez18Perm& mart_perm,
 std::vector<int> Martinez18TaskSetPerms::GetPossibleOffset(int gcd) {
   std::vector<int> offsets;
   offsets.reserve(gcd);
-  for (int i = 0; i <= gcd; i++) offsets.push_back(i);
+  for (int i = 0; i <= gcd; i++)
+    offsets.push_back(i);  // i<gcd should also work
   return offsets;
 }
 
