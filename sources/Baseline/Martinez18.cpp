@@ -48,13 +48,14 @@ void Martinez18TaskSetPerms::FindPossibleOffsets() {
 
 int Martinez18TaskSetPerms::PerformOptimization() {
   Martinez18Perm perms_offset(tasks_info_.N);
-  Iterate(0, perms_offset);
+  Iterate(chain_.size() - 1,
+          perms_offset);  // try to adjust the last task in the chain first
   return best_yet_obj_;
 }
 
 void Martinez18TaskSetPerms::Iterate(uint position,
                                      Martinez18Perm& perms_offset) {
-  if (position == chain_.size()) {  // finish iterate all the pair permutations
+  if (position == -1) {  // finish iterate all the pair permutations
     iteration_count_++;
     if (GlobalVariablesDAGOpt::debugMode) perms_offset.print();
     EvaluateMartPerm(perms_offset);
@@ -67,7 +68,7 @@ void Martinez18TaskSetPerms::Iterate(uint position,
   for (int offset_curr : possible_offsets_curr) {
     if (ifTimeout(start_time_)) break;
     perms_offset[task_id] = offset_curr;
-    Iterate(position + 1, perms_offset);
+    Iterate(position - 1, perms_offset);
   }
 }
 
