@@ -12,13 +12,63 @@ PermutationInequality GeneratePermIneqOnlyOffset(
   PermutationInequality perm_ineq(task_prev_id, task_next_id, type_trait);
   perm_ineq.lower_bound_ =
       variable_od_range.lower_bound.at(task_next_id).offset -
-      tasks_info.GetTask(task_prev_id).deadline;
+      (variable_od_range.upper_bound.at(task_prev_id).deadline);
   perm_ineq.lower_bound_valid_ = true;
   perm_ineq.upper_bound_ =
       variable_od_range.upper_bound.at(task_next_id).offset -
-      tasks_info.GetTask(task_prev_id).deadline + 1;
+      (variable_od_range.lower_bound.at(task_prev_id).deadline) + 1;
   perm_ineq.upper_bound_valid_ = true;
   return perm_ineq;
+}
+
+std::vector<JobCEC> GetPossibleReadingJobs_MartModel(
+    const JobCEC& job_curr, const Task& task_prev, int superperiod,
+    const RegularTaskSystem::TaskSetInfoDerived& tasksInfo) {
+  int job_min_start_time = GetActivationTime(job_curr, tasksInfo);
+  int job_max_start_time =
+      job_min_start_time + GetPeriod(job_curr, tasksInfo) - 1;
+
+  int period_prev = tasksInfo.GetTask(task_prev.id).period;
+  std::vector<JobCEC> readingJobs;
+  readingJobs.reserve(superperiod / tasksInfo.GetTask(job_curr.taskId).period);
+  for (int i = std::floor(float(job_min_start_time - (task_prev.period - 1)) /
+                          period_prev) -
+               1;
+       i <= std::ceil(float(job_max_start_time) / period_prev); i++) {
+    JobCEC job_prev_i(task_prev.id, i);
+    int min_finish_prev = GetActivationTime(job_prev_i, tasksInfo) +
+                          GetExecutionTime(job_prev_i, tasksInfo);
+    if (min_finish_prev > job_max_start_time) continue;
+    readingJobs.push_back(job_prev_i);
+  }
+
+  return readingJobs;
+}
+
+void TwoTaskPermutations_OnlyOffset::AppendAllPermutations(
+    const JobCEC& job_curr, SinglePairPermutation& permutation_current) {
+  if (ifTimeout(start_time_)) return;
+  std::vector<JobCEC> jobs_possible_match = GetPossibleReadingJobs_MartModel(
+      job_curr, tasks_info_.GetTask(task_prev_id_), superperiod_, tasks_info_);
+
+  for (auto job_match : jobs_possible_match) {
+    PermutationInequality perm_ineq_curr = permutation_current.inequality_;
+    bool append_success = permutation_current.AppendJobs(
+        job_curr, job_match, tasks_info_, variable_od_range_);
+    if (append_success) {
+      if (job_curr.jobId ==
+          superperiod_ / GetPeriod(job_curr, tasks_info_) -
+              1) {  // reach end, record the current permutations
+        InsertNewPermSingle(permutation_current);
+      } else {
+        JobCEC job_next(job_curr.taskId, job_curr.jobId + 1);
+        AppendAllPermutations(job_next, permutation_current);
+      }
+    } else  // skip this match because it's not feasible or useful
+      ;
+    permutation_current.inequality_ = perm_ineq_curr;
+    permutation_current.PopMatchJobPair(job_curr, job_match);
+  }
 }
 
 void TwoTaskPermutations_OnlyOffset::FindAllPermutations() {
