@@ -49,10 +49,13 @@ std::pair<VariableOD, int> LPOptimizer::OptimizeWithoutClear(
 #endif
   AddVariables();  // must be called first
   if (optimize_offset_only) AddConstantDeadlineConstraint();
-  AddSchedulabilityConstraints();
+  if (!optimize_offset_only) AddSchedulabilityConstraints();
   AddPermutationInequalityConstraints(chains_perm);
   AddObjectiveFunctions(chains_perm);
   cplexSolver_.extract(model_);
+  if (GlobalVariablesDAGOpt::debugMode) {
+    WriteModelToFile();
+  }
 #ifdef PROFILE_CODE
   EndTimer("Build_LP_Model");
 #endif
@@ -89,8 +92,8 @@ std::pair<VariableOD, int> LPOptimizer::OptimizeWithoutClear(
 // this function doesn't include artificial variables
 void LPOptimizer::AddVariablesOD(int number_of_tasks_to_opt) {
   numVariables_ = number_of_tasks_to_opt * 2;
-  varArray_ = IloNumVarArray(env_, numVariables_, 0, tasks_info_.hyper_period,
-                             IloNumVar::Float);
+  varArray_ =
+      IloNumVarArray(env_, numVariables_, 0, IloInfinity, IloNumVar::Float);
 }
 
 void LPOptimizer::AddConstantDeadlineConstraint() {

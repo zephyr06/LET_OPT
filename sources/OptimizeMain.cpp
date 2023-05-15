@@ -37,7 +37,7 @@ ScheduleResult PerformTOM_OPTOffset_Sort(const DAG_Model& dag_tasks) {
   if (res.obj_ >= 1e8) {
     res.obj_ = PerformStandardLETAnalysis<ObjDataAge>(dag_tasks).obj_;
   }
-  res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
+  res.schedulable_ = CheckSchedulability(dag_tasks);
   auto stop = std::chrono::high_resolution_clock::now();
   res.timeTaken_ = GetTimeTaken(start, stop);
 

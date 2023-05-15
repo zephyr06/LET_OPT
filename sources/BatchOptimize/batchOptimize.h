@@ -141,8 +141,8 @@ std::unordered_map<DAG_SPACE::BASELINEMETHODS, BatchResult> BatchOptimizeOrder(
   // }
 
   // result analysis
-  // results_man.PrintWorseCase(BASELINEMETHODS::TOM_Approx,
-  //                            BASELINEMETHODS::TOM_Sort_Approx);
+  results_man.PrintWorseCase(BASELINEMETHODS::Martinez18,
+                             BASELINEMETHODS::TOM_Sort_Offset);
   results_man.PrintResultTable(baselineMethods);
   if (std::find(baselineMethods.begin(), baselineMethods.end(),
                 BASELINEMETHODS::TOM_WSkip) != baselineMethods.end())
