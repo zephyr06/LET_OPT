@@ -16,7 +16,7 @@ PermutationInequality GeneratePermIneqOnlyOffset(
   perm_ineq.lower_bound_valid_ = true;
   perm_ineq.upper_bound_ =
       variable_od_range.upper_bound.at(task_next_id).offset -
-      (variable_od_range.lower_bound.at(task_prev_id).deadline) + 1;
+      (variable_od_range.lower_bound.at(task_prev_id).deadline);
   perm_ineq.upper_bound_valid_ = true;
   return perm_ineq;
 }
@@ -34,7 +34,8 @@ std::vector<JobCEC> GetPossibleReadingJobs_MartModel(
   for (int i = std::floor(float(job_min_start_time - (task_prev.period - 1)) /
                           period_prev) -
                1;
-       i <= std::ceil(float(job_max_start_time) / period_prev); i++) {
+       i <= std::ceil(float(job_max_start_time) / period_prev);
+       i++) {  // TODO: the upper-bound seem to be floor instead of ceil
     JobCEC job_prev_i(task_prev.id, i);
     int min_finish_prev = GetActivationTime(job_prev_i, tasksInfo) +
                           GetExecutionTime(job_prev_i, tasksInfo);

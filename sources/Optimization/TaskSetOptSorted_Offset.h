@@ -5,6 +5,17 @@
 // Martinez18TCAD
 namespace DAG_SPACE {
 
+inline VariableRange FindVariableRangeMartModel(const DAG_Model& dag_tasks) {
+  VariableRange variable_range;
+  variable_range.lower_bound = VariableOD(dag_tasks.GetTaskSet());
+  variable_range.upper_bound = variable_range.lower_bound;
+  for (uint i = 0; i < variable_range.lower_bound.size(); i++) {
+    variable_range.upper_bound[i].offset += dag_tasks.GetTask(i).period - 1;
+    variable_range.upper_bound[i].deadline += dag_tasks.GetTask(i).period - 1;
+  }
+  return variable_range;
+}
+
 PermutationInequality GeneratePermIneqOnlyOffset(
     int task_prev_id, int task_next_id, const std::string& type_trait,
     const VariableRange& variable_od_range,
@@ -20,6 +31,7 @@ class TwoTaskPermutations_OnlyOffset : public TwoTaskPermutations {
       : TwoTaskPermutations(task_prev_id, task_next_id, dag_tasks, tasks_info,
                             rta, perm_count_global) {
     type_trait_ = "DataAge";
+    variable_od_range_ = FindVariableRangeMartModel(dag_tasks);
     FindAllPermutations();
   }
 
@@ -29,20 +41,10 @@ class TwoTaskPermutations_OnlyOffset : public TwoTaskPermutations {
   void FindAllPermutations();
 
   // data members
-  VariableRange variable_range_od_;
+  // VariableRange variable_range_od_;
 };
 
 // ************************************************************************************
-inline VariableRange FindVariableRangeMartModel(const DAG_Model& dag_tasks) {
-  VariableRange variable_range;
-  variable_range.lower_bound = VariableOD(dag_tasks.GetTaskSet());
-  variable_range.upper_bound = variable_range.lower_bound;
-  for (uint i = 0; i < variable_range.lower_bound.size(); i++) {
-    variable_range.upper_bound[i].offset += dag_tasks.GetTask(i).period;
-    variable_range.upper_bound[i].deadline += dag_tasks.GetTask(i).period;
-  }
-  return variable_range;
-}
 
 class TaskSetOptSorted_Offset : public TaskSetOptSorted {
  public:
