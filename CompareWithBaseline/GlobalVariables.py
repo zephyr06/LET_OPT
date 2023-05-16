@@ -4,10 +4,10 @@ baseline_method_names = ["InitialMethod", "ImplicitCommunication", "TOM_BF", "TO
 baseline_method_labels = {"InitialMethod": "StanLET",
                           "ImplicitCommunication": "Implicit",
                           "TOM_BF": "iLET_BF",
-                          "TOM_WSkip": "iLET_WSkip",
-                          "TOM_Sort": "iLET_Sort",
+                          "TOM_WSkip": "iLET_Skip_Infeasible",
+                          "TOM_Sort": "iLET_Efficient",
                           "Martinez18": "Martinez18",
-                          "TOM_Sort_Offset": "Martinez18_Algo1",
+                          "TOM_Sort_Offset": "Martinez18_GCP_Efficient",
                           "Bardatsch16": "Bradatsch16"}
 
 marker_map = {"InitialMethod": "o",
