@@ -13,9 +13,10 @@ outDir="generatedNewTaskset"
 parallelismFactor=0.4
 chainLengthRatio=0
 numCauseEffectChain=1
-SF_ForkNum=1
+SF_ForkNum=3
 excludeSF_StanLET0=1
-fork_sensor_num=2
+fork_sensor_num_min=2
+fork_sensor_num_max=4
 # ***************************************************
 cd ../release
 cmake -DCMAKE_BUILD_TYPE=Release ..
@@ -36,7 +37,8 @@ echo "chainLengthRatio: $chainLengthRatio" >> configs.log
 echo "numCauseEffectChain: $numCauseEffectChain" >> configs.log
 echo "SF_ForkNum: $SF_ForkNum" >> configs.log
 echo "excludeSF_StanLET0: $excludeSF_StanLET0" >> configs.log
-echo "fork_sensor_num: $fork_sensor_num" >> configs.log
+echo "fork_sensor_num_min: $fork_sensor_num_min" >> configs.log
+echo "fork_sensor_num_max: $fork_sensor_num_max" >> configs.log
 
 for (( idx = 0 ; idx < ${#N[@]}; idx++ )); do
     taskNumber=${N[idx]}
@@ -47,7 +49,7 @@ for (( idx = 0 ; idx < ${#N[@]}; idx++ )); do
             --per_core_utilization_min $per_core_utilization_min --per_core_utilization_max $per_core_utilization_max \
             --outDir "release/$outDir/N$taskNumber/" --parallelismFactor $parallelismFactor --chainLengthRatio $chainLengthRatio \
             --numCauseEffectChain $numCauseEffectChain --clearOutputDir 0 --SF_ForkNum $SF_ForkNum --excludeSF_StanLET0 $excludeSF_StanLET0 \
-            --fork_sensor_num $fork_sensor_num &
+            --fork_sensor_num_min $fork_sensor_num_min --fork_sensor_num_max $fork_sensor_num_max&
     done
     wait
 done
