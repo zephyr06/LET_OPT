@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
       .scan<'i', int>();
   program.add_argument("--parallelismFactor")
       .default_value(0.4)
-      .help("the parallelismFactor when generating random DAGs")
+      .help("the maximum parallelismFactor when generating random DAGs")
       .scan<'f', double>();
   program.add_argument("--numCauseEffectChain")
       .default_value(0)
@@ -156,7 +156,7 @@ int main(int argc, char *argv[]) {
   int examChainsWithSharedNodes =
       program.get<int>("--examChainsWithSharedNodes");
   int randomSeed = program.get<int>("--randomSeed");
-  double parallelismFactor = program.get<double>("--parallelismFactor");
+  double parallelismFactor_max = program.get<double>("--parallelismFactor");
   int numCauseEffectChain = program.get<int>("--numCauseEffectChain");
   int chainLength = program.get<int>("--chainLength");
   double chainLengthRatio = program.get<double>("--chainLengthRatio");
@@ -195,8 +195,8 @@ int main(int argc, char *argv[]) {
       << totalUtilization_min << std::endl
       << "totalUtilization_max(--totalUtilization_max): "
       << totalUtilization_max << std::endl
-      << "parallelismFactor (--parallelismFactor): " << parallelismFactor
-      << std::endl
+      << "max parallelismFactor (--parallelismFactor): "
+      << parallelismFactor_max << std::endl
       << "taskType(--taskType), 0 means normal, 1 means DAG: " << taskType
       << std::endl
       << "deadlineType(--deadlineType), 1 means random, 0 means implicit: "
@@ -259,7 +259,7 @@ int main(int argc, char *argv[]) {
       tasks_params.totalUtilization_max = totalUtilization_max;
       tasks_params.numberOfProcessor = numberOfProcessor;
       tasks_params.coreRequireMax = 1;
-      tasks_params.parallelismFactor = parallelismFactor;
+      tasks_params.parallelismFactor = RandRange(0.1, parallelismFactor_max);
       tasks_params.period_generation_type = period_generation_type;
       tasks_params.deadlineType = deadlineType;
       tasks_params.numCauseEffectChain = numCauseEffectChain;
