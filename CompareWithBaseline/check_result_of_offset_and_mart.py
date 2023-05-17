@@ -25,4 +25,4 @@ def CheckOptResultsOffsetMart(task_set_number_range=[5], root_path=ROOT_PATH):
                 if res1.runtime < 600 and res2.runtime < 600:
                     if res1.obj != res2.obj:
                         print("Check this file's Mart and Offset: ", filename)
-CheckOptResultsOffsetMart([50])
+CheckOptResultsOffsetMart([5, 10, 15, 20, 25, 30, 35, 40, 45, 50])
