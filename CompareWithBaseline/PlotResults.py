@@ -28,21 +28,22 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
     #     TODO set a suitable range for sensor fusion
     #     splot.set_ylim([0.15, 2.05])
 
-    # Shrink current axis's height by 10% at the botom
-    box = ax.get_position()
-    ax.set_position([box.x0, box.y0 + box.height * 0.21,
-                     box.width, box.height * 0.9])
-    handles, labels = ax.get_legend_handles_labels()
-    handles = np.concatenate((handles[::3],handles[1::3],handles[2::3]),axis=0)
-    labels = np.concatenate((labels[::3],labels[1::3],labels[2::3]),axis=0)
-    if obj == "DataAge":
-        plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.39), ncol=3)
-    elif obj == "ReactionTime":
-        plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
-    elif obj == "SensorFusion":
-        plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
-    else:
-        plt.legend()
+    # # Shrink current axis's height by 10% at the botom
+    # box = ax.get_position()
+    # ax.set_position([box.x0, box.y0 + box.height * 0.21,
+    #                  box.width, box.height * 0.9])
+    # handles, labels = ax.get_legend_handles_labels()
+    # handles = np.concatenate((handles[::3],handles[1::3],handles[2::3]),axis=0)
+    # labels = np.concatenate((labels[::3],labels[1::3],labels[2::3]),axis=0)
+    # if obj == "DataAge":
+    #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.39), ncol=3)
+    # elif obj == "ReactionTime":
+    #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
+    # elif obj == "SensorFusion":
+    #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
+    # else:
+    #     plt.legend()
+    ax.get_legend().remove()
 
     plt.grid(linestyle="--")
     plt.savefig(ROOT_CompareWithBaseline_PATH + obj +
@@ -67,21 +68,23 @@ def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_
     splot.set_ylim([1e-6, 1e3])
     splot.set(yscale="log")
 
-    # Shrink current axis's height by 10% at the botom
-    box = ax.get_position()
-    ax.set_position([box.x0, box.y0 + box.height * 0.21,
-                     box.width, box.height * 0.9])
-    handles, labels = ax.get_legend_handles_labels()
-    handles = np.concatenate((handles[::3],handles[1::3],handles[2::3]),axis=0)
-    labels = np.concatenate((labels[::3],labels[1::3],labels[2::3]),axis=0)
-    if obj == "DataAge":
-        plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.39), ncol=3)
-    elif obj == "ReactionTime":
-        plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
-    elif obj == "SensorFusion":
-        plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
-    else:
-        plt.legend()
+    # # Shrink current axis's height by 10% at the botom
+    # box = ax.get_position()
+    # ax.set_position([box.x0, box.y0 + box.height * 0.21,
+    #                  box.width, box.height * 0.9])
+    # handles, labels = ax.get_legend_handles_labels()
+    # handles = np.concatenate((handles[::3],handles[1::3],handles[2::3]),axis=0)
+    # labels = np.concatenate((labels[::3],labels[1::3],labels[2::3]),axis=0)
+    # if obj == "DataAge":
+    #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.39), ncol=3)
+    # elif obj == "ReactionTime":
+    #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
+    # elif obj == "SensorFusion":
+    #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
+    # else:
+    #     plt.legend()
+    ax.get_legend().remove()
+    
     plt.grid(linestyle="--")
     plt.savefig(ROOT_CompareWithBaseline_PATH + obj +
                 "/Compare_RunTime_" + obj + ".pdf", format='pdf')
@@ -91,7 +94,7 @@ def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_
 
 def draw_RT_results(task_set_number_range):
     method_names = ["InitialMethod", "ImplicitCommunication",
-                    "TOM_BF", "TOM_WSkip", "TOM_Sort"]  # "TOM_Sort_Bound"
+                    "TOM_BF", "TOM_WSkip", "TOM_Sort"]
     plot_Obj_results(task_set_number_range, method_names, "ReactionTime")
     plot_Runtime_results(task_set_number_range, method_names, "ReactionTime")
 
