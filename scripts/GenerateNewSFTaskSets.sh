@@ -10,13 +10,13 @@ taskSetNumber=1000
 per_core_utilization_min=0.1
 per_core_utilization_max=0.9
 outDir="generatedNewTaskset"
-parallelismFactor=0.4
+parallelismFactor=0.9
 chainLengthRatio=0
 numCauseEffectChain=1
-SF_ForkNum=3
+SF_ForkNum=1
 excludeSF_StanLET0=1
 fork_sensor_num_min=2
-fork_sensor_num_max=4
+fork_sensor_num_max=5
 # ***************************************************
 cd ../release
 cmake -DCMAKE_BUILD_TYPE=Release ..
