@@ -1,6 +1,7 @@
 import pathlib
-baseline_method_names = ["InitialMethod", "ImplicitCommunication", "TOM_BF", "TOM_WSkip",
-                         "TOM_Sort", "Martinez18", "TOM_Sort_Offset", "Bardatsch16"]
+baseline_method_names = ["InitialMethod", "ImplicitCommunication", "Martinez18",
+                         "TOM_Sort_Offset", "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort"]
+
 baseline_method_labels = {"InitialMethod": "StanLET",
                           "ImplicitCommunication": "Implicit",
                           "TOM_BF": "iLET_BF",
