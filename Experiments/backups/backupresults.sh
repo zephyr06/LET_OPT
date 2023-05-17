@@ -1,5 +1,6 @@
 ROOT_PATH=/projects/rtss_let/LET_OPT
-#ROOT_PATH=/home/dong/workspace/LET_OPT
+# ROOT_PATH=/home/dong/workspace/LET_OPT
+# ROOT_PATH=/home/zephyr/Programming/LET_OPT
 if [[ -n "${TMPDIR}" ]]; then
 TEMP_PATH=${TMPDIR}/let
 else
