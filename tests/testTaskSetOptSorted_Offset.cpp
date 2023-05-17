@@ -173,6 +173,31 @@ TEST_F(PermutationTest_n5_v60, optimize) {
   EXPECT_THAT(2500, obj_offset_opt_sort);
 }
 
+class PermutationTest_n5_v62 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n5_v62");
+    dag_tasks.chains_ = {dag_tasks.chains_[0]};
+  }
+};
+TEST_F(PermutationTest_n5_v62, Evaluate_LP) {
+  TaskSetOptSorted_Offset task_sets_perms(dag_tasks, dag_tasks.chains_);
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(task_sets_perms.adjacent_two_task_permutations_[0][0]);
+  chains_perm.push_back(task_sets_perms.adjacent_two_task_permutations_[1][0]);
+  chains_perm.print();
+  std::pair<VariableOD, int> res =
+      FindODWithLP(dag_tasks, tasks_info, chains_perm,
+                   task_sets_perms.graph_of_all_ca_chains_, "DataAge",
+                   task_sets_perms.rta_, true);
+  EXPECT_EQ(500, res.second);
+}
+TEST_F(PermutationTest_n5_v62, optimize) {
+  int obj_offset_opt_sort = PerformTOM_OPTOffset_Sort(dag_tasks).obj_;
+  // Martinez18TaskSetPerms mart_task_perms0(dag_tasks, dag_tasks.chains_[0]);
+  // int obj_mart0 = mart_task_perms0.PerformOptimization();
+
+  EXPECT_THAT(500, obj_offset_opt_sort);
+}
 // class PermutationTest_n5_v61 : public PermutationTestBase {
 //   void SetUp() override { SetUpBase("test_n5_v61"); }
 // };

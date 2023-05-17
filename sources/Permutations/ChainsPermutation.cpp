@@ -370,7 +370,8 @@ void UpdateVariablesRangeNextOffset(VariableRange& variable_range, int prev_id,
 VariableRange FindPossibleVariableOD(const DAG_Model& dag_tasks,
                                      const TaskSetInfoDerived& tasks_info,
                                      const std::vector<int>& rta,
-                                     const ChainsPermutation& chains_perm) {
+                                     const ChainsPermutation& chains_perm,
+                                     bool optimize_offset_only) {
   VariableRange variable_range = FindVariableRange(dag_tasks, rta);
   std::vector<Edge> edges = chains_perm.GetEdges();
   for (int i = 0; i <= chains_perm.size() + 1 + tasks_info.N; i++) {
@@ -398,12 +399,13 @@ VariableRange FindPossibleVariableOD(const DAG_Model& dag_tasks,
 VariableOD FindBestPossibleVariableOD(const DAG_Model& dag_tasks,
                                       const TaskSetInfoDerived& tasks_info,
                                       const std::vector<int>& rta,
-                                      const ChainsPermutation& chains_perm) {
+                                      const ChainsPermutation& chains_perm,
+                                      bool optimize_offset_only) {
 #ifdef PROFILE_CODE
   BeginTimer(__FUNCTION__);
 #endif
-  VariableRange variable_range =
-      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
+  VariableRange variable_range = FindPossibleVariableOD(
+      dag_tasks, tasks_info, rta, chains_perm, optimize_offset_only);
   VariableOD variable_od = variable_range.lower_bound;
   for (int i = 0; i < tasks_info.N; i++) {
     variable_od[i].offset = variable_range.upper_bound[i].offset;

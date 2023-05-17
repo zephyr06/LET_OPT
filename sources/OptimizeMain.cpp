@@ -25,7 +25,10 @@ ScheduleResult PerformOPT_Martinez18_DA(const DAG_Model& dag_tasks) {
   res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
   auto stop = std::chrono::high_resolution_clock::now();
   res.timeTaken_ = GetTimeTaken(start, stop);
-
+  if (GlobalVariablesDAGOpt::debugMode) {
+    std::cout << "Best yet variable of Martinez18: \n";
+    task_sets_perms.best_yet_variable_od_.print();
+  }
   return res;
 }
 
@@ -41,6 +44,10 @@ ScheduleResult PerformTOM_OPTOffset_Sort(const DAG_Model& dag_tasks) {
   auto stop = std::chrono::high_resolution_clock::now();
   res.timeTaken_ = GetTimeTaken(start, stop);
 
+  if (GlobalVariablesDAGOpt::debugMode) {
+    std::cout << "Best yet variable of Martinez18: \n";
+    task_sets_perms.best_yet_variable_od_.print();
+  }
   PrintResultAnalysis(task_sets_perms, res);
   return res;
 }

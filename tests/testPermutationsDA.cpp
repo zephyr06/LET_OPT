@@ -294,7 +294,7 @@ TEST_F(PermutationTest25_n3, FindPossibleVariableOD) {
   GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
   std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
   VariableRange variable_range_w_chains =
-      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
+      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm, false);
   variable_range_w_chains.lower_bound.print();
   variable_range_w_chains.upper_bound.print();
   EXPECT_EQ(0, variable_range_w_chains.lower_bound[0].offset);
@@ -322,7 +322,7 @@ TEST_F(PermutationTest25_n3, IsValid) {
   GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
   std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
   VariableRange variable_range_w_chains =
-      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
+      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm, false);
   variable_range_w_chains.lower_bound[0].offset = 77;
   variable_range_w_chains.upper_bound[0].deadline = 77;
   variable_range_w_chains.lower_bound.print();

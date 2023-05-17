@@ -79,7 +79,7 @@ TEST_F(PermutationTest1, FindBestPossibleVariableOD) {
   TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_,
                                       "ReactionTime");
   VariableRange variable_range = FindPossibleVariableOD(
-      dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm);
+      dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm, false);
   auto rta = GetResponseTimeTaskSet(dag_tasks);
 
   EXPECT_EQ(0, variable_range.lower_bound[1].offset);
@@ -103,7 +103,7 @@ TEST_F(PermutationTest1, FindBestPossibleVariableOD) {
   EXPECT_EQ(1000, variable_range.upper_bound[4].deadline);
 
   VariableOD variable_od = FindBestPossibleVariableOD(
-      dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm);
+      dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm, false);
 
   EXPECT_EQ(82, variable_od[1].offset);
   EXPECT_EQ(341, variable_od[1].deadline);
@@ -127,7 +127,7 @@ TEST_F(PermutationTest1, FindBestPossibleVariableOD_DA) {
 
   TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_, "DataAge");
   VariableRange variable_range = FindPossibleVariableOD(
-      dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm);
+      dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm, false);
   auto rta = GetResponseTimeTaskSet(dag_tasks);
 
   EXPECT_EQ(0, variable_range.lower_bound[1].offset);
@@ -151,7 +151,7 @@ TEST_F(PermutationTest1, FindBestPossibleVariableOD_DA) {
   EXPECT_EQ(1000, variable_range.upper_bound[4].deadline);
 
   VariableOD variable_od = FindBestPossibleVariableOD(
-      dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm);
+      dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm, false);
 
   EXPECT_EQ(82, variable_od[1].offset);
   EXPECT_EQ(341, variable_od[1].deadline);
@@ -193,7 +193,7 @@ TEST_F(PermutationTest2, FindBestPossibleVariableOD) {
   TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_,
                                       "ReactionTime");
   VariableRange variable_range = FindPossibleVariableOD(
-      dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm);
+      dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm, false);
   EXPECT_EQ(0, variable_range.lower_bound[0].offset);
   EXPECT_EQ(1, variable_range.lower_bound[0].deadline);
   EXPECT_EQ(9, variable_range.upper_bound[0].offset);
@@ -224,7 +224,7 @@ TEST_F(PermutationTest24_n3, FindPossibleVariableOD) {
   chains_perm.push_back(perm01[0]);
   std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
   VariableRange variable_range =
-      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
+      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm, false);
   EXPECT_EQ(0, variable_range.lower_bound[0].offset);
   EXPECT_EQ(11 + 7, variable_range.lower_bound[1].deadline);
 }
@@ -240,7 +240,7 @@ TEST_F(PermutationTest24_n3, select_feasible_perm) {
   chains_perm.push_back(perm01[0]);
   std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
   VariableRange variable_range =
-      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
+      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm, false);
   variable_range.lower_bound.print();
   variable_range.upper_bound.print();
   Edge edge_ite(1, 2);
@@ -280,7 +280,7 @@ TEST_F(PermutationTest18_n3, select_feasible_perm) {
   ChainsPermutation chains_perm;
   std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
   VariableRange variable_range =
-      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
+      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm, false);
   variable_range.lower_bound.print();
   variable_range.upper_bound.print();
   Edge edge_ite(0, 1);
@@ -302,7 +302,7 @@ TEST_F(PermutationTest18_n3, skip_worse_perm1) {
   std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
   ChainsPermutation chains_perm;
   VariableRange variable_range =
-      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
+      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm, false);
   Edge edge_ite01(0, 1);
   PermIneqBound_Range edge_range =
       GetEdgeIneqRangeRT(edge_ite01, variable_range);
@@ -331,7 +331,7 @@ TEST_F(PermutationTest18_n3, skip_worse_perm2) {
   std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
   ChainsPermutation chains_perm;
   VariableRange variable_range =
-      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm);
+      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm, false);
   Edge edge_ite01(0, 1);
   PermIneqBound_Range edge_range =
       GetEdgeIneqRangeRT(edge_ite01, variable_range);
@@ -355,8 +355,8 @@ TEST_F(PermutationTest18_n3, skip_worse_perm2) {
   ChainsPermutation chains_perm_next_lv;
   chains_perm_next_lv.push_back(perm01[2]);
   Edge edge_ite12(1, 2);
-  VariableRange variable_range12 =
-      FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm_next_lv);
+  VariableRange variable_range12 = FindPossibleVariableOD(
+      dag_tasks, tasks_info, rta, chains_perm_next_lv, false);
   PermIneqBound_Range edge_range12 =
       GetEdgeIneqRangeRT(edge_ite12, variable_range12);
   TwoTaskPermutationsIterator iterator12(

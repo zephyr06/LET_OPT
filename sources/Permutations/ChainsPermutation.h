@@ -118,9 +118,11 @@ class ChainsPermutation {
 VariableRange FindPossibleVariableOD(const DAG_Model &dag_tasks,
                                      const TaskSetInfoDerived &tasks_info,
                                      const std::vector<int> &rta,
-                                     const ChainsPermutation &chains_perm);
+                                     const ChainsPermutation &chains_perm,
+                                     bool optimize_offset_only);
 VariableOD FindBestPossibleVariableOD(const DAG_Model &dag_tasks,
                                       const TaskSetInfoDerived &tasks_info,
                                       const std::vector<int> &rta,
-                                      const ChainsPermutation &chains_perm);
+                                      const ChainsPermutation &chains_perm,
+                                      bool optimize_offset_only);
 }  // namespace DAG_SPACE

@@ -28,7 +28,8 @@ class TaskSetOptEnumWSkip : public TaskSetOptEnumerate {
     if (found_optimal_) return;
 
     VariableRange variable_range_w_chains =
-        FindPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm);
+        FindPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm,
+                               false);  // optimize_offset_only_=false
     PermIneqBound_Range perm_ineq_bound_range = GetEdgeIneqRange(
         adjacent_two_task_permutations_[position].GetEdge(),
         variable_range_w_chains, ObjectiveFunction::type_trait);

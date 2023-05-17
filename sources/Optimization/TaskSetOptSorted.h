@@ -15,7 +15,8 @@ class TaskSetOptSorted : public TaskSetPermutation {
   // ONLY for TaskSetOptSorted_Offset's constructor;
   // the only difference between this constructor and the base is that this
   // one doesn't call FindPairPermutations()
-  TaskSetOptSorted(const DAG_Model& dag_tasks, const std::vector<std::vector<int>>& chains)
+  TaskSetOptSorted(const DAG_Model& dag_tasks,
+                   const std::vector<std::vector<int>>& chains)
       : TaskSetPermutation(dag_tasks, chains) {
     feasible_chains_ =
         FeasiblieChainsManagerVec(adjacent_two_task_permutations_.size());
@@ -45,8 +46,8 @@ class TaskSetOptSorted : public TaskSetPermutation {
       return;
     }
 
-    VariableRange variable_range_w_chains =
-        FindPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm);
+    VariableRange variable_range_w_chains = FindPossibleVariableOD(
+        dag_tasks_, tasks_info_, rta_, chains_perm, optimize_offset_only_);
     PermIneqBound_Range perm_ineq_bound_range = GetEdgeIneqRange(
         adjacent_two_task_permutations_[position].GetEdge(),
         variable_range_w_chains, ObjectiveFunction::type_trait);
@@ -144,8 +145,8 @@ class TaskSetOptSorted : public TaskSetPermutation {
   double GetBestPossibleObj_UpperBound(
       const ChainsPermutation& chains_perm,
       const std::vector<std::vector<int>>& sub_chains) {
-    VariableOD best_possible_variable_od =
-        FindBestPossibleVariableOD(dag_tasks_, tasks_info_, rta_, chains_perm);
+    VariableOD best_possible_variable_od = FindBestPossibleVariableOD(
+        dag_tasks_, tasks_info_, rta_, chains_perm, optimize_offset_only_);
     if (IfRT_Trait(ObjectiveFunction::type_trait))
       return ObjReactionTimeApprox::Obj(dag_tasks_, tasks_info_, chains_perm,
                                         best_possible_variable_od, sub_chains);
@@ -162,7 +163,7 @@ class TaskSetOptSorted : public TaskSetPermutation {
 #ifdef PROFILE_CODE
     BeginTimer(__FUNCTION__);
 #endif
-
+    chains_perm.print();
     std::pair<VariableOD, int> res = FindODWithLP(
         dag_tasks_, tasks_info_, chains_perm, graph_of_all_ca_chains_,
         ObjectiveFunction::type_trait, rta_, optimize_offset_only_);
