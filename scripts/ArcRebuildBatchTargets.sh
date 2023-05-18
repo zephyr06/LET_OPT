@@ -11,3 +11,4 @@ cmake -DCMAKE_BUILD_TYPE=RELEASE ..
 make BatchRunAll.run -j16 
 make BatchRunSF.run -j16
 make BatchDAWithMartRunAll.run -j16
+make BatchDARunMultiChain.run -j16

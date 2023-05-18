@@ -7,3 +7,4 @@ cmake -DCMAKE_BUILD_TYPE=RELEASE ..
 make BatchRunAll.run -j8
 make BatchRunSF.run -j8
 make BatchDAWithMartRunAll.run -j8
+make BatchDARunMultiChain.run -j8
