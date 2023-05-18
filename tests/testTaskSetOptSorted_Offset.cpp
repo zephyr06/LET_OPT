@@ -198,6 +198,60 @@ TEST_F(PermutationTest_n5_v62, optimize) {
 
   EXPECT_THAT(500, obj_offset_opt_sort);
 }
+
+class PermutationTest_n5_v30 : public PermutationTestBase {
+  void SetUp() override { SetUpBase("test_n5_v30"); }
+};
+
+TEST_F(PermutationTest_n5_v30, FindBestPossibleVariableOD_offset_only) {
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm24(2, 4, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info, "DataAge");
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm12[73]);
+  chains_perm.push_back(perm24[11]);
+  chains_perm.push_back(perm23[0]);
+  chains_perm.print();
+
+  TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_, "DataAge");
+  VariableRange variable_range = FindPossibleVariableOD(
+      dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm, true);
+  auto rta = GetResponseTimeTaskSet(dag_tasks);
+  PrintRta(rta);
+
+  EXPECT_EQ(0, variable_range.lower_bound[1].offset);
+  EXPECT_EQ(1000, variable_range.lower_bound[1].deadline);
+  EXPECT_EQ(9, variable_range.upper_bound[1].offset);
+  EXPECT_EQ(1009, variable_range.upper_bound[1].deadline);
+
+  EXPECT_EQ(0, variable_range.lower_bound[2].offset);
+  EXPECT_EQ(10, variable_range.lower_bound[2].deadline);
+  EXPECT_EQ(9, variable_range.upper_bound[2].offset);
+  EXPECT_EQ(19, variable_range.upper_bound[2].deadline);
+
+  EXPECT_EQ(190, variable_range.lower_bound[3].offset);
+  EXPECT_EQ(190 + 200, variable_range.lower_bound[3].deadline);
+  EXPECT_EQ(199, variable_range.upper_bound[3].offset);
+  EXPECT_EQ(199 + 200, variable_range.upper_bound[3].deadline);
+
+  EXPECT_EQ(10, variable_range.lower_bound[4].offset);
+  EXPECT_EQ(1010, variable_range.lower_bound[4].deadline);
+  EXPECT_EQ(28, variable_range.upper_bound[4].offset);
+  EXPECT_EQ(1028, variable_range.upper_bound[4].deadline);
+
+  VariableOD variable_od = FindBestPossibleVariableOD(
+      dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm, true);
+
+  EXPECT_EQ(variable_range.upper_bound[1].offset, variable_od[1].offset);
+  EXPECT_EQ(variable_range.lower_bound[1].deadline, variable_od[1].deadline);
+  EXPECT_EQ(variable_range.upper_bound[2].offset, variable_od[2].offset);
+  EXPECT_EQ(variable_range.lower_bound[2].deadline, variable_od[2].deadline);
+  EXPECT_EQ(variable_range.upper_bound[3].offset, variable_od[3].offset);
+  EXPECT_EQ(variable_range.lower_bound[3].deadline, variable_od[3].deadline);
+  EXPECT_EQ(variable_range.upper_bound[4].offset, variable_od[4].offset);
+  EXPECT_EQ(variable_range.lower_bound[4].deadline, variable_od[4].deadline);
+}
+
 // class PermutationTest_n5_v61 : public PermutationTestBase {
 //   void SetUp() override { SetUpBase("test_n5_v61"); }
 // };

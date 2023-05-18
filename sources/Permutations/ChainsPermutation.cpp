@@ -365,6 +365,36 @@ void UpdateVariablesRangeNextOffset(VariableRange& variable_range, int prev_id,
   } else
     CoutError("Unrecognized type_trait_ in UpdateVariablesRangePrevDeadline!");
 }
+
+std::vector<int> GetPeriodVector(const TaskSetInfoDerived& tasks_info) {
+  std::vector<int> period_vec;
+  period_vec.reserve(tasks_info.N);
+  for (int i = 0; i < tasks_info.N; i++)
+    period_vec.push_back(tasks_info.GetTask(i).period);
+  return period_vec;
+}
+// in-place update
+void UpdateVariablesBasedPeriod(VariableRange& variable_range, int prev_id,
+                                const std::vector<int>& periods,
+                                bool& whether_changed) {
+  UpdateVariableSafeMin(
+      variable_range.lower_bound[prev_id].offset,
+      variable_range.lower_bound[prev_id].deadline - periods[prev_id],
+      whether_changed);
+  UpdateVariableSafeMin(
+      variable_range.lower_bound[prev_id].deadline,
+      variable_range.lower_bound[prev_id].offset + periods[prev_id],
+      whether_changed);
+
+  UpdateVariableSafeMax(
+      variable_range.upper_bound[prev_id].offset,
+      variable_range.upper_bound[prev_id].deadline - periods[prev_id],
+      whether_changed);
+  UpdateVariableSafeMax(
+      variable_range.upper_bound[prev_id].deadline,
+      variable_range.upper_bound[prev_id].offset + periods[prev_id],
+      whether_changed);
+}
 // the bounds are safe but pessimistic, i.e., the actual up could be smaller,
 // the actual lb could be higher
 VariableRange FindPossibleVariableOD(const DAG_Model& dag_tasks,
@@ -372,7 +402,12 @@ VariableRange FindPossibleVariableOD(const DAG_Model& dag_tasks,
                                      const std::vector<int>& rta,
                                      const ChainsPermutation& chains_perm,
                                      bool optimize_offset_only) {
-  VariableRange variable_range = FindVariableRange(dag_tasks, rta);
+  VariableRange variable_range;
+  if (optimize_offset_only)
+    variable_range = FindVariableRangeWithRTA(dag_tasks);
+  else
+    variable_range = FindVariableRange(dag_tasks, rta);
+
   std::vector<Edge> edges = chains_perm.GetEdges();
   for (int i = 0; i <= chains_perm.size() + 1 + tasks_info.N; i++) {
     bool whether_changed = false;
@@ -388,8 +423,15 @@ VariableRange FindPossibleVariableOD(const DAG_Model& dag_tasks,
                                      whether_changed, ineq);
 
       // Update Range based on RTA
-      UpdateVariablesBasedRTA(variable_range, prev_id, next_id, rta,
-                              whether_changed);
+      if (optimize_offset_only) {
+        std::vector<int> period_vec = GetPeriodVector(tasks_info);
+        UpdateVariablesBasedPeriod(variable_range, prev_id, period_vec,
+                                   whether_changed);
+        UpdateVariablesBasedPeriod(variable_range, next_id, period_vec,
+                                   whether_changed);
+      } else
+        UpdateVariablesBasedRTA(variable_range, prev_id, next_id, rta,
+                                whether_changed);
     }
     if (!whether_changed) break;
   }

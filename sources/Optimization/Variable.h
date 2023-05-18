@@ -83,6 +83,7 @@ struct VariableRange {
 VariableRange FindVariableRange(const DAG_Model& dag_tasks);
 VariableRange FindVariableRange(const DAG_Model& dag_tasks,
                                 const std::vector<int>& rta);
+VariableRange FindVariableRangeWithRTA(const DAG_Model& dag_tasks);
 
 inline int GetDeadline(const JobCEC& job_curr, const VariableOD& variable_od,
                        const TaskSetInfoDerived& tasks_info) {
