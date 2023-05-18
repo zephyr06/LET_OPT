@@ -163,7 +163,7 @@ class TaskSetOptSorted : public TaskSetPermutation {
 #ifdef PROFILE_CODE
     BeginTimer(__FUNCTION__);
 #endif
-    chains_perm.print();
+    // chains_perm.print();
     std::pair<VariableOD, int> res = FindODWithLP(
         dag_tasks_, tasks_info_, chains_perm, graph_of_all_ca_chains_,
         ObjectiveFunction::type_trait, rta_, optimize_offset_only_);
