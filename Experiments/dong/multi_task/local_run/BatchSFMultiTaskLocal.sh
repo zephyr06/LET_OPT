@@ -1,11 +1,11 @@
 #!/usr/bin/bash
 
-task_number_list=( 50 45 40 35 30 25 20 15 10 5 )
-files_per_task_list=( 20 20 20 20 20 20 20 20 20 20 )
-TOTAL_TASK_NUMBER=9 # the max index start from 0
+task_number_list=( 2 3 4 5 )
+files_per_task_list=( 40 40 40 40 )
+TOTAL_TASK_NUMBER=3 # the max index start from 0
 
 MinFileIndex=0
-MaxFileIndex=99
+MaxFileIndex=199
 
 
 ## change directory and load modules ##
