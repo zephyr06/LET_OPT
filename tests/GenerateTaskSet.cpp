@@ -117,16 +117,16 @@ int main(int argc, char *argv[]) {
           "functions")
       .scan<'i', int>();
   program.add_argument("--excludeSF_StanLET0")
-      .default_value(0)
+      .default_value(1)
       .help("exclude cases where standard LET return 0")
       .scan<'i', int>();
   program.add_argument("--fork_sensor_num_min")
-      .default_value(0)
+      .default_value(2)
       .help(
           "the minimum number of sensor tasks for each fork in SF experiments")
       .scan<'i', int>();
   program.add_argument("--fork_sensor_num_max")
-      .default_value(0)
+      .default_value(2)
       .help(
           "the maximum number of sensor tasks for each fork in SF experiments")
       .scan<'i', int>();
@@ -310,6 +310,11 @@ int main(int argc, char *argv[]) {
       //  "dag-set-N" + to_string(task_number_in_tasksets) +
       //                   "-" + string(3 - to_string(i).size(), '0') +
       //                   to_string(i) + "-syntheticJobs" + ".csv";
+      
+      // if generate taskset for sensor fusion, the 'N' of a task set is indexed by the max sensor number
+      if (SF_ForkNum > 0) {
+        fileName = GetTaskSetName(i, fork_sensor_num_max);
+      }
       std::ofstream myfile;
       myfile.open(outDirectory + fileName);
       WriteDAG(myfile, dag_tasks);
