@@ -23,9 +23,9 @@ for i in range(method_num):
                          markersize=marker_size_map[method_names[i]])
 
 plt.legend( loc='lower center',  ncol=method_num)
-x0,x1 = 0.85, 1.15
-delta_y=0.042
-y0,y1 = 0.90+delta_y+0.001, 1-delta_y
+x0,x1 = 0.86124, 1.138
+delta_y=0.0429
+y0,y1 = 0.90+delta_y+0.0052, 1-delta_y-0.0036
 bbox = Bbox([[x0,y0],[x1,y1]])
 bbox = bbox.transformed(ax.transData).transformed(fig.dpi_scale_trans.inverted())
 plt.savefig("legends.pdf", format='pdf', bbox_inches=bbox)
