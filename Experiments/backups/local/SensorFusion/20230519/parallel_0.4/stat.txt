@@ -1,0 +1,7 @@
+
+######## SF object, 'index' is the maximum of source tasks  ########
+    TOM_WSkip     TOM_BF  ImplicitCommunication  InitialMethod  index
+0  0.86371089  0.8650548             1.79314008            1.0      5
+######## SF runtime, 'index' is the maximum of source tasks  ########
+     TOM_WSkip        TOM_BF  ImplicitCommunication  InitialMethod  index
+0  53.99022412  112.68533508             0.01638779     0.00040976      5
