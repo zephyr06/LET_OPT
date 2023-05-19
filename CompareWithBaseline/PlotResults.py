@@ -121,7 +121,14 @@ def print_SF_table_results(task_set_number_range, exclude_time_out=False):
                     "ImplicitCommunication", "TOM_BF", "TOM_WSkip"]
     dataset_pd_obj, dataset_pd_runtime = ReadOptResultsAllMethod(
         method_names, "SensorFusion", task_set_number_range, exclude_time_out)
-    print("######## SF objects, 'index' is the maximum of source tasks  ########")
+    print("######## SF object, 'index' is the maximum of source tasks  ########")
     print(dataset_pd_obj)
     print("######## SF runtime, 'index' is the maximum of source tasks  ########")
     print(dataset_pd_runtime)
+    
+    file = open(ROOT_CompareWithBaseline_PATH + "SensorFusion/stat.txt", "w")
+    file.write("\n######## SF object, 'index' is the maximum of source tasks  ########\n")
+    file.write(dataset_pd_obj.to_string())
+    file.write("\n######## SF runtime, 'index' is the maximum of source tasks  ########\n")
+    file.write(dataset_pd_runtime.to_string())
+    file.close()
