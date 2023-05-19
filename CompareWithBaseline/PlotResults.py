@@ -113,3 +113,15 @@ def draw_SF_results(task_set_number_range, exclude_time_out=False):
                      "SensorFusion", exclude_time_out)
     plot_Runtime_results(task_set_number_range, method_names,
                          "SensorFusion", exclude_time_out)
+
+def print_SF_table_results(task_set_number_range, exclude_time_out=False):
+    draw_SF_results(task_set_number_range, exclude_time_out=False)
+    
+    method_names = ["InitialMethod",
+                    "ImplicitCommunication", "TOM_BF", "TOM_WSkip"]
+    dataset_pd_obj, dataset_pd_runtime = ReadOptResultsAllMethod(
+        method_names, "SensorFusion", task_set_number_range, exclude_time_out)
+    print("######## SF objects, 'index' is the maximum of source tasks  ########")
+    print(dataset_pd_obj)
+    print("######## SF runtime, 'index' is the maximum of source tasks  ########")
+    print(dataset_pd_runtime)
