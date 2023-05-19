@@ -21,7 +21,7 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
                              markersize=marker_size_map[method_names[i]])  # , alpha=alpha_list[i])
     font_size = 15
     plt.xlabel("Task Number", fontsize=font_size)
-    plt.ylabel("Relative performance gap(%)", fontsize=font_size)
+    plt.ylabel("Relative gap(%)", fontsize=font_size)
     # if obj != "SensorFusion":
     #     splot.set_ylim([0.15, 1.05])
     # else:
