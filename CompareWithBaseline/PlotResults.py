@@ -22,8 +22,9 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
     font_size = 15
     plt.xlabel("Task Number", fontsize=font_size)
     plt.ylabel("Relative gap(%)", fontsize=font_size)
-    # if obj != "SensorFusion":
-    #     splot.set_ylim([0.15, 1.05])
+    if obj != "SensorFusion":
+        splot.set_ylim([0.15, 1.05])
+    
     # else:
     #     TODO set a suitable range for sensor fusion
     #     splot.set_ylim([0.15, 2.05])
@@ -100,8 +101,8 @@ def draw_RT_results(task_set_number_range):
 
 
 def draw_DA_results(task_set_number_range):
-    method_names = ["InitialMethod", "ImplicitCommunication", "Martinez18", "TOM_Sort_Offset",
-                    "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort"]
+    method_names = ["InitialMethod", "ImplicitCommunication", "Martinez18",
+                    "TOM_Sort_Offset", "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort"]
     plot_Obj_results(task_set_number_range, method_names, "DataAge")
     plot_Runtime_results(task_set_number_range, method_names, "DataAge")
 
