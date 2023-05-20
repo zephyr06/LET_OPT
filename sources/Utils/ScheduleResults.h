@@ -49,7 +49,10 @@ class ResultsManager {
 
   void PrintTimeOutCase() const;
 
+  void PrintTimeOutRatio() const;
+
   void PrintTimeOutCaseSingleMethod(BASELINEMETHODS method) const;
+  void PrintTimeOutRatio(BASELINEMETHODS method) const;
 
   // print case where method_compare perform worse than method_base
   void PrintWorseCase(BASELINEMETHODS method_base,

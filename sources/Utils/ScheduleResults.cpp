@@ -62,6 +62,11 @@ void ResultsManager::PrintTimeOutCase() const {
     PrintTimeOutCaseSingleMethod(itr->first);
   }
 }
+void ResultsManager::PrintTimeOutRatio() const {
+  for (auto itr = runTimeAll_.begin(); itr != runTimeAll_.end(); itr++) {
+    PrintTimeOutRatio(itr->first);
+  }
+}
 
 void ResultsManager::PrintTimeOutCaseSingleMethod(
     BASELINEMETHODS method) const {
@@ -73,6 +78,17 @@ void ResultsManager::PrintTimeOutCaseSingleMethod(
       std::cout << i << "\n";
     }
   }
+}
+void ResultsManager::PrintTimeOutRatio(BASELINEMETHODS method) const {
+  if (runTimeAll_.find(method) == runTimeAll_.end()) return;
+  std::cout << "Time-out ratio of method " + BaselineMethodNames[method] + ":";
+  float time_out_count = 0;
+  for (uint i = 0; i < runTimeAll_.at(method).size(); i++) {
+    if (runTimeAll_.at(method)[i] >= GlobalVariablesDAGOpt::TIME_LIMIT) {
+      time_out_count++;
+    }
+  }
+  std::cout << time_out_count / runTimeAll_.at(method).size() << "\n";
 }
 
 // print case where method_compare perform worse than method_base
