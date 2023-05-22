@@ -7,8 +7,8 @@ import numpy as np
 
 sys.path.insert(1, '~/programming/LET_OPT/CompareWithBaseline')
 
-
-def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=False):
+# if output_file_name is empty, default name settings will be used
+def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=False, output_file_name=""):
     dataset_pd_obj, dataset_pd_runtime = ReadOptResultsAllMethod(
         method_names, obj, task_set_number_range, exclude_time_out)
 
@@ -22,12 +22,9 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
     font_size = 15
     plt.xlabel("Task Number", fontsize=font_size)
     plt.ylabel("Relative gap(%)", fontsize=font_size)
-    if obj != "SensorFusion":
-        splot.set_ylim([0.15, 1.05])
-    
-    # else:
-    #     TODO set a suitable range for sensor fusion
-    #     splot.set_ylim([0.15, 2.05])
+
+    if (obj == "ReactionTime" or obj == "DataAge"):
+        splot.set_ylim([-82, 5])
 
     # # Shrink current axis's height by 10% at the botom
     # box = ax.get_position()
@@ -47,13 +44,17 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
     ax.get_legend().remove()
 
     plt.grid(linestyle="--")
-    plt.savefig(ROOT_CompareWithBaseline_PATH + obj +
+    if(output_file_name==""):
+        plt.savefig(ROOT_CompareWithBaseline_PATH + obj +
                 "/Compare_Performance_" + obj + ".pdf", format='pdf')
+    else:
+        plt.savefig(ROOT_CompareWithBaseline_PATH + obj +
+                    "/Compare_Performance_" + output_file_name + ".pdf", format='pdf')
     plt.show(block=False)
     plt.pause(3)
 
-
-def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_out=False):
+# if output_file_name is empty, default name settings will be used
+def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_out=False, output_file_name=""):
     dataset_pd_obj, dataset_pd_runtime = ReadOptResultsAllMethod(
         method_names, obj, task_set_number_range, exclude_time_out)
     plt.figure()
@@ -87,8 +88,13 @@ def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_
     ax.get_legend().remove()
     
     plt.grid(linestyle="--")
-    plt.savefig(ROOT_CompareWithBaseline_PATH + obj +
+
+    if(output_file_name==""):
+        plt.savefig(ROOT_CompareWithBaseline_PATH + obj +
                 "/Compare_RunTime_" + obj + ".pdf", format='pdf')
+    else:
+        plt.savefig(ROOT_CompareWithBaseline_PATH + obj +
+                "/Compare_RunTime_" + output_file_name + ".pdf", format='pdf')
     plt.show(block=False)
     plt.pause(3)
 
@@ -106,6 +112,13 @@ def draw_DA_results(task_set_number_range):
     plot_Obj_results(task_set_number_range, method_names, "DataAge")
     plot_Runtime_results(task_set_number_range, method_names, "DataAge")
 
+def draw_DA_results3Chains(task_set_number_range):
+    method_names = ["InitialMethod", "ImplicitCommunication",
+                    "TOM_Sort_Offset", "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort"]
+    plot_Obj_results(task_set_number_range, method_names, "DataAge", output_file_name="DataAge3Chains")
+    plot_Runtime_results(task_set_number_range, method_names, "DataAge", output_file_name="DataAge3Chains")
+
+
 
 def draw_SF_results(task_set_number_range, exclude_time_out=False):
     method_names = ["InitialMethod",
@@ -116,18 +129,21 @@ def draw_SF_results(task_set_number_range, exclude_time_out=False):
                          "SensorFusion", exclude_time_out)
 
 def print_SF_table_results(task_set_number_range, exclude_time_out=False):
-    draw_SF_results(task_set_number_range, exclude_time_out=False)
-    
+    # draw_SF_results(task_set_number_range, exclude_time_out=False)
+
     method_names = ["InitialMethod",
                     "ImplicitCommunication", "TOM_BF", "TOM_WSkip"]
     dataset_pd_obj, dataset_pd_runtime = ReadOptResultsAllMethod(
         method_names, "SensorFusion", task_set_number_range, exclude_time_out)
     pd.set_option("display.precision", 8)
-    print("######## SF object, 'index' is the maximum of source tasks  ########")
-    print(dataset_pd_obj)
+    pd.set_option('display.precision', 3)
     print("######## SF runtime, 'index' is the maximum of source tasks  ########")
     print(dataset_pd_runtime)
-    
+    # pd.options.display.float_format = "{:,.2f}".format
+    print("######## SF object, 'index' is the maximum of source tasks  ########")
+    print(dataset_pd_obj)
+
+
     file = open(ROOT_CompareWithBaseline_PATH + "SensorFusion/stat.txt", "w")
     file.write("\n######## SF object, 'index' is the maximum of source tasks  ########\n")
     file.write(dataset_pd_obj.to_string())

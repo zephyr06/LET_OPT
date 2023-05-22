@@ -41,6 +41,14 @@ def ReadOptResults(method_name="TOM_Sort", obj_type="DataAge", task_set_number=5
     return res_vec
 
 
+
+# Normalize based on the method called "InitialMethod"
+def Normalize(obj_vec, obj_base):
+    return (obj_vec-obj_base) / float(obj_base)*100.0
+# def Normalize(obj_vec, obj_base):
+#     return (obj_vec) / float(obj_base)*100.0
+
+
 def Average(res_vec, base_vec, obj_type="DataAge", task_num=5, exclude_time_out=False, excluded_table=[]):
     average_obj = 0
     average_runtime = 0
@@ -51,14 +59,14 @@ def Average(res_vec, base_vec, obj_type="DataAge", task_num=5, exclude_time_out=
             # print("Exclude one time out case")
             total_case -= 1
             continue
-        if obj_type != "SensorFusion":
+        if (obj_type == "ReactionTime" or obj_type == "DataAge"):
             if (float(res_vec[i].obj) / base_vec[i].obj > 1.1):
                 print("Find an error result!")
-            average_obj += float(res_vec[i].obj) / base_vec[i].obj
+            average_obj += Normalize(res_vec[i].obj, base_vec[i].obj)
             average_runtime += res_vec[i].runtime
-        else:
+        elif obj_type=="SensorFusion":
             if (base_vec[i].obj > 0):
-                average_obj += float(res_vec[i].obj) / base_vec[i].obj
+                average_obj += Normalize(res_vec[i].obj, base_vec[i].obj)
             else:
                 total_case -= 1
             average_runtime += res_vec[i].runtime

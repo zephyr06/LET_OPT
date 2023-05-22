@@ -10,6 +10,7 @@ TaskData/periodic-set-*
 TaskData/*/periodic-set-*
 TaskData/dagTasks/*
 TaskData/*/dag-set*
+TaskData/N*/*
 CompareWithBaseline/data_buffer_energy_task_number.txt
 CompareWithBaseline/time_task_number.txt
 Visualize/currGraph.gv.pdf

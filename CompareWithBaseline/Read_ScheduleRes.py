@@ -4,11 +4,6 @@ import numpy as np
 import pandas as pd
 
 
-# Normalize based on the method called "InitialMethod"
-def Normalize(obj_vec, obj_base):
-    for i in range(len(obj_vec)):
-        obj_vec[i] = obj_vec[i] / obj_base[i]
-    return obj_vec
 
 
 def AverageList(lst):
