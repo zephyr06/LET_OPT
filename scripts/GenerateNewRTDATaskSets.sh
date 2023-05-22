@@ -2,7 +2,7 @@
 
 # ************** Adjust settings there **************
 N=(5 10 15 20 25 30 35 40 45 50)
-numPerThread=(1000 1000 1000 200 200 200 200 200 200 200)
+numPerThread=(1000 1000 1000 125 125 125 125 125 125 125)
 # N=(4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50)
 # numPerThread=(200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200)
 # ROOT_PATH="/home/zephyr/Programming/LET_OPT"
@@ -13,6 +13,7 @@ outDir="generatedNewTaskset"
 parallelismFactor=0.9
 chainLengthRatio=0.25
 numCauseEffectChain=3
+examChainsWithSharedNodes=0
 # ***************************************************
 cd ../release
 cmake -DCMAKE_BUILD_TYPE=Release ..
@@ -30,6 +31,7 @@ echo "per_core_utilization_max: $per_core_utilization_max" >> configs.log
 echo "parallelismFactor: $parallelismFactor" >> configs.log
 echo "chainLengthRatio: $chainLengthRatio" >> configs.log
 echo "numCauseEffectChain: $numCauseEffectChain" >> configs.log
+echo "examChainsWithSharedNodes: $examChainsWithSharedNodes" >> configs.log
 
 for (( idx = 0 ; idx < ${#N[@]}; idx++ )); do
     taskNumber=${N[idx]}
@@ -39,7 +41,7 @@ for (( idx = 0 ; idx < ${#N[@]}; idx++ )); do
         ../tests/GenerateTaskSet --taskSetNameStartIndex $taskSetStartNumber --taskSetNumber $(($taskSetStartNumber + ${numPerThread[idx]})) --task_number_in_tasksets $taskNumber \
             --per_core_utilization_min $per_core_utilization_min --per_core_utilization_max $per_core_utilization_max \
             --outDir "release/$outDir/N$taskNumber/" --parallelismFactor $parallelismFactor --chainLengthRatio $chainLengthRatio \
-            --numCauseEffectChain $numCauseEffectChain --clearOutputDir 0 &
+            --numCauseEffectChain $numCauseEffectChain --clearOutputDir 0 --examChainsWithSharedNodes $examChainsWithSharedNodes &
     done
     wait
 done
