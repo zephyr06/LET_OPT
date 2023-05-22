@@ -800,6 +800,26 @@ TEST_F(PermutationTest18_n3, ReadWriteResults) {
   EXPECT_EQ(res_sched.obj_per_chain_[1], res_read.obj_per_chain_[1]);
 }
 
+class PermutationTestPaperExample2Chain : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_PaperExample2Chain");
+    type_trait = "DataAge";
+  }
+
+ public:
+  std::string type_trait;
+};
+
+TEST_F(PermutationTestPaperExample2Chain, adjacent_two_task_permutations_) {
+  TaskSetOptSorted task_sets_perms =
+      TaskSetOptSorted(dag_tasks, {dag_tasks.chains_}, "DataAge");
+  EXPECT_EQ(0, task_sets_perms.adjacent_two_task_permutations_[1][0]
+                   ->inequality_.lower_bound_);
+  EXPECT_THAT(task_sets_perms.adjacent_two_task_permutations_[1][0]
+                  ->inequality_.upper_bound_,
+              ::testing::Le(20));
+}
+
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
