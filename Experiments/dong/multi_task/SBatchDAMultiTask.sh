@@ -17,14 +17,13 @@ ROOT_PATH=/projects/rtss_let/LET_OPT
 # ROOT_PATH=/home/dong/workspace/LET_OPT
 cd $ROOT_PATH/release
 module reset
-module load yaml-cpp/0.6.3-GCCcore-8.3.0
+export MODULEPATH="/projects/rtss_let/modules/tinkercliffs-rome/all:$MODULEPATH"
+module --ignore_cache spider GTSAM
+module load GTSAM/4.1.1-foss-2021b
 
 ## No more needed after success compilation ##
-# module load CMake/3.15.3-GCCcore-8.3.0
-# module load boost/1.68.0.a 
-# module load Eigen/3.3.7-GCCcore-8.3.0
 # cmake -DCMAKE_BUILD_TYPE=RELEASE ..
-# make BatchDAWithMartRunAll.run 
+# make BatchRunDA.run 
 
 N=$1
 MinFileIndex=$2
@@ -34,8 +33,8 @@ MaxFileIndex=$4
 ## Launch multiple tasks in one node, make sure applied for adequate ntasks-per-node
 for file_index in $(seq $MinFileIndex $files_per_task $MaxFileIndex); do
 	end_index=$((file_index + files_per_task))
-    echo "./RunSingleFile/BatchDAWithMartRunAll.run --N $N --begin $file_index --end $end_index &"
-    ./RunSingleFile/BatchDAWithMartRunAll.run --N $N --begin $file_index --end $end_index &
+    echo "./RunSingleFile/BatchRunDA.run --N $N --begin $file_index --end $end_index &"
+    ./RunSingleFile/BatchRunDA.run --N $N --begin $file_index --end $end_index &
 done
 
 ## Wait for all of the background tasks to finish

@@ -13,7 +13,7 @@
 #include "sources/Utils/colormod.h"
 #include "sources/Utils/testMy.h"
 
-#define PROFILE_CODE
+// #define PROFILE_CODE
 
 #define CurrentTimeInProfiler std::chrono::high_resolution_clock::now()
 

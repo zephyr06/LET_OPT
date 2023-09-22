@@ -1,5 +1,5 @@
 %YAML:1.0
-debugMode: 1
+debugMode: 0
 TIME_LIMIT: 600 # seconds, -1 means unlimited time
 SKIP_PERM: 1
 # the proportion of permutations to keep! 1 means no sampling
@@ -19,7 +19,7 @@ priorityMode: RM
 # test_n5_v27 is a long case
 testDataSetName: test_PaperExample
 TIME_SCALE_FACTOR: 10
-CHAIN_NUMBER: 3
+CHAIN_NUMBER: 999
 
 
 #*************************************************************
