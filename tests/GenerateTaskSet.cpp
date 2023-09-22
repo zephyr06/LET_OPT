@@ -33,9 +33,9 @@ int main(int argc, char *argv[])
       .default_value(0)
       .help("the start index of DAG's name to create")
       .scan<'i', int>();
-  program.add_argument("--NumberOfProcessor")
+  program.add_argument("--numberOfProcessor")
       .default_value(4)
-      .help("the NumberOfProcessor of tasks in DAG")
+      .help("the numberOfProcessor of tasks in DAG")
       .scan<'i', int>();
   program.add_argument("--per_core_utilization_min")
       .default_value(0.4)
@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
   int task_number_in_tasksets = program.get<int>("--task_number_in_tasksets");
   int DAG_taskSetNumber = program.get<int>("--taskSetNumber");
   int DAG_taskSetNameStartIndex = program.get<int>("--taskSetNameStartIndex");
-  int numberOfProcessor = program.get<int>("--NumberOfProcessor");
+  int numberOfProcessor = program.get<int>("--numberOfProcessor");
   double per_core_utilization_min =
       program.get<double>("--per_core_utilization_min");
   double per_core_utilization_max =
@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
       << DAG_taskSetNumber << std::endl
       << "DAG_taskSetNameStartIndex(--taskSetNameStartIndex): "
       << DAG_taskSetNameStartIndex << std::endl
-      << "NumberOfProcessor(--NumberOfProcessor): "
+      << "numberOfProcessor(--numberOfProcessor): "
       << numberOfProcessor << std::endl
       << "totalUtilization_min(--totalUtilization_min): "
       << totalUtilization_min << std::endl
