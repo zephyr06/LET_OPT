@@ -16,6 +16,7 @@ mkdir ${backup_file_name}
 cp $ROOT_PATH/TaskData/configs.log ./${backup_file_name}/
 cp -r $ROOT_PATH/TaskData/N* ./${backup_file_name}/
 rm ./${backup_file_name}/*.zip
+cp -r $ROOT_PATH/TaskData/OneChain ./${backup_file_name}/
 
 # cp -r $ROOT_PATH/Experiments/dong ./${backup_file_name}/slurm_outputs/
 # cp $ROOT_PATH/Experiments/*.out ./${backup_file_name}/slurm_outputs/
