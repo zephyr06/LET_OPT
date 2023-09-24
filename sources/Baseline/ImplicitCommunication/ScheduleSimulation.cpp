@@ -26,7 +26,8 @@ Schedule SimulatedFTP_SingleCore(const DAG_Model &dag_tasks,
     run_queue.RemoveFinishedJob(time_now);
 
     // check whether to add new instances
-    AddTasksToRunQueue(run_queue, dag_tasks, processor_id, time_now);
+    if (time_now < tasks_info.hyper_period)
+      AddTasksToRunQueue(run_queue, dag_tasks, processor_id, time_now);
 
     // Run jobs with highest priority
     run_queue.RunJobHigestPriority(time_now);
