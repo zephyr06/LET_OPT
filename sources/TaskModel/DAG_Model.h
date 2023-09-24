@@ -65,17 +65,22 @@ class DAG_Model {
             int fork_sensor_num_max)
       : tasks(tasks), mapPrev(mapPrev) {
     RecordTaskPosition();
-    std::tie(graph_, indexesBGL_) = GenerateGraphForTaskSet();
+    ConstructBGL_Graph();
     chains_ = GetRandomChains(numCauseEffectChain, chain_length);
     CategorizeTaskSet();
     sf_forks_ =
         GetRandomForks(num_fork, fork_sensor_num_min, fork_sensor_num_max);
   }
 
+  DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev)
+      : DAG_Model(tasks, mapPrev, 0, 0, 0, 0, 1e3) {}
+
   DAG_Model(TaskSet &tasks, MAP_Prev &mapPrev, int numCauseEffectChain)
       : DAG_Model(tasks, mapPrev, numCauseEffectChain, 0, 0, 0, 1e3) {}
 
   std::pair<Graph, indexVertexMap> GenerateGraphForTaskSet() const;
+
+  inline void ConstructBGL_Graph() { std::tie(graph_, indexesBGL_) = GenerateGraphForTaskSet(); }
 
   void addEdge(int prevIndex, int nextIndex) {
     mapPrev[nextIndex].push_back(GetTask(prevIndex));
@@ -108,10 +113,8 @@ class DAG_Model {
   }
 
   // data member
- private:
-  TaskSet tasks;
-
  public:
+  TaskSet tasks;
   MAP_Prev mapPrev;
   Graph graph_;
   indexVertexMap indexesBGL_;

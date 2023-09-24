@@ -5,12 +5,16 @@ std::vector<double> Uunifast(int N, double utilAll, bool boundU) {
   std::vector<double> utilVec(N, 0);
 
   double nextU = 0;
-  for (int i = 1; i < N; i++) {
+  for (int i = 1; i < N; i++)
+  {
     nextU = sumU * pow(double(rand()) / RAND_MAX, 1.0 / (N - 1));
-    if (boundU) {
+    if (boundU)
+    {
       utilVec[i - 1] = std::min(1.0, sumU - nextU);
       nextU += std::max(0.0, sumU - nextU - 1.0);
-    } else {
+    }
+    else
+    {
       utilVec[i - 1] = sumU - nextU;
     }
     sumU = nextU;
@@ -20,7 +24,7 @@ std::vector<double> Uunifast(int N, double utilAll, bool boundU) {
 }
 
 TaskSet GenerateTaskSet(int N, double totalUtilization, int numberOfProcessor,
-                        int coreRequireMax, int taskSetType, int deadlineType) {
+                        int coreRequireMax, int taskType, int deadlineType) {
   std::vector<double> utilVec = Uunifast(N, totalUtilization);
   TaskSet tasks;
 
@@ -29,29 +33,43 @@ TaskSet GenerateTaskSet(int N, double totalUtilization, int numberOfProcessor,
     int processorId = rand() % numberOfProcessor;
     int coreRequire = 1 + rand() % (coreRequireMax);
 
-    // automobile periods with WATERS distribution
-    int probability = rand() % PeriodCDFWaters.back();
-    int period_idx = 0;
-    while (probability > PeriodCDFWaters[period_idx]) {
-      period_idx++;
+    if (taskType == 1) { // random choice from AutoMobile set 'PeriodSetAM'
+      periodCurr = int(PeriodSetAM[rand() % PeriodSetAM.size()] * GlobalVariablesDAGOpt::TIME_SCALE_FACTOR);
+      double deadline = periodCurr;
+      if (deadlineType == 1)
+        deadline = round(RandRange(std::max(1.0, ceil(periodCurr * utilVec[i])), periodCurr));
+      Task task(0, periodCurr, 0, std::max(1.0, ceil(periodCurr * utilVec[i])), deadline, i, processorId,
+                coreRequire);
+      tasks.push_back(task);
     }
-    periodCurr = int(PeriodSetWaters[period_idx] *
-                     GlobalVariablesDAGOpt::TIME_SCALE_FACTOR);
-    double deadline = periodCurr;
-    if (deadlineType == 1)
-      deadline = round(
-          RandRange(std::max(1.0, ceil(periodCurr * utilVec[i])), periodCurr));
-    Task task(0, periodCurr, 0, std::max(1.0, ceil(periodCurr * utilVec[i])),
-              deadline, i, processorId, coreRequire);
-    tasks.push_back(task);
+    else if (taskType == 2) { // automobile periods with WATERS distribution
+      int probability = rand() % PeriodCDFWaters.back();
+      int period_idx = 0;
+      while (probability > PeriodCDFWaters[period_idx]) {
+        period_idx++;
+      }
+      periodCurr = int(PeriodSetWaters[period_idx] *
+                       GlobalVariablesDAGOpt::TIME_SCALE_FACTOR);
+      double deadline = periodCurr;
+      if (deadlineType == 1)
+        deadline = round(
+            RandRange(std::max(1.0, ceil(periodCurr * utilVec[i])), periodCurr));
+      Task task(0, periodCurr, 0, std::max(1.0, ceil(periodCurr * utilVec[i])),
+                deadline, i, processorId, coreRequire);
+      tasks.push_back(task);
+    }
+    else
+      CoutError("Not recognized taskType!");
   }
   return tasks;
 }
+
 void WriteTaskSets(std::ofstream &file, const TaskSet &tasks) {
   int N = tasks.size();
   file << "JobID,Period,ExecutionTime,DeadLine,processorId"
           "\n";
-  for (int i = 0; i < N; i++) {
+  for (int i = 0; i < N; i++)
+  {
     file << tasks[i].id
          // << "," << tasks[i].offset
          << ","
@@ -65,48 +83,64 @@ void WriteTaskSets(std::ofstream &file, const TaskSet &tasks) {
   }
 }
 
+DAG_Model AddEdges2DAG_He21(DAG_Model &dag_tasks, int N, double parallelFactor) {
+  MAP_Prev mapPrev;
+  // add edges randomly
+  for (int i = 0; i < N; i++) {
+    for (int j = i + 1; j < N; j++) {
+      if (double(rand()) / RAND_MAX < parallelFactor) {
+        dag_tasks.addEdge(i, j);
+      }
+    }
+  }
+  dag_tasks.ConstructBGL_Graph();
+  return dag_tasks;
+}
+
 using namespace DAG_SPACE;
-DAG_Model GenerateDAG(const TaskSetGenerationParameters &tasks_params) {
+DAG_Model GenerateDAG_He21(const TaskSetGenerationParameters &tasks_params)
+{
   double totalUtilization = RandRange(tasks_params.totalUtilization_min,
                                       tasks_params.totalUtilization_max);
   TaskSet tasks = GenerateTaskSet(
       tasks_params.N, totalUtilization, tasks_params.numberOfProcessor,
-      tasks_params.coreRequireMax, tasks_params.period_generation_type,
+      tasks_params.coreRequireMax, tasks_params.taskType,
       tasks_params.deadlineType);
-  MAP_Prev mapPrev;
-  DAG_Model dagModel(tasks, mapPrev, 0);
-  // add edges randomly
-  for (int i = 0; i < tasks_params.N; i++) {
-    for (int j = i + 1; j < tasks_params.N; j++) {
-      if (double(rand()) / RAND_MAX < tasks_params.parallelismFactor) {
-        dagModel.addEdge(i, j);
-      }
-    }
-  }
+
+  DAG_Model dagModel;
+  dagModel.tasks = tasks;
+  AddEdges2DAG_He21(dagModel, tasks_params.N, tasks_params.parallelismFactor);
+
   return DAG_Model(tasks, dagModel.mapPrev, tasks_params.numCauseEffectChain,
                    tasks_params.chain_length, tasks_params.SF_ForkNum,
                    tasks_params.fork_sensor_num_min,
                    tasks_params.fork_sensor_num_max);
 }
 
-void WriteDAG(std::ofstream &file, DAG_Model &dag_tasks) {
+void WriteDAG(std::ofstream &file, DAG_Model &dag_tasks)
+{
   WriteTaskSets(file, dag_tasks.GetTaskSet());
   file << "Note: "
        << "*a,b"
        << " means a->b, i.e., a writes data and b reads data from it\n";
-  for (const auto &chain : dag_tasks.chains_) {
+  for (const auto &chain : dag_tasks.chains_)
+  {
     file << "@Chain:";
-    for (int x : chain) file << x << ", ";
+    for (int x : chain)
+      file << x << ", ";
     file << "\n";
   }
-  for (const auto &sf_fork : dag_tasks.sf_forks_) {
+  for (const auto &sf_fork : dag_tasks.sf_forks_)
+  {
     file << "@Fork_source:";
-    for (int x : sf_fork.source) file << x << ", ";
+    for (int x : sf_fork.source)
+      file << x << ", ";
     file << "\n";
     file << "@Fork_sink:" << sf_fork.sink << ", \n";
   }
   for (auto itr = dag_tasks.mapPrev.begin(); itr != dag_tasks.mapPrev.end();
-       itr++) {
+       itr++)
+  {
     for (uint i = 0; i < itr->second.size(); i++)
       file << "*" << ((itr->second)[i].id) << "," << (itr->first) << "\n";
   }

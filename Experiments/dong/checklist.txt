@@ -1,4 +1,5 @@
 1. copy the target task set to TaskData/
-2. check parameter CHAIN_NUMBER, make sure CHAIN_NUMBER in sources/parameters.yaml is set to the same as or greater the chain number as in the task set
-3. disable profiler: undefine the macro PROFILE_CODE in sources/Utils/profilier.h
-4. rebuild the target
+2. if also batch run "OneChain" results, copy the target task set to TaskData/OneChain/
+3. check parameter CHAIN_NUMBER, make sure CHAIN_NUMBER in sources/parameters.yaml is set to a scalar that is greater than all possible chain numbers
+4. disable profiler: undefine the macro PROFILE_CODE in sources/Utils/profilier.h
+5. rebuild the target

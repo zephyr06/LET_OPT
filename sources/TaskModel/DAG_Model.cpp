@@ -132,6 +132,8 @@ std::vector<int> DAG_Model::FindSinkTaskIds() const {
 std::vector<std::vector<int>> DAG_Model::GetRandomChains(int numOfChains,
                                                          int chain_length) {
   std::vector<std::vector<int>> chains;
+  if (numOfChains <=0)
+    return chains;
   chains.reserve(numOfChains);
   int chainCount = 0;
   auto rng = std::default_random_engine{};
@@ -180,6 +182,8 @@ std::vector<SF_Fork> DAG_Model::GetRandomForks(int num_fork,
                                                int fork_sensor_num_min,
                                                int fork_sensor_num_max) {
   std::vector<SF_Fork> res;
+  if (num_fork <= 0)
+    return res;
   res.reserve(mapPrev.size());
   for (const auto& [sink, source_tasks] : mapPrev) {
     if (source_tasks.size() > 1 && source_tasks.size() >= fork_sensor_num_min &&

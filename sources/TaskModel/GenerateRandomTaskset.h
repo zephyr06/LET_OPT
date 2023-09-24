@@ -1,3 +1,4 @@
+#pragma once
 #include <time.h>
 
 #include <cmath>
@@ -29,7 +30,8 @@ struct TaskSetGenerationParameters {
   int numberOfProcessor;
   int coreRequireMax;
   double parallelismFactor;
-  int period_generation_type;
+  int taskType;
+  int taskSetType;
   int deadlineType;
   int numCauseEffectChain;
   int chain_length;
@@ -39,12 +41,13 @@ struct TaskSetGenerationParameters {
 };
 
 TaskSet GenerateTaskSet(int N, double totalUtilization, int numberOfProcessor,
-                        int coreRequireMax, int taskSetType = 1,
+                        int coreRequireMax, int taskType = 2,
                         int deadlineType = 0);
 
 void WriteTaskSets(std::ofstream &file, TaskSet &tasks);
 
 using namespace DAG_SPACE;
-DAG_Model GenerateDAG(const TaskSetGenerationParameters &tasks_gene_param);
+DAG_Model GenerateDAG_He21(const TaskSetGenerationParameters &tasks_gene_param);
+DAG_Model AddEdges2DAG_He21(DAG_Model &dag_tasks, int N, double parallelFactor);
 
 void WriteDAG(std::ofstream &file, DAG_Model &tasksDAG);

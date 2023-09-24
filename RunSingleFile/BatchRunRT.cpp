@@ -19,8 +19,8 @@ int main(int argc, char *argv[]) {
       .scan<'i', int>();
 
   program.add_argument("--obj")
-      .default_value(std::string("DA"))
-      .help("the type of objective function,  DA");
+      .default_value(std::string("RT"))
+      .help("the type of objective function, RT or DA");
 
   try {
     program.parse_args(argc, argv);
@@ -36,16 +36,15 @@ int main(int argc, char *argv[]) {
 
   DAG_SPACE::BatchSettings batch_test_settings(
       N, begin_index, end_index, "TaskData/N" + std::to_string(N) + "/");
-  batch_test_settings.chainNum = 1;
+  batch_test_settings.chainNum = GlobalVariablesDAGOpt::CHAIN_NUMBER;
 
   std::vector<DAG_SPACE::BASELINEMETHODS> baselineMethods = {
-      DAG_SPACE::InitialMethod,   DAG_SPACE::ImplicitCommunication,
-      DAG_SPACE::TOM_BF,          DAG_SPACE::TOM_WSkip,
-      DAG_SPACE::TOM_Sort,        DAG_SPACE::Martinez18,
-      DAG_SPACE::TOM_Sort_Offset, DAG_SPACE::Bardatsch16};
+      DAG_SPACE::InitialMethod, DAG_SPACE::ImplicitCommunication,
+      DAG_SPACE::TOM_BF, DAG_SPACE::TOM_WSkip, DAG_SPACE::TOM_Sort};
+  // DAG_SPACE::TOM_Sort_Bound  // , DAG_SPACE::TOM_Sort_ImpBound
 
-  DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjDataAge>(baselineMethods,
-                                                       batch_test_settings);
+  DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTime>(
+      baselineMethods, batch_test_settings);
 
   std::cout << "N: " << N << "\n";
   PrintTimer();

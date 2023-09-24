@@ -43,11 +43,8 @@ int main(int argc, char *argv[]) {
 
     DAG_SPACE::BatchSettings batch_test_settings(
         N, begin_index, end_index, "TaskData/N" + std::to_string(N) + "/");
-    if (chainNum == 0) {
-        batch_test_settings.chainNum = GlobalVariablesDAGOpt::CHAIN_NUMBER;
-    } else {
-        batch_test_settings.chainNum = chainNum;
-    }
+    
+    batch_test_settings.chainNum = GlobalVariablesDAGOpt::CHAIN_NUMBER;
 
     std::vector<DAG_SPACE::BASELINEMETHODS> baselineMethods = {
         DAG_SPACE::InitialMethod, DAG_SPACE::ImplicitCommunication,
