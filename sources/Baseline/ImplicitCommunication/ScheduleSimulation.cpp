@@ -21,7 +21,7 @@ Schedule SimulatedFTP_SingleCore(const DAG_Model &dag_tasks,
                                  int processor_id) {
   const TaskSet &tasks = dag_tasks.GetTaskSet();
   RunQueue run_queue(tasks);
-  for (LLint time_now = 0; time_now < tasks_info.hyper_period; time_now++) {
+  for (LLint time_now = 0; time_now <= tasks_info.hyper_period; time_now++) {
     // first remove jobs that have been finished at this time
     run_queue.RemoveFinishedJob(time_now);
 
