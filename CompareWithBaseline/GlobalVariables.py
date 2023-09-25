@@ -8,7 +8,7 @@ baseline_method_labels = {"InitialMethod": "StanLET",
                           "TOM_WSkip": "iLET_Skip_Infeasible",
                           "TOM_Sort": "iLET_Efficient",
                           "Martinez18": "Martinez18",
-                          "TOM_Sort_Offset": "Martinez18_GCP_Efficient",
+                          "TOM_Sort_Offset": "Martinez18_GLP_Efficient",
                           "Bardatsch16": "Bradatsch16"}
 
 marker_map = {"InitialMethod": "o",
