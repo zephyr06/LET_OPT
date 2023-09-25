@@ -41,7 +41,9 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
     #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
     # else:
     #     plt.legend()
-    ax.get_legend().remove()
+    
+    # ax.get_legend().remove()
+    ax.set_title(obj + " Objective Performance")
 
     plt.grid(linestyle="--")
     if(output_file_name==""):
@@ -85,7 +87,9 @@ def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_
     #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
     # else:
     #     plt.legend()
-    ax.get_legend().remove()
+    
+    # ax.get_legend().remove()
+    ax.set_title(obj + " Running Time")
     
     plt.grid(linestyle="--")
 
@@ -106,17 +110,17 @@ def draw_RT_results(task_set_number_range):
     plot_Runtime_results(task_set_number_range, method_names, "ReactionTime")
 
 
-def draw_DA_results(task_set_number_range):
+def draw_DA_resultsOneChain(task_set_number_range):
     method_names = ["InitialMethod", "ImplicitCommunication", "Martinez18",
+                    "TOM_Sort_Offset", "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort"]
+    plot_Obj_results(task_set_number_range, method_names, "DataAgeOneChain", output_file_name="DataAgeOneChain")
+    plot_Runtime_results(task_set_number_range, method_names, "DataAgeOneChain", output_file_name="DataAgeOneChain")
+
+def draw_DA_results(task_set_number_range):
+    method_names = ["InitialMethod", "ImplicitCommunication",
                     "TOM_Sort_Offset", "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort"]
     plot_Obj_results(task_set_number_range, method_names, "DataAge")
     plot_Runtime_results(task_set_number_range, method_names, "DataAge")
-
-def draw_DA_results3Chains(task_set_number_range):
-    method_names = ["InitialMethod", "ImplicitCommunication",
-                    "TOM_Sort_Offset", "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort"]
-    plot_Obj_results(task_set_number_range, method_names, "DataAge", output_file_name="DataAge3Chains")
-    plot_Runtime_results(task_set_number_range, method_names, "DataAge", output_file_name="DataAge3Chains")
 
 
 

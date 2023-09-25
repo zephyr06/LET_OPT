@@ -28,6 +28,10 @@ def PrintResultVec(res_vec):
 # return 1D array of the results
 def ReadOptResults(method_name="TOM_Sort", obj_type="DataAge", task_set_number=5, root_path=ROOT_PATH):
     data_set_folder = root_path + "TaskData/N" + str(task_set_number)
+    if obj_type == "DataAgeOneChain":
+        data_set_folder = root_path + "TaskData/OneChain/N" + str(task_set_number)
+        obj_type = "DataAge"
+        
     res_vec = []
     files_all = os.listdir(data_set_folder)
     files_all.sort()
@@ -59,7 +63,7 @@ def Average(res_vec, base_vec, obj_type="DataAge", task_num=5, exclude_time_out=
             # print("Exclude one time out case")
             total_case -= 1
             continue
-        if (obj_type == "ReactionTime" or obj_type == "DataAge"):
+        if (obj_type == "ReactionTime" or obj_type == "DataAge" or obj_type == "DataAgeOneChain"):
             if (float(res_vec[i].obj) / base_vec[i].obj > 1.1):
                 print("Find an error result!")
             average_obj += Normalize(res_vec[i].obj, base_vec[i].obj)
