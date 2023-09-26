@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
       .default_value(-1)
       .help(
           "the number of random cause-effect chains, a negative number will"
-          "use 1 to 2 times of tasks number as the number of chains")
+          "use random number of chains")
       .scan<'i', int>();
   program.add_argument("--chainLength")
       .default_value(0)
@@ -230,7 +230,7 @@ int main(int argc, char *argv[])
          "(--clearOutputDir): "
       << clearOutputDir << std::endl
       << "numCauseEffectChain, the number of random cause-effect chains, a negative number will "
-         "use 1 to 2 times of tasks number as the number of chains (--numCauseEffectChain): "
+         "use random number of chains (--numCauseEffectChain): "
       << numCauseEffectChain << std::endl
       << "chainLength, the length of random cause-effect chains, 0 means no length requirements, "
          "Note that this will only be effective when taskSetType is 1. (--chainLength): "
@@ -280,7 +280,7 @@ int main(int argc, char *argv[])
       tasks_params.fork_sensor_num_max = fork_sensor_num_max;
 
       if (numCauseEffectChain < 0) 
-        tasks_params.numCauseEffectChain = min(round(task_number_in_tasksets * (1.0 + (double(rand()) / RAND_MAX) * 1.0 )), round(0.1 * task_number_in_tasksets * task_number_in_tasksets));
+        tasks_params.numCauseEffectChain = min(round(task_number_in_tasksets * (1.5 + (double(rand()) / RAND_MAX) * 1.5 )), round(0.15 * task_number_in_tasksets * task_number_in_tasksets));
       if (SF_ForkNum < 0)
         tasks_params.SF_ForkNum = floor((0.25 + (double(rand()) / RAND_MAX) * 0.75 ) * task_number_in_tasksets);
 
