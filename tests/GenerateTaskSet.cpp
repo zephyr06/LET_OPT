@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
 
   if (randomSeed < 0)
   {
-    srand(time(0) + (int64_t)&chainLength);
+    srand((unsigned int)((unsigned int)time(0) + (unsigned int)(int64_t)&chainLength));
   }
   else
   {
