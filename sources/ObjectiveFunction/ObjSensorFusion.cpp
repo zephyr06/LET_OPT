@@ -91,6 +91,24 @@ SF_JobFork GetSF_JobFork(JobCEC sink_job, const std::vector<int> &source_tasks,
   }
   return job_forks;
 }
+std::vector<double> ObjSensorFusion::ObjAllInstances_SingleFork(
+    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+    const ChainsPermutation &chains_perm, const VariableOD &variable_od,
+    const SF_Fork &fork_curr) {
+  std::vector<double> all_instances;
+  int fork_num =
+      tasks_info.hyper_period / dag_tasks.GetTask(fork_curr.sink).period;
+  all_instances.reserve(fork_num);
+
+  int for_curr_max_diff = 0;
+  for (int job_id = 0; job_id < fork_num; job_id++) {
+    SF_JobFork job_forks =
+        GetSF_JobFork(JobCEC(fork_curr.sink, job_id), fork_curr.source,
+                      tasks_info, chains_perm);
+    all_instances.push_back(GetSF_Diff(job_forks, variable_od, tasks_info));
+  }
+  return all_instances;
+}
 
 double ObjSensorFusion::Obj(const DAG_Model &dag_tasks,
                             const TaskSetInfoDerived &tasks_info,
@@ -99,19 +117,28 @@ double ObjSensorFusion::Obj(const DAG_Model &dag_tasks,
                             const std::vector<std::vector<int>> /*unusedArg*/) {
   int diff_all_forks = 0;
   for (const auto &fork_curr : dag_tasks.sf_forks_) {
-    int for_curr_max_diff = 0;
-    for (int job_id = 0; job_id < tasks_info.hyper_period /
-                                      dag_tasks.GetTask(fork_curr.sink).period;
-         job_id++) {
-      SF_JobFork job_forks =
-          GetSF_JobFork(JobCEC(fork_curr.sink, job_id), fork_curr.source,
-                        tasks_info, chains_perm);
-      for_curr_max_diff = std::max(
-          for_curr_max_diff, GetSF_Diff(job_forks, variable_od, tasks_info));
-    }
+    std::vector<double> all_instances = ObjAllInstances_SingleFork(
+        dag_tasks, tasks_info, chains_perm, variable_od, fork_curr);
+    int for_curr_max_diff =
+        *max_element(all_instances.begin(), all_instances.end());
     diff_all_forks += for_curr_max_diff;
   }
   return diff_all_forks;
+}
+
+std::vector<double> ObjSensorFusion::ObjAllInstances_SingleFork(
+    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+    const Schedule &schedule, const SF_Fork &fork_curr) {
+  std::vector<double> all_instances;
+  int fork_num =
+      tasks_info.hyper_period / dag_tasks.GetTask(fork_curr.sink).period;
+  all_instances.reserve(fork_num);
+  for (int job_id = 0; job_id < fork_num; job_id++) {
+    SF_JobFork job_forks = GetSF_JobFork(
+        JobCEC(fork_curr.sink, job_id), fork_curr.source, tasks_info, schedule);
+    all_instances.push_back(GetSF_Diff(job_forks, schedule, tasks_info));
+  }
+  return all_instances;
 }
 
 double ObjSensorFusion::Obj(const DAG_Model &dag_tasks,
@@ -121,19 +148,38 @@ double ObjSensorFusion::Obj(const DAG_Model &dag_tasks,
                             const std::vector<std::vector<int>> /*unusedArg*/) {
   int diff_all_forks = 0;
   for (const auto &fork_curr : dag_tasks.sf_forks_) {
-    int for_curr_max_diff = 0;
-    for (int job_id = 0; job_id < tasks_info.hyper_period /
-                                      dag_tasks.GetTask(fork_curr.sink).period;
-         job_id++) {
-      SF_JobFork job_forks =
-          GetSF_JobFork(JobCEC(fork_curr.sink, job_id), fork_curr.source,
-                        tasks_info, schedule);
-      for_curr_max_diff = std::max(for_curr_max_diff,
-                                   GetSF_Diff(job_forks, schedule, tasks_info));
-    }
+    std::vector<double> all_instances =
+        ObjAllInstances_SingleFork(dag_tasks, tasks_info, schedule, fork_curr);
+    int for_curr_max_diff =
+        *max_element(all_instances.begin(), all_instances.end());
     diff_all_forks += for_curr_max_diff;
   }
   return diff_all_forks;
+}
+double ObjSensorFusion::Jitter(
+    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+    const ChainsPermutation &chains_perm, const VariableOD &variable_od,
+    const std::vector<std::vector<int>> & /*unusedArg*/) {
+  double jitter_forks = 0;
+  for (const auto &fork_curr : dag_tasks.sf_forks_) {
+    std::vector<double> all_instances = ObjAllInstances_SingleFork(
+        dag_tasks, tasks_info, chains_perm, variable_od, fork_curr);
+    jitter_forks += JitterOfVector(all_instances);
+  }
+  return jitter_forks;
+}
+
+double ObjSensorFusion::Jitter(
+    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+    const ChainsPermutation & /*unusedArg*/, const Schedule &schedule,
+    const std::vector<std::vector<int>> & /*unusedArg*/) {
+  double jitter_forks = 0;
+  for (const auto &fork_curr : dag_tasks.sf_forks_) {
+    std::vector<double> all_instances =
+        ObjAllInstances_SingleFork(dag_tasks, tasks_info, schedule, fork_curr);
+    jitter_forks += JitterOfVector(all_instances);
+  }
+  return jitter_forks;
 }
 
 bool ForkIntersect(const SF_Fork &fork1, const SF_Fork &fork2) {
@@ -155,6 +201,7 @@ bool ForkIntersect(const std::vector<SF_Fork> &forks1,
   }
   return false;
 }
+
 void Merge_j2i(std::vector<std::vector<SF_Fork>> &decoupled_sf_forks, uint i,
                uint j) {
   std::vector<SF_Fork> forks_j = decoupled_sf_forks[j];
@@ -162,6 +209,7 @@ void Merge_j2i(std::vector<std::vector<SF_Fork>> &decoupled_sf_forks, uint i,
   if (i > j) i--;
   for (const auto &fork : forks_j) decoupled_sf_forks[i].push_back(fork);
 }
+
 std::vector<std::vector<SF_Fork>> ExtractDecoupledForks(
     const std::vector<SF_Fork> &sf_forks_all) {
   std::vector<std::vector<SF_Fork>> decoupled_sf_forks;

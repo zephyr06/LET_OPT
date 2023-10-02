@@ -29,6 +29,15 @@ SF_JobFork GetSF_JobFork(JobCEC sink_job, const std::vector<int> &source_tasks,
 class ObjSensorFusion {
  public:
   static const std::string type_trait;
+  static std::vector<double> ObjAllInstances_SingleFork(
+      const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+      const ChainsPermutation &chains_perm, const VariableOD &variable_od,
+      const SF_Fork &fork_curr);
+
+  static std::vector<double> ObjAllInstances_SingleFork(
+      const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+      const Schedule &schedule, const SF_Fork &fork_curr);
+
   static double Obj(const DAG_Model &dag_tasks,
                     const TaskSetInfoDerived &tasks_info,
                     const ChainsPermutation &chains_perm,
@@ -39,30 +48,17 @@ class ObjSensorFusion {
                     const ChainsPermutation & /*unusedArg*/,
                     const Schedule &schedule,
                     const std::vector<std::vector<int>> /*unusedArg*/);
+
   static double Jitter(const DAG_Model &dag_tasks,
                        const TaskSetInfoDerived &tasks_info,
                        const ChainsPermutation &chains_perm,
                        const VariableOD &variable_od,
-                       const std::vector<std::vector<int>> /*unusedArg*/) {
-    CoutWarning("Jitter Not implemented yet!");
-    return INT32_MAX;
-  }
+                       const std::vector<std::vector<int>> & /*unusedArg*/);
   static double Jitter(const DAG_Model &dag_tasks,
                        const TaskSetInfoDerived &tasks_info,
                        const ChainsPermutation & /*unusedArg*/,
                        const Schedule &schedule,
-                       const std::vector<std::vector<int>> /*unusedArg*/) {
-    CoutWarning("Jitter Not implemented yet!");
-    return INT32_MAX;
-  }
-
-  static std::vector<double> ObjAllChains(
-      const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-      const ChainsPermutation &chains_perm, const VariableOD &variable_od,
-      const std::vector<std::vector<int>> &chains_to_analyze) {
-    CoutError("No implementation in ObjAllChains");
-    return {};
-  }
+                       const std::vector<std::vector<int>> & /*unusedArg*/);
 };
 
 // *********************** Get Individual SF Forks

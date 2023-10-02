@@ -376,7 +376,58 @@ TEST_F(PermutationTest_n10_v14, extractIndependentMerge) {
       PerformTOM_OPT_EnumW_Skip<DAG_SPACE::ObjSensorFusion>(dag_tasks);
   EXPECT_EQ(801, res.obj_);
 }
+class PermutationTest_n3_v36 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n3_v36");
+    type_trait = "SensorFusion";
+    dag_tasks.chains_ = GetChainsForSF(dag_tasks);
+  }
 
+ public:
+  std::string type_trait;
+};
+
+TEST_F(PermutationTest_n3_v36, jitter_sf) {
+  VariableOD variable_od = VariableOD(tasks);
+  variable_od.print();
+  TwoTaskPermutations perm02(0, 2, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
+
+  ChainsPermutation chains_perm;
+  chains_perm.clear();
+  chains_perm.push_back(perm02[1]);
+  chains_perm.push_back(perm12[0]);
+  chains_perm.print();
+  EXPECT_EQ(10, ObjSensorFusion::Jitter(dag_tasks, tasks_info, chains_perm,
+                                        variable_od, dag_tasks.chains_));
+}
+
+TEST_F(PermutationTest_n3_v36, jitter_sf_v2) {
+  VariableOD variable_od = VariableOD(tasks);
+  variable_od[0].offset = 0;
+  variable_od[0].deadline = 1;
+  variable_od[1].offset = 1;
+  variable_od[1].deadline = 3;
+  variable_od[2].offset = 3;
+  variable_od[2].deadline = 6;
+  variable_od.print();
+  TwoTaskPermutations perm02(0, 2, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
+
+  ChainsPermutation chains_perm;
+  chains_perm.clear();
+  chains_perm.push_back(perm02[1]);
+  chains_perm.push_back(perm12[1]);
+  chains_perm.print();
+  EXPECT_EQ(6, ObjSensorFusion::Jitter(dag_tasks, tasks_info, chains_perm,
+                                       variable_od, dag_tasks.chains_));
+}
+
+TEST_F(PermutationTest_n3_v36, PerformStandardLETAnalysisDA) {
+  ScheduleResult res = PerformStandardLETAnalysis<ObjSensorFusion>(dag_tasks);
+  EXPECT_EQ(10, res.obj_);
+  EXPECT_EQ(10, res.jitter_);
+}
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
