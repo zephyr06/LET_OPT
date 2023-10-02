@@ -65,13 +65,13 @@ class ObjReactionTime {
     return ObjReactionTimeFromSChedule(dag_tasks, tasks_info, chains_to_analyze,
                                        schedule);
   }
-  static std::vector<double> ObjPerChain(
+  static std::vector<double> ObjAllChains(
       const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
       const ChainsPermutation &chains_perm, const VariableOD &variable_od,
       const std::vector<std::vector<int>> &chains_to_analyze) {
     ObjReactionTimeIntermediate obj;
-    return obj.ObjPerChain(dag_tasks, tasks_info, chains_perm, variable_od,
-                           chains_to_analyze);
+    return obj.ObjAllChains(dag_tasks, tasks_info, chains_perm, variable_od,
+                            chains_to_analyze);
   }
 };
 

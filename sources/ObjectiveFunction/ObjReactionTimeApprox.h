@@ -16,14 +16,14 @@ class ObjReactionTimeApprox {
     return obj.Obj(dag_tasks, tasks_info, chains_perm, variable_od_org,
                    chains_to_analyze);
   }
-  static std::vector<double> ObjPerChain(
+  static std::vector<double> ObjAllChains(
       const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
       const ChainsPermutation &chains_perm, const VariableOD &variable_od,
       const std::vector<std::vector<int>> &chains_to_analyze) {
     ObjReactionTimeIntermediate obj;
     VariableOD variable_od_org(dag_tasks.GetTaskSet());
-    return obj.ObjPerChain(dag_tasks, tasks_info, chains_perm, variable_od_org,
-                           chains_to_analyze);
+    return obj.ObjAllChains(dag_tasks, tasks_info, chains_perm, variable_od_org,
+                            chains_to_analyze);
   }
 };
 

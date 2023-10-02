@@ -5,7 +5,7 @@ namespace DAG_SPACE {
 const std::string ObjectiveFunctionBaseIntermediate::type_trait(
     "ObjectiveFunctionBase");
 
-std::vector<double> ObjectiveFunctionBaseIntermediate::ObjPerChain(
+std::vector<double> ObjectiveFunctionBaseIntermediate::ObjAllChains(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
     const ChainsPermutation &chains_perm, const VariableOD &variable_od,
     const std::vector<std::vector<int>> &chains_to_analyze) {
@@ -24,7 +24,7 @@ std::vector<double> ObjectiveFunctionBaseIntermediate::ObjPerChain(
 #endif
   return obj_per_chain;
 }
-std::vector<double> ObjectiveFunctionBaseIntermediate::ObjPerChain(
+std::vector<double> ObjectiveFunctionBaseIntermediate::ObjAllChains(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
     const ChainsPermutation &chains_perm, const Schedule &schedule,
     const std::vector<std::vector<int>> &chains_to_analyze) {
@@ -42,7 +42,7 @@ std::vector<double> ObjectiveFunctionBaseIntermediate::ObjPerChain(
 //     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
 //     const ChainsPermutation &chains_perm, const VariableOD &variable_od,
 //     const std::vector<std::vector<int>> &chains_to_analyze) {
-//   std::vector<double> obj_vec = ObjPerChain(dag_tasks, tasks_info,
+//   std::vector<double> obj_vec = ObjAllChains(dag_tasks, tasks_info,
 //   chains_perm,
 //                                             variable_od, chains_to_analyze);
 //   int max_obj = std::accumulate(obj_vec.begin(), obj_vec.end(), 0);
@@ -53,7 +53,7 @@ std::vector<double> ObjectiveFunctionBaseIntermediate::ObjPerChain(
 //     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
 //     const ChainsPermutation &chains_perm, const Schedule &schedule,
 //     const std::vector<std::vector<int>> &chains_to_analyze) {
-//   std::vector<double> obj_vec = ObjPerChain(dag_tasks, tasks_info,
+//   std::vector<double> obj_vec = ObjAllChains(dag_tasks, tasks_info,
 //   chains_perm,
 //                                             schedule, chains_to_analyze);
 //   int max_obj = std::accumulate(obj_vec.begin(), obj_vec.end(), 0);

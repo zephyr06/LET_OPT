@@ -5,6 +5,15 @@
 #include "sources/Utils/profilier.h"
 namespace DAG_SPACE {
 
+inline double Jitter(const std::vector<double> &data) {
+  if (data.size() == 0)
+    return 0;
+  else {
+    return *max_element(data.begin(), data.end()) -
+           *min_element(data.begin(), data.end());
+  }
+}
+
 class ObjectiveFunctionBaseIntermediate {
  public:
   static const std::string type_trait;
@@ -42,12 +51,13 @@ class ObjectiveFunctionBaseIntermediate {
     return {0};
   }
 
-  std::vector<double> ObjPerChain(
+  std::vector<double> ObjAllChains(
       const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
       const ChainsPermutation &chains_perm, const VariableOD &variable_od,
       const std::vector<std::vector<int>> &chains_to_analyze);
+
   // overload for schedule arguments
-  std::vector<double> ObjPerChain(
+  std::vector<double> ObjAllChains(
       const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
       const ChainsPermutation &chains_perm, const Schedule &schedule,
       const std::vector<std::vector<int>> &chains_to_analyze);
@@ -57,7 +67,7 @@ class ObjectiveFunctionBaseIntermediate {
                     const ChainsPermutation &chains_perm,
                     const VariableOD &variable_od,
                     const std::vector<std::vector<int>> &chains_to_analyze) {
-    std::vector<double> obj_vec = ObjPerChain(
+    std::vector<double> obj_vec = ObjAllChains(
         dag_tasks, tasks_info, chains_perm, variable_od, chains_to_analyze);
     int max_obj = std::accumulate(obj_vec.begin(), obj_vec.end(), 0);
     return max_obj;
@@ -68,7 +78,7 @@ class ObjectiveFunctionBaseIntermediate {
                     const ChainsPermutation &chains_perm,
                     const Schedule &schedule,
                     const std::vector<std::vector<int>> &chains_to_analyze) {
-    std::vector<double> obj_vec = ObjPerChain(
+    std::vector<double> obj_vec = ObjAllChains(
         dag_tasks, tasks_info, chains_perm, schedule, chains_to_analyze);
     int max_obj = std::accumulate(obj_vec.begin(), obj_vec.end(), 0);
 

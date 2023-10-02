@@ -51,14 +51,14 @@ class ObjDataAge {
     return obj.Obj(dag_tasks, tasks_info, chains_perm, variable_od,
                    chains_to_analyze);
   }
-  // static double Variance(
-  //     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
-  //     const ChainsPermutation &chains_perm, const VariableOD &variable_od,
-  //     const std::vector<std::vector<int>> &chains_to_analyze) {
-  //   ObjDataAgeIntermediate obj;
-  //   return obj.Obj(dag_tasks, tasks_info, chains_perm, variable_od,
-  //                  chains_to_analyze);
-  // }
+  static double Variance(
+      const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+      const ChainsPermutation &chains_perm, const VariableOD &variable_od,
+      const std::vector<std::vector<int>> &chains_to_analyze) {
+    ObjDataAgeIntermediate obj;
+    return obj.Obj(dag_tasks, tasks_info, chains_perm, variable_od,
+                   chains_to_analyze);
+  }
   static double Obj(const DAG_Model &dag_tasks,
                     const TaskSetInfoDerived &tasks_info,
                     const ChainsPermutation & /* not used*/,
@@ -68,13 +68,13 @@ class ObjDataAge {
                                   schedule);
   }
 
-  static std::vector<double> ObjPerChain(
+  static std::vector<double> ObjAllChains(
       const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
       const ChainsPermutation &chains_perm, const VariableOD &variable_od,
       const std::vector<std::vector<int>> &chains_to_analyze) {
     ObjDataAgeIntermediate obj;
-    return obj.ObjPerChain(dag_tasks, tasks_info, chains_perm, variable_od,
-                           chains_to_analyze);
+    return obj.ObjAllChains(dag_tasks, tasks_info, chains_perm, variable_od,
+                            chains_to_analyze);
   }
 };
 }  // namespace DAG_SPACE

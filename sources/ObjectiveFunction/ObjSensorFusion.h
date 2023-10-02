@@ -40,11 +40,11 @@ class ObjSensorFusion {
                     const Schedule &schedule,
                     const std::vector<std::vector<int>> /*unusedArg*/);
 
-  static std::vector<double> ObjPerChain(
+  static std::vector<double> ObjAllChains(
       const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
       const ChainsPermutation &chains_perm, const VariableOD &variable_od,
       const std::vector<std::vector<int>> &chains_to_analyze) {
-    CoutError("No implementation in ObjPerChain");
+    CoutError("No implementation in ObjAllChains");
     return {};
   }
 };
