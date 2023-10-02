@@ -9,7 +9,7 @@ FEASIBLE_CHAINS_MAX: 10
 # 100, test_n10_v9, 600s, stop at 479-5
 # 50, test_n10_v9, 560s, stop at 479-5
 FEASIBLE_INCOMPLETE_CHAINS_MAX: 50
-
+OPTIMIZE_JITTER_WEIGHT: 0
 
 #*************************************************************
 # Task set settings

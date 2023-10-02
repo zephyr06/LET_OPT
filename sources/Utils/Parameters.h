@@ -18,6 +18,7 @@ extern double SAMPLE_FEASIBLE_CHAINS;
 extern int FEASIBLE_CHAINS_MAX;
 extern int FEASIBLE_INCOMPLETE_CHAINS_MAX;
 extern const double kCplexInequalityThreshold;
+extern double OPTIMIZE_JITTER_WEIGHT;
 
 // Task set settings
 extern const std::string testDataSetName;
