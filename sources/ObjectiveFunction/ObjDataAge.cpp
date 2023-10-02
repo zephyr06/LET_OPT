@@ -63,32 +63,52 @@ double ObjDataAgeIntermediate::ObjSingleChain(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
     const ChainsPermutation &chains_perm, const std::vector<int> &chain,
     const VariableOD &variable_od) {
-  int max_data_age = -1;
+  std::vector<double> all_dag_age_instance =
+      ObjAllInstances(dag_tasks, tasks_info, chains_perm, chain, variable_od);
+  return max(-1.0, *std::max_element(all_dag_age_instance.begin(),
+                                     all_dag_age_instance.end()));
+}
+
+std::vector<double> ObjDataAgeIntermediate::ObjAllInstances(
+    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+    const ChainsPermutation &chains_perm, const std::vector<int> &chain,
+    const VariableOD &variable_od) {
   int hyper_period = GetHyperPeriod(tasks_info, chain);
   int job_num_in_hyper_period =
       hyper_period / tasks_info.GetTask(chain.back()).period;
+  std::vector<double> all_dag_age_instance;
+  all_dag_age_instance.reserve(job_num_in_hyper_period + 1);
   for (int j = 0; j <= job_num_in_hyper_period;
        j++)  // iterate each source job within a hyper-period
   {
     JobCEC job_source(chain.back(), j);
     JobCEC job_last_read =
         GetLastReadJob(job_source, chains_perm, chain, tasks_info);
-    max_data_age =
-        std::max(max_data_age,
-                 int(GetDeadline(job_source, variable_od, tasks_info) -
-                     GetStartTime(job_last_read, variable_od, tasks_info)));
+    all_dag_age_instance.push_back(
+        int(GetDeadline(job_source, variable_od, tasks_info) -
+            GetStartTime(job_last_read, variable_od, tasks_info)));
   }
-  return max_data_age;
+  return all_dag_age_instance;
 }
-
 double ObjDataAgeIntermediate::ObjSingleChain(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
     const ChainsPermutation &chains_perm, const std::vector<int> &chain,
     const Schedule &schedule) {
-  int max_data_age = -1;
+  std::vector<double> all_dag_age_instance =
+      ObjAllInstances(dag_tasks, tasks_info, chains_perm, chain, schedule);
+  return max(-1.0, *std::max_element(all_dag_age_instance.begin(),
+                                     all_dag_age_instance.end()));
+}
+
+std::vector<double> ObjDataAgeIntermediate::ObjAllInstances(
+    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+    const ChainsPermutation &chains_perm, const std::vector<int> &chain,
+    const Schedule &schedule) {
   int hyper_period = GetHyperPeriod(tasks_info, chain);
   int job_num_in_hyper_period =
       hyper_period / tasks_info.GetTask(chain.back()).period;
+  std::vector<double> all_dag_age_instance;
+  all_dag_age_instance.reserve(job_num_in_hyper_period + 1);
   for (int j = 0; j <= job_num_in_hyper_period;
        j++)  // iterate each source job within a hyper-period
   {
@@ -97,11 +117,11 @@ double ObjDataAgeIntermediate::ObjSingleChain(
         GetLastReadJob(job_source, chains_perm, chain, tasks_info);
 
     // *************** Unique code compared from above
-    max_data_age = std::max(
-        max_data_age, int(GetFinishTime(job_source, schedule, tasks_info) -
-                          GetStartTime(job_last_read, schedule, tasks_info)));
+    all_dag_age_instance.push_back(
+        int(GetFinishTime(job_source, schedule, tasks_info) -
+            GetStartTime(job_last_read, schedule, tasks_info)));
     // ***************
   }
-  return max_data_age;
+  return all_dag_age_instance;
 }
 }  // namespace DAG_SPACE
