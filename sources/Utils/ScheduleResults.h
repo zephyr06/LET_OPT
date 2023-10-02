@@ -11,6 +11,7 @@ namespace DAG_SPACE {
 struct ScheduleResult {
   bool schedulable_;
   double obj_;
+  double jitter_;
   double timeTaken_;
   VariableOD variable_opt_;            // optional
   std::vector<double> obj_per_chain_;  // optional
@@ -19,6 +20,7 @@ struct ScheduleResult {
 struct BatchResult {
   double schedulableRatio;
   double performance;
+  double jitter;
   double runTime;
 };
 

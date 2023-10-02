@@ -127,6 +127,8 @@ std::unordered_map<DAG_SPACE::BASELINEMETHODS, BatchResult> BatchOptimizeOrder(
       std::cout << "Schedulable? " << res.schedulable_ << std::endl;
       std::cout << Color::green << "Objective: " << res.obj_ << Color::def
                 << std::endl;
+      std::cout << Color::green << "Jitter: " << res.jitter_ << Color::def
+                << std::endl;
       std::cout << "res.timeTaken_: " << res.timeTaken_ << "\n\n";
 
       if ((!res.schedulable_ && batchTestMethod == TOM_Sort) || res.obj_ >= 1e8)

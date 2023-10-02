@@ -62,7 +62,8 @@ TEST_F(PermutationTest1, Iteration) {
 }
 TEST_F(PermutationTest1, Iteration_bf) {
   TaskSetOptEnumerate task_sets_perms(dag_tasks, {task_chain}, "ReactionTime");
-  int obj_find = task_sets_perms.PerformOptimizationBF<ObjReactionTime>();
+  int obj_find =
+      task_sets_perms.PerformOptimizationBF<ObjReactionTime>().second;
   // task_sets_perms.best_yet_chain_[0]->print();
   // task_sets_perms.best_yet_chain_[1]->print();
   EXPECT_THAT(task_sets_perms.iteration_count_, testing::Le(6));
@@ -779,7 +780,7 @@ TEST_F(PermutationTest18_n3, GetOptObjPerChain) {
       TaskSetOptEnumerate(dag_tasks, dag_tasks.chains_, "ReactionTime");
   task_sets_perms.adjacent_two_task_permutations_[0].print();
   task_sets_perms.adjacent_two_task_permutations_[1].print();
-  task_sets_perms.PerformOptimizationBF<ObjReactionTime>();
+  task_sets_perms.PerformOptimizationBF<ObjReactionTime>().second;
   std::vector<double> objs_expected = {20, 20};
   std::vector<double> objs_actual =
       task_sets_perms.GetOptObjPerChain<ObjReactionTime>();

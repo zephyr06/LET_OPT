@@ -59,7 +59,7 @@ ScheduleResult PerformTOM_OPT_BF_SF(const DAG_Model& dag_tasks) {
   for (const auto& dag : dags) {
     TaskSetOptEnumerate task_sets_perms =
         TaskSetOptEnumerate(dag, GetChainsForSF(dag), "SensorFusion");
-    res.obj_ += task_sets_perms.PerformOptimizationBF<ObjSensorFusion>();
+    res.obj_ += task_sets_perms.PerformOptimizationBF<ObjSensorFusion>().second;
     res.schedulable_ =
         res.schedulable_ && task_sets_perms.ExamSchedulabilityOptSol();
     std::cout << "\n";

@@ -18,7 +18,8 @@ class LPOptimizer {
               const GraphOfChains &graph_of_all_ca_chains,
               const std::string &obj_trait, const std::vector<int> &rta,
               bool optimize_offset_only = false,
-              double optimize_jitter_weight = 0)
+              double optimize_jitter_weight =
+                  GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT)
       : dag_tasks_(dag_tasks),
         tasks_info_(tasks_info),
         //   chains_perm_(chains_perm),
@@ -167,9 +168,12 @@ inline std::pair<VariableOD, int> FindODWithLP(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
     const ChainsPermutation &chains_perm,
     const GraphOfChains &graph_of_all_ca_chains, const std::string &obj_trait,
-    const std::vector<int> &rta, bool optimize_offset_only = false) {
+    const std::vector<int> &rta, bool optimize_offset_only = false,
+    double optimize_jitter_weight =
+        GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT) {
   LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_of_all_ca_chains,
-                           obj_trait, rta, optimize_offset_only);
+                           obj_trait, rta, optimize_offset_only,
+                           optimize_jitter_weight);
   return lp_optimizer.Optimize(chains_perm);
 }
 

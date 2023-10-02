@@ -21,9 +21,9 @@ int main(int argc, char** argv) {
   std::cout << "Schedulable? " << CheckSchedulability(dag_tasks) << "\n";
 
   TaskSetOptEnumWSkip task_sets_perms =
-      TaskSetOptEnumWSkip(dag_tasks, {dag_tasks.chains_}, "DataAge");
+      TaskSetOptEnumWSkip(dag_tasks, {dag_tasks.chains_}, "ReactionTime");
   int obj_find =
-      task_sets_perms.PerformOptimizationSkipInfeasible<ObjDataAge>();
+      task_sets_perms.PerformOptimizationSkipInfeasible<ObjReactionTime>();
 
   std::cout << "The best permutation is: \n";
   task_sets_perms.best_yet_chain_.print();
@@ -35,6 +35,7 @@ int main(int argc, char** argv) {
   // print some info
 
   std::cout << "The minimum objective function found is " << obj_find << "\n";
+
   std::cout << "The total number of permutation iterations is: "
             << task_sets_perms.iteration_count_ << "\n";
 #ifdef PROFILE_CODE

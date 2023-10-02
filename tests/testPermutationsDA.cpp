@@ -177,7 +177,7 @@ TEST_F(PermutationTest6_n5, overall_opt_brute_force) {
       TaskSetOptEnumerate(dag_tasks, dag_tasks.chains_, "DataAge");
   task_sets_perms.adjacent_two_task_permutations_[0].print();
   task_sets_perms.adjacent_two_task_permutations_[1].print();
-  int obj_find = task_sets_perms.PerformOptimizationBF<ObjDataAge>();
+  int obj_find = task_sets_perms.PerformOptimizationBF<ObjDataAge>().second;
 
   TaskSetOptEnumWSkip task_sets_perms_enum =
       TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAge");
@@ -258,7 +258,7 @@ TEST_F(PermutationTest25_n3, overall_opt_bf) {
       TaskSetOptEnumerate(dag_tasks, dag_tasks.chains_, "DataAge");
   task_sets_perms.adjacent_two_task_permutations_[0].print();
   task_sets_perms.adjacent_two_task_permutations_[1].print();
-  int obj_find = task_sets_perms.PerformOptimizationBF<ObjDataAge>();
+  int obj_find = task_sets_perms.PerformOptimizationBF<ObjDataAge>().second;
   // EXPECT_EQ(300, obj_find);
   EXPECT_THAT(obj_find, ::testing::Le(300));
 }

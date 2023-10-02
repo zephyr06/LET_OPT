@@ -52,11 +52,14 @@ ScheduleResult PerformTOM_OPT_BF(const DAG_Model& dag_tasks) {
   else {
     TaskSetOptEnumerate task_sets_perms(dag_tasks, dag_tasks.chains_,
                                         ObjectiveFunction::type_trait);
-    res.obj_ = task_sets_perms.PerformOptimizationBF<ObjectiveFunction>();
+    res.obj_ =
+        task_sets_perms.PerformOptimizationBF<ObjectiveFunction>().second;
     res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
   }
   if (res.obj_ >= 1e8) {
     res.obj_ = PerformStandardLETAnalysis<ObjectiveFunction>(dag_tasks).obj_;
+    res.jitter_ =
+        PerformStandardLETAnalysis<ObjectiveFunction>(dag_tasks).jitter_;
   }
   auto stop = std::chrono::high_resolution_clock::now();
   res.timeTaken_ = GetTimeTaken(start, stop);

@@ -9,7 +9,7 @@ FEASIBLE_CHAINS_MAX: 10
 # 100, test_n10_v9, 600s, stop at 479-5
 # 50, test_n10_v9, 560s, stop at 479-5
 FEASIBLE_INCOMPLETE_CHAINS_MAX: 50
-OPTIMIZE_JITTER_WEIGHT: 0
+OPTIMIZE_JITTER_WEIGHT: 1
 
 #*************************************************************
 # Task set settings
@@ -17,7 +17,7 @@ priorityMode: RM
 # test_n5_v9 test_n5_v16 
 # test_n5_v41 test_n30_v2  test_n5_v22  test_n3_v24
 # test_n5_v27 is a long case
-testDataSetName: test_PaperExample
+testDataSetName: test_n5_v63
 TIME_SCALE_FACTOR: 10
 CHAIN_NUMBER: 999
 

@@ -23,6 +23,8 @@ ScheduleResult PerformStandardLETAnalysis(const DAG_Model& dag_tasks) {
       ObjectiveFunctionBase::type_trait, schedule_actual);
   res.obj_ = ObjectiveFunctionBase::Obj(dag_tasks, tasks_info, chains_perm,
                                         variable_od_let, dag_tasks.chains_);
+  res.jitter_ = ObjectiveFunctionBase::Jitter(
+      dag_tasks, tasks_info, chains_perm, variable_od_let, dag_tasks.chains_);
 
   res.schedulable_ = CheckSchedulability(dag_tasks);
 
