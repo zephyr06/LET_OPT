@@ -5,7 +5,7 @@
 #include "sources/Utils/profilier.h"
 namespace DAG_SPACE {
 
-inline double Jitter(const std::vector<double> &data) {
+inline double JitterOfVector(const std::vector<double> &data) {
   if (data.size() == 0)
     return 0;
   else {
@@ -72,6 +72,7 @@ class ObjectiveFunctionBaseIntermediate {
     int max_obj = std::accumulate(obj_vec.begin(), obj_vec.end(), 0);
     return max_obj;
   }
+
   // overload for schedule arguments
   inline double Obj(const DAG_Model &dag_tasks,
                     const TaskSetInfoDerived &tasks_info,
@@ -83,6 +84,49 @@ class ObjectiveFunctionBaseIntermediate {
     int max_obj = std::accumulate(obj_vec.begin(), obj_vec.end(), 0);
 
     return max_obj;
+  }
+
+  // functions related to jitter --------------------------------------
+  double JitterSingleChain(const DAG_Model &dag_tasks,
+                           const TaskSetInfoDerived &tasks_info,
+                           const ChainsPermutation &chains_perm,
+                           const std::vector<int> &chain,
+                           const VariableOD &variable_od) {
+    std::vector<double> jitters =
+        ObjAllInstances(dag_tasks, tasks_info, chains_perm, chain, variable_od);
+    return JitterOfVector(jitters);
+  }
+  double JitterSingleChain(const DAG_Model &dag_tasks,
+                           const TaskSetInfoDerived &tasks_info,
+                           const ChainsPermutation &chains_perm,
+                           const std::vector<int> &chain,
+                           const Schedule &schedule) {
+    std::vector<double> jitters =
+        ObjAllInstances(dag_tasks, tasks_info, chains_perm, chain, schedule);
+    return JitterOfVector(jitters);
+  }
+
+  double Jitter(const DAG_Model &dag_tasks,
+                const TaskSetInfoDerived &tasks_info,
+                const ChainsPermutation &chains_perm,
+                const VariableOD &variable_od,
+                const std::vector<std::vector<int>> &chains_to_analyze) {
+    double sum = 0;
+    for (const std::vector<int> &chain : chains_to_analyze)
+      sum += JitterSingleChain(dag_tasks, tasks_info, chains_perm, chain,
+                               variable_od);
+    return sum;
+  }
+
+  double Jitter(const DAG_Model &dag_tasks,
+                const TaskSetInfoDerived &tasks_info,
+                const ChainsPermutation &chains_perm, const Schedule &schedule,
+                const std::vector<std::vector<int>> &chains_to_analyze) {
+    double sum = 0;
+    for (const std::vector<int> &chain : chains_to_analyze)
+      sum += JitterSingleChain(dag_tasks, tasks_info, chains_perm, chain,
+                               schedule);
+    return sum;
   }
 };
 

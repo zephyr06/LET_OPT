@@ -162,7 +162,8 @@ TEST_F(PermutationTest1, data_age) {
   EXPECT_EQ(20, ObjDataAge::Obj(dag_tasks, tasks_info, chains_perm, variable_od,
                                 dag_tasks.chains_));
 }
-TEST_F(PermutationTest1, data_age_ObjPerChain) {
+
+TEST_F(PermutationTest1, data_age_ObjAllChains) {
   // chain is 0 -> 1 -> 2
   std::vector<int> chain = {0, 1, 2};
   dag_tasks.chains_ = {chain, {0, 1}};
@@ -174,7 +175,7 @@ TEST_F(PermutationTest1, data_age_ObjPerChain) {
   chains_perm.push_back(perm12[1]);
   chains_perm.print();
   variable_od.print();
-  std::vector<double> obj_per_chain = ObjDataAge::ObjPerChain(
+  std::vector<double> obj_per_chain = ObjDataAge::ObjAllChains(
       dag_tasks, tasks_info, chains_perm, variable_od, dag_tasks.chains_);
   std::vector<double> obj_per_chain_expected = {50, 20 + 10};
   EXPECT_EQ(obj_per_chain_expected.size(), obj_per_chain.size());
@@ -223,6 +224,62 @@ TEST_F(PermutationTest1, PerformStandardLETAnalysisDA) {
   dag_tasks.chains_ = {{0, 1, 2}};
   ScheduleResult res = PerformStandardLETAnalysis<ObjDataAge>(dag_tasks);
   EXPECT_EQ(50, res.obj_);
+}
+TEST_F(PermutationTest1, jitter_data_age) {
+  // chain is 0 -> 1 -> 2
+  std::vector<int> chain = {0, 1, 2};
+  dag_tasks.chains_ = {chain};
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
+
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[2]);
+  chains_perm.push_back(perm12[1]);
+  chains_perm.print();
+  EXPECT_EQ(0, ObjDataAge::Jitter(dag_tasks, tasks_info, chains_perm,
+                                  variable_od, dag_tasks.chains_));
+
+  chains_perm.clear();
+  chains_perm.push_back(perm01[2]);
+  chains_perm.push_back(perm12[0]);
+  chains_perm.print();
+  EXPECT_EQ(0, ObjDataAge::Jitter(dag_tasks, tasks_info, chains_perm,
+                                  variable_od, dag_tasks.chains_));
+
+  chains_perm.clear();
+  chains_perm.push_back(perm01[1]);
+  chains_perm.push_back(perm12[0]);
+  chains_perm.print();
+  EXPECT_EQ(0, ObjDataAge::Jitter(dag_tasks, tasks_info, chains_perm,
+                                  variable_od, dag_tasks.chains_));
+}
+TEST_F(PermutationTest1, jitter_reaction_time) {
+  // chain is 0 -> 1 -> 2
+  std::vector<int> chain = {0, 1, 2};
+  dag_tasks.chains_ = {chain};
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[2]);
+  chains_perm.push_back(perm12[1]);
+  chains_perm.print();
+  EXPECT_EQ(10, ObjReactionTime::Jitter(dag_tasks, tasks_info, chains_perm,
+                                        variable_od, dag_tasks.chains_));
+
+  chains_perm.clear();
+  chains_perm.push_back(perm01[2]);
+  chains_perm.push_back(perm12[0]);
+  chains_perm.print();
+  EXPECT_EQ(10, ObjReactionTime::Jitter(dag_tasks, tasks_info, chains_perm,
+                                        variable_od, dag_tasks.chains_));
+
+  chains_perm.clear();
+  chains_perm.push_back(perm01[1]);
+  chains_perm.push_back(perm12[0]);
+  chains_perm.print();
+  EXPECT_EQ(10, ObjReactionTime::Jitter(dag_tasks, tasks_info, chains_perm,
+                                        variable_od, dag_tasks.chains_));
 }
 
 class PermutationTest_Non_Har : public ::testing::Test {
@@ -564,7 +621,7 @@ TEST_F(PermutationTest_2chain_v1, Obj_RTApprox) {
             ObjReactionTimeApprox::Obj(dag_tasks, tasks_info, chains_perm,
                                        variable_od, dag_tasks.chains_));
 
-  std::vector<double> obj_per_chain = ObjReactionTimeApprox::ObjPerChain(
+  std::vector<double> obj_per_chain = ObjReactionTimeApprox::ObjAllChains(
       dag_tasks, tasks_info, chains_perm, variable_od, dag_tasks.chains_);
   std::vector<double> obj_per_chain_expected = {200, 200, 200};
   ASSERT_EQ(obj_per_chain_expected.size(), obj_per_chain.size());
