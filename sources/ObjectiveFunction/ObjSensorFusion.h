@@ -39,6 +39,22 @@ class ObjSensorFusion {
                     const ChainsPermutation & /*unusedArg*/,
                     const Schedule &schedule,
                     const std::vector<std::vector<int>> /*unusedArg*/);
+  static double Jitter(const DAG_Model &dag_tasks,
+                       const TaskSetInfoDerived &tasks_info,
+                       const ChainsPermutation &chains_perm,
+                       const VariableOD &variable_od,
+                       const std::vector<std::vector<int>> /*unusedArg*/) {
+    CoutWarning("Jitter Not implemented yet!");
+    return INT32_MAX;
+  }
+  static double Jitter(const DAG_Model &dag_tasks,
+                       const TaskSetInfoDerived &tasks_info,
+                       const ChainsPermutation & /*unusedArg*/,
+                       const Schedule &schedule,
+                       const std::vector<std::vector<int>> /*unusedArg*/) {
+    CoutWarning("Jitter Not implemented yet!");
+    return INT32_MAX;
+  }
 
   static std::vector<double> ObjAllChains(
       const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,

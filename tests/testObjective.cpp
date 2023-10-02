@@ -253,6 +253,7 @@ TEST_F(PermutationTest1, jitter_data_age) {
   EXPECT_EQ(0, ObjDataAge::Jitter(dag_tasks, tasks_info, chains_perm,
                                   variable_od, dag_tasks.chains_));
 }
+
 TEST_F(PermutationTest1, jitter_reaction_time) {
   // chain is 0 -> 1 -> 2
   std::vector<int> chain = {0, 1, 2};

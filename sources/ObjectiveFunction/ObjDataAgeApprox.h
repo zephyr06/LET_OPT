@@ -25,5 +25,23 @@ class ObjDataAgeApprox {
     return obj.ObjAllChains(dag_tasks, tasks_info, chains_perm, variable_od_org,
                             chains_to_analyze);
   }
+
+  static double Jitter(const DAG_Model &dag_tasks,
+                       const TaskSetInfoDerived &tasks_info,
+                       const ChainsPermutation & /*unusedArg*/,
+                       const Schedule &schedule,
+                       const std::vector<std::vector<int>> /*unusedArg*/) {
+    CoutWarning("Jitter Not implemented yet!");
+    return INT32_MAX;
+  }
+
+  static double Jitter(const DAG_Model &dag_tasks,
+                       const TaskSetInfoDerived &tasks_info,
+                       const ChainsPermutation &chains_perm,
+                       const VariableOD &variable_od,
+                       const std::vector<std::vector<int>> &chains_to_analyze) {
+    CoutWarning("Jitter Not implemented yet!");
+    return INT32_MAX;
+  }
 };
 }  // namespace DAG_SPACE
