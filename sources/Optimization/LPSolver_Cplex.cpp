@@ -113,15 +113,24 @@ void LPOptimizer::AddConstantDeadlineConstraint() {
 }
 
 void LPOptimizer::AddArtificialVariables() {
-  if (IfRT_Trait(obj_trait_) || IfDA_Trait(obj_trait_))
-    varArray_art_ =
+  if (IfRT_Trait(obj_trait_) || IfDA_Trait(obj_trait_)) {
+    varArray_art_max_ =
         IloNumVarArray(env_, static_cast<int>(dag_tasks_.chains_.size()), 0,
                        IloInfinity, IloNumVar::Float);
-  else if (IfSF_Trait(obj_trait_))
-    varArray_art_ =
+    if (optimize_jitter_weight_ != 0)
+      varArray_art_min_ =
+          IloNumVarArray(env_, static_cast<int>(dag_tasks_.chains_.size()), 0,
+                         IloInfinity, IloNumVar::Float);
+  } else if (IfSF_Trait(obj_trait_)) {
+    varArray_art_max_ =
         IloNumVarArray(env_, static_cast<int>(dag_tasks_.sf_forks_.size()), 0,
                        IloInfinity, IloNumVar::Float);
-  else
+    if (optimize_jitter_weight_ != 0)
+      varArray_art_min_ =
+          IloNumVarArray(env_, static_cast<int>(dag_tasks_.sf_forks_.size()), 0,
+                         IloInfinity, IloNumVar::Float);
+
+  } else
     CoutError("Unrecognized obj_trait in LPSolver!");
 }
 
@@ -219,15 +228,18 @@ void LPOptimizer::AddTwoJobLengthConstraint(const JobCEC &start_job,
                                             const JobCEC &finish_job,
                                             int chain_count,
                                             int job_pair_index) {
-  // std::string const_name = GetReactConstraintName(chain_count,
-  // job_pair_index);
   IloExpr finish_expr = GetFinishTimeExpression(finish_job);
   IloExpr start_expr = GetStartTimeExpression(start_job);
-  IloRange myConstraint1(env_, 0,
-                         varArray_art_[chain_count] - finish_expr + start_expr,
-                         IloInfinity);  // , const_name.c_str()
+  IloRange myConstraint1(
+      env_, 0, varArray_art_max_[chain_count] - finish_expr + start_expr,
+      IloInfinity);  // , const_name.c_str()
   model_.add(myConstraint1);
-  // name2ilo_const_[const_name] = myConstraint1;
+  if (optimize_jitter_weight_ != 0) {
+    IloRange myConstraint2(
+        env_, 0, finish_expr - start_expr - varArray_art_min_[chain_count],
+        IloInfinity);
+    model_.add(myConstraint2);
+  }
   finish_expr.end();
   start_expr.end();
 }
@@ -235,15 +247,19 @@ void LPOptimizer::AddTwoJobApproxLengthConstraint(const JobCEC &start_job,
                                                   const JobCEC &finish_job,
                                                   int chain_count,
                                                   int job_pair_index) {
-  // std::string const_name = GetReactConstraintName(chain_count,
-  // job_pair_index);
   IloExpr finish_expr = GetFinishTimeExpressionApprox(finish_job);
   IloExpr start_expr = GetStartTimeExpressionApprox(start_job);
-  IloRange myConstraint1(env_, 0,
-                         varArray_art_[chain_count] - finish_expr + start_expr,
-                         IloInfinity);  // , const_name.c_str()
+  IloRange myConstraint1(
+      env_, 0, varArray_art_max_[chain_count] - finish_expr + start_expr,
+      IloInfinity);  // , const_name.c_str()
   model_.add(myConstraint1);
-  // name2ilo_const_[const_name] = myConstraint1;
+
+  if (optimize_jitter_weight_ != 0) {
+    IloRange myConstraint2(
+        env_, 0, finish_expr - start_expr - varArray_art_min_[chain_count],
+        IloInfinity);  // , const_name.c_str()
+    model_.add(myConstraint2);
+  }
   finish_expr.end();
   start_expr.end();
 }
@@ -304,7 +320,11 @@ void LPOptimizer::AddRTDAObjectiveFunctions(
     }
 
     // Normal obj to optmize RTDA: obj = max_RTs + max_DAs
-    rtda_expression += varArray_art_[chain_count];
+    rtda_expression += varArray_art_max_[chain_count];
+    if (optimize_jitter_weight_ != 0)
+      rtda_expression +=
+          (varArray_art_max_[chain_count] - varArray_art_min_[chain_count]) *
+          optimize_jitter_weight_;
     // rtda_expression += theta_da;
     chain_count++;
   }
@@ -315,16 +335,18 @@ void LPOptimizer::AddRTDAObjectiveFunctions(
 #endif
 }
 
+// TODO: SF can speed up by improving this function, but probably not very
+// worthywhile?
 void LPOptimizer::AddTwoJobDiffConstraint(const JobCEC &finish_job1,
                                           const JobCEC &finish_job2,
                                           int fork_count) {
   IloExpr finish_expr1 = GetFinishTimeExpression(finish_job1);
   IloExpr finish_expr2 = GetFinishTimeExpression(finish_job2);
   IloRange myConstraint1(
-      env_, 0, varArray_art_[fork_count] - (finish_expr1 - finish_expr2),
+      env_, 0, varArray_art_max_[fork_count] - (finish_expr1 - finish_expr2),
       IloInfinity);
   IloRange myConstraint2(
-      env_, 0, varArray_art_[fork_count] - (finish_expr2 - finish_expr1),
+      env_, 0, varArray_art_max_[fork_count] - (finish_expr2 - finish_expr1),
       IloInfinity);
   if (GlobalVariablesDAGOpt::debugMode) {
     std::cout << myConstraint1 << "\n"
@@ -357,7 +379,7 @@ void LPOptimizer::AddSFObjectiveFunctions(
         }
       }
     }
-    sf_expression += varArray_art_[fork_count];
+    sf_expression += varArray_art_max_[fork_count];
     fork_count++;
   }
   model_.add(IloMinimize(env_, sf_expression));

@@ -36,6 +36,26 @@ TEST_F(PermutationTest1, Optimize) {
   auto res = lp_optimizer.Optimize(chains_perm);
   EXPECT_EQ(20, res.second);
 }
+
+TEST_F(PermutationTest1, Optimize_jitter) {
+  dag_tasks.chains_ = {{0, 1, 2}};
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[0]);
+  chains_perm.push_back(perm12[0]);
+  chains_perm.print();
+
+  GraphOfChains graph_chains(dag_tasks.chains_);
+
+  std::vector<int> rta = {1, 3, 6};
+  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "ReactionTime",
+                           rta, false, 1);
+  auto res = lp_optimizer.Optimize(chains_perm);
+  EXPECT_EQ(20 + 10, res.second);  // there is only one feasible solution
+}
+
 TEST_F(PermutationTest1, OptimizeApprox) {
   dag_tasks.chains_ = {{0, 1, 2}};
   TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
@@ -91,6 +111,25 @@ TEST_F(PermutationTest1, OptimizeApproxDA_v2) {
   lp_optimizer.WriteModelToFile();
   lp_optimizer.ClearCplexMemory();
   EXPECT_EQ(10, res.second);
+}
+
+TEST_F(PermutationTest1, Optimize_jitter_v2) {
+  dag_tasks.chains_ = {{0, 1, 2}};
+  TwoTaskPermutations perm01(0, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+
+  ChainsPermutation chains_perm;
+  chains_perm.push_back(perm01[1]);
+  chains_perm.push_back(perm12[1]);
+  chains_perm.print();
+
+  GraphOfChains graph_chains(dag_tasks.chains_);
+
+  std::vector<int> rta = {1, 3, 6};
+  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_chains, "ReactionTime",
+                           rta, false, 1);
+  auto res = lp_optimizer.Optimize(chains_perm);
+  EXPECT_EQ(27 + 10, res.second);
 }
 
 class PermutationTest2 : public ::testing::Test {

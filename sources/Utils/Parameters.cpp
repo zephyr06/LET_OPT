@@ -25,7 +25,7 @@ const double kCplexInequalityThreshold =
 // Task set settings
 const std::string testDataSetName =
     loaded_doc["testDataSetName"].as<std::string>();
-const double OPTIMIZE_JITTER_WEIGHT =
+double OPTIMIZE_JITTER_WEIGHT =
     loaded_doc["OPTIMIZE_JITTER_WEIGHT"].as<double>();
 
 const std::string priorityMode = loaded_doc["priorityMode"].as<std::string>();

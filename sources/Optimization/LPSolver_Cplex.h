@@ -17,7 +17,8 @@ class LPOptimizer {
               // const ChainsPermutation &chains_perm,
               const GraphOfChains &graph_of_all_ca_chains,
               const std::string &obj_trait, const std::vector<int> &rta,
-              bool optimize_offset_only = false)
+              bool optimize_offset_only = false,
+              double optimize_jitter_weight = 0)
       : dag_tasks_(dag_tasks),
         tasks_info_(tasks_info),
         //   chains_perm_(chains_perm),
@@ -25,6 +26,7 @@ class LPOptimizer {
         obj_trait_(obj_trait),
         rta_(rta),
         optimize_offset_only_(optimize_offset_only),
+        optimize_jitter_weight_(optimize_jitter_weight),
         // cplex's environments
         env_(IloEnv()),
         model_(env_),
@@ -147,12 +149,14 @@ class LPOptimizer {
   std::string obj_trait_;
   const std::vector<int> &rta_;
   bool optimize_offset_only_;
+  double optimize_jitter_weight_;
 
   IloEnv env_;
   IloModel model_;
   IloCplex cplexSolver_;
   IloNumVarArray varArray_;
-  IloNumVarArray varArray_art_;
+  IloNumVarArray varArray_art_max_;
+  IloNumVarArray varArray_art_min_;
   IloConstraintArray constraint_array_;
   int optimal_obj_ = INFEASIBLE_OBJ;
   // std::unordered_map<std::string, IloRange> name2ilo_const_;
