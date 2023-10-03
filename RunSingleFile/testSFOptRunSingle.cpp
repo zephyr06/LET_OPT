@@ -36,6 +36,13 @@ int main(int argc, char** argv) {
   std::cout << "The minimum objective function found is " << obj_find << "\n";
   // std::cout << "The total number of permutation iterations is: "
   //           << task_sets_perms.iteration_count_ << "\n";
+
+  std::cout << "==================================================\n";
+  auto res2 = PerformStandardLETAnalysis<ObjSensorFusion>(dag_tasks);
+  int obj_find2 = res2.obj_;
+  std::cout << "The minimum objective function in standard LET is " << obj_find2
+            << "\n";
+  std::cout << "The jitter found is " << res2.jitter_ << "\n";
 #ifdef PROFILE_CODE
   EndTimer("main");
   PrintTimer();

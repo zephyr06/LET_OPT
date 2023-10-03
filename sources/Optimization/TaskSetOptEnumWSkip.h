@@ -17,7 +17,7 @@ class TaskSetOptEnumWSkip : public TaskSetOptEnumerate {
               << ObjectiveFunction::Jitter(
                      dag_tasks_, tasks_info_, best_yet_chain_,
                      best_yet_variable_od_, graph_of_all_ca_chains_.chains_)
-              << "\n\n\n";
+              << "\n";
     return best_yet_obj_;
   }
 
