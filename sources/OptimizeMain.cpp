@@ -60,7 +60,9 @@ ScheduleResult PerformTOM_OPT_BF_SF(const DAG_Model& dag_tasks) {
   for (const auto& dag : dags) {
     TaskSetOptEnumerate task_sets_perms =
         TaskSetOptEnumerate(dag, GetChainsForSF(dag), "SensorFusion");
-    res.obj_ += task_sets_perms.PerformOptimizationBF<ObjSensorFusion>().second;
+    auto res_cur = task_sets_perms.PerformOptimizationBF<ObjSensorFusion>();
+    res.obj_ += res_cur.obj_;
+    res.jitter_ += res_cur.jitter_;
     res.schedulable_ =
         res.schedulable_ && task_sets_perms.ExamSchedulabilityOptSol();
     res.variable_opt_ = task_sets_perms.best_yet_variable_od_;
@@ -73,6 +75,7 @@ ScheduleResult PerformTOM_OPT_EnumW_Skip_SF(const DAG_Model& dag_tasks) {
   auto dags = ExtractDAGsWithIndependentForks(dag_tasks);
   ScheduleResult res;
   res.obj_ = 0;
+  res.schedulable_ = true;
   for (const auto& dag : dags) {
     TaskSetOptEnumWSkip task_sets_perms =
         TaskSetOptEnumWSkip(dag, GetChainsForSF(dag), "SensorFusion");

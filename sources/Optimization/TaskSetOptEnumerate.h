@@ -10,10 +10,11 @@ class TaskSetOptEnumerate : public TaskSetPermutation {
       : TaskSetPermutation(dag_tasks, chains, type_trait) {}
 
   template <typename ObjectiveFunction>
-  std::pair<VariableOD, int> PerformOptimizationBF() {
+  ScheduleResult PerformOptimizationBF() {
     ChainsPermutation chains_perm;
     IterateAllPermsBF<ObjectiveFunction>(0, chains_perm);
-    return std::make_pair(best_yet_variable_od_, best_yet_obj_);
+    // return std::make_pair(best_yet_variable_od_, best_yet_obj_);
+    return GetScheduleResult<ObjectiveFunction>();
   }
 
   // depth equals the number of edge pais

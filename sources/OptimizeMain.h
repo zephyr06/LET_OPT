@@ -52,8 +52,10 @@ ScheduleResult PerformTOM_OPT_BF(const DAG_Model& dag_tasks) {
   else {
     TaskSetOptEnumerate task_sets_perms(dag_tasks, dag_tasks.chains_,
                                         ObjectiveFunction::type_trait);
-    res.obj_ =
-        task_sets_perms.PerformOptimizationBF<ObjectiveFunction>().second;
+    ScheduleResult res_cur =
+        task_sets_perms.PerformOptimizationBF<ObjectiveFunction>();
+    res.obj_ = res_cur.obj_;
+    res.jitter_ = res_cur.jitter_;
     res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
   }
   if (res.obj_ >= 1e8) {

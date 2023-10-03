@@ -9,6 +9,7 @@
 #include "sources/Permutations/GraphOfChains.h"
 #include "sources/Permutations/TwoTaskPermutationsIterator.h"
 #include "sources/Utils/BatchUtils.h"
+#include "sources/Utils/ScheduleResults.h"
 #include "sources/Utils/profilier.h"
 namespace DAG_SPACE {
 
@@ -36,6 +37,18 @@ class TaskSetPermutation {
     return ObjectiveFunction::ObjAllChains(
         dag_tasks_, tasks_info_, best_yet_chain_, best_yet_variable_od_,
         graph_of_all_ca_chains_.chains_);
+  }
+
+  template <typename ObjectiveFunction>
+  ScheduleResult GetScheduleResult() const {
+    ScheduleResult res;
+    res.jitter_ = ObjectiveFunction::Jitter(
+        dag_tasks_, tasks_info_, best_yet_chain_, best_yet_variable_od_,
+        graph_of_all_ca_chains_.chains_);
+    res.obj_ = best_yet_obj_;
+    res.variable_opt_ = best_yet_variable_od_;
+    res.schedulable_ = ExamSchedulabilityOptSol();
+    return res;
   }
   // The following functions more related to optimization
 
