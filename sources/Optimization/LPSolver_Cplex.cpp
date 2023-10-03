@@ -117,18 +117,26 @@ void LPOptimizer::AddArtificialVariables() {
     varArray_art_max_ =
         IloNumVarArray(env_, static_cast<int>(dag_tasks_.chains_.size()), 0,
                        IloInfinity, IloNumVar::Float);
-    if (optimize_jitter_weight_ != 0)
-      varArray_art_min_ =
-          IloNumVarArray(env_, static_cast<int>(dag_tasks_.chains_.size()), 0,
-                         IloInfinity, IloNumVar::Float);
+    // if (optimize_jitter_weight_ != 0)
+    //   varArray_art_min_ =
+    //       IloNumVarArray(env_, static_cast<int>(dag_tasks_.chains_.size()),
+    //       0,
+    //                      IloInfinity, IloNumVar::Float);
   } else if (IfSF_Trait(obj_trait_)) {
     varArray_art_max_ =
         IloNumVarArray(env_, static_cast<int>(dag_tasks_.sf_forks_.size()), 0,
                        IloInfinity, IloNumVar::Float);
-    if (optimize_jitter_weight_ != 0)
-      varArray_art_min_ =
-          IloNumVarArray(env_, static_cast<int>(dag_tasks_.sf_forks_.size()), 0,
-                         IloInfinity, IloNumVar::Float);
+    if (optimize_jitter_weight_ != 0) {
+      // varArray_art_min_ =
+      //     IloNumVarArray(env_, static_cast<int>(dag_tasks_.sf_forks_.size()),
+      //     0,
+      //                    IloInfinity, IloNumVar::Float);
+
+      // varArray_sf_instances_ =
+      //     IloNumVarArray(env_,
+      //     dag_tasks_.getSF_Fork_InstanceCount(tasks_info_),
+      //                    0, IloInfinity, IloNumVar::Float);
+    }
 
   } else
     CoutError("Unrecognized obj_trait in LPSolver!");
@@ -234,12 +242,12 @@ void LPOptimizer::AddTwoJobLengthConstraint(const JobCEC &start_job,
       env_, 0, varArray_art_max_[chain_count] - finish_expr + start_expr,
       IloInfinity);  // , const_name.c_str()
   model_.add(myConstraint1);
-  if (optimize_jitter_weight_ != 0) {
-    IloRange myConstraint2(
-        env_, 0, finish_expr - start_expr - varArray_art_min_[chain_count],
-        IloInfinity);
-    model_.add(myConstraint2);
-  }
+  // if (optimize_jitter_weight_ != 0) {
+  //   IloRange myConstraint2(
+  //       env_, 0, finish_expr - start_expr - varArray_art_min_[chain_count],
+  //       IloInfinity);
+  //   model_.add(myConstraint2);
+  // }
   finish_expr.end();
   start_expr.end();
 }
@@ -254,12 +262,12 @@ void LPOptimizer::AddTwoJobApproxLengthConstraint(const JobCEC &start_job,
       IloInfinity);  // , const_name.c_str()
   model_.add(myConstraint1);
 
-  if (optimize_jitter_weight_ != 0) {
-    IloRange myConstraint2(
-        env_, 0, finish_expr - start_expr - varArray_art_min_[chain_count],
-        IloInfinity);  // , const_name.c_str()
-    model_.add(myConstraint2);
-  }
+  // if (optimize_jitter_weight_ != 0) {
+  //   IloRange myConstraint2(
+  //       env_, 0, finish_expr - start_expr - varArray_art_min_[chain_count],
+  //       IloInfinity);  // , const_name.c_str()
+  //   model_.add(myConstraint2);
+  // }
   finish_expr.end();
   start_expr.end();
 }
@@ -268,6 +276,9 @@ void LPOptimizer::AddObjectiveFunctions(const ChainsPermutation &chains_perm) {
   if (IfRT_Trait(obj_trait_) || IfDA_Trait(obj_trait_)) {
     AddRTDAObjectiveFunctions(chains_perm);
   } else if (IfSF_Trait(obj_trait_)) {
+    // if (optimize_jitter_weight_)
+    //   AddSFObjectiveFunctions_WithJitter(chains_perm);
+    // else
     AddSFObjectiveFunctions(chains_perm);
   } else
     CoutError("Unrecognized type trait in AddObjectiveFunctions!");
@@ -321,10 +332,10 @@ void LPOptimizer::AddRTDAObjectiveFunctions(
 
     // Normal obj to optmize RTDA: obj = max_RTs + max_DAs
     rtda_expression += varArray_art_max_[chain_count];
-    if (optimize_jitter_weight_ != 0)
-      rtda_expression +=
-          (varArray_art_max_[chain_count] - varArray_art_min_[chain_count]) *
-          optimize_jitter_weight_;
+    // if (optimize_jitter_weight_ != 0)
+    //   rtda_expression +=
+    //       (varArray_art_max_[chain_count] - varArray_art_min_[chain_count]) *
+    //       optimize_jitter_weight_;
     // rtda_expression += theta_da;
     chain_count++;
   }
@@ -333,29 +344,6 @@ void LPOptimizer::AddRTDAObjectiveFunctions(
 #ifdef PROFILE_CODE
   EndTimer("AddObjective");
 #endif
-}
-
-// TODO: SF can speed up by improving this function, but probably not very
-// worthywhile?
-void LPOptimizer::AddTwoJobDiffConstraint(const JobCEC &finish_job1,
-                                          const JobCEC &finish_job2,
-                                          int fork_count) {
-  IloExpr finish_expr1 = GetFinishTimeExpression(finish_job1);
-  IloExpr finish_expr2 = GetFinishTimeExpression(finish_job2);
-  IloRange myConstraint1(
-      env_, 0, varArray_art_max_[fork_count] - (finish_expr1 - finish_expr2),
-      IloInfinity);
-  IloRange myConstraint2(
-      env_, 0, varArray_art_max_[fork_count] - (finish_expr2 - finish_expr1),
-      IloInfinity);
-  if (GlobalVariablesDAGOpt::debugMode) {
-    std::cout << myConstraint1 << "\n"
-              << "\n";  //  << myConstraint2
-  }
-  model_.add(myConstraint1);
-  // model_.add(myConstraint2);
-  finish_expr1.end();
-  finish_expr2.end();
 }
 
 void LPOptimizer::AddSFObjectiveFunctions(
@@ -373,6 +361,7 @@ void LPOptimizer::AddSFObjectiveFunctions(
       SF_JobFork job_forks =
           GetSF_JobFork(JobCEC(fork_curr.sink, job_id), fork_curr.source,
                         tasks_info_, chains_perm);
+      // TODO: more constraints are added?
       for (const auto &job1 : job_forks.source_jobs) {
         for (const auto &job2 : job_forks.source_jobs) {
           if (job1 != job2) AddTwoJobDiffConstraint(job1, job2, fork_count);
@@ -387,6 +376,35 @@ void LPOptimizer::AddSFObjectiveFunctions(
 #ifdef PROFILE_CODE
   EndTimer("AddObjective");
 #endif
+}
+
+// TODO: SF can speed up by improving this function, but probably not very
+// worthywhile?
+void LPOptimizer::AddTwoJobDiffConstraint(const JobCEC &finish_job1,
+                                          const JobCEC &finish_job2,
+                                          int fork_count) {
+  IloExpr finish_expr1 = GetFinishTimeExpression(finish_job1);
+  IloExpr finish_expr2 = GetFinishTimeExpression(finish_job2);
+  IloRange myConstraint1(
+      env_, 0, varArray_art_max_[fork_count] - (finish_expr1 - finish_expr2),
+      IloInfinity);
+  // IloRange myConstraint2(
+  //     env_, 0, varArray_art_max_[fork_count] - (finish_expr2 - finish_expr1),
+  //     IloInfinity);
+  if (GlobalVariablesDAGOpt::debugMode) {
+    std::cout << myConstraint1 << "\n"
+              << "\n";  //  << myConstraint2
+  }
+  model_.add(myConstraint1);
+  // if (optimize_jitter_weight_ != 0) {
+  //   IloRange myConstraint2(
+  //       env_, 0, (finish_expr1 - finish_expr2) -
+  //       varArray_art_min_[fork_count], IloInfinity);
+  //   model_.add(myConstraint2);
+  // }
+  // model_.add(myConstraint2);
+  finish_expr1.end();
+  finish_expr2.end();
 }
 
 VariableOD LPOptimizer::ExtratOptSolution(IloNumArray &values_optimized) {
@@ -409,6 +427,99 @@ VariableOD LPOptimizer::ExtratOptSolution(IloNumArray &values_optimized) {
 }
 
 // ****************following functions are commented**************
+
+// void LPOptimizer::AddTwoJob_ForkConstraint(const JobCEC &finish_job1,
+//                                            const JobCEC &finish_job2,
+//                                            int fork_count, int
+//                                            sink_job_index) {
+//   // IloNumVarArray sf_fork_curr(env_, 1, 0, IloInfinity, IloNumVar::Float);
+//   IloExpr finish_expr1 = GetFinishTimeExpression(finish_job1);
+//   IloExpr finish_expr2 = GetFinishTimeExpression(finish_job2);
+//   IloRange myConstraint1(env_, 0,
+//                          varArray_sf_instances_[dag_tasks_.getSFInstance(
+//                              fork_count, sink_job_index, tasks_info_)] -
+//                              (finish_expr1 - finish_expr2),
+//                          IloInfinity);
+//   IloRange myConstraint2(env_, 0,
+//                          varArray_sf_instances_[dag_tasks_.getSFInstance(
+//                              fork_count, sink_job_index, tasks_info_)] -
+//                              (finish_expr2 - finish_expr1),
+//                          IloInfinity);
+//   model_.add(myConstraint1);
+//   model_.add(myConstraint2);
+//   if (GlobalVariablesDAGOpt::debugMode) {
+//     std::cout << myConstraint1 << "\n"
+//               << "\n";  //  << myConstraint2
+//   }
+//   finish_expr1.end();
+//   finish_expr2.end();
+// }
+// void LPOptimizer::AddForkSinkJobMinConstraint(int fork_count,
+//                                               int sink_job_index) {
+//   IloRange myConstraint3(env_, 0,
+//                          varArray_sf_instances_[dag_tasks_.getSFInstance(
+//                              fork_count, sink_job_index, tasks_info_)] -
+//                              varArray_art_min_[fork_count],
+//                          IloInfinity);
+//   model_.add(myConstraint3);
+//   if (GlobalVariablesDAGOpt::debugMode) {
+//     std::cout << myConstraint3 << "\n"
+//               << "\n";  //  << myConstraint2
+//   }
+// }
+
+// void LPOptimizer::AddSFObjectiveFunctions_WithJitter(
+//     const ChainsPermutation &chains_perm) {
+//   if (!(IfSF_Trait(obj_trait_))) return;
+// #ifdef PROFILE_CODE
+//   BeginTimer("AddSFObjectiveFunctions_WithJitter");
+// #endif
+//   if (GlobalVariablesDAGOpt::debugMode) {
+//     std::cout << "Add SF-Fork constraints:\n";
+//   }
+//   IloExpr sf_expression(env_);
+//   int fork_count = 0;
+//   for (const auto &fork_curr : dag_tasks_.sf_forks_) {
+//     for (int job_id = 0; job_id < tasks_info_.hyper_period /
+//                                       dag_tasks_.GetTask(fork_curr.sink).period;
+//          job_id++) {
+//       SF_JobFork job_forks =
+//           GetSF_JobFork(JobCEC(fork_curr.sink, job_id), fork_curr.source,
+//                         tasks_info_, chains_perm);
+//       // TODO: more constraints are added?
+//       for (const auto &job1 : job_forks.source_jobs) {
+//         for (const auto &job2 : job_forks.source_jobs) {
+//           if (job1 != job2) {
+//             AddTwoJobDiffConstraint(job1, job2,
+//                                     fork_count);  // add max-SF constraint
+//             // AddTwoJob_ForkConstraint(
+//             //     job1, job2, fork_count,
+//             //     job_id);  // add another artificial variable to describe
+//             the
+//             // SF
+//             // Fork result of this sink job
+//           }
+//         }
+//       }
+//       // AddForkSinkJobMinConstraint(fork_count,
+//       //                             job_id);  // add min-SF constraints
+//     }
+//     sf_expression += varArray_art_max_[fork_count] +
+//                      optimize_jitter_weight_ * (varArray_art_max_[fork_count]
+//                      -
+//                                                 varArray_art_min_[fork_count]);
+
+//     fork_count++;
+//   }
+//   if (GlobalVariablesDAGOpt::debugMode) {
+//     std::cout << "Add SF-Fork constraints finished:\n";
+//   }
+//   model_.add(IloMinimize(env_, sf_expression));
+//   sf_expression.end();
+// #ifdef PROFILE_CODE
+//   EndTimer("AddSFObjectiveFunctions_WithJitter");
+// #endif
+// }
 
 // TO_Commented_DO: consider whether it's necessary to improve efficiency there
 // by reducing problem size; int LPOptimizer::FindMinOffset(int task_id,

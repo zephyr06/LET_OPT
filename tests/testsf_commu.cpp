@@ -349,6 +349,13 @@ TEST_F(PermutationTest_n10_v11, extractIndependentMerge) {
   EXPECT_EQ(3, dags[0].sf_forks_.size());
 }
 
+TEST_F(PermutationTest_n10_v11, getSFInstance) {
+  EXPECT_EQ(1000 / 100 + 1000 / 100 + 1000 / 100,
+            dag_tasks.getSF_Fork_InstanceCount(tasks_info));
+  EXPECT_EQ(0, dag_tasks.getSFInstance(0, 0, tasks_info));
+  EXPECT_EQ(11, dag_tasks.getSFInstance(1, 1, tasks_info));
+}
+
 class PermutationTest_n10_v12 : public PermutationTestBase {
   void SetUp() override { SetUpBase("test_n10_v12"); }
 };

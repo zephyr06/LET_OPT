@@ -58,8 +58,8 @@ class LPOptimizer {
 
   void AddObjectiveFunctions(const ChainsPermutation &chains_perm);  // RTDA obj
 
-  void AddSFObjectiveFunctions(
-      const ChainsPermutation &chains_perm);  // RTDA obj
+  void AddSFObjectiveFunctions(const ChainsPermutation &chains_perm);
+  // void AddSFObjectiveFunctions_WithJitter(const ChainsPermutation &chains_perm);
 
   void AddRTDAObjectiveFunctions(
       const ChainsPermutation &chains_perm);  // RTDA obj
@@ -73,6 +73,11 @@ class LPOptimizer {
 
   void AddTwoJobDiffConstraint(const JobCEC &finish_job1,
                                const JobCEC &finish_job2, int fork_count);
+  // void AddTwoJob_ForkConstraint(const JobCEC &finish_job1,
+  //                               const JobCEC &finish_job2, int fork_count,
+  //                               int sink_job_index);
+  // void AddForkSinkJobMinConstraint(int fork_count, int sink_job_index);
+
   inline IloExpr GetStartTimeExpression(const JobCEC &job) {
     IloExpr exp(env_);
     exp += varArray_[GetVariableIndexVirtualOffset(job)];
@@ -158,6 +163,7 @@ class LPOptimizer {
   IloNumVarArray varArray_;
   IloNumVarArray varArray_art_max_;
   IloNumVarArray varArray_art_min_;
+  IloNumVarArray varArray_sf_instances_;
   IloConstraintArray constraint_array_;
   int optimal_obj_ = INFEASIBLE_OBJ;
   // std::unordered_map<std::string, IloRange> name2ilo_const_;
