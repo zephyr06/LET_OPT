@@ -22,10 +22,12 @@ int main(int argc, char** argv) {
 
   std::cout << "Schedulable? " << CheckSchedulability(dag_tasks) << "\n";
 
-  auto res = PerformTOM_OPT_EnumW_Skip<ObjSensorFusion>(dag_tasks);
+  // auto res = PerformTOM_OPT_EnumW_Skip<ObjSensorFusion>(dag_tasks);
+  auto res = PerformTOM_OPT_BF<ObjSensorFusion>(dag_tasks);
   int obj_find = res.obj_;
   // std::cout << "The best permutation is: \n";
   // task_sets_perms.best_yet_chain_.print();
+  std::cout << "Schedulable: " << res.schedulable_ << "\n";
   std::cout << "The best offset-deadline assignments are: \n";
   res.variable_opt_.print();
 

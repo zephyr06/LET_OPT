@@ -55,6 +55,7 @@ ScheduleResult PerformTOM_OPTOffset_Sort(const DAG_Model& dag_tasks) {
 ScheduleResult PerformTOM_OPT_BF_SF(const DAG_Model& dag_tasks) {
   auto dags = ExtractDAGsWithIndependentForks(dag_tasks);
   ScheduleResult res;
+  res.schedulable_ = true;
   res.obj_ = 0;
   for (const auto& dag : dags) {
     TaskSetOptEnumerate task_sets_perms =
@@ -62,6 +63,7 @@ ScheduleResult PerformTOM_OPT_BF_SF(const DAG_Model& dag_tasks) {
     res.obj_ += task_sets_perms.PerformOptimizationBF<ObjSensorFusion>().second;
     res.schedulable_ =
         res.schedulable_ && task_sets_perms.ExamSchedulabilityOptSol();
+    res.variable_opt_ = task_sets_perms.best_yet_variable_od_;
     std::cout << "\n";
   }
   return res;

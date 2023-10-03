@@ -64,6 +64,7 @@ class ResultsManager {
   std::unordered_map<BASELINEMETHODS, std::vector<ScheduleResult>> results_map_;
   std::unordered_map<BASELINEMETHODS, std::vector<double>> runTimeAll_;
   std::unordered_map<BASELINEMETHODS, std::vector<double>> objsAll_;
+  std::unordered_map<BASELINEMETHODS, std::vector<double>> jittersAll_;
   std::unordered_map<BASELINEMETHODS, std::vector<int>>
       schedulableAll_;  // values could
   std::vector<std::string> file_name_;

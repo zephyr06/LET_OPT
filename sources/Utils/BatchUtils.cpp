@@ -36,6 +36,7 @@ void WriteToResultFile(const std::string &pathDataset, const std::string &file,
   YAML::Node node;
   node["Schedulable"] = res.schedulable_;
   node["Obj_Overall"] = res.obj_;
+  node["Jitter"] = res.jitter_;
   node["TimeTaken"] = res.timeTaken_;
   for (auto obj : res.obj_per_chain_) node["Obj_Per_chain"].push_back(obj);
 
@@ -60,6 +61,7 @@ DAG_SPACE::ScheduleResult ReadFromResultFile(const std::string &pathDataset,
   DAG_SPACE::ScheduleResult result;
   result.schedulable_ = node["Schedulable"].as<bool>();
   result.obj_ = node["Obj_Overall"].as<double>();
+  result.jitter_ = node["Jitter"].as<double>();
   result.timeTaken_ = node["TimeTaken"].as<double>();
   if (node["Obj_Per_chain"])
     result.obj_per_chain_ = node["Obj_Per_chain"].as<std::vector<double>>();

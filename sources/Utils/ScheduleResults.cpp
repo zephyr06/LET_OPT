@@ -7,6 +7,7 @@ void ResultsManager::add(BASELINEMETHODS method, const ScheduleResult& result,
   results_map_[method].push_back(result);
   runTimeAll_[method].push_back(result.timeTaken_);
   objsAll_[method].push_back(result.obj_);
+  jittersAll_[method].push_back(result.jitter_);
   schedulableAll_[method].push_back(result.schedulable_);
   if (file_name_.size() == 0 || file_name_.back() != file)
     file_name_.push_back(file);
@@ -17,10 +18,13 @@ ResultsManager::GetBatchResVec(
     const std::vector<DAG_SPACE::BASELINEMETHODS>& baselineMethods) const {
   std::unordered_map<DAG_SPACE::BASELINEMETHODS, BatchResult> batchResVec;
   for (auto method : baselineMethods) {
-    BatchResult batchRes{Average(schedulableAll_.at(method)),
-                         Average(objsAll_.at(method),
-                                 objsAll_.at(BASELINEMETHODS::InitialMethod)),
-                         Average(runTimeAll_.at(method))};
+    BatchResult batchRes{
+        Average(schedulableAll_.at(method)),
+        Average(objsAll_.at(method),
+                objsAll_.at(BASELINEMETHODS::InitialMethod)),
+        Average(jittersAll_.at(method),
+                jittersAll_.at(BASELINEMETHODS::InitialMethod)),
+        Average(runTimeAll_.at(method))};
     batchResVec[method] = (batchRes);
   }
   return batchResVec;
@@ -45,14 +49,16 @@ void ResultsManager::PrintLongestCase(BASELINEMETHODS method) const {
 // depend on global paramters: BaselineMethodNames
 void ResultsManager::PrintResultTable(
     const std::vector<DAG_SPACE::BASELINEMETHODS>& baselineMethods) const {
-  VariadicTable<std::string, double, double, double, double> vt(
-      {"Method", "Schedulable ratio", "Obj", "Obj(Norm)", "TimeTaken"}, 10);
+  VariadicTable<std::string, double, double, double, double, double> vt(
+      {"Method", "Schedulable ratio", "Obj", "Obj(Norm)", "Jitter",
+       "TimeTaken"},
+      10);
   for (const auto& method : baselineMethods) {
     vt.addRow(BaselineMethodNames[method], Average(schedulableAll_.at(method)),
               Average(objsAll_.at(method)),
               Average(objsAll_.at(method),
                       objsAll_.at(BASELINEMETHODS::InitialMethod)),
-              Average(runTimeAll_.at(method)));
+              Average(jittersAll_.at(method)), Average(runTimeAll_.at(method)));
   }
   vt.print(std::cout);
 }

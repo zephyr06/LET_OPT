@@ -59,6 +59,14 @@ class ObjSensorFusion {
                        const ChainsPermutation & /*unusedArg*/,
                        const Schedule &schedule,
                        const std::vector<std::vector<int>> & /*unusedArg*/);
+
+  static std::vector<double> ObjAllChains(
+      const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+      const ChainsPermutation &chains_perm, const VariableOD &variable_od,
+      const std::vector<std::vector<int>> &chains_to_analyze) {
+    CoutError("Not implemented!");
+    return {0};
+  }
 };
 
 // *********************** Get Individual SF Forks
