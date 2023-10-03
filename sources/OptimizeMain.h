@@ -31,6 +31,8 @@ ScheduleResult PerformImplicitCommuAnalysis(const DAG_Model& dag_tasks) {
   //   chains_perm.print();
   res.obj_ = ObjectiveFunctionBase::Obj(dag_tasks, tasks_info, chains_perm,
                                         schedule, dag_tasks.chains_);
+  res.jitter_ = ObjectiveFunctionBase::Jitter(
+      dag_tasks, tasks_info, chains_perm, schedule, dag_tasks.chains_);
   res.schedulable_ = CheckSchedulability(dag_tasks);
 
   auto stop = std::chrono::high_resolution_clock::now();
