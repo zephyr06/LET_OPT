@@ -139,8 +139,11 @@ double Average(const std::vector<T> &data,
     CoutError("Inconsistent data size in Average!");
   if (data.size()) {
     T sum = 0;
-    for (int i = 0; i < int(data.size()); i++)
+    for (int i = 0; i < int(data.size()); i++) {
+      if (data_baseline < 1e-8) CoutError("Average divide numbers by 0!!");
       sum += double(data[i]) / data_baseline[i];
+    }
+
     return double(sum) / data.size();
   } else {
     return -1;

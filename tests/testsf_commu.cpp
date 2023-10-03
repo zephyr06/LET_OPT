@@ -435,6 +435,12 @@ TEST_F(PermutationTest_n3_v36, PerformStandardLETAnalysisDA) {
   EXPECT_EQ(10, res.obj_);
   EXPECT_EQ(10, res.jitter_);
 }
+
+TEST_F(PermutationTest_n3_v36, PerformImplicitCommuAnalysis) {
+  ScheduleResult res = PerformImplicitCommuAnalysis<ObjSensorFusion>(dag_tasks);
+  EXPECT_EQ(9, res.obj_);
+  EXPECT_EQ(8, res.jitter_);
+}
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
