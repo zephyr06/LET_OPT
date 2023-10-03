@@ -1,0 +1,9 @@
+JobID,Period,ExecutionTime,DeadLine,processorId
+0,10,4,10,1
+1,20,10,20,1
+2,10,1,10,1
+Note: *a,b means a->b, i.e., a writes data and b reads data from it
+@Fork_source:0, 1, 
+@Fork_sink:2, 
+*0,2
+*1,2
