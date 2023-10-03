@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
   TaskSetOptEnumWSkip task_sets_perms =
       TaskSetOptEnumWSkip(dag_tasks, {dag_tasks.chains_}, "ReactionTime");
   int obj_find =
-      task_sets_perms.PerformOptimizationSkipInfeasible<ObjReactionTime>();
+      task_sets_perms.PerformOptimizationSkipInfeasible<ObjReactionTime>().obj_;
 
   std::cout << "The best permutation is: \n";
   task_sets_perms.best_yet_chain_.print();

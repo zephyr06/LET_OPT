@@ -81,8 +81,10 @@ ScheduleResult PerformTOM_OPT_EnumW_Skip(const DAG_Model& dag_tasks) {
   else {
     TaskSetOptEnumWSkip task_sets_perms = TaskSetOptEnumWSkip(
         dag_tasks, dag_tasks.chains_, ObjectiveFunction::type_trait);
-    res.obj_ =
+    ScheduleResult res_cur =
         task_sets_perms.PerformOptimizationSkipInfeasible<ObjectiveFunction>();
+    res.obj_ = res_cur.obj_;
+    res.jitter_ = res_cur.jitter_;
     res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
   }
   if (res.obj_ >= 1e8) {

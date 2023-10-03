@@ -75,12 +75,15 @@ ScheduleResult PerformTOM_OPT_EnumW_Skip_SF(const DAG_Model& dag_tasks) {
   auto dags = ExtractDAGsWithIndependentForks(dag_tasks);
   ScheduleResult res;
   res.obj_ = 0;
+  res.jitter_ = 0;
   res.schedulable_ = true;
   for (const auto& dag : dags) {
     TaskSetOptEnumWSkip task_sets_perms =
         TaskSetOptEnumWSkip(dag, GetChainsForSF(dag), "SensorFusion");
-    res.obj_ +=
+    ScheduleResult res_cur =
         task_sets_perms.PerformOptimizationSkipInfeasible<ObjSensorFusion>();
+    res.obj_ += res_cur.obj_;
+    res.jitter_ += res_cur.jitter_;
     res.schedulable_ =
         res.schedulable_ && task_sets_perms.ExamSchedulabilityOptSol();
     std::cout << "\n";
