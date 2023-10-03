@@ -7,19 +7,17 @@
 #include "sources/ObjectiveFunction/ObjSensorFusion.h"
 #include "sources/RTA/RTA_LL.h"
 #include "sources/TaskModel/GenerateRandomTaskset.h"
-#include "sources/Utils/argparse.hpp"
 #include "sources/TaskModel/GenerateRandomTasksetWATERS.h"
+#include "sources/Utils/argparse.hpp"
 using namespace GlobalVariablesDAGOpt;
-void deleteDirectoryContents(const std::string &dir_path)
-{
+void deleteDirectoryContents(const std::string &dir_path) {
   for (const auto &entry : std::filesystem::directory_iterator(dir_path))
     std::filesystem::remove_all(entry.path());
 }
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
   using namespace std;
   argparse::ArgumentParser program("program name");
-  program.add_argument("-v", "--verbose"); // parameter packing
+  program.add_argument("-v", "--verbose");  // parameter packing
 
   program.add_argument("--task_number_in_tasksets")
       .default_value(5)
@@ -53,8 +51,9 @@ int main(int argc, char *argv[])
       .scan<'f', double>();
   program.add_argument("--taskSetType")
       .default_value(2)
-      .help("type of tasksets, 0 means normal, 1 means DAG with random chains, "
-            "2 means DAG with chains conforms to WATERS15 distribution")
+      .help(
+          "type of tasksets, 0 means normal, 1 means DAG with random chains, "
+          "2 means DAG with chains conforms to WATERS15 distribution")
       .scan<'i', int>();
   program.add_argument("--deadlineType")
       .default_value(0)
@@ -62,9 +61,10 @@ int main(int argc, char *argv[])
       .scan<'i', int>();
   program.add_argument("--taskType")
       .default_value(2)
-      .help("type of task period generation method, 0 means normal, 1 means "
-            "random choice from predefined set, 2 means "
-            "automobile task with WATERS distribution")
+      .help(
+          "type of task period generation method, 0 means normal, 1 means "
+          "random choice from predefined set, 2 means "
+          "automobile task with WATERS distribution")
       .scan<'i', int>();
   program.add_argument("--excludeUnschedulable")
       .default_value(1)
@@ -105,7 +105,9 @@ int main(int argc, char *argv[])
       .scan<'i', int>();
   program.add_argument("--chainLength")
       .default_value(0)
-      .help("the length of random cause-effect chains, only be effective when taskSetType is 1")
+      .help(
+          "the length of random cause-effect chains, only be effective when "
+          "taskSetType is 1")
       .scan<'i', int>();
   program.add_argument("--chainLengthRatio")
       .default_value(0.0)
@@ -135,12 +137,9 @@ int main(int argc, char *argv[])
           "the maximum number of sensor tasks for each fork in SF experiments")
       .scan<'i', int>();
 
-  try
-  {
+  try {
     program.parse_args(argc, argv);
-  }
-  catch (const std::runtime_error &err)
-  {
+  } catch (const std::runtime_error &err) {
     std::cout << err.what() << std::endl;
     std::cout << program;
     exit(0);
@@ -167,8 +166,7 @@ int main(int argc, char *argv[])
   int numCauseEffectChain = program.get<int>("--numCauseEffectChain");
   int chainLength = program.get<int>("--chainLength");
   double chainLengthRatio = program.get<double>("--chainLengthRatio");
-  if (chainLengthRatio >= 0.001)
-  {
+  if (chainLengthRatio >= 0.001) {
     chainLength = std::ceil(chainLengthRatio * task_number_in_tasksets);
   }
   std::string outDir = program.get<std::string>("--outDir");
@@ -178,12 +176,9 @@ int main(int argc, char *argv[])
   int fork_sensor_num_min = program.get<int>("--fork_sensor_num_min");
   int fork_sensor_num_max = program.get<int>("--fork_sensor_num_max");
 
-  if (randomSeed < 0)
-  {
+  if (randomSeed < 0) {
     srand(time(0) + (int64_t)&chainLength);
-  }
-  else
-  {
+  } else {
     srand(randomSeed);
   }
 
@@ -194,26 +189,28 @@ int main(int argc, char *argv[])
       << "Task configuration: " << std::endl
       << "the number of tasks in DAG(--task_number_in_tasksets): "
       << task_number_in_tasksets << std::endl
-      << "DAG_taskSetNumber(--taskSetNumber): "
-      << DAG_taskSetNumber << std::endl
+      << "DAG_taskSetNumber(--taskSetNumber): " << DAG_taskSetNumber
+      << std::endl
       << "DAG_taskSetNameStartIndex(--taskSetNameStartIndex): "
       << DAG_taskSetNameStartIndex << std::endl
-      << "numberOfProcessor(--numberOfProcessor): "
-      << numberOfProcessor << std::endl
+      << "numberOfProcessor(--numberOfProcessor): " << numberOfProcessor
+      << std::endl
       << "totalUtilization_min(--totalUtilization_min): "
       << totalUtilization_min << std::endl
       << "totalUtilization_max(--totalUtilization_max): "
       << totalUtilization_max << std::endl
       << "max parallelismFactor (--parallelismFactor): "
       << parallelismFactor_max << std::endl
-      << "taskSetType(--taskSetType), 0 means normal, 1 means DAG with random chains, "
+      << "taskSetType(--taskSetType), 0 means normal, 1 means DAG with random "
+         "chains, "
          "2 means DAG with chains conforms to WATERS15 distribution: "
       << taskSetType << std::endl
       << "deadlineType(--deadlineType), 1 means random, 0 means implicit: "
       << deadlineType << std::endl
-      << "taskType(--taskType), 0 means normal, 1 means random choice from predefined set, "
-      << "2 means automobile task with WATERS distribution: "
-      << taskType << std::endl
+      << "taskType(--taskType), 0 means normal, 1 means random choice from "
+         "predefined set, "
+      << "2 means automobile task with WATERS distribution: " << taskType
+      << std::endl
       << "excludeUnschedulable(--excludeUnschedulable): "
       << excludeUnschedulable << std::endl
       << "excludeDAGWithWongChainNumber(--excludeDAGWithWongChainNumber): "
@@ -229,17 +226,22 @@ int main(int argc, char *argv[])
       << "clearOutputDir, whether clean the output directory "
          "(--clearOutputDir): "
       << clearOutputDir << std::endl
-      << "numCauseEffectChain, the number of random cause-effect chains, a negative number will "
-         "use 1 to 2 times of tasks number as the number of chains (--numCauseEffectChain): "
+      << "numCauseEffectChain, the number of random cause-effect chains, a "
+         "negative number will "
+         "use 1 to 2 times of tasks number as the number of chains "
+         "(--numCauseEffectChain): "
       << numCauseEffectChain << std::endl
-      << "chainLength, the length of random cause-effect chains, 0 means no length requirements, "
-         "Note that this will only be effective when taskSetType is 1. (--chainLength): "
+      << "chainLength, the length of random cause-effect chains, 0 means no "
+         "length requirements, "
+         "Note that this will only be effective when taskSetType is 1. "
+         "(--chainLength): "
       << chainLength << std::endl
       << "chainLengthRatio, the ratio of random cause-effect chains length "
          "over the number of tasks in DAG, a value greater than 0 will "
          "overwrite chainLength. (--chainLengthRatio): "
       << chainLengthRatio << std::endl
-      << "SF_ForkNum, the number of forks, a negative number will generate random number of Fork "
+      << "SF_ForkNum, the number of forks, a negative number will generate "
+         "random number of Fork "
          "range from 0.25N to N, default -1. (--SF_ForkNum): "
       << SF_ForkNum << std::endl
       << "exclude cases where standard LET return 0 (--excludeSF_StanLET0): "
@@ -253,15 +255,13 @@ int main(int argc, char *argv[])
       << std::endl;
 
   std::string outDirectory = GlobalVariablesDAGOpt::PROJECT_PATH + outDir;
-  if (clearOutputDir > 0)
-  {
+  if (clearOutputDir > 0) {
     deleteDirectoryContents(outDirectory);
   }
 
   double totalUtilization = totalUtilization_min;
-  for (int i = DAG_taskSetNameStartIndex; i < DAG_taskSetNumber; i++)
-  {
-    if (taskSetType == 1 || taskSetType == 2) // DAG task set
+  for (int i = DAG_taskSetNameStartIndex; i < DAG_taskSetNumber; i++) {
+    if (taskSetType == 1 || taskSetType == 2)  // DAG task set
     {
       TaskSetGenerationParameters tasks_params;
       tasks_params.N = task_number_in_tasksets;
@@ -279,18 +279,22 @@ int main(int argc, char *argv[])
       tasks_params.fork_sensor_num_min = fork_sensor_num_min;
       tasks_params.fork_sensor_num_max = fork_sensor_num_max;
 
-      if (numCauseEffectChain < 0) 
-        tasks_params.numCauseEffectChain = min(round(task_number_in_tasksets * (1.0 + (double(rand()) / RAND_MAX) * 1.0 )), round(0.1 * task_number_in_tasksets * task_number_in_tasksets));
+      if (numCauseEffectChain < 0)
+        tasks_params.numCauseEffectChain =
+            min(round(task_number_in_tasksets *
+                      (1.0 + (double(rand()) / RAND_MAX) * 1.0)),
+                round(0.1 * task_number_in_tasksets * task_number_in_tasksets));
       if (SF_ForkNum < 0)
-        tasks_params.SF_ForkNum = floor((0.25 + (double(rand()) / RAND_MAX) * 0.75 ) * task_number_in_tasksets);
+        tasks_params.SF_ForkNum =
+            floor((0.25 + (double(rand()) / RAND_MAX) * 0.75) *
+                  task_number_in_tasksets);
 
       DAG_Model dag_tasks;
-      if (taskSetType == 1) { // DAG with random choice of chains
+      if (taskSetType == 1) {  // DAG with random choice of chains
         dag_tasks = GenerateDAG_He21(tasks_params);
       } else if (taskSetType == 2) {
         dag_tasks = GenerateDAG_WATERS15(tasks_params);
       }
-
 
       // if (excludeDAGWithWongChainNumber == 1)
       // {
@@ -317,14 +321,12 @@ int main(int argc, char *argv[])
         }
       }
 
-      if (excludeUnschedulable == 1)
-      {
+      if (excludeUnschedulable == 1) {
         const TaskSet &task_set = dag_tasks.GetTaskSet();
         Reorder(task_set, GlobalVariablesDAGOpt::priorityMode);
-        if (!CheckSchedulability(dag_tasks))
-        {
+        if (!CheckSchedulability(dag_tasks)) {
           i--;
-          continue; // re-generate a new task set
+          continue;  // re-generate a new task set
         }
       }
 
@@ -335,7 +337,11 @@ int main(int argc, char *argv[])
         }
         DAG_Model tmp_dag_tasks = dag_tasks;
         tmp_dag_tasks.chains_ = GetChainsForSF(tmp_dag_tasks);
-        if (excludeSF_StanLET0 && PerformStandardLETAnalysis<ObjSensorFusion>(tmp_dag_tasks).obj_ == 0) {
+        if (excludeSF_StanLET0 &&
+            (PerformStandardLETAnalysis<ObjSensorFusion>(tmp_dag_tasks).obj_ <
+                 1e-6 ||
+             PerformStandardLETAnalysis<ObjSensorFusion>(tmp_dag_tasks)
+                     .jitter_ < 1e-6)) {
           i--;
           continue;
         }
@@ -349,8 +355,7 @@ int main(int argc, char *argv[])
       myfile.open(outDirectory + fileName);
       WriteDAG(myfile, dag_tasks);
       myfile.close();
-    }
-    else
+    } else
       CoutError("taskSetType is not recognized!");
   }
 
