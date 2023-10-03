@@ -80,7 +80,9 @@ class DAG_Model {
 
   std::pair<Graph, indexVertexMap> GenerateGraphForTaskSet() const;
 
-  inline void ConstructBGL_Graph() { std::tie(graph_, indexesBGL_) = GenerateGraphForTaskSet(); }
+  inline void ConstructBGL_Graph() {
+    std::tie(graph_, indexesBGL_) = GenerateGraphForTaskSet();
+  }
 
   void addEdge(int prevIndex, int nextIndex) {
     mapPrev[nextIndex].push_back(GetTask(prevIndex));
@@ -102,6 +104,10 @@ class DAG_Model {
 
   void CategorizeTaskSet();
   void RecordTaskPosition();
+
+  int getSF_Fork_InstanceCount(const TaskSetInfoDerived &tasks_info) const;
+  int getSFInstance(int fork_index, int sink_job_index,
+                    const TaskSetInfoDerived &tasks_info) const;
 
   inline const TaskSet &GetTaskSet() const { return tasks; }
 

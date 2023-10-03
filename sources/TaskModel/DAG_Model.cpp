@@ -132,8 +132,7 @@ std::vector<int> DAG_Model::FindSinkTaskIds() const {
 std::vector<std::vector<int>> DAG_Model::GetRandomChains(int numOfChains,
                                                          int chain_length) {
   std::vector<std::vector<int>> chains;
-  if (numOfChains <=0)
-    return chains;
+  if (numOfChains <= 0) return chains;
   chains.reserve(numOfChains);
   int chainCount = 0;
   auto rng = std::default_random_engine{};
@@ -182,8 +181,7 @@ std::vector<SF_Fork> DAG_Model::GetRandomForks(int num_fork,
                                                int fork_sensor_num_min,
                                                int fork_sensor_num_max) {
   std::vector<SF_Fork> res;
-  if (num_fork <= 0)
-    return res;
+  if (num_fork <= 0) return res;
   res.reserve(mapPrev.size());
   for (const auto& [sink, source_tasks] : mapPrev) {
     if (source_tasks.size() > 1 && source_tasks.size() >= fork_sensor_num_min &&
@@ -195,6 +193,25 @@ std::vector<SF_Fork> DAG_Model::GetRandomForks(int num_fork,
   std::shuffle(std::begin(res), std::end(res), rng);
   if (num_fork < res.size()) res.resize(num_fork);
   return res;
+}
+
+int DAG_Model::getSF_Fork_InstanceCount(
+    const TaskSetInfoDerived& tasks_info) const {
+  int count = 0;
+  for (uint i = 0; i < sf_forks_.size(); i++) {
+    count +=
+        tasks_info.hyper_period / tasks_info.GetTask(sf_forks_[i].sink).period;
+  }
+  return count;
+}
+int DAG_Model::getSFInstance(int fork_index, int sink_job_index,
+                             const TaskSetInfoDerived& tasks_info) const {
+  int count = 0;
+  for (uint i = 0; i < fork_index; i++) {
+    count +=
+        tasks_info.hyper_period / tasks_info.GetTask(sf_forks_[i].sink).period;
+  }
+  return count + sink_job_index;
 }
 
 // transform a string to a vectof of int
