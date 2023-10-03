@@ -45,7 +45,10 @@ class TaskSetPermutation {
     res.jitter_ = ObjectiveFunction::Jitter(
         dag_tasks_, tasks_info_, best_yet_chain_, best_yet_variable_od_,
         graph_of_all_ca_chains_.chains_);
-    res.obj_ = best_yet_obj_;
+    // res.obj_ = best_yet_obj_;
+    res.obj_ = ObjectiveFunction::Obj(dag_tasks_, tasks_info_, best_yet_chain_,
+                                      best_yet_variable_od_,
+                                      graph_of_all_ca_chains_.chains_);
     res.variable_opt_ = best_yet_variable_od_;
     res.schedulable_ = ExamSchedulabilityOptSol();
     return res;
