@@ -49,16 +49,19 @@ void ResultsManager::PrintLongestCase(BASELINEMETHODS method) const {
 // depend on global paramters: BaselineMethodNames
 void ResultsManager::PrintResultTable(
     const std::vector<DAG_SPACE::BASELINEMETHODS>& baselineMethods) const {
-  VariadicTable<std::string, double, double, double, double, double> vt(
+  VariadicTable<std::string, double, double, double, double, double, double> vt(
       {"Method", "Schedulable ratio", "Obj", "Obj(Norm)", "Jitter",
-       "TimeTaken"},
+       "Jitter(Norm)", "TimeTaken"},
       10);
   for (const auto& method : baselineMethods) {
     vt.addRow(BaselineMethodNames[method], Average(schedulableAll_.at(method)),
               Average(objsAll_.at(method)),
               Average(objsAll_.at(method),
                       objsAll_.at(BASELINEMETHODS::InitialMethod)),
-              Average(jittersAll_.at(method)), Average(runTimeAll_.at(method)));
+              Average(jittersAll_.at(method)),
+              Average(jittersAll_.at(method),
+                      jittersAll_.at(BASELINEMETHODS::InitialMethod)),
+              Average(runTimeAll_.at(method)));
   }
   vt.print(std::cout);
 }
