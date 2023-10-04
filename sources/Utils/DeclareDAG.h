@@ -140,7 +140,10 @@ double Average(const std::vector<T> &data,
   if (data.size()) {
     T sum = 0;
     for (int i = 0; i < int(data.size()); i++) {
-      if (data_baseline[i] < 1e-8) CoutError("Average divide numbers by 0!!");
+      if (data_baseline[i] < 1e-8) {
+        CoutWarning("Average divide numbers by 0!!");
+        continue;
+      }
       sum += double(data[i]) / data_baseline[i];
     }
 
