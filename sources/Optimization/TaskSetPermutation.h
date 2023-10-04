@@ -28,13 +28,16 @@ class TaskSetPermutation {
     best_yet_variable_od_ = VariableOD(dag_tasks_.GetTaskSet());
     Schedule schedule_stand_let =
         Variable2Schedule(tasks_info_, best_yet_variable_od_);
-    ChainsPermutation chains_perm = GetChainsPermFromVariable(
-        dag_tasks_, tasks_info_, dag_tasks_.chains_,
+    best_yet_chain_ = GetChainsPermFromVariable(
+        dag_tasks_, tasks_info_, graph_of_all_ca_chains_.chains_,
         ObjectiveFunction::type_trait, schedule_stand_let);
-    best_yet_chain_ = chains_perm;
-    best_yet_obj_ =
-        ObjectiveFunction::Obj(dag_tasks_, tasks_info_, chains_perm,
-                               best_yet_variable_od_, dag_tasks_.chains_);
+    best_yet_obj_ = ObjectiveFunction::Obj(
+        dag_tasks_, tasks_info_, best_yet_chain_, best_yet_variable_od_,
+        graph_of_all_ca_chains_.chains_);
+    if (GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT)
+      best_yet_obj_ += ObjectiveFunction::Jitter(
+          dag_tasks_, tasks_info_, best_yet_chain_, best_yet_variable_od_,
+          graph_of_all_ca_chains_.chains_);
   }
 
   void FindPairPermutations();
