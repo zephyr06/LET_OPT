@@ -179,10 +179,6 @@ int main(int argc, char *argv[]) {
   if (randomSeed < 0) {
     srand((unsigned int)(time(0) & 0x0FFFFFFF + (int64_t)&chainLength &
                          0x0FFFFFFF));
-    // std::cout<< "############# chain length  "  << ((int64_t)&chainLength &
-    // 0x0FFFFFFF) << "  ##########\n"
-    //          << "#############  time  "  << (time(0) & 0x0FFFFFFF) << "
-    //          ##########\n";
   } else {
     srand(randomSeed);
   }

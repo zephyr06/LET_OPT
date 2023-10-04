@@ -18,8 +18,8 @@ int main(int argc, char *argv[]) {
       .help("the last file index that's going to be optimized (Not INCLUSIVE)")
       .scan<'i', int>();
   program.add_argument("--obj")
-      .default_value(std::string("RT"))
-      .help("the type of objective function, RT or DA");
+      .default_value(std::string("SF"))
+      .help("the type of objective function, RT, DA or SF");
 
   try {
     program.parse_args(argc, argv);

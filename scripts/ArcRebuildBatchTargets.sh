@@ -2,13 +2,11 @@ ROOT_PATH=/projects/rtss_let/LET_OPT
 
 cd $ROOT_PATH/release
 module reset
-module load yaml-cpp/0.6.3-GCCcore-8.3.0
-
-module load CMake/3.15.3-GCCcore-8.3.0
-module load boost/1.68.0.a 
-module load Eigen/3.3.7-GCCcore-8.3.0
+export MODULEPATH="/projects/rtss_let/modules/tinkercliffs-rome/all:$MODULEPATH"
+module --ignore_cache spider GTSAM
+module load GTSAM/4.1.1-foss-2021b
 cmake -DCMAKE_BUILD_TYPE=RELEASE ..
-make BatchRunAll.run -j16 
+make BatchRunRT.run -j16 
+make BatchRunDA.run -j16
+make BatchRunDAWithMart.run -j16
 make BatchRunSF.run -j16
-make BatchDAWithMartRunAll.run -j16
-make BatchDARunMultiChain.run -j16

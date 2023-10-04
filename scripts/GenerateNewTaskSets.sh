@@ -57,7 +57,7 @@ for (( idx = 0 ; idx < ${#N[@]}; idx++ )); do
             --fork_sensor_num_max $fork_sensor_num_max \
             --numCauseEffectChain $numCauseEffectChain \
             &
-        sleep 0.1
+        sleep 1.1
     done
     wait
 done
