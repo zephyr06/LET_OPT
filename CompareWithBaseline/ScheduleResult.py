@@ -3,21 +3,26 @@ from GlobalVariables import *
 
 
 class ScheduleResult:
-    def __init__(self, schedulable, obj, runtime, file_path):
+    def __init__(self, schedulable, obj, jitter, runtime, file_path):
         self.schedulable = schedulable
         self.obj = obj
+        self.jitter = jitter
         self.runtime = runtime
         self.file_path = file_path
 
     def print(self):
-        print(str(self.schedulable) + ", " +
-              str(self.obj) + ", " + str(self.runtime))
+        print(str(self.schedulable) + ", " + str(self.obj) + ", " 
+              + str(self.jitter) + ", " + str(self.runtime))
 
 
 def ReadScheduleResult(file_path):
     file = open(file_path, 'r')
     lines = file.readlines()
-    return ScheduleResult(lines[0][lines[0].find(":")+2:], int(lines[1][lines[1].find(":")+2:]), float(lines[2][lines[2].find(":")+2:]), file_path)
+    return ScheduleResult(lines[0][lines[0].find(":")+2:],
+                          float(lines[1][lines[1].find(":")+2:]), 
+                          float(lines[2][lines[2].find(":")+2:]),
+                          float(lines[3][lines[3].find(":")+2:]),
+                          file_path)
 
 
 def PrintResultVec(res_vec):
@@ -54,8 +59,9 @@ def Normalize(obj_vec, obj_base):
 
 
 def Average(res_vec, base_vec, obj_type="DataAge", task_num=5, exclude_time_out=False, excluded_table=[]):
-    average_obj = 0
-    average_runtime = 0
+    average_obj = 0.
+    average_jitter = 0.
+    average_runtime = 0.
     total_case = len(res_vec)
     # for res in res_vec:
     for i in range(len(res_vec)):
@@ -67,12 +73,14 @@ def Average(res_vec, base_vec, obj_type="DataAge", task_num=5, exclude_time_out=
             if (float(res_vec[i].obj) / base_vec[i].obj > 1.1):
                 print("Find an error result!")
             average_obj += Normalize(res_vec[i].obj, base_vec[i].obj)
+            average_jitter += Normalize(res_vec[i].jitter, base_vec[i].jitter)
             average_runtime += res_vec[i].runtime
         elif obj_type=="SensorFusion":
             if (base_vec[i].obj > 0):
                 average_obj += Normalize(res_vec[i].obj, base_vec[i].obj)
             else:
                 total_case -= 1
+            average_jitter += Normalize(res_vec[i].jitter, base_vec[i].jitter)
             average_runtime += res_vec[i].runtime
             
-    return average_obj / total_case, average_runtime / total_case
+    return average_obj / total_case, average_jitter / total_case, average_runtime / total_case
