@@ -23,6 +23,20 @@ class TaskSetPermutation {
   TaskSetPermutation(const DAG_Model& dag_tasks,
                      const std::vector<std::vector<int>>& chains);
 
+  template <typename ObjectiveFunction>
+  void InitializeSolutions() {
+    best_yet_variable_od_ = VariableOD(dag_tasks_.GetTaskSet());
+    Schedule schedule_stand_let =
+        Variable2Schedule(tasks_info_, best_yet_variable_od_);
+    ChainsPermutation chains_perm = GetChainsPermFromVariable(
+        dag_tasks_, tasks_info_, dag_tasks_.chains_,
+        ObjectiveFunction::type_trait, schedule_stand_let);
+    best_yet_chain_ = chains_perm;
+    best_yet_obj_ =
+        ObjectiveFunction::Obj(dag_tasks_, tasks_info_, chains_perm,
+                               best_yet_variable_od_, dag_tasks_.chains_);
+  }
+
   void FindPairPermutations();
   bool ExamSchedulabilityOptSol() const;
   std::vector<Edge> GetAllEdges() const;

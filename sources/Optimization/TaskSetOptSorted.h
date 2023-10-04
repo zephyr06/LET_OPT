@@ -27,6 +27,7 @@ class TaskSetOptSorted : public TaskSetPermutation {
 
   template <typename ObjectiveFunction>
   int PerformOptimizationSort() {
+    InitializeSolutions<ObjectiveFunction>();
     ChainsPermutation chains_perm;
     IterateSortedPerms<ObjectiveFunction>(0, chains_perm);
     std::cout << "The number of feasibile chains found: "
