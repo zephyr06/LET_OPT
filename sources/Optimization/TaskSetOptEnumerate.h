@@ -51,7 +51,7 @@ class TaskSetOptEnumerate : public TaskSetPermutation {
                            // just move forward
     {
       if (GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT)
-        res.second += ObjectiveFunction::Jitter(
+        res.second += GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT * ObjectiveFunction::Jitter(
             dag_tasks_, tasks_info_, chains_perm, res.first,
             graph_of_all_ca_chains_.chains_);
       if (res.second < best_yet_obj_) {

@@ -35,7 +35,7 @@ class TaskSetPermutation {
         dag_tasks_, tasks_info_, best_yet_chain_, best_yet_variable_od_,
         graph_of_all_ca_chains_.chains_);
     if (GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT)
-      best_yet_obj_ += ObjectiveFunction::Jitter(
+      best_yet_obj_ += GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT * ObjectiveFunction::Jitter(
           dag_tasks_, tasks_info_, best_yet_chain_, best_yet_variable_od_,
           graph_of_all_ca_chains_.chains_);
   }
