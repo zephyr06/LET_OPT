@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 3.0)
 project(LET_OPT CXX C)
 set (CMAKE_CXX_STANDARD 17)
-# set(CMAKE_BUILD_TYPE Debug)
+# set(CMAKE_BUILD_TYPE DEBUG)
 
 include_directories(${CMAKE_SOURCE_DIR})
 
 add_definitions(-DPROJECT_ROOT_DIR="${PROJECT_SOURCE_DIR}")
 
-if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+string(TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CASED_BUILD_TYPE)
+if(UPPER_CASED_BUILD_TYPE STREQUAL "DEBUG")
 find_package(GTSAMCMakeTools)
 include(GtsamMakeConfigFile)
 include(GtsamBuildTypes)
@@ -67,7 +68,8 @@ if (CPLEX_FOUND)
 endif()
 
 add_subdirectory(sources)
-if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+string(TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CASED_BUILD_TYPE)
+if(UPPER_CASED_BUILD_TYPE STREQUAL "DEBUG")
 find_package(GTest REQUIRED)
 target_link_libraries(${CONVENIENCE_LIB_NAME}  GTest::GTest GTest::Main) # discover and run all the tests
 target_link_libraries(${CONVENIENCE_LIB_NAME} gtest_main)
