@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J GenerateTaskSet_19
+#SBATCH -J GenerateTaskSet_all
 #SBATCH --account=ev_charging
 #SBATCH --partition=normal_q
 #SBATCH --nodes=1 --ntasks-per-node=128 --cpus-per-task=1
@@ -22,7 +22,7 @@ module --ignore_cache spider GTSAM
 module load GTSAM/4.1.1-foss-2021b
 
 cd ../scripts
-./GenerateHighUtilizationTasksets.sh
+./GenerateNewTaskSets.sh
 
 wait
 exit 0

@@ -1,7 +1,6 @@
-
-
 #include "sources/TaskModel/GenerateRandomTasksetWATERS.h"
 #include "sources/TaskModel/GenerateRandomTaskset.h"
+#include "sources/RTA/RTA_LL.h"
 
 void AddChains2DAG(DAG_Model &dag_tasks, int numCauseEffectChain) {
   RandomChainsGenerator generator(dag_tasks);
@@ -12,17 +11,33 @@ DAG_Model GenerateDAG_WATERS15(int N, double totalUtilization, int numberOfProce
                                int coreRequireMax, int taskType, int deadlineType,
                                double parallelismFactor, int numCauseEffectChain,
                                int sf_fork_num, int fork_sensor_num_min, int fork_sensor_num_max) {
-  TaskSet tasks = GenerateTaskSet(N, totalUtilization, numberOfProcessor,
-                                  coreRequireMax, taskType, deadlineType);
+  TaskSet tasks;
   DAG_Model dagModel;
+  do {
+    tasks = GenerateTaskSet(N, totalUtilization, numberOfProcessor,
+                            coreRequireMax, taskType, deadlineType);
+
+    DAG_Model dummy_dag_tasks;
+    dummy_dag_tasks.tasks = Reorder(tasks, GlobalVariablesDAGOpt::priorityMode);;
+    dummy_dag_tasks.RecordTaskPosition();
+    dummy_dag_tasks.CategorizeTaskSet();
+    if (CheckSchedulability(dummy_dag_tasks)) {
+      // std::cout<<"unschedulable!\n";
+      break;  // re-generate a new task set
+    }                                
+  } while (1);
+
   dagModel.tasks = tasks;
   dagModel.RecordTaskPosition();
-
-  AddEdges2DAG_He21(dagModel, N, parallelismFactor);
-
-  dagModel.ConstructBGL_Graph();
   dagModel.CategorizeTaskSet();
-  AddChains2DAG(dagModel, numCauseEffectChain);
+  for (int i = 0; i < 500 * (totalUtilization / numberOfProcessor); i++) {
+    dagModel.mapPrev.clear();
+    AddEdges2DAG_He21(dagModel, N, parallelismFactor);
+    AddChains2DAG(dagModel, numCauseEffectChain);
+    if (dagModel.chains_.size() >= numCauseEffectChain)
+      break;
+  }
+
   dagModel.sf_forks_ = dagModel.GetRandomForks(sf_fork_num, fork_sensor_num_min, fork_sensor_num_max);
   return dagModel;
 }
