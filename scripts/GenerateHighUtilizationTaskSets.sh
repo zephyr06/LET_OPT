@@ -24,8 +24,8 @@ cmake -DCMAKE_BUILD_TYPE=Release ..
 cmake -DCMAKE_BUILD_TYPE=Release ..
 cmake --build . --config Release --target GenerateTaskSet -j4
 
-# rm $outDir -rf
-# mkdir $outDir
+rm $outDir -rf
+mkdir $outDir
 cd $outDir
 echo "New TaskSet Configs:" > configs.log
 echo "taskNumber_list: ${N[@]}" >> configs.log
@@ -63,7 +63,7 @@ for (( idx = 0 ; idx < ${#N[@]}; idx++ )); do
     wait
 done
 
-echo "TaskSet Creation Time: $(date +"%Y%m%d")" | cat - configs.log > temp && mv temp configs.log
+echo "TaskSet Creation Time: $(date +%Y%m%d)" | cat - configs.log > temp && mv temp configs.log
 
 wait
 exit 0
