@@ -57,6 +57,7 @@ ScheduleResult PerformTOM_OPT_BF_SF(const DAG_Model& dag_tasks) {
   ScheduleResult res;
   res.schedulable_ = true;
   res.obj_ = 0;
+  res.jitter_ = 0;
   for (const auto& dag : dags) {
     TaskSetOptEnumerate task_sets_perms =
         TaskSetOptEnumerate(dag, GetChainsForSF(dag), "SensorFusion");

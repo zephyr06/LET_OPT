@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
             << "eLET_brute_force, max Sensor Fusion: " << res.obj_ << Color::def
             << "\n";
   std::cout << Color::blue
-            << "Standard LET, jitter Sensor Fusion: " << res.jitter_
+            << "eLET_brute_force LET, jitter Sensor Fusion: " << res.jitter_
             << Color::def << "\n";
 
   // case TOM_WSkip:
@@ -33,15 +33,15 @@ int main(int argc, char *argv[]) {
             << "eLET_SkipInfeasible, max Sensor Fusion: " << res.obj_
             << Color::def << "\n";
   std::cout << Color::blue
-            << "Standard LET, jitter Sensor Fusion: " << res.jitter_
+            << "eLET_SkipInfeasible LET, jitter Sensor Fusion: " << res.jitter_
             << Color::def << "\n";
 
   // case ImplicitCommunication:
   res = PerformImplicitCommuAnalysis<ObjSensorFusion>(dag_tasks);
   std::cout << Color::blue
-            << "ImplicitCommunication, max Sensor Fusion: " << res.obj_
+            << "\nImplicitCommunication, max Sensor Fusion: " << res.obj_
             << Color::def << "\n";
   std::cout << Color::blue
-            << "Standard LET, jitter Sensor Fusion: " << res.jitter_
-            << Color::def << "\n";
+            << "ImplicitCommunication LET, jitter Sensor Fusion: "
+            << res.jitter_ << Color::def << "\n";
 }
