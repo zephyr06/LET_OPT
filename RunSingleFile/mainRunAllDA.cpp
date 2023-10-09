@@ -6,10 +6,14 @@ int main(int argc, char *argv[]) {
   // DAG_Model dag_tasks = ReadDAG_Tasks(
   //     GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_PaperExample.csv",
   //     "RM", 1);
+  // DAG_Model dag_tasks =
+  //     ReadDAG_Tasks(GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/" +
+  //                       GlobalVariablesDAGOpt::testDataSetName + ".csv",
+  //                   "RM", 1);
   DAG_Model dag_tasks =
-      ReadDAG_Tasks(GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/" +
-                        GlobalVariablesDAGOpt::testDataSetName + ".csv",
-                    "RM", 1);
+      ReadDAG_Tasks(GlobalVariablesDAGOpt::PROJECT_PATH +
+                        "TaskData/test_PaperExample2Chain_v2.csv",
+                    "RM", 2);
   ScheduleResult res;
 
   // case InitialMethod:
@@ -34,8 +38,9 @@ int main(int argc, char *argv[]) {
 
   // case Martinez18:
   res = PerformOPT_Martinez18_DA(dag_tasks);
-  std::cout << Color::blue << "Martinez18, max Data Age: " << res.obj_
-            << Color::def << "\n";
+  std::cout << Color::blue
+            << "Martinez18, max Data Age of 1 chain: " << res.obj_ << Color::def
+            << "\n";
 
   // case TOM_Sort_Offset:
   res = PerformTOM_OPTOffset_Sort(dag_tasks);

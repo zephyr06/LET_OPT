@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
 #endif
   auto dag_tasks =
       ReadDAG_Tasks(GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/" +
-                        "test_PaperExample2Chain" + ".csv",
+                        "test_PaperExample2Chain_v2" + ".csv",
                     GlobalVariablesDAGOpt::priorityMode, 2);
   const TaskSet& tasks = dag_tasks.GetTaskSet();
   TaskSetInfoDerived tasks_info(tasks);
@@ -19,8 +19,8 @@ int main(int argc, char** argv) {
 
   std::cout << "Schedulable? " << CheckSchedulability(dag_tasks) << "\n";
 
-  TaskSetOptSorted task_sets_perms =
-      TaskSetOptSorted(dag_tasks, {dag_tasks.chains_}, "DataAge");
+  TaskSetOptEnumWSkip task_sets_perms =
+      TaskSetOptEnumWSkip(dag_tasks, {dag_tasks.chains_}, "DataAge");
 
   std::cout << "*******************All the edge last-reading "
                "patterns***********************\n";
