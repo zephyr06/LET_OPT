@@ -9,7 +9,7 @@ sys.path.insert(1, '~/programming/LET_OPT/CompareWithBaseline')
 
 # if output_file_name is empty, default name settings will be used
 def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=False, output_file_name=""):
-    dataset_pd_obj, dataset_pd_runtime = ReadOptResultsAllMethod(
+    dataset_pd_obj, dataset_pd_jitter, dataset_pd_runtime = ReadOptResultsAllMethod(
         method_names, obj, task_set_number_range, exclude_time_out)
 
     plt.figure()
@@ -57,7 +57,7 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
 
 # if output_file_name is empty, default name settings will be used
 def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_out=False, output_file_name=""):
-    dataset_pd_obj, dataset_pd_runtime = ReadOptResultsAllMethod(
+    dataset_pd_obj, dataset_pd_jitter, dataset_pd_runtime = ReadOptResultsAllMethod(
         method_names, obj, task_set_number_range, exclude_time_out)
     plt.figure()
     ax = plt.subplot(111)
@@ -101,6 +101,55 @@ def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_
                 "/Compare_RunTime_" + output_file_name + ".pdf", format='pdf')
     plt.show(block=False)
     plt.pause(3)
+    
+
+# if output_file_name is empty, default name settings will be used
+def plot_Jitter_results(task_set_number_range, method_names, obj, exclude_time_out=False, output_file_name=""):
+    dataset_pd_obj, dataset_pd_jitter, dataset_pd_runtime = ReadOptResultsAllMethod(
+        method_names, obj, task_set_number_range, exclude_time_out)
+
+    plt.figure()
+    ax = plt.subplot(111)
+    for i in range(len(method_names)):
+        splot = sns.lineplot(data=dataset_pd_jitter, x="index", y=method_names[i], marker=marker_map[method_names[i]],
+                             color=color_map[method_names[i]
+                                             ], label=baseline_method_labels[method_names[i]],
+                             markersize=marker_size_map[method_names[i]])  # , alpha=alpha_list[i])
+    font_size = 15
+    plt.xlabel("Task Number", fontsize=font_size)
+    plt.ylabel("Relative gap(%)", fontsize=font_size)
+
+    if (obj == "ReactionTime" or obj == "DataAge"):
+        splot.set_ylim([-82, 5])
+
+    # # Shrink current axis's height by 10% at the botom
+    # box = ax.get_position()
+    # ax.set_position([box.x0, box.y0 + box.height * 0.21,
+    #                  box.width, box.height * 0.9])
+    # handles, labels = ax.get_legend_handles_labels()
+    # handles = np.concatenate((handles[::3],handles[1::3],handles[2::3]),axis=0)
+    # labels = np.concatenate((labels[::3],labels[1::3],labels[2::3]),axis=0)
+    # if obj == "DataAge":
+    #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.39), ncol=3)
+    # elif obj == "ReactionTime":
+    #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
+    # elif obj == "SensorFusion":
+    #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
+    # else:
+    #     plt.legend()
+    
+    # ax.get_legend().remove()
+    ax.set_title(obj + " Jitter Performance")
+
+    plt.grid(linestyle="--")
+    if(output_file_name==""):
+        plt.savefig(ROOT_CompareWithBaseline_PATH + obj +
+                "/Compare_Jitter_" + obj + ".pdf", format='pdf')
+    else:
+        plt.savefig(ROOT_CompareWithBaseline_PATH + obj +
+                    "/Compare_Jitter_" + output_file_name + ".pdf", format='pdf')
+    plt.show(block=False)
+    plt.pause(3)
 
 
 def draw_RT_results(task_set_number_range):
@@ -128,6 +177,8 @@ def draw_SF_results(task_set_number_range, exclude_time_out=False):
     method_names = ["InitialMethod",
                     "ImplicitCommunication", "TOM_BF", "TOM_WSkip"]
     plot_Obj_results(task_set_number_range, method_names,
+                     "SensorFusion", exclude_time_out)
+    plot_Jitter_results(task_set_number_range, method_names,
                      "SensorFusion", exclude_time_out)
     plot_Runtime_results(task_set_number_range, method_names,
                          "SensorFusion", exclude_time_out)

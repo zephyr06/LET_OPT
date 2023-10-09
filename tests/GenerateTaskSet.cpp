@@ -317,15 +317,21 @@ int main(int argc, char *argv[]) {
       if (tasks_params.numCauseEffectChain > 0) {
         if (dag_tasks.chains_.size() < tasks_params.numCauseEffectChain) {
           i--;
+        //   cout<<"not enough chain!\n";
           continue;
         }
       }
 
       if (excludeUnschedulable == 1) {
         const TaskSet &task_set = dag_tasks.GetTaskSet();
-        Reorder(task_set, GlobalVariablesDAGOpt::priorityMode);
-        if (!CheckSchedulability(dag_tasks)) {
+        auto dummy_task_set = Reorder(task_set, GlobalVariablesDAGOpt::priorityMode);
+        DAG_Model dummy_dag_tasks;
+        dummy_dag_tasks.tasks = dummy_task_set;
+        dummy_dag_tasks.RecordTaskPosition();
+        dummy_dag_tasks.CategorizeTaskSet();
+        if (!CheckSchedulability(dummy_dag_tasks)) {
           i--;
+        //   cout<<"unschedulable!\n";
           continue;  // re-generate a new task set
         }
       }
@@ -333,6 +339,7 @@ int main(int argc, char *argv[]) {
       if (tasks_params.SF_ForkNum > 0) {
         if (dag_tasks.sf_forks_.size() < tasks_params.SF_ForkNum) {
           i--;
+        //   cout<<"not enough SF fork!\n";
           continue;
         }
         DAG_Model tmp_dag_tasks = dag_tasks;
@@ -343,6 +350,7 @@ int main(int argc, char *argv[]) {
              PerformStandardLETAnalysis<ObjSensorFusion>(tmp_dag_tasks)
                      .jitter_ < 1e-6)) {
           i--;
+        //    cout<<"zero LET!\n";
           continue;
         }
       }

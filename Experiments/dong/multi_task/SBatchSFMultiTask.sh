@@ -13,9 +13,8 @@
 echo "Current job id is: $SLURM_JOB_ID"
 
 ## change directory and load modules ##
-ROOT_PATH=/projects/rtss_let/LET_OPT
-# ROOT_PATH=/projects/rtss_let/LET_OPT_SFTable
-# ROOT_PATH=/home/dong/workspace/LET_OPT
+# ROOT_PATH=/projects/rtss_let/LET_OPT
+ROOT_PATH=/home/dongli/workspace/LET_OPT
 cd $ROOT_PATH/release
 module reset
 export MODULEPATH="/projects/rtss_let/modules/tinkercliffs-rome/all:$MODULEPATH"

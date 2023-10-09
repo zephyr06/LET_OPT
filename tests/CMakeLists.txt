@@ -1,5 +1,7 @@
 
-if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+string(TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CASED_BUILD_TYPE)
+if(UPPER_CASED_BUILD_TYPE STREQUAL "DEBUG")
+message("########## Debug test")
 gtsamAddTestsGlob(LET_OPT "test*.cpp" "testEnv.cpp" "${CONVENIENCE_LIB_NAME}")
 endif()
 
@@ -22,7 +24,8 @@ TARGET_LINK_LIBRARIES(GenerateTaskSet ${CONVENIENCE_LIB_NAME})
 #     add_executable( ${testname} ${RELATIVE_SOURCE_FILE} )
 #     # Make sure YourLib is linked to each app
 #     target_link_libraries( ${testname} ${CONVENIENCE_LIB_NAME} )
-#     if(CMAKE_BUILD_TYPE STREQUAL "DEBUG")
+#     string(TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CASED_BUILD_TYPE)
+#     if(UPPER_CASED_BUILD_TYPE STREQUAL "DEBUG")
 #     target_link_libraries(${testname}  GTest::GTest GTest::Main)
 #     gtest_discover_tests(${testname})
 #     endif()
