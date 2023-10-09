@@ -22,8 +22,8 @@ perform_optimization() {
 }
 
 
-ROOT_PATH=/projects/rtss_let/LET_OPT
-# ROOT_PATH=/home/dong/workspace/LET_OPT
+# ROOT_PATH=/projects/rtss_let/LET_OPT
+ROOT_PATH=/home/dongli/workspace/LET_OPT
 cd $ROOT_PATH/Experiments/dong/multi_task
 mkdir log
 
