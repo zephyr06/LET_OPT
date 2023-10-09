@@ -87,6 +87,8 @@ ScheduleResult PerformTOM_OPT_EnumW_Skip_SF(const DAG_Model& dag_tasks) {
     res.jitter_ += res_cur.jitter_;
     res.schedulable_ =
         res.schedulable_ && task_sets_perms.ExamSchedulabilityOptSol();
+    // NOTE!!! This update only works if there is only one fork!!!!
+    res.variable_opt_ = task_sets_perms.best_yet_variable_od_;
     std::cout << "\n";
   }
   return res;

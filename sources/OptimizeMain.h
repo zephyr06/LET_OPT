@@ -88,6 +88,7 @@ ScheduleResult PerformTOM_OPT_EnumW_Skip(const DAG_Model& dag_tasks) {
     res.obj_ = res_cur.obj_;
     res.jitter_ = res_cur.jitter_;
     res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
+    res.variable_opt_ = res_cur.variable_opt_;
   }
   if (res.obj_ >= 1e8) {
     res.obj_ = PerformStandardLETAnalysis<ObjectiveFunction>(dag_tasks).obj_;

@@ -35,6 +35,7 @@ int main(int argc, char *argv[]) {
   std::cout << Color::blue
             << "eLET_SkipInfeasible LET, jitter Sensor Fusion: " << res.jitter_
             << Color::def << "\n";
+  res.variable_opt_.print();
 
   // case ImplicitCommunication:
   res = PerformImplicitCommuAnalysis<ObjSensorFusion>(dag_tasks);

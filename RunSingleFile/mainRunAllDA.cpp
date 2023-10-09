@@ -30,6 +30,7 @@ int main(int argc, char *argv[]) {
   res = PerformTOM_OPT_EnumW_Skip<ObjDataAge>(dag_tasks);
   std::cout << Color::blue << "eLET_SkipInfeasible, max Data Age: " << res.obj_
             << Color::def << "\n";
+  res.variable_opt_.print();
 
   // case TOM_Sort:
   res = PerformTOM_OPT_Sort<ObjDataAge>(dag_tasks);
