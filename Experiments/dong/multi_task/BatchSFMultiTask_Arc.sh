@@ -4,7 +4,7 @@
 task_number_list=( 9 8 7 6 5 4 3 2 )
 files_per_task_list=( 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 8 )
 time_per_node_list=( 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 ) # in hour
-TOTAL_TASK_NUMBER=16 # the max index start from 0
+TOTAL_TASK_NUMBER=7 # the max index start from 0
 
 MinFileIndex=0
 MaxFileIndex=999
