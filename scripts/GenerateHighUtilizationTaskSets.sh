@@ -14,10 +14,10 @@ per_core_utilization_max=0.9
 outDir="generatedNewTaskset"
 parallelismFactor=0.9
 numberOfProcessor=4
-SF_ForkNum=-1 # negative means random number of forks
+SF_ForkNum=0 # negative means random number of forks
 fork_sensor_num_min=2
 fork_sensor_num_max=9
-numCauseEffectChain=3 # negative means random number of chains
+numCauseEffectChain=-1 # negative means random number of chains
 # ***************************************************
 cd ../release
 cmake -DCMAKE_BUILD_TYPE=Release ..
