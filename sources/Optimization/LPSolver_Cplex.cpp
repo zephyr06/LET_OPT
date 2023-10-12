@@ -16,6 +16,9 @@ void LPOptimizer::Init() {
   model_ = IloModel(env_);
   cplexSolver_ = IloCplex(env_);
   cplexSolver_.setOut(env_.getNullStream());
+  cplexSolver_.setParam(
+      IloCplex::Param::Emphasis::MIP,
+      5);  // emphasize speed than optimality during optimization
   // constraint_array_(env_);
 #ifdef PROFILE_CODE
   EndTimer("Init");
