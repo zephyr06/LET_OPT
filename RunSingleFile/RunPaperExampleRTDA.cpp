@@ -19,8 +19,18 @@ int main(int argc, char** argv) {
 
   std::cout << "Schedulable? " << CheckSchedulability(dag_tasks) << "\n";
 
-  TaskSetOptEnumWSkip task_sets_perms =
-      TaskSetOptEnumWSkip(dag_tasks, {dag_tasks.chains_}, "DataAge");
+  // TaskSetOptSorted task_sets_perms =
+  //     TaskSetOptSorted(dag_tasks, {dag_tasks.chains_}, "DataAge");
+  // int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAge>();
+
+  // TaskSetOptEnumWSkip task_sets_perms =
+  //     TaskSetOptEnumWSkip(dag_tasks, {dag_tasks.chains_}, "DataAge");
+  // int obj_find =
+  //     task_sets_perms.PerformOptimizationSkipInfeasible<ObjDataAge>().obj_;
+
+  TaskSetOptEnumerate task_sets_perms =
+      TaskSetOptEnumerate(dag_tasks, {dag_tasks.chains_}, "DataAge");
+  int obj_find = task_sets_perms.PerformOptimizationBF<ObjDataAge>().obj_;
 
   std::cout << "*******************All the edge last-reading "
                "patterns***********************\n";
@@ -29,7 +39,6 @@ int main(int argc, char** argv) {
   task_sets_perms.adjacent_two_task_permutations_[2].print();
   std::cout << "*******************All the edge last-reading "
                "patterns***********************\n";
-  int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAge>();
 
   std::cout << "The best permutation is: \n";
   task_sets_perms.best_yet_chain_.print();
