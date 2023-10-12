@@ -69,7 +69,7 @@ def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_
     font_size = 15
     plt.xlabel("Task Number", fontsize=font_size)
     plt.ylabel("Running time (seconds)", fontsize=font_size)
-    splot.set_ylim([1e-6, 1e3])
+    splot.set_ylim([1e-5, 1e4])
     splot.set(yscale="log")
 
     # # Shrink current axis's height by 10% at the botom

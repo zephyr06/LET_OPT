@@ -73,7 +73,6 @@ def Average(res_vec, base_vec, obj_type="DataAge", task_num=5, exclude_time_out=
             if (float(res_vec[i].obj) / base_vec[i].obj > 1.1):
                 print("Find an error result!")
             average_obj += Normalize(res_vec[i].obj, base_vec[i].obj)
-            average_jitter += Normalize(res_vec[i].jitter, base_vec[i].jitter)
             average_runtime += res_vec[i].runtime
         elif obj_type=="SensorFusion":
             if (base_vec[i].obj > 0):
