@@ -32,7 +32,6 @@ echo "per_core_utilization_max: $per_core_utilization_max" >> configs.log
 echo "parallelismFactor: $parallelismFactor" >> configs.log
 echo "numberOfProcessor: $numberOfProcessor" >> configs.log
 echo "SF_ForkNum: $SF_ForkNum" >> configs.log
-echo "fork_sensor_num: $fork_sensor_num" >> configs.log
 echo "numCauseEffectChain: $numCauseEffectChain" >> configs.log
 echo "list of fork_sensor_num: ${fork_sensor_num_list[@]}" >> configs.log
 
