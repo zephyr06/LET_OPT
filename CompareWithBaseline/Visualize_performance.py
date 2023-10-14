@@ -25,7 +25,10 @@ title = args.title
 if __name__ == "__main__":
     # task_set_number_range = [5, 10, 20, 30, 40]
     # task_set_number_range = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
-    task_set_number_range = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
+    task_set_number_range = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 
+                             31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]
+    # task_set_number_range = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 
+    #                          31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
     # task_set_number_range = [5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39]
     # task_set_number_range = [5, 10, 15, 20, 25, 30, 35, 40]
     # task_set_number_range = [15, 16, 17, 18, 19, 20, 21]
@@ -36,7 +39,9 @@ if __name__ == "__main__":
     # draw_DA_results(task_set_number_range)
     # draw_DA_resultsOneChain(task_set_number_range)
     
-    task_set_number_range = [2, 3, 4, 5, 6, 7, 8, 9]
+    # task_set_number_range = [2, 3, 4, 5, 6, 7, 8, 9]
+    # task_set_number_range = [4, 5, 6, 7, 8, 9]
+    task_set_number_range = [1, 3, 4, 5, 6, 7, 8, 10]
     draw_SF_results(task_set_number_range, exclude_time_out=False)
 
     # max_source_number_range = [2, 3, 4, 5]
