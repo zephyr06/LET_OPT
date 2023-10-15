@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 COUNT_PATH="/home/dong/workspace/LET_OPT/TaskData"
-COUNT_PATH="/home/dong/workspace/LET_OPT/TaskData/OneChain"
+# COUNT_PATH="/home/dong/workspace/LET_OPT/TaskData/OneChain"
 # COUNT_PATH=/home/zephyr/Programming/LET_OPT/TaskData
 COUNT_PATH="/home/dong/workspace/LET_OPT/release/generatedNewTaskset"
 # COUNT_PATH="/projects/rtss_let/LET_OPT/release/generatedNewTaskset"

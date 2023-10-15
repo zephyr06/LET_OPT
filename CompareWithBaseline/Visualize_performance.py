@@ -41,7 +41,7 @@ if __name__ == "__main__":
     
     # task_set_number_range = [2, 3, 4, 5, 6, 7, 8, 9]
     # task_set_number_range = [4, 5, 6, 7, 8, 9]
-    task_set_number_range = [1, 3, 4, 5, 6, 7, 8, 10]
+    task_set_number_range = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     draw_SF_results(task_set_number_range, exclude_time_out=False)
 
     # max_source_number_range = [2, 3, 4, 5]
