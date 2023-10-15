@@ -12,7 +12,7 @@ parallelismFactor=0.9
 numberOfProcessor=4
 SF_ForkNum=1 # negative means random number of forks
 fork_sensor_num_min=2
-fork_sensor_num_max=4
+fork_sensor_num_max=3
 numCauseEffectChain=0 # negative means random number of chains
 
 taskNumber=21
