@@ -5,7 +5,7 @@ fork_sensor_num_list=(2 3 4 5 6 7 8 9)
 numPerThread=(200 200 200 200 200 200 200 200)
 # ROOT_PATH="/home/zephyr/Programming/LET_OPT"
 taskSetNumber=1000
-per_core_utilization_min=0.9
+per_core_utilization_min=0.5
 per_core_utilization_max=0.9
 outDir="generatedNewTaskset"
 parallelismFactor=0.9
@@ -61,5 +61,12 @@ done
 
 echo "TaskSet Creation Time: $(date +%Y%m%d)" | cat - configs.log > temp && mv temp configs.log
 
+echo "Rename files name to have correct N number"
+for (( idx = 0 ; idx < ${#fork_sensor_num_list[@]}; idx++ )); do
+    fork_sensor_num=${fork_sensor_num_list[idx]}
+    for file in N$fork_sensor_num/*.csv; do 
+        mv $file $(echo $file | sed s/N${taskNumber}/N${fork_sensor_num}/); 
+    done
+done
 wait
 exit 0
