@@ -5,7 +5,7 @@ fork_sensor_num_list=(2 3 4 5 6 7 8 9)
 numPerThread=(200 200 200 200 200 200 200 200)
 # ROOT_PATH="/home/zephyr/Programming/LET_OPT"
 taskSetNumber=1000
-per_core_utilization_min=0.5
+per_core_utilization_min=0.9
 per_core_utilization_max=0.9
 outDir="generatedNewTaskset"
 parallelismFactor=0.9
@@ -13,7 +13,7 @@ numberOfProcessor=4
 SF_ForkNum=-1 # negative means random number of forks
 numCauseEffectChain=0 # negative means random number of chains
 
-taskNumber=40
+taskNumber=21
 # ***************************************************
 cd ../release
 cmake -DCMAKE_BUILD_TYPE=Release ..
