@@ -284,8 +284,10 @@ int main(int argc, char *argv[]) {
             round(task_number_in_tasksets *
                   (1.5 + (double(rand()) / RAND_MAX) * 1.5)),
             round(0.15 * task_number_in_tasksets * task_number_in_tasksets));
-      if (SF_ForkNum < 0)
-        tasks_params.SF_ForkNum = 1 + floor(double(rand()) / RAND_MAX * 5);
+      if (SF_ForkNum < 0) {
+        // tasks_params.SF_ForkNum = 1 + floor(double(rand()) / RAND_MAX * 5);
+        tasks_params.SF_ForkNum = 1 + i % 5;
+      }
 
       DAG_Model dag_tasks;
       if (taskSetType == 1) {  // DAG with random choice of chains
