@@ -26,8 +26,8 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
     elif obj == "SensorFusion":
         plt.ylabel("Relative Gap of Time Disparity (%)", fontsize=font_size)
 
-    if (obj == "ReactionTime" or obj == "DataAge"):
-        splot.set_ylim([-82, 5])
+    if (obj == "ReactionTime" or obj == "DataAge" or obj == "DataAgeOneChain"):
+        splot.set_ylim([-62, 5])
 
     # # Shrink current axis's height by 10% at the botom
     # box = ax.get_position()
@@ -72,7 +72,7 @@ def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_
     font_size = 15
     plt.xlabel("Task Number", fontsize=font_size)
     plt.ylabel("Running Time (Seconds)", fontsize=font_size)
-    splot.set_ylim([1e-5, 1e4])
+    splot.set_ylim([1e-5, 5e3])
     splot.set(yscale="log")
 
     # # Shrink current axis's height by 10% at the botom
@@ -94,6 +94,7 @@ def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_
     # ax.get_legend().remove()
     ax.set_title(obj + " Running Time")
     
+    splot.set_yticks([10**i for i in range(-5,4)])
     plt.grid(linestyle="--")
 
     if(output_file_name==""):
