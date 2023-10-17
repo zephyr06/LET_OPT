@@ -2,13 +2,13 @@ import pathlib
 baseline_method_names = ["InitialMethod", "ImplicitCommunication", "Martinez18",
                          "TOM_Sort_Offset", "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort"]
 
-baseline_method_labels = {"InitialMethod": "StanLET",
+baseline_method_labels = {"InitialMethod": "DefLET",
                           "ImplicitCommunication": "Implicit",
-                          "TOM_BF": "iLET_BF",
-                          "TOM_WSkip": "iLET_Skip_Infeasible",
-                          "TOM_Sort": "iLET_Efficient",
+                          "TOM_BF": "fLET_BF",
+                          "TOM_WSkip": "fLET_backtracking",
+                          "TOM_Sort": "fLET_acktracking+",
                           "Martinez18": "Martinez18",
-                          "TOM_Sort_Offset": "Martinez18_GLP_Efficient",
+                          "TOM_Sort_Offset": "Martinez18_Alg1",
                           "Bardatsch16": "Bradatsch16"}
 
 marker_map = {"InitialMethod": "o",
@@ -19,14 +19,14 @@ marker_map = {"InitialMethod": "o",
               "Martinez18": "D",
               "TOM_Sort_Offset": "P",
               "Bardatsch16": "X"}
-marker_size_map = {"InitialMethod": 6,
+marker_size_map = {"InitialMethod": 8,
                    "ImplicitCommunication": 12,
-                   "TOM_BF": 6,
-                   "TOM_WSkip": 8,
-                   "TOM_Sort": 6,
+                   "TOM_BF": 9,
+                   "TOM_WSkip": 10,
+                   "TOM_Sort": 7,
                    "Martinez18": 8,
                    "TOM_Sort_Offset": 8,
-                   "Bardatsch16": 4}
+                   "Bardatsch16": 7}
 # marker_size_map = {"InitialMethod": 6,
 #                    "ImplicitCommunication": 10,
 #                    "TOM_BF": 6,
@@ -56,5 +56,8 @@ color_map = {"InitialMethod": "#0084DB",
 
 ROOT_PATH = str(pathlib.Path(__file__).parent.resolve().parent.resolve()) + "/"
 ROOT_CompareWithBaseline_PATH = ROOT_PATH + "CompareWithBaseline/"
+
+axis_label_font_size=17
+tick_font_size=12
 
 verbose_mode = False

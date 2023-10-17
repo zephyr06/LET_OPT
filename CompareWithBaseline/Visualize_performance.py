@@ -35,14 +35,14 @@ if __name__ == "__main__":
     # task_set_number_range = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
     # task_set_number_range = [4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50]
 
-    draw_RT_results(task_set_number_range)
-    draw_DA_results(task_set_number_range)
-    draw_DA_resultsOneChain(task_set_number_range)
+    # draw_RT_results(task_set_number_range)
+    # draw_DA_results(task_set_number_range)
+    # draw_DA_resultsOneChain(task_set_number_range)
     
-    # task_set_number_range = [2, 3, 4, 5, 6, 7, 8, 9]
+    task_set_number_range = [2, 3, 4, 5, 6, 7, 8, 9]
     # task_set_number_range = [4, 5, 6, 7, 8, 9]
     # task_set_number_range = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    # draw_SF_results(task_set_number_range, exclude_time_out=False)
+    draw_SF_results(task_set_number_range, exclude_time_out=False)
 
     # max_source_number_range = [2, 3, 4, 5]
     # print_SF_table_results(max_source_number_range, exclude_time_out=False)

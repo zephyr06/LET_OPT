@@ -19,36 +19,31 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
                              color=color_map[method_names[i]
                                              ], label=baseline_method_labels[method_names[i]],
                              markersize=marker_size_map[method_names[i]])  # , alpha=alpha_list[i])
-    font_size = 15
-    plt.xlabel("Task Number", fontsize=font_size)
-    if (obj == "ReactionTime" or obj == "DataAge"):
-        plt.ylabel("Relative Gap (%)", fontsize=font_size)
+        
+    if obj == "SensorFusion":
+        plt.xlabel("Number of Source Tasks per Merge", fontsize=axis_label_font_size)
+    else:
+        plt.xlabel("Number of Tasks", fontsize=axis_label_font_size)
+        
+    if (obj == "ReactionTime"):
+        plt.ylabel("Relative Gap of Reaction Time (%)", fontsize=axis_label_font_size)
+    elif (obj == "DataAge" or obj == "DataAgeOneChain"):
+        plt.ylabel("Relative Gap of Data Age (%)", fontsize=axis_label_font_size)
     elif obj == "SensorFusion":
-        plt.ylabel("Relative Gap of Time Disparity (%)", fontsize=font_size)
+        plt.ylabel("Relative Gap of Time Disparity (%)", fontsize=axis_label_font_size)
 
     if (obj == "ReactionTime" or obj == "DataAge" or obj == "DataAgeOneChain"):
         splot.set_ylim([-62, 5])
-
-    # # Shrink current axis's height by 10% at the botom
-    # box = ax.get_position()
-    # ax.set_position([box.x0, box.y0 + box.height * 0.21,
-    #                  box.width, box.height * 0.9])
-    # handles, labels = ax.get_legend_handles_labels()
-    # handles = np.concatenate((handles[::3],handles[1::3],handles[2::3]),axis=0)
-    # labels = np.concatenate((labels[::3],labels[1::3],labels[2::3]),axis=0)
-    # if obj == "DataAge":
-    #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.39), ncol=3)
-    # elif obj == "ReactionTime":
-    #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
-    # elif obj == "SensorFusion":
-    #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
-    # else:
-    #     plt.legend()
     
-    # ax.get_legend().remove()
-    ax.set_title(obj + " Objective Performance")
+    ax.get_legend().remove()
+    # ax.set_title(obj + " Objective Performance")
 
+    if obj != "SensorFusion":
+        splot.set_xticks([i for i in range(5,22,2)])
     plt.grid(linestyle="--")
+    plt.xticks(fontsize=tick_font_size)
+    plt.yticks(fontsize=tick_font_size)
+    plt.tight_layout()
     if(output_file_name==""):
         plt.savefig(ROOT_CompareWithBaseline_PATH + obj +
                 "/Compare_Performance_" + obj + ".pdf", format='pdf')
@@ -69,33 +64,25 @@ def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_
                              color=color_map[method_names[i]
                                              ], label=baseline_method_labels[method_names[i]],
                              markersize=marker_size_map[method_names[i]])  # , alpha=alpha_list[i])
-    font_size = 15
-    plt.xlabel("Task Number", fontsize=font_size)
-    plt.ylabel("Running Time (Seconds)", fontsize=font_size)
+    if obj == "SensorFusion":
+        plt.xlabel("Number of Source Tasks per Merge", fontsize=axis_label_font_size)
+    else:
+        plt.xlabel("Number of Tasks", fontsize=axis_label_font_size)
+        
+    plt.ylabel("Running Time (Seconds)", fontsize=axis_label_font_size)
     splot.set_ylim([1e-5, 5e3])
     splot.set(yscale="log")
-
-    # # Shrink current axis's height by 10% at the botom
-    # box = ax.get_position()
-    # ax.set_position([box.x0, box.y0 + box.height * 0.21,
-    #                  box.width, box.height * 0.9])
-    # handles, labels = ax.get_legend_handles_labels()
-    # handles = np.concatenate((handles[::3],handles[1::3],handles[2::3]),axis=0)
-    # labels = np.concatenate((labels[::3],labels[1::3],labels[2::3]),axis=0)
-    # if obj == "DataAge":
-    #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.39), ncol=3)
-    # elif obj == "ReactionTime":
-    #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
-    # elif obj == "SensorFusion":
-    #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
-    # else:
-    #     plt.legend()
     
-    # ax.get_legend().remove()
-    ax.set_title(obj + " Running Time")
+    ax.get_legend().remove()
+    # ax.set_title(obj + " Running Time")
     
+    if obj != "SensorFusion":
+        splot.set_xticks([i for i in range(5,22,2)])
     splot.set_yticks([10**i for i in range(-5,4)])
     plt.grid(linestyle="--")
+    plt.xticks(fontsize=tick_font_size)
+    plt.yticks(fontsize=tick_font_size)
+    plt.tight_layout()
 
     if(output_file_name==""):
         plt.savefig(ROOT_CompareWithBaseline_PATH + obj +
@@ -119,36 +106,26 @@ def plot_Jitter_results(task_set_number_range, method_names, obj, exclude_time_o
                              color=color_map[method_names[i]
                                              ], label=baseline_method_labels[method_names[i]],
                              markersize=marker_size_map[method_names[i]])  # , alpha=alpha_list[i])
-    font_size = 15
-    plt.xlabel("Task Number", fontsize=font_size)
-    if (obj == "ReactionTime" or obj == "DataAge"):
-        plt.ylabel("Relative Gap (%)", fontsize=font_size)
+        
+    if obj == "SensorFusion":
+        plt.xlabel("Number of Source Tasks per Merge", fontsize=axis_label_font_size)
+    else:
+        plt.xlabel("Number of Tasks", fontsize=axis_label_font_size)
+        
+    if (obj == "ReactionTime" or obj == "DataAge" or obj == "DataAgeOneChain"):
+        plt.ylabel("Relative Gap of Jitter (%)", fontsize=axis_label_font_size)
     elif obj == "SensorFusion":
-        plt.ylabel("Relative Gap of Jitter (%)", fontsize=font_size)
-
-    if (obj == "ReactionTime" or obj == "DataAge"):
-        splot.set_ylim([-82, 5])
-
-    # # Shrink current axis's height by 10% at the botom
-    # box = ax.get_position()
-    # ax.set_position([box.x0, box.y0 + box.height * 0.21,
-    #                  box.width, box.height * 0.9])
-    # handles, labels = ax.get_legend_handles_labels()
-    # handles = np.concatenate((handles[::3],handles[1::3],handles[2::3]),axis=0)
-    # labels = np.concatenate((labels[::3],labels[1::3],labels[2::3]),axis=0)
-    # if obj == "DataAge":
-    #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.39), ncol=3)
-    # elif obj == "ReactionTime":
-    #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
-    # elif obj == "SensorFusion":
-    #     plt.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, -0.32), ncol=3)
-    # else:
-    #     plt.legend()
+        plt.ylabel("Relative Gap of Jitter (%)", fontsize=axis_label_font_size)
     
-    # ax.get_legend().remove()
-    ax.set_title(obj + " Jitter Performance")
+    ax.get_legend().remove()
+    # ax.set_title(obj + " Jitter Performance")
 
+    if obj != "SensorFusion":
+        splot.set_xticks([i for i in range(5,22,2)])
     plt.grid(linestyle="--")
+    plt.xticks(fontsize=tick_font_size)
+    plt.yticks(fontsize=tick_font_size)
+    plt.tight_layout()
     if(output_file_name==""):
         plt.savefig(ROOT_CompareWithBaseline_PATH + obj +
                 "/Compare_Jitter_" + obj + ".pdf", format='pdf')
