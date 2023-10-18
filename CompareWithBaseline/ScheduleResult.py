@@ -62,6 +62,7 @@ def Average(res_vec, base_vec, obj_type="DataAge", task_num=5, exclude_time_out=
     average_obj = 0.
     average_jitter = 0.
     average_runtime = 0.
+    timeout_cnt = 0.
     total_case = len(res_vec)
     # for res in res_vec:
     for i in range(len(res_vec)):
@@ -74,6 +75,8 @@ def Average(res_vec, base_vec, obj_type="DataAge", task_num=5, exclude_time_out=
                 print("Find an error result!")
             average_obj += Normalize(res_vec[i].obj, base_vec[i].obj)
             average_runtime += res_vec[i].runtime
+            if res_vec[i].runtime > 1000.:
+                timeout_cnt += 1.0
         elif obj_type=="SensorFusion":
             if (base_vec[i].obj > 0):
                 average_obj += Normalize(res_vec[i].obj, base_vec[i].obj)
@@ -81,5 +84,7 @@ def Average(res_vec, base_vec, obj_type="DataAge", task_num=5, exclude_time_out=
                 total_case -= 1
             average_jitter += Normalize(res_vec[i].jitter, base_vec[i].jitter)
             average_runtime += res_vec[i].runtime
+            if res_vec[i].runtime > 1000.:
+                timeout_cnt += 1.0
             
-    return average_obj / total_case, average_jitter / total_case, average_runtime / total_case
+    return average_obj / total_case, average_jitter / total_case, average_runtime / total_case, timeout_cnt * 100. / total_case

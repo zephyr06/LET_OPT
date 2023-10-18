@@ -9,7 +9,7 @@ sys.path.insert(1, '~/programming/LET_OPT/CompareWithBaseline')
 
 # if output_file_name is empty, default name settings will be used
 def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=False, output_file_name=""):
-    dataset_pd_obj, dataset_pd_jitter, dataset_pd_runtime = ReadOptResultsAllMethod(
+    dataset_pd_obj, dataset_pd_jitter, dataset_pd_runtime, dataset_pd_timeout_rate = ReadOptResultsAllMethod(
         method_names, obj, task_set_number_range, exclude_time_out)
 
     plt.figure()
@@ -55,7 +55,7 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
 
 # if output_file_name is empty, default name settings will be used
 def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_out=False, output_file_name=""):
-    dataset_pd_obj, dataset_pd_jitter, dataset_pd_runtime = ReadOptResultsAllMethod(
+    dataset_pd_obj, dataset_pd_jitter, dataset_pd_runtime, dataset_pd_timeout_rate = ReadOptResultsAllMethod(
         method_names, obj, task_set_number_range, exclude_time_out)
     plt.figure()
     ax = plt.subplot(111)
@@ -96,7 +96,7 @@ def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_
 
 # if output_file_name is empty, default name settings will be used
 def plot_Jitter_results(task_set_number_range, method_names, obj, exclude_time_out=False, output_file_name=""):
-    dataset_pd_obj, dataset_pd_jitter, dataset_pd_runtime = ReadOptResultsAllMethod(
+    dataset_pd_obj, dataset_pd_jitter, dataset_pd_runtime, dataset_pd_timeout_rate = ReadOptResultsAllMethod(
         method_names, obj, task_set_number_range, exclude_time_out)
 
     plt.figure()
@@ -136,11 +136,51 @@ def plot_Jitter_results(task_set_number_range, method_names, obj, exclude_time_o
     plt.pause(3)
 
 
+# if output_file_name is empty, default name settings will be used
+def plot_Timeout_rate(task_set_number_range, method_names, obj, exclude_time_out=False, output_file_name=""):
+    dataset_pd_obj, dataset_pd_jitter, dataset_pd_runtime, dataset_pd_timeout_rate = ReadOptResultsAllMethod(
+        method_names, obj, task_set_number_range, exclude_time_out)
+
+    plt.figure()
+    ax = plt.subplot(111)
+    for i in range(len(method_names)):
+        splot = sns.lineplot(data=dataset_pd_timeout_rate, x="index", y=method_names[i], marker=marker_map[method_names[i]],
+                             color=color_map[method_names[i]
+                                             ], label=baseline_method_labels[method_names[i]],
+                             markersize=marker_size_map[method_names[i]])  # , alpha=alpha_list[i])
+        
+    if obj == "SensorFusion":
+        plt.xlabel("Number of Source Tasks per Merge", fontsize=axis_label_font_size)
+    else:
+        plt.xlabel("Number of Tasks", fontsize=axis_label_font_size)
+        
+    plt.ylabel("Timeout Rate (%)", fontsize=axis_label_font_size)
+    
+    # ax.get_legend().remove()
+    ax.set_title(obj)
+
+    if obj != "SensorFusion":
+        splot.set_xticks([i for i in range(5,22,2)])
+    plt.grid(linestyle="--")
+    plt.xticks(fontsize=tick_font_size)
+    plt.yticks(fontsize=tick_font_size)
+    plt.tight_layout()
+    if(output_file_name==""):
+        plt.savefig(ROOT_CompareWithBaseline_PATH + obj +
+                "/Compare_Timeout_" + obj + ".pdf", format='pdf')
+    else:
+        plt.savefig(ROOT_CompareWithBaseline_PATH + obj +
+                    "/Compare_Timeout_" + output_file_name + ".pdf", format='pdf')
+    plt.show(block=False)
+    plt.pause(3)
+
+
 def draw_RT_results(task_set_number_range):
     method_names = ["InitialMethod", "Maia23", "ImplicitCommunication", 
                     "TOM_BF", "TOM_WSkip", "TOM_Sort"]
     plot_Obj_results(task_set_number_range, method_names, "ReactionTime")
     plot_Runtime_results(task_set_number_range, method_names, "ReactionTime")
+    plot_Timeout_rate(task_set_number_range, method_names, "ReactionTime")
 
 
 def draw_DA_resultsOneChain(task_set_number_range):
@@ -148,24 +188,24 @@ def draw_DA_resultsOneChain(task_set_number_range):
                     "TOM_Sort_Offset", "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort"]
     plot_Obj_results(task_set_number_range, method_names, "DataAgeOneChain", output_file_name="DataAgeOneChain")
     plot_Runtime_results(task_set_number_range, method_names, "DataAgeOneChain", output_file_name="DataAgeOneChain")
+    plot_Timeout_rate(task_set_number_range, method_names, "DataAgeOneChain", output_file_name="DataAgeOneChain")
 
 def draw_DA_results(task_set_number_range):
     method_names = ["InitialMethod", "Maia23", "ImplicitCommunication", 
                     "TOM_Sort_Offset", "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort"]
     plot_Obj_results(task_set_number_range, method_names, "DataAge")
     plot_Runtime_results(task_set_number_range, method_names, "DataAge")
+    plot_Timeout_rate(task_set_number_range, method_names, "DataAge")
 
 
 
 def draw_SF_results(task_set_number_range, exclude_time_out=False):
     method_names = ["InitialMethod",
                     "ImplicitCommunication", "TOM_BF", "TOM_WSkip"]
-    plot_Obj_results(task_set_number_range, method_names,
-                     "SensorFusion", exclude_time_out)
-    plot_Jitter_results(task_set_number_range, method_names,
-                     "SensorFusion", exclude_time_out)
-    plot_Runtime_results(task_set_number_range, method_names,
-                         "SensorFusion", exclude_time_out)
+    plot_Obj_results(task_set_number_range, method_names, "SensorFusion", exclude_time_out)
+    plot_Jitter_results(task_set_number_range, method_names, "SensorFusion", exclude_time_out)
+    plot_Runtime_results(task_set_number_range, method_names, "SensorFusion", exclude_time_out)
+    plot_Timeout_rate(task_set_number_range, method_names, "SensorFusion", exclude_time_out)
 
 def print_SF_table_results(task_set_number_range, exclude_time_out=False):
     # draw_SF_results(task_set_number_range, exclude_time_out=False)
