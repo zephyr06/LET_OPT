@@ -40,9 +40,10 @@ int main(int argc, char *argv[]) {
 
   std::vector<DAG_SPACE::BASELINEMETHODS> baselineMethods = {
       DAG_SPACE::InitialMethod,   DAG_SPACE::ImplicitCommunication,
-      DAG_SPACE::TOM_BF,          DAG_SPACE::TOM_WSkip,
-      DAG_SPACE::TOM_Sort,        DAG_SPACE::Martinez18,
-      DAG_SPACE::TOM_Sort_Offset, DAG_SPACE::Bardatsch16};
+      DAG_SPACE::Maia23,          DAG_SPACE::TOM_BF,          
+      DAG_SPACE::TOM_WSkip,       DAG_SPACE::TOM_Sort,        
+      DAG_SPACE::Martinez18,      DAG_SPACE::TOM_Sort_Offset, 
+      DAG_SPACE::Bardatsch16};
 
   DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjDataAge>(baselineMethods,
                                                        batch_test_settings);
