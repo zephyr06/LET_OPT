@@ -9,6 +9,10 @@ namespace DAG_SPACE {
 struct OD_Vir {
   int offset;
   int deadline;
+  bool operator==(const OD_Vir& other) const {
+    return other.offset == offset && other.deadline == deadline;
+  }
+  bool operator!=(const OD_Vir& other) const { return !(*this == other); }
 };
 
 // variableOD organizes variables following the order by task id;
@@ -66,6 +70,9 @@ class VariableOD {
   void SetOffset(uint task_id, int value) {
     if (value > variables_[task_id].offset) variables_[task_id].offset = value;
   }
+
+  bool operator==(const VariableOD& other) const;
+  bool operator!=(const VariableOD& other) const;
 
   void print() const;
   // data members

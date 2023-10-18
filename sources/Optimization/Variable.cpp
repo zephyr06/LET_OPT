@@ -53,4 +53,16 @@ VariableOD FindBestPossibleVariableOD(const DAG_Model& dag_tasks,
   }
   return variable;
 }
+
+bool VariableOD::operator==(const VariableOD& other) const {
+  if (other.size() != size()) return false;
+  for (auto itr = variables_.begin(); itr != variables_.end(); itr++) {
+    if (other.at(itr->first) != itr->second) return false;
+  }
+  return true;
+}
+
+bool VariableOD::operator!=(const VariableOD& other) const {
+  return !(*this == other);
+}
 }  // namespace DAG_SPACE
