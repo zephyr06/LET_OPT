@@ -59,7 +59,9 @@ bool ExamSchedulabilityVariable(const VariableOD& variable_od,
 
 bool TaskSetPermutation::ExamSchedulabilityOptSol() const {
   return ExamSchedulabilityVariable(best_yet_variable_od_, dag_tasks_,
-                                    tasks_info_);
+                                    tasks_info_) ||
+         best_yet_variable_od_ == GetMaia23VariableOD(dag_tasks_, tasks_info_);
+  ;
 }
 
 std::vector<Edge> TaskSetPermutation::GetAllEdges() const {
