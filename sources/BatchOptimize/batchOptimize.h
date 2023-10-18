@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include "assert.h"
+#include "sources/Baseline/Maia23.h"
 #include "sources/Baseline/StandardLET.h"
 #include "sources/OptimizeMain.h"
 #include "sources/Utils/BatchUtils.h"
@@ -27,6 +28,9 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
   switch (batchTestMethod) {
     case InitialMethod:
       res = PerformStandardLETAnalysis<ObjectiveFunctionBase>(dag_tasks);
+      break;
+    case Maia23:
+      res = PerformMaia23Analysis<ObjectiveFunctionBase>(dag_tasks);
       break;
     case TOM_BF:
       res = PerformTOM_OPT_BF<ObjectiveFunctionBase>(dag_tasks);

@@ -1,6 +1,7 @@
 
 #include "gmock/gmock.h"  // Brings in gMock.
 #include "sources/Baseline/ImplicitCommunication/ScheduleSimulation.h"
+#include "sources/Baseline/Maia23.h"
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
 #include "sources/Optimization/Variable.h"
 #include "testEnv.cpp"
@@ -16,25 +17,6 @@ class PermutationTest18_n3 : public PermutationTestBase {
  public:
   std::string type_trait;
 };
-
-VariableOD GetMaia23VariableOD(const DAG_Model& dag_tasks,
-                               const TaskSetInfoDerived& tasks_info) {
-  Schedule schedule = SimulateFixedPrioritySched(dag_tasks, tasks_info);
-  VariableOD variable(dag_tasks.tasks);
-  for (auto itr = schedule.begin(); itr != schedule.end(); itr++) {
-    const JobCEC job_cur = itr->first;
-    const JobStartFinish& startfinish = itr->second;
-    int initial_release_time =
-        job_cur.jobId * tasks_info.GetTask(job_cur.taskId).period;
-    int rel_start = startfinish.start - initial_release_time;
-    int rel_finish = startfinish.finish - initial_release_time;
-    variable[job_cur.taskId].offset =
-        max(variable[job_cur.taskId].offset, rel_start);
-    variable[job_cur.taskId].deadline =
-        min(variable[job_cur.taskId].deadline, rel_finish);
-  }
-  return variable;
-}
 
 TEST_F(PermutationTest18_n3, SimulateFixedPrioritySched) {
   Schedule schedule_actual = SimulateFixedPrioritySched(dag_tasks, tasks_info);
@@ -55,6 +37,13 @@ TEST_F(PermutationTest18_n3, GetMaia23VariableOD) {
 
   EXPECT_EQ(1, variable_maia[2].offset);
   EXPECT_EQ(4, variable_maia[2].deadline);
+}
+
+TEST_F(PermutationTest18_n3, RT_OBJ) {
+  ScheduleResult res = PerformMaia23Analysis<ObjReactionTime>(dag_tasks);
+  EXPECT_EQ(34, res.obj_);
+  res = PerformMaia23Analysis<ObjDataAge>(dag_tasks);
+  EXPECT_EQ(24, res.obj_);
 }
 
 class PermutationTest28_n3 : public PermutationTestBase {
@@ -89,6 +78,13 @@ TEST_F(PermutationTest28_n3, GetMaia23VariableOD) {
   EXPECT_EQ(0, variable_maia[2].offset);
   EXPECT_EQ(5, variable_maia[2].deadline);
 }
+TEST_F(PermutationTest28_n3, RT_OBJ) {
+  ScheduleResult res = PerformMaia23Analysis<ObjReactionTime>(dag_tasks);
+  EXPECT_EQ(55 - 5, res.obj_);
+  res = PerformMaia23Analysis<ObjDataAge>(dag_tasks);
+  EXPECT_EQ(145 - 5, res.obj_);
+}
+
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
