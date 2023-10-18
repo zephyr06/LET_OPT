@@ -137,20 +137,20 @@ def plot_Jitter_results(task_set_number_range, method_names, obj, exclude_time_o
 
 
 def draw_RT_results(task_set_number_range):
-    method_names = ["InitialMethod", "ImplicitCommunication",
+    method_names = ["InitialMethod", "Maia23", "ImplicitCommunication", 
                     "TOM_BF", "TOM_WSkip", "TOM_Sort"]
     plot_Obj_results(task_set_number_range, method_names, "ReactionTime")
     plot_Runtime_results(task_set_number_range, method_names, "ReactionTime")
 
 
 def draw_DA_resultsOneChain(task_set_number_range):
-    method_names = ["InitialMethod", "ImplicitCommunication", "Martinez18",
+    method_names = ["InitialMethod", "Maia23", "ImplicitCommunication", "Martinez18",
                     "TOM_Sort_Offset", "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort"]
     plot_Obj_results(task_set_number_range, method_names, "DataAgeOneChain", output_file_name="DataAgeOneChain")
     plot_Runtime_results(task_set_number_range, method_names, "DataAgeOneChain", output_file_name="DataAgeOneChain")
 
 def draw_DA_results(task_set_number_range):
-    method_names = ["InitialMethod", "ImplicitCommunication",
+    method_names = ["InitialMethod", "Maia23", "ImplicitCommunication", 
                     "TOM_Sort_Offset", "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort"]
     plot_Obj_results(task_set_number_range, method_names, "DataAge")
     plot_Runtime_results(task_set_number_range, method_names, "DataAge")

@@ -1,9 +1,10 @@
 import pathlib
-baseline_method_names = ["InitialMethod", "ImplicitCommunication", "Martinez18",
-                         "TOM_Sort_Offset", "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort"]
+baseline_method_names = ["InitialMethod", "ImplicitCommunication", "Martinez18", 
+                         "TOM_Sort_Offset", "Bardatsch16", "Maia23", "TOM_BF", "TOM_WSkip", "TOM_Sort"]
 
 baseline_method_labels = {"InitialMethod": "DefLET",
                           "ImplicitCommunication": "Implicit",
+                          "Maia23": "Maia23",
                           "TOM_BF": "fLET_BF",
                           "TOM_WSkip": "fLET_backtracking",
                           "TOM_Sort": "fLET_acktracking+",
@@ -13,6 +14,7 @@ baseline_method_labels = {"InitialMethod": "DefLET",
 
 marker_map = {"InitialMethod": "o",
               "ImplicitCommunication": "*",
+              "Maia23": "v",
               "TOM_BF": "D",
               "TOM_WSkip": "^",
               "TOM_Sort": "s",
@@ -21,6 +23,7 @@ marker_map = {"InitialMethod": "o",
               "Bardatsch16": "X"}
 marker_size_map = {"InitialMethod": 8,
                    "ImplicitCommunication": 12,
+                    "Maia23": 10,
                    "TOM_BF": 9,
                    "TOM_WSkip": 10,
                    "TOM_Sort": 7,
@@ -37,6 +40,7 @@ marker_size_map = {"InitialMethod": 8,
 #                    "Bardatsch16": 3}
 color_map = {"InitialMethod": "#0084DB",
              "ImplicitCommunication": "#ffa64d",
+             "Maia23": "#b544c7",
              "TOM_BF": "r",
              "TOM_WSkip": "y",
              "TOM_Sort": "limegreen",
