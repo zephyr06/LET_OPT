@@ -117,7 +117,7 @@ class Task {
       else
         CoutError("Period parameter less or equal to 0!");
     } else if (CompareStringNoCase(priorityType_, "orig"))
-      return id;
+      return id * -1;
     else if (CompareStringNoCase(priorityType_, "assigned"))
       return priority_;
     else
