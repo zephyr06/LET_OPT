@@ -36,14 +36,7 @@ Schedule Variable2Schedule(const TaskSetInfoDerived &tasks_info,
 Schedule VariableMart2Schedule(const TaskSetInfoDerived &tasks_info,
                                const VariableOD &variable_od);
 
-void PrintSchedule(const Schedule &schedule) {
-  for (auto itr = schedule.begin(); itr != schedule.end(); itr++) {
-    JobCEC job = itr->first;
-    JobStartFinish sf = itr->second;
-    std::cout << "(" << job.taskId << ", " << job.jobId << ")"
-              << ": " << sf.start << ", " << sf.finish << "\n";
-  }
-}
+void PrintSchedule(const Schedule &schedule);
 
 bool CheckSchedulability(const DAG_Model &dag_tasks, const Schedule &schedule);
 
