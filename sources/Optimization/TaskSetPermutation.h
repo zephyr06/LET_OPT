@@ -1,6 +1,7 @@
 #pragma once
 #include <list>
 
+#include "sources/Baseline/Maia23.h"
 #include "sources/Baseline/StandardLET.h"
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
 #include "sources/Optimization/LPSolver_Cplex.h"
@@ -12,6 +13,10 @@
 #include "sources/Utils/ScheduleResults.h"
 #include "sources/Utils/profilier.h"
 namespace DAG_SPACE {
+
+bool ExamSchedulabilityVariable(const VariableOD& variable_od,
+                                const DAG_Model& dag_tasks,
+                                const TaskSetInfoDerived& tasks_info);
 
 class TaskSetPermutation {
  public:
@@ -25,7 +30,8 @@ class TaskSetPermutation {
 
   template <typename ObjectiveFunction>
   void InitializeSolutions() {
-    best_yet_variable_od_ = VariableOD(dag_tasks_.GetTaskSet());
+    // best_yet_variable_od_ = VariableOD(dag_tasks_.GetTaskSet());
+    best_yet_variable_od_ = GetMaia23VariableOD(dag_tasks_, tasks_info_);
     Schedule schedule_stand_let =
         Variable2Schedule(tasks_info_, best_yet_variable_od_);
     best_yet_chain_ = GetChainsPermFromVariable(
@@ -35,9 +41,11 @@ class TaskSetPermutation {
         dag_tasks_, tasks_info_, best_yet_chain_, best_yet_variable_od_,
         graph_of_all_ca_chains_.chains_);
     if (GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT)
-      best_yet_obj_ += GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT * ObjectiveFunction::Jitter(
-          dag_tasks_, tasks_info_, best_yet_chain_, best_yet_variable_od_,
-          graph_of_all_ca_chains_.chains_);
+      best_yet_obj_ +=
+          GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT *
+          ObjectiveFunction::Jitter(dag_tasks_, tasks_info_, best_yet_chain_,
+                                    best_yet_variable_od_,
+                                    graph_of_all_ca_chains_.chains_);
   }
 
   void FindPairPermutations();

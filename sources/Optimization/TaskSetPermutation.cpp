@@ -39,19 +39,27 @@ void TaskSetPermutation::FindPairPermutations() {
               << adjacent_two_task_permutations_.back().size() << "\n";
   }
 }
-bool TaskSetPermutation::ExamSchedulabilityOptSol() const {
-  if (best_yet_variable_od_.size() == 0) return false;
-  for (int i = 0; i < tasks_info_.N; i++) {
-    int offset = best_yet_variable_od_.at(i).offset;
-    int deadline = best_yet_variable_od_.at(i).deadline;
-    int rta = GetResponseTime(dag_tasks_, i);
-    if (rta + offset > deadline || deadline > dag_tasks_.GetTask(i).deadline)
+
+bool ExamSchedulabilityVariable(const VariableOD& variable_od,
+                                const DAG_Model& dag_tasks,
+                                const TaskSetInfoDerived& tasks_info) {
+  if (variable_od.size() == 0) return false;
+  for (int i = 0; i < tasks_info.N; i++) {
+    int offset = variable_od.at(i).offset;
+    int deadline = variable_od.at(i).deadline;
+    int rta = GetResponseTime(dag_tasks, i);
+    if (rta + offset > deadline || deadline > dag_tasks.GetTask(i).deadline)
       return false;
   }
   if (GlobalVariablesDAGOpt::debugMode == 1) {
-    best_yet_variable_od_.print();
+    variable_od.print();
   }
   return true;
+}
+
+bool TaskSetPermutation::ExamSchedulabilityOptSol() const {
+  return ExamSchedulabilityVariable(best_yet_variable_od_, dag_tasks_,
+                                    tasks_info_);
 }
 
 std::vector<Edge> TaskSetPermutation::GetAllEdges() const {

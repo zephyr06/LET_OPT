@@ -1,5 +1,6 @@
 
 
+#include "sources/Baseline/Maia23.h"
 #include "sources/OptimizeMain.h"
 
 using namespace DAG_SPACE;
@@ -35,6 +36,9 @@ int main(int argc, char** argv) {
   std::cout << "The minimum objective function found is " << obj_find << "\n";
   std::cout << "The total number of permutation iterations is: "
             << task_sets_perms.iteration_count_ << "\n";
+
+  std::cout << "Maia23: \n";
+  std::cout << PerformMaia23Analysis<ObjDataAge>(dag_tasks).obj_ << "\n";
 #ifdef PROFILE_CODE
   EndTimer("main");
   PrintTimer();
