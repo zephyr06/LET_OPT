@@ -11,7 +11,8 @@ void PrintResultAnalysis(const TaskSetPermutation& task_sets_perms,
   }
   if (!res.schedulable_ &&
       res.timeTaken_ < GlobalVariablesDAGOpt::TIME_LIMIT - 5)
-    CoutError("Find an unschedulable case!");
+    // CoutError("Find an unschedulable case!");
+    CoutWarning("Find an unschedulable case!");
 }
 
 ScheduleResult PerformOPT_Martinez18_DA(const DAG_Model& dag_tasks) {
