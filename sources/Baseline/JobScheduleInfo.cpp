@@ -34,4 +34,6 @@ Schedule VariableMart2Schedule(const TaskSetInfoDerived &tasks_info,
   }
   return schedule_all;
 }
+
+bool CheckSchedulability(const DAG_Model &dag_tasks, const Schedule &schedule);
 }  // namespace DAG_SPACE

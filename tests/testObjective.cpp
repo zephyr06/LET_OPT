@@ -747,7 +747,8 @@ TEST_F(PermutationTest42, GetSubChains) {
   ChainsPermutation chains_perm;
   chains_perm.push_back(perm14[0]);
   chains_perm.push_back(perm02[0]);
-  chains_perm.push_back(perm23[4]);
+  chains_perm.push_back(perm23[0]);
+  chains_perm.print();
 
   std::vector<std::vector<int>> chains_full_length = {{1, 4}, {0, 2, 3, 4}};
   std::vector<std::vector<int>> chains_sub =

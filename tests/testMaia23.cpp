@@ -89,15 +89,6 @@ class PermutationTest_n5_v65 : public PermutationTestBase {
   void SetUp() override { SetUpBase("test_n5_v65"); }
 };
 
-void PrintSchedule(const Schedule& schedule) {
-  for (auto itr = schedule.begin(); itr != schedule.end(); itr++) {
-    JobCEC job = itr->first;
-    JobStartFinish sf = itr->second;
-    std::cout << "(" << job.taskId << ", " << job.jobId << ")"
-              << ": " << sf.start << ", " << sf.finish << "\n";
-  }
-}
-
 TEST_F(PermutationTest_n5_v65, CategorizeTaskSet) {
   EXPECT_EQ(0, dag_tasks.task_id2task_index_within_processor_[3]);
   EXPECT_EQ(1, dag_tasks.task_id2task_index_within_processor_[0]);

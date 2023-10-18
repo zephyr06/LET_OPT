@@ -19,11 +19,11 @@ TEST_F(PermutationTest18_n3, GetVariableOD_Bradatsch16) {
   PrintRta(rta);
   VariableOD variable = GetVariableOD_Bradatsch16(dag_tasks);
   EXPECT_EQ(1, variable[0].deadline);
-  EXPECT_EQ(3, variable[1].deadline);
-  EXPECT_EQ(6, variable[2].deadline);
+  EXPECT_EQ(6, variable[1].deadline);
+  EXPECT_EQ(4, variable[2].deadline);
 }
 TEST_F(PermutationTest18_n3, PerformBradatsch16LETAnalysis) {
-  EXPECT_EQ(10 + 20 + 6,
+  EXPECT_EQ(4 + 20 + 20 - 10,
             PerformBradatsch16LETAnalysis<ObjDataAge>(dag_tasks).obj_);
 }
 class PermutationTest23_n3 : public PermutationTestBase {

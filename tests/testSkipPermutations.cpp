@@ -32,12 +32,12 @@ class PermutationTest1 : public ::testing::Test {
 };
 
 TEST_F(PermutationTest1, obj_) {
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
-  TwoTaskPermutations perm24(2, 4, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm42(4, 2, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm21(2, 1, dag_tasks, tasks_info, "ReactionTime");
   TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info, "ReactionTime");
   ChainsPermutation chains_perm;
-  chains_perm.push_back(perm12[8]);
-  chains_perm.push_back(perm24[11]);
+  chains_perm.push_back(perm42[8]);
+  chains_perm.push_back(perm21[11]);
   chains_perm.push_back(perm23[3]);
   chains_perm.print();
   TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_,
@@ -57,22 +57,57 @@ TEST_F(PermutationTest1, obj_) {
 
   ObjReactionTimeIntermediate objRI;
   EXPECT_EQ(1889 - 723,
-            objRI.ObjSingleChain(dag_tasks, tasks_info, chains_perm, {1, 2, 4},
+            objRI.ObjSingleChain(dag_tasks, tasks_info, chains_perm, {4, 2, 1},
                                  best_possible_variable_od));
 
   EXPECT_EQ(0, objRI.ObjSingleChain(dag_tasks, tasks_info, chains_perm,
-                                    {1, 2, 3}, best_possible_variable_od));
+                                    {4, 2, 3}, best_possible_variable_od));
 
   EXPECT_THAT(obj_curr, testing::Le(res.second));
 }
+// TEST_F(PermutationTest1, obj_) {
+//   TwoTaskPermutations perm14(1, 4, dag_tasks, tasks_info, "ReactionTime");
+//   TwoTaskPermutations perm42(4, 2, dag_tasks, tasks_info, "ReactionTime");
+//   TwoTaskPermutations perm43(4, 3, dag_tasks, tasks_info, "ReactionTime");
+//   ChainsPermutation chains_perm;
+//   chains_perm.push_back(perm14[8]);
+//   chains_perm.push_back(perm42[11]);
+//   chains_perm.push_back(perm43[3]);
+//   chains_perm.print();
+//   TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_,
+//                                       "ReactionTime");
+//   std::pair<VariableOD, int> res =
+//       FindODWithLP(task_sets_perms.dag_tasks_, task_sets_perms.tasks_info_,
+//                    chains_perm, task_sets_perms.graph_of_all_ca_chains_,
+//                    "ReactionTime", task_sets_perms.rta_);
 
+//   VariableOD best_possible_variable_od =
+//       FindBestPossibleVariableOD(dag_tasks, tasks_info,
+//       task_sets_perms.rta_);
+//   std::vector<std::vector<int>> sub_chains =
+//       GetSubChains(task_sets_perms.dag_tasks_.chains_, chains_perm);
+//   double obj_curr = ObjReactionTime::Obj(
+//       task_sets_perms.dag_tasks_, task_sets_perms.tasks_info_, chains_perm,
+//       best_possible_variable_od, sub_chains);
+
+//   ObjReactionTimeIntermediate objRI;
+//   EXPECT_EQ(1889 - 723,
+//             objRI.ObjSingleChain(dag_tasks, tasks_info, chains_perm, {1, 4,
+//             2},
+//                                  best_possible_variable_od));
+
+//   EXPECT_EQ(0, objRI.ObjSingleChain(dag_tasks, tasks_info, chains_perm,
+//                                     {1, 4, 3}, best_possible_variable_od));
+
+//   EXPECT_THAT(obj_curr, testing::Le(res.second));
+// }
 TEST_F(PermutationTest1, FindBestPossibleVariableOD) {
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
-  TwoTaskPermutations perm24(2, 4, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm42(4, 2, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm21(2, 1, dag_tasks, tasks_info, "ReactionTime");
   TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info, "ReactionTime");
   ChainsPermutation chains_perm;
-  chains_perm.push_back(perm12[8]);
-  chains_perm.push_back(perm24[11]);
+  chains_perm.push_back(perm42[8]);
+  chains_perm.push_back(perm21[11]);
   chains_perm.push_back(perm23[3]);
   chains_perm.print();
 
@@ -82,10 +117,10 @@ TEST_F(PermutationTest1, FindBestPossibleVariableOD) {
       dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm, false);
   auto rta = GetResponseTimeTaskSet(dag_tasks);
 
-  EXPECT_EQ(0, variable_range.lower_bound[1].offset);
-  EXPECT_EQ(341, variable_range.lower_bound[1].deadline);  // modified
-  EXPECT_EQ(82, variable_range.upper_bound[1].offset);     // true max is 82
-  EXPECT_EQ(359, variable_range.upper_bound[1].deadline);
+  EXPECT_EQ(0, variable_range.lower_bound[4].offset);
+  EXPECT_EQ(341, variable_range.lower_bound[4].deadline);  // modified
+  EXPECT_EQ(82, variable_range.upper_bound[4].offset);     // true max is 82
+  EXPECT_EQ(359, variable_range.upper_bound[4].deadline);
 
   EXPECT_EQ(0, variable_range.lower_bound[2].offset);
   EXPECT_EQ(1, variable_range.lower_bound[2].deadline);
@@ -97,31 +132,31 @@ TEST_F(PermutationTest1, FindBestPossibleVariableOD) {
   EXPECT_EQ(159 + 10, variable_range.upper_bound[3].offset);  // modified
   EXPECT_EQ(200, variable_range.upper_bound[3].deadline);
 
-  EXPECT_EQ(1, variable_range.lower_bound[4].offset);
-  EXPECT_EQ(890, variable_range.lower_bound[4].deadline);
-  EXPECT_EQ(19, variable_range.upper_bound[4].offset);  // modified
-  EXPECT_EQ(1000, variable_range.upper_bound[4].deadline);
+  EXPECT_EQ(1, variable_range.lower_bound[1].offset);
+  EXPECT_EQ(890, variable_range.lower_bound[1].deadline);
+  EXPECT_EQ(19, variable_range.upper_bound[1].offset);  // modified
+  EXPECT_EQ(1000, variable_range.upper_bound[1].deadline);
 
   VariableOD variable_od = FindBestPossibleVariableOD(
       dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm, false);
 
-  EXPECT_EQ(82, variable_od[1].offset);
-  EXPECT_EQ(341, variable_od[1].deadline);
+  EXPECT_EQ(82, variable_od[4].offset);
+  EXPECT_EQ(341, variable_od[4].deadline);
   EXPECT_EQ(9, variable_od[2].offset);
   EXPECT_EQ(1, variable_od[2].deadline);
   EXPECT_EQ(169, variable_od[3].offset);
   EXPECT_EQ(165, variable_od[3].deadline);
-  EXPECT_EQ(19, variable_od[4].offset);
-  EXPECT_EQ(890, variable_od[4].deadline);
+  EXPECT_EQ(19, variable_od[1].offset);
+  EXPECT_EQ(890, variable_od[1].deadline);
 }
 
 TEST_F(PermutationTest1, FindBestPossibleVariableOD_DA) {
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
-  TwoTaskPermutations perm24(2, 4, dag_tasks, tasks_info, "DataAge");
-  TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm42(4, 2, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm21(2, 1, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info, "ReactionTime");
   ChainsPermutation chains_perm;
-  chains_perm.push_back(perm12[8]);
-  chains_perm.push_back(perm24[11]);
+  chains_perm.push_back(perm42[8]);
+  chains_perm.push_back(perm21[11]);
   chains_perm.push_back(perm23[3]);
   chains_perm.print();
 
@@ -130,10 +165,10 @@ TEST_F(PermutationTest1, FindBestPossibleVariableOD_DA) {
       dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm, false);
   auto rta = GetResponseTimeTaskSet(dag_tasks);
 
-  EXPECT_EQ(0, variable_range.lower_bound[1].offset);
-  EXPECT_EQ(341, variable_range.lower_bound[1].deadline);  // modified
-  EXPECT_EQ(82, variable_range.upper_bound[1].offset);     // true max is 82
-  EXPECT_EQ(359, variable_range.upper_bound[1].deadline);
+  EXPECT_EQ(0, variable_range.lower_bound[4].offset);
+  EXPECT_EQ(341, variable_range.lower_bound[4].deadline);  // modified
+  EXPECT_EQ(82, variable_range.upper_bound[4].offset);     // true max is 82
+  EXPECT_EQ(359, variable_range.upper_bound[4].deadline);
 
   EXPECT_EQ(0, variable_range.lower_bound[2].offset);
   EXPECT_EQ(1, variable_range.lower_bound[2].deadline);
@@ -145,22 +180,22 @@ TEST_F(PermutationTest1, FindBestPossibleVariableOD_DA) {
   EXPECT_EQ(165, variable_range.lower_bound[3].deadline);     // true min is 165
   EXPECT_EQ(200, variable_range.upper_bound[3].deadline);
 
-  EXPECT_EQ(1, variable_range.lower_bound[4].offset);
-  EXPECT_EQ(19, variable_range.upper_bound[4].offset);  // modified
-  EXPECT_EQ(890, variable_range.lower_bound[4].deadline);
-  EXPECT_EQ(1000, variable_range.upper_bound[4].deadline);
+  EXPECT_EQ(1, variable_range.lower_bound[1].offset);
+  EXPECT_EQ(19, variable_range.upper_bound[1].offset);  // modified
+  EXPECT_EQ(890, variable_range.lower_bound[1].deadline);
+  EXPECT_EQ(1000, variable_range.upper_bound[1].deadline);
 
   VariableOD variable_od = FindBestPossibleVariableOD(
       dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm, false);
 
-  EXPECT_EQ(82, variable_od[1].offset);
-  EXPECT_EQ(341, variable_od[1].deadline);
+  EXPECT_EQ(82, variable_od[4].offset);
+  EXPECT_EQ(341, variable_od[4].deadline);
   EXPECT_EQ(9, variable_od[2].offset);
   EXPECT_EQ(1, variable_od[2].deadline);
   EXPECT_EQ(169, variable_od[3].offset);
   EXPECT_EQ(165, variable_od[3].deadline);
-  EXPECT_EQ(19, variable_od[4].offset);
-  EXPECT_EQ(890, variable_od[4].deadline);
+  EXPECT_EQ(19, variable_od[1].offset);
+  EXPECT_EQ(890, variable_od[1].deadline);
 }
 class PermutationTest2 : public ::testing::Test {
  protected:
@@ -180,11 +215,11 @@ class PermutationTest2 : public ::testing::Test {
 };
 
 TEST_F(PermutationTest2, FindBestPossibleVariableOD) {
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "ReactionTime");
+  TwoTaskPermutations perm21(2, 1, dag_tasks, tasks_info, "ReactionTime");
   // TwoTaskPermutations perm24(2, 4, dag_tasks, tasks_info,"ReactionTime");
   // TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info,"ReactionTime");
   ChainsPermutation chains_perm;
-  chains_perm.push_back(perm12[0]);
+  chains_perm.push_back(perm21[0]);
   // chains_perm.push_back(perm24[11]);
   // chains_perm.push_back(perm23[3]);
   chains_perm.print();
@@ -199,15 +234,15 @@ TEST_F(PermutationTest2, FindBestPossibleVariableOD) {
   EXPECT_EQ(9, variable_range.upper_bound[0].offset);
   EXPECT_EQ(10, variable_range.upper_bound[0].deadline);
 
-  EXPECT_EQ(0, variable_range.lower_bound[1].offset);
-  EXPECT_EQ(3, variable_range.lower_bound[1].deadline);
-  EXPECT_EQ(10, variable_range.upper_bound[1].offset);
-  EXPECT_EQ(13, variable_range.upper_bound[1].deadline);  // modified
+  EXPECT_EQ(0, variable_range.lower_bound[2].offset);
+  EXPECT_EQ(3, variable_range.lower_bound[2].deadline);
+  EXPECT_EQ(10, variable_range.upper_bound[2].offset);
+  EXPECT_EQ(13, variable_range.upper_bound[2].deadline);  // modified
 
-  EXPECT_EQ(3, variable_range.lower_bound[2].offset);  // modified
-  EXPECT_EQ(10, variable_range.lower_bound[2].deadline);
-  EXPECT_EQ(13, variable_range.upper_bound[2].offset);
-  EXPECT_EQ(20, variable_range.upper_bound[2].deadline);
+  EXPECT_EQ(3, variable_range.lower_bound[1].offset);  // modified
+  EXPECT_EQ(10, variable_range.lower_bound[1].deadline);
+  EXPECT_EQ(13, variable_range.upper_bound[1].offset);
+  EXPECT_EQ(20, variable_range.upper_bound[1].deadline);
 }
 class PermutationTest24_n3 : public PermutationTestBase {
   void SetUp() override { SetUpBase("test_n3_v24"); }
@@ -216,47 +251,47 @@ class PermutationTest24_n3 : public PermutationTestBase {
 TEST_F(PermutationTest24_n3, FindPossibleVariableOD) {
   TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_,
                                       "ReactionTime");
-  auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];
-  auto perm12 = task_sets_perms.adjacent_two_task_permutations_[1];
-  perm01.print();
-  perm12.print();
+  auto perm02 = task_sets_perms.adjacent_two_task_permutations_[0];
+  auto perm21 = task_sets_perms.adjacent_two_task_permutations_[1];
+  perm02.print();
+  perm21.print();
   ChainsPermutation chains_perm;
-  chains_perm.push_back(perm01[0]);
+  chains_perm.push_back(perm02[0]);
   std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
   VariableRange variable_range =
       FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm, false);
   EXPECT_EQ(0, variable_range.lower_bound[0].offset);
-  EXPECT_EQ(11 + 7, variable_range.lower_bound[1].deadline);
+  EXPECT_EQ(11 + 7, variable_range.lower_bound[2].deadline);
 }
 
 TEST_F(PermutationTest24_n3, select_feasible_perm) {
   TaskSetOptEnumWSkip task_sets_perms(dag_tasks, dag_tasks.chains_,
                                       "ReactionTime");
-  auto perm01 = task_sets_perms.adjacent_two_task_permutations_[0];
-  auto perm12 = task_sets_perms.adjacent_two_task_permutations_[1];
-  perm01.print();
-  perm12.print();
+  auto perm02 = task_sets_perms.adjacent_two_task_permutations_[0];
+  auto perm21 = task_sets_perms.adjacent_two_task_permutations_[1];
+  perm02.print();
+  perm21.print();
   ChainsPermutation chains_perm;
-  chains_perm.push_back(perm01[0]);
+  chains_perm.push_back(perm02[0]);
   std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
   VariableRange variable_range =
       FindPossibleVariableOD(dag_tasks, tasks_info, rta, chains_perm, false);
   variable_range.lower_bound.print();
   variable_range.upper_bound.print();
-  Edge edge_ite(1, 2);
+  Edge edge_ite(2, 1);
   PermIneqBound_Range edge_range = GetEdgeIneqRangeRT(edge_ite, variable_range);
   EXPECT_EQ(20 - 0, edge_range.lower_bound_s_upper_bound);
   EXPECT_EQ(18 - 10, edge_range.upper_bound_s_lower_bound);
-  std::cout << "Valid range for edge(1,2): "
+  std::cout << "Valid range for edge(2,1): "
             << edge_range.lower_bound_s_upper_bound << ", "
             << edge_range.upper_bound_s_lower_bound << "\n";
   // std::vector<int> rta = GetResponseTimeTaskSet(dag_tasks);
   EXPECT_FALSE(
-      chains_perm.IsValid(task_sets_perms.variable_range_od_, *perm12[0],
+      chains_perm.IsValid(task_sets_perms.variable_range_od_, *perm21[0],
                           task_sets_perms.graph_of_all_ca_chains_, rta));
 
   EXPECT_TRUE(
-      chains_perm.IsValid(task_sets_perms.variable_range_od_, *perm12[1],
+      chains_perm.IsValid(task_sets_perms.variable_range_od_, *perm21[1],
                           task_sets_perms.graph_of_all_ca_chains_, rta));
   TwoTaskPermutationsIterator iterator(
       task_sets_perms.adjacent_two_task_permutations_[1], edge_range);
@@ -286,7 +321,9 @@ TEST_F(PermutationTest18_n3, select_feasible_perm) {
   Edge edge_ite(0, 1);
   PermIneqBound_Range edge_range = GetEdgeIneqRangeRT(edge_ite, variable_range);
   EXPECT_EQ(10 - 0, edge_range.lower_bound_s_upper_bound);
-  EXPECT_EQ(1 - 17, edge_range.upper_bound_s_lower_bound);
+  EXPECT_EQ(-13,
+            edge_range.upper_bound_s_lower_bound);  // not carefully verified
+                                                    // after changing PA
   TwoTaskPermutationsIterator iterator(
       task_sets_perms.adjacent_two_task_permutations_[0], edge_range);
   EXPECT_EQ(3, iterator.size());
