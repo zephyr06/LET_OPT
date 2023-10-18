@@ -107,7 +107,8 @@ class RunQueue {
 
   /**
    * @brief Given a new task's id, find its position in the queue
-   * such that the queue is ordered from highest priority to lowest priority
+   * such that the queue is ordered from highest priority (largest numbers in
+   * priority()) to lowest priority
    *
    * @param id: new task's id
    * @return LLint
