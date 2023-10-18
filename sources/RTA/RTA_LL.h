@@ -97,7 +97,7 @@ class RTA_LL : public RTA_BASE {
   }
 };
 
-int GetResponseTime(const TaskSet &tasks, int index, int warm_start = 0);
+// int GetResponseTime(const TaskSet &tasks, int index, int warm_start = 0);
 
 int GetResponseTime(const DAG_Model &dag_tasks, int task_id);
 
