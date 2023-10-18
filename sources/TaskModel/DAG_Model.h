@@ -103,6 +103,7 @@ class DAG_Model {
   std::vector<int> FindSinkTaskIds() const;
 
   void CategorizeTaskSet();
+  void SortTaskSetForEachProcessor();
   void RecordTaskPosition();
 
   int getSF_Fork_InstanceCount(const TaskSetInfoDerived &tasks_info) const;

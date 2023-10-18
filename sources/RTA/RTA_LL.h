@@ -11,8 +11,10 @@ class RTA_LL : public RTA_BASE {
 
   double RTA_Common_Warm(double beginTime, int index) override {
     TaskSet tasksHp;
-    for (int i = 0; i < index; i++) {
-      tasksHp.push_back(tasks_.at(i));
+    for (uint i = 0; i < tasks_.size(); i++) {
+      if (tasks_[i].processorId == tasks_[index].processorId &&
+          tasks_[i].priority() > tasks_[index].priority())
+        tasksHp.push_back(tasks_.at(i));
     }
     return ResponseTimeAnalysisWarm(beginTime, tasks_.at(index), tasksHp);
   }

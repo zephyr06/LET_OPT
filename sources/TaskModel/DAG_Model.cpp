@@ -167,10 +167,22 @@ void DAG_Model::CategorizeTaskSet() {
     } else {
       processor2taskset_[p_id].push_back(tasks[i]);
     }
-    task_id2task_index_within_processor_[task_id] =
-        processor2taskset_[p_id].size() - 1;
+  }
+  SortTaskSetForEachProcessor();
+}
+void DAG_Model::SortTaskSetForEachProcessor() {
+  for (auto itr = processor2taskset_.begin(); itr != processor2taskset_.end();
+       itr++) {
+    TaskSet& tasks = itr->second;
+    std::sort(tasks.begin(), tasks.end(), [](const Task& a, const Task& b) {
+      return a.priority() > b.priority();
+    });
+    for (uint i = 0; i < tasks.size(); i++) {
+      task_id2task_index_within_processor_[tasks[i].id] = i;
+    }
   }
 }
+
 void DAG_Model::RecordTaskPosition() {
   for (int i = 0; i < static_cast<int>(tasks.size()); i++) {
     task_id2position_[tasks[i].id] = i;
