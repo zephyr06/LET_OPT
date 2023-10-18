@@ -399,7 +399,7 @@ TEST_F(PermutationTest4, GenerateBoxPermutationConstraints) {
 TEST_F(PermutationTest4, simple_contructor_v1) {
   task0.print();
   task1.print();
-  std::cout << "RTA-22-old: " << GetResponseTime(tasks, 22) << "\n";
+  std::cout << "RTA-22-old: " << GetResponseTime(dag_tasks, 22) << "\n";
   std::cout << "RTA-22: " << GetResponseTime(dag_tasks, 22) << "\n";
   std::cout << "RTA-23: " << GetResponseTime(dag_tasks, 23) << "\n";
   TwoTaskPermutations two_task_permutation(23, 22, dag_tasks, tasks_info,

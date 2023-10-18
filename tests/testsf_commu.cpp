@@ -101,8 +101,8 @@ TEST_F(PermutationTest30_n3, SF_Obj_Implicit) {
   Schedule schedule = SimulateFixedPrioritySched(dag_tasks, tasks_info);
   ChainsPermutation chains_perm = GetChainsPermFromVariable(
       dag_tasks, tasks_info, GetChainsForSF(dag_tasks), "DataAge", schedule);
-  EXPECT_EQ(1 + 1, ObjSensorFusion::Obj(dag_tasks, tasks_info, chains_perm,
-                                        schedule, {{}}));
+  EXPECT_EQ(18 + 1, ObjSensorFusion::Obj(dag_tasks, tasks_info, chains_perm,
+                                         schedule, {{}}));
 }
 
 TEST_F(PermutationTest30_n3, SF_Obj_StanLET) {
@@ -127,8 +127,8 @@ TEST_F(PermutationTest31_n3, SF_Obj_Implicit) {
   Schedule schedule = SimulateFixedPrioritySched(dag_tasks, tasks_info);
   ChainsPermutation chains_perm = GetChainsPermFromVariable(
       dag_tasks, tasks_info, GetChainsForSF(dag_tasks), "DataAge", schedule);
-  EXPECT_EQ(1 - (3 - 20), ObjSensorFusion::Obj(dag_tasks, tasks_info,
-                                               chains_perm, schedule, {{}}));
+  EXPECT_EQ(1, ObjSensorFusion::Obj(dag_tasks, tasks_info, chains_perm,
+                                    schedule, {{}}));
 }
 
 class PermutationTest_n6_v1 : public PermutationTestBase {

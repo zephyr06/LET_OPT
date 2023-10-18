@@ -85,6 +85,35 @@ TEST_F(PermutationTest28_n3, RT_OBJ) {
   EXPECT_EQ(145 - 5, res.obj_);
 }
 
+class PermutationTest_n5_v65 : public PermutationTestBase {
+  void SetUp() override { SetUpBase("test_n5_v65"); }
+};
+
+void PrintSchedule(const Schedule& schedule) {
+  for (auto itr = schedule.begin(); itr != schedule.end(); itr++) {
+    JobCEC job = itr->first;
+    JobStartFinish sf = itr->second;
+    std::cout << "(" << job.taskId << ", " << job.jobId << ")"
+              << ": " << sf.start << ", " << sf.finish << "\n";
+  }
+}
+
+TEST_F(PermutationTest_n5_v65, CategorizeTaskSet) {
+  EXPECT_EQ(0, dag_tasks.task_id2task_index_within_processor_[3]);
+  EXPECT_EQ(1, dag_tasks.task_id2task_index_within_processor_[0]);
+  EXPECT_EQ(3, dag_tasks.processor2taskset_[2][0].id);
+  EXPECT_EQ(0, dag_tasks.processor2taskset_[2][1].id);
+}
+
+TEST_F(PermutationTest_n5_v65, RT_OBJ) {
+  VariableOD variable_od_Maia = GetMaia23VariableOD(dag_tasks, tasks_info);
+  Schedule schedule_actual = Variable2Schedule(tasks_info, variable_od_Maia);
+  variable_od_Maia.print();
+  PrintSchedule(schedule_actual);
+  // EXPECT_TRUE(
+  //     ExamSchedulabilityVariable(variable_od_Maia, dag_tasks, tasks_info));
+}
+
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
