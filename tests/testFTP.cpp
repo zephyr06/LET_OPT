@@ -2,7 +2,7 @@
 #include "gmock/gmock.h"  // Brings in gMock.
 #include "sources/Baseline/ImplicitCommunication/ScheduleSimulation.h"
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
-#include "testEnv.cpp"
+#include "tests/testEnv.cpp"
 using namespace DAG_SPACE;
 
 class PermutationTest18_n3 : public PermutationTestBase {

@@ -1,6 +1,6 @@
 #include "sources/OptimizeMain.h"
 #include "sources/Permutations/FeasibleChainManager.h"
-#include "testEnv.cpp"
+#include "tests/testEnv.cpp"
 
 class PermutationTest22 : public PermutationTestBase {
   void SetUp() override {

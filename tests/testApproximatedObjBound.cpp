@@ -2,7 +2,7 @@
 #include "sources/Baseline/OptSortedBound.h"
 #include "sources/Optimization/Variable.h"
 #include "sources/TaskModel/DAG_Model.h"
-#include "testEnv.cpp"
+#include "tests/testEnv.cpp"
 using namespace DAG_SPACE;
 
 class PermutationTest18_n3 : public PermutationTestBase {

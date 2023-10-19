@@ -7,7 +7,7 @@
 #include "sources/TaskModel/DAG_Model.h"
 #include "sources/Utils/Interval.h"
 #include "sources/Utils/JobCEC.h"
-#include "testEnv.cpp"
+#include "tests/testEnv.cpp"
 using namespace DAG_SPACE;
 
 class PermutationTest1 : public ::testing::Test {

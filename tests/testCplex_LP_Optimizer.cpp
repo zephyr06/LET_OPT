@@ -1,7 +1,7 @@
 
 #include "gmock/gmock.h"  // Brings in gMock.
 #include "sources/Optimization/LPSolver_Cplex.h"
-#include "testEnv.cpp"
+#include "tests/testEnv.cpp"
 using namespace DAG_SPACE;
 
 class PermutationTest1 : public ::testing::Test {

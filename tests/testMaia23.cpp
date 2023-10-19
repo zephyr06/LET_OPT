@@ -4,7 +4,7 @@
 #include "sources/Baseline/Maia23.h"
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
 #include "sources/Optimization/Variable.h"
-#include "testEnv.cpp"
+#include "tests/testEnv.cpp"
 using namespace DAG_SPACE;
 
 class PermutationTest18_n3 : public PermutationTestBase {

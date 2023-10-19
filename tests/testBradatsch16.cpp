@@ -1,7 +1,7 @@
 
 #include "gmock/gmock.h"  // Brings in gMock.
 #include "sources/Baseline/Bradatsch16.h"
-#include "testEnv.cpp"
+#include "tests/testEnv.cpp"
 using namespace DAG_SPACE;
 
 class PermutationTest18_n3 : public PermutationTestBase {

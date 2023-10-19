@@ -4,7 +4,7 @@
 #include "sources/Optimization/TaskSetOptSorted.h"
 #include "sources/Optimization/TaskSetOptSorted_Offset.h"
 #include "sources/OptimizeMain.h"
-#include "testEnv.cpp"
+#include "tests/testEnv.cpp"
 using namespace DAG_SPACE;
 
 class PermutationTest18_n3 : public PermutationTestBase {

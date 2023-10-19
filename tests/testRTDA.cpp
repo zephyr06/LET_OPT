@@ -7,7 +7,7 @@
 #include "sources/Baseline/StandardLET.h"
 #include "sources/ObjectiveFunction/RTDA_Factor.h"
 #include "sources/Optimization/Variable.h"
-#include "testEnv.cpp"
+#include "tests/testEnv.cpp"
 using namespace DAG_SPACE;
 
 class PermutationTest_n3_v35 : public PermutationTestBase {

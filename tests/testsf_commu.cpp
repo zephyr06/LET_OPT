@@ -6,7 +6,7 @@
 #include "sources/Baseline/Martinez18.h"
 #include "sources/Baseline/StandardLET.h"
 #include "sources/Optimization/Variable.h"
-#include "testEnv.cpp"
+#include "tests/testEnv.cpp"
 using namespace DAG_SPACE;
 
 class PermutationTest53_n5 : public PermutationTestBase {
