@@ -74,7 +74,7 @@ TEST_F(PermutationTest1, Iteration_bf) {
 }
 TEST_F(PermutationTest1, Iteration_Sorted) {
   TaskSetOptSorted task_sets_perms(dag_tasks, {task_chain}, "ReactionTime");
-  int obj_find = task_sets_perms.PerformOptimizationSort<ObjReactionTime>();
+  int obj_find = task_sets_perms.PerformOptimizationSort<ObjReactionTime>().obj_;
   // task_sets_perms.best_yet_chain_[0]->print();
   // task_sets_perms.best_yet_chain_[1]->print();
   EXPECT_THAT(task_sets_perms.iteration_count_, testing::Le(6));

@@ -37,7 +37,7 @@ ScheduleResult PerformTOM_OPTOffset_Sort(const DAG_Model& dag_tasks) {
   auto start = std::chrono::high_resolution_clock::now();
   ScheduleResult res;
   TaskSetOptSorted_Offset task_sets_perms(dag_tasks, dag_tasks.chains_);
-  res.obj_ = task_sets_perms.PerformOptimizationSort<ObjDataAge>();
+  res.obj_ = task_sets_perms.PerformOptimizationSort<ObjDataAge>().obj_;
   if (res.obj_ >= 1e8) {
     res.obj_ = PerformStandardLETAnalysis<ObjDataAge>(dag_tasks).obj_;
   }

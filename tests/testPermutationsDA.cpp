@@ -164,7 +164,7 @@ TEST_F(PermutationTest6_n5, overall_opt_Sort) {
       TaskSetOptSorted(dag_tasks, dag_tasks.chains_, "DataAge");
   task_sets_perms.adjacent_two_task_permutations_[0].print();
   task_sets_perms.adjacent_two_task_permutations_[1].print();
-  int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAge>();
+  int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAge>().obj_;
 
   TaskSetOptEnumWSkip task_sets_perms_enum =
       TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAge");
@@ -336,7 +336,7 @@ TEST_F(PermutationTest25_n3, overall_opt_Sort) {
       TaskSetOptSorted(dag_tasks, dag_tasks.chains_, "DataAge");
   task_sets_perms.adjacent_two_task_permutations_[0].print();
   task_sets_perms.adjacent_two_task_permutations_[1].print();
-  int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAge>();
+  int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAge>().obj_;
   EXPECT_TRUE(task_sets_perms.ExamSchedulabilityOptSol());
   // TODO: the optimal solution seems to be 200!!
   // EXPECT_EQ(300, obj_find);

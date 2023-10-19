@@ -26,7 +26,7 @@ class TaskSetOptSorted : public TaskSetPermutation {
   void PrintFeasibleChainsRecord() const;
 
   template <typename ObjectiveFunction>
-  int PerformOptimizationSort() {
+  ScheduleResult PerformOptimizationSort() {
     InitializeSolutions<ObjectiveFunction>();
     ChainsPermutation chains_perm;
     IterateSortedPerms<ObjectiveFunction>(0, chains_perm);
@@ -35,7 +35,8 @@ class TaskSetOptSorted : public TaskSetPermutation {
     std::cout << "Decrease succes: " << decrease_success
               << ", Decrease Fail: " << decrease_fail << std::endl;
     PrintFeasibleChainsRecord();
-    return best_yet_obj_;
+    // return best_yet_obj_;
+    return GetScheduleResult<ObjectiveFunction>();
   }
 
   template <typename ObjectiveFunction>

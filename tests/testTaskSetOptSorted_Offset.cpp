@@ -44,7 +44,7 @@ TEST_F(PermutationTest18_n3, optimize) {
   int obj_mart = mart_task_perms.PerformOptimization();
 
   TaskSetOptSorted_Offset task_sets_perms(dag_tasks, {dag_tasks.chains_[0]});
-  int obj = task_sets_perms.PerformOptimizationSort<ObjDataAge>();
+  int obj = task_sets_perms.PerformOptimizationSort<ObjDataAge>().obj_;
   task_sets_perms.best_yet_chain_[Edge(0, 1)]->print();
   task_sets_perms.best_yet_chain_[Edge(1, 2)]->print();
   // EXPECT_THAT(obj, ::testing::Le(40));
@@ -120,7 +120,7 @@ TEST_F(PermutationTest4_n3, optimize) {
   int obj_mart = mart_task_perms.PerformOptimization();
 
   TaskSetOptSorted_Offset task_sets_perms(dag_tasks, {dag_tasks.chains_[0]});
-  int obj = task_sets_perms.PerformOptimizationSort<ObjDataAge>();
+  int obj = task_sets_perms.PerformOptimizationSort<ObjDataAge>().obj_;
   EXPECT_EQ(obj_mart, obj);
 }
 

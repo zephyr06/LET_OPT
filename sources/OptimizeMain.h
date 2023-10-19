@@ -106,7 +106,7 @@ ScheduleResult PerformTOM_OPT_Sort(const DAG_Model& dag_tasks) {
   ScheduleResult res;
   TaskSetOptSorted task_sets_perms = TaskSetOptSorted(
       dag_tasks, dag_tasks.chains_, ObjectiveFunction::type_trait);
-  res.obj_ = task_sets_perms.PerformOptimizationSort<ObjectiveFunction>();
+  res.obj_ = task_sets_perms.PerformOptimizationSort<ObjectiveFunction>().obj_;
   if (res.obj_ >= 1e8) {
     res.obj_ = PerformStandardLETAnalysis<ObjectiveFunction>(dag_tasks).obj_;
   }

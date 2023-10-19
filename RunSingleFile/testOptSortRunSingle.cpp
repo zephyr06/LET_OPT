@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
 
   TaskSetOptSorted task_sets_perms =
       TaskSetOptSorted(dag_tasks, {dag_tasks.chains_}, "DataAge");
-  int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAge>();
+  int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAge>().obj_;
 
   std::cout << "The best permutation is: \n";
   task_sets_perms.best_yet_chain_.print();
