@@ -117,9 +117,9 @@ void LPOptimizer::AddConstantDeadlineConstraint() {
 
 void LPOptimizer::AddArtificialVariables() {
   if (IfRT_Trait(obj_trait_) || IfDA_Trait(obj_trait_)) {
-    varArray_art_max_ =
-        IloNumVarArray(env_, static_cast<int>(dag_tasks_.chains_.size()), 0,
-                       IloInfinity, IloNumVar::Float);
+    varArray_art_max_ = IloNumVarArray(
+        env_, static_cast<int>(graph_of_all_ca_chains_.chains_.size()), 0,
+        IloInfinity, IloNumVar::Float);
     // if (optimize_jitter_weight_ != 0)
     //   varArray_art_min_ =
     //       IloNumVarArray(env_, static_cast<int>(dag_tasks_.chains_.size()),
@@ -294,7 +294,7 @@ void LPOptimizer::AddRTDAObjectiveFunctions(
 #endif
   IloExpr rtda_expression(env_);
   int chain_count = 0;
-  for (auto chain : dag_tasks_.chains_) {
+  for (auto chain : graph_of_all_ca_chains_.chains_) {
     int hyper_period = GetHyperPeriod(tasks_info_, chain);
     if (IfRT_Trait(obj_trait_)) {
       LLint total_start_jobs =

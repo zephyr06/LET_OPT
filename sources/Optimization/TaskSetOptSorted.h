@@ -1,7 +1,7 @@
 #pragma once
 #include "sources/Optimization/TaskSetPermutation.h"
 namespace DAG_SPACE {
-
+bool AllChainsNotEmpty(const std::vector<std::vector<int>>& chains);
 class TaskSetOptSorted : public TaskSetPermutation {
  public:
   TaskSetOptSorted(const DAG_Model& dag_tasks,
@@ -117,9 +117,18 @@ class TaskSetOptSorted : public TaskSetPermutation {
     std::vector<std::vector<int>> sub_chains =
         GetSubChains(dag_tasks_.chains_, chains_perm);
 
-    int best_possible_obj_incomplete =
-        GetBestPossibleObj_UpperBound<ObjectiveFunction>(chains_perm,
-                                                         sub_chains);
+    // int best_possible_obj_incomplete =
+    //     GetBestPossibleObj_UpperBound<ObjectiveFunction>(chains_perm,
+    //                                                      sub_chains);
+    // TODO: this part can be improved when there are multiple short chains
+    int best_possible_obj_incomplete = 0;
+    if (AllChainsNotEmpty(sub_chains))
+      best_possible_obj_incomplete =
+          FindODWithLP(dag_tasks_, tasks_info_, chains_perm, sub_chains,
+                       ObjectiveFunction::type_trait, rta_,
+                       optimize_offset_only_)
+              .second;
+
     if (best_possible_obj_incomplete > best_yet_obj_) {
       if (GlobalVariablesDAGOpt::debugMode) {
         std::cout << "Early break at level " << chains_perm.size() << ": ";

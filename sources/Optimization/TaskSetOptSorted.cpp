@@ -2,6 +2,12 @@
 #include "sources/Optimization/TaskSetOptSorted.h"
 
 namespace DAG_SPACE {
+bool AllChainsNotEmpty(const std::vector<std::vector<int>>& chains) {
+  for (const std::vector<int>& chain : chains) {
+    if (chain.size() == 0) return false;
+  }
+  return true;
+}
 
 void TaskSetOptSorted::PrintFeasibleChainsRecord() const {
   std::vector<Edge> edges = GetAllEdges();
