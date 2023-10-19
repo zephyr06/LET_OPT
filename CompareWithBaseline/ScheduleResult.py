@@ -36,6 +36,9 @@ def ReadOptResults(method_name="TOM_Sort", obj_type="DataAge", task_set_number=5
     if obj_type == "DataAgeOneChain":
         data_set_folder = root_path + "TaskData/OneChain/N" + str(task_set_number)
         obj_type = "DataAge"
+    if method_name in ["TOM_BF_No_Jitter_Weight", "TOM_WSkip_No_Jitter_Weight"]:
+        data_set_folder = root_path + "TaskData/no_jitter_weight/N" + str(task_set_number)
+        method_name = method_name[0:method_name.find('_',5)]
         
     res_vec = []
     files_all = os.listdir(data_set_folder)

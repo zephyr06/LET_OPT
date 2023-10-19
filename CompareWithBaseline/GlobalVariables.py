@@ -10,7 +10,10 @@ baseline_method_labels = {"InitialMethod": "DefLET",
                           "TOM_Sort": "fLET_acktracking+",
                           "Martinez18": "Martinez18",
                           "TOM_Sort_Offset": "Martinez18_Alg1",
-                          "Bardatsch16": "Bradatsch16"}
+                          "Bardatsch16": "Bradatsch16",
+                          "TOM_BF_No_Jitter_Weight": "fLET_BF \u03C9=0",
+                          "TOM_WSkip_No_Jitter_Weight": "fLET_backtracking \u03C9=0"
+                          }
 
 marker_map = {"InitialMethod": "o",
               "ImplicitCommunication": "*",
@@ -20,7 +23,9 @@ marker_map = {"InitialMethod": "o",
               "TOM_Sort": "s",
               "Martinez18": "D",
               "TOM_Sort_Offset": "P",
-              "Bardatsch16": "X"}
+              "Bardatsch16": "X",
+              "TOM_BF_No_Jitter_Weight": "D",
+              "TOM_WSkip_No_Jitter_Weight": "^"}
 marker_size_map = {"InitialMethod": 8,
                    "ImplicitCommunication": 12,
                     "Maia23": 10,
@@ -29,7 +34,9 @@ marker_size_map = {"InitialMethod": 8,
                    "TOM_Sort": 7,
                    "Martinez18": 8,
                    "TOM_Sort_Offset": 8,
-                   "Bardatsch16": 7}
+                   "Bardatsch16": 7,
+                   "TOM_BF_No_Jitter_Weight": 9,
+                   "TOM_WSkip_No_Jitter_Weight": 10}
 # marker_size_map = {"InitialMethod": 6,
 #                    "ImplicitCommunication": 10,
 #                    "TOM_BF": 6,
@@ -46,7 +53,9 @@ color_map = {"InitialMethod": "#0084DB",
              "TOM_Sort": "limegreen",
              "Martinez18": "purple",
              "TOM_Sort_Offset": "k",
-             "Bardatsch16": "#00FFFF"}
+             "Bardatsch16": "#00FFFF",
+             "TOM_BF_No_Jitter_Weight": "#ff4d82",
+             "TOM_WSkip_No_Jitter_Weight": "#ab7c0f"}
 
 # marker_list = ["o", "*", "D", "^", "s", "D", "P", "X"]
 # markersize_list = [8, 12, 10, 12, 8, 8, 8, 4]
