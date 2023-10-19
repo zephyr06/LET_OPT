@@ -1,0 +1,12 @@
+TaskSet Creation Time: 20231018
+New TaskSet Configs:
+taskNumber_list: 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21
+taskSetNumber: 1000
+per_core_utilization_min: 0.5
+per_core_utilization_max: 0.9
+parallelismFactor: 0.9
+numberOfProcessor: 4
+SF_ForkNum: 0
+fork_sensor_num_min: 2
+fork_sensor_num_max: 9
+numCauseEffectChain: -1

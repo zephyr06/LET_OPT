@@ -63,7 +63,7 @@ def Average(res_vec, base_vec, obj_type="DataAge", task_num=5, exclude_time_out=
     average_jitter = 0.
     average_runtime = 0.
     timeout_cnt = 0.
-    total_case = len(res_vec)
+    total_case = len(base_vec)
     # for res in res_vec:
     for i in range(len(res_vec)):
         if exclude_time_out and excluded_table[i]:

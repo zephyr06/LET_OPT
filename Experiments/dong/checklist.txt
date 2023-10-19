@@ -1,5 +1,7 @@
 1. copy the target task set to TaskData/
 2. if also batch run "OneChain" results, copy the target task set to TaskData/OneChain/
 3. check parameter CHAIN_NUMBER, make sure CHAIN_NUMBER in sources/parameters.yaml is set to a scalar that is greater than all possible chain numbers
-4. disable profiler: undefine the macro PROFILE_CODE in sources/Utils/profilier.h
-5. rebuild the target
+4. check OPTIMIZE_JITTER_WEIGHT is 0 for DART experiments
+5. make sure TIME_LIMIT is desired
+6. disable profiler: undefine the macro PROFILE_CODE in sources/Utils/profilier.h
+7. rebuild the target
