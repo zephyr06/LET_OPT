@@ -11,7 +11,7 @@ class TaskSetOptEnumWSkip : public TaskSetOptEnumerate {
 
   template <typename ObjectiveFunction>
   ScheduleResult PerformOptimizationSkipInfeasible() {
-    InitializeSolutions<ObjectiveFunction>();
+    InitializeSolutions<ObjectiveFunction>(Maia23);
     ChainsPermutation chains_perm;
     IterateAllPermsWSkip<ObjectiveFunction>(0, chains_perm);
     std::cout << "Jitter after optimization: "
