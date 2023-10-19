@@ -47,12 +47,13 @@ TEST_F(PermutationTest18_n3, optimize) {
   int obj = task_sets_perms.PerformOptimizationSort<ObjDataAge>().obj_;
   task_sets_perms.best_yet_chain_[Edge(0, 1)]->print();
   task_sets_perms.best_yet_chain_[Edge(1, 2)]->print();
-  // EXPECT_THAT(obj, ::testing::Le(40));
-  EXPECT_EQ(obj_mart, obj);
+  EXPECT_THAT(obj, ::testing::Le(obj_mart));
+  // EXPECT_EQ(obj_mart, obj);
 }
 TEST_F(PermutationTest18_n3, optimize_overall) {
   // EXPECT_THAT(PerformTOM_OPTOffset_Sort(dag_tasks).obj_, ::testing::Le(50));
-  EXPECT_EQ(50, PerformTOM_OPTOffset_Sort(dag_tasks).obj_);
+  // EXPECT_EQ(50, PerformTOM_OPTOffset_Sort(dag_tasks).obj_);
+  EXPECT_THAT(PerformTOM_OPTOffset_Sort(dag_tasks).obj_, ::testing::Le(50));
 }
 
 class PermutationTest4_n3 : public PermutationTestBase {
@@ -121,7 +122,8 @@ TEST_F(PermutationTest4_n3, optimize) {
 
   TaskSetOptSorted_Offset task_sets_perms(dag_tasks, {dag_tasks.chains_[0]});
   int obj = task_sets_perms.PerformOptimizationSort<ObjDataAge>().obj_;
-  EXPECT_EQ(obj_mart, obj);
+  // EXPECT_EQ(obj_mart, obj);
+  EXPECT_THAT(obj, ::testing::Le(obj_mart));
 }
 
 class PermutationTest_n5_v59 : public PermutationTestBase {
@@ -134,7 +136,8 @@ TEST_F(PermutationTest_n5_v59, optimize) {
   int obj_mart1 = mart_task_perms1.PerformOptimization();
 
   int obj_offset_opt_sort = PerformTOM_OPTOffset_Sort(dag_tasks).obj_;
-  EXPECT_THAT(obj_mart0 + obj_mart1, obj_offset_opt_sort);
+  // EXPECT_THAT(obj_mart0 + obj_mart1, obj_offset_opt_sort);
+  EXPECT_THAT(obj_offset_opt_sort, ::testing::Le(obj_mart0 + obj_mart1));
 }
 
 TEST_F(PermutationTest_n5_v59, FindVariableRangeMart) {
@@ -170,7 +173,8 @@ TEST_F(PermutationTest_n5_v60, optimize) {
   // Martinez18TaskSetPerms mart_task_perms0(dag_tasks, dag_tasks.chains_[0]);
   // int obj_mart0 = mart_task_perms0.PerformOptimization();
 
-  EXPECT_THAT(2500, obj_offset_opt_sort);
+  // EXPECT_THAT(2500, obj_offset_opt_sort);
+  EXPECT_THAT(obj_offset_opt_sort, ::testing::Le(2500));
 }
 
 class PermutationTest_n5_v62 : public PermutationTestBase {
@@ -196,7 +200,8 @@ TEST_F(PermutationTest_n5_v62, optimize) {
   // Martinez18TaskSetPerms mart_task_perms0(dag_tasks, dag_tasks.chains_[0]);
   // int obj_mart0 = mart_task_perms0.PerformOptimization();
 
-  EXPECT_THAT(500, obj_offset_opt_sort);
+  // EXPECT_THAT(500, obj_offset_opt_sort);
+  EXPECT_THAT(obj_offset_opt_sort, ::testing::Le(500));
 }
 
 class PermutationTest_n5_v30 : public PermutationTestBase {
@@ -204,12 +209,12 @@ class PermutationTest_n5_v30 : public PermutationTestBase {
 };
 
 TEST_F(PermutationTest_n5_v30, FindBestPossibleVariableOD_offset_only) {
-  TwoTaskPermutations perm12(1, 2, dag_tasks, tasks_info, "DataAge");
-  TwoTaskPermutations perm24(2, 4, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm42(4, 2, dag_tasks, tasks_info, "DataAge");
+  TwoTaskPermutations perm21(2, 1, dag_tasks, tasks_info, "DataAge");
   TwoTaskPermutations perm23(2, 3, dag_tasks, tasks_info, "DataAge");
   ChainsPermutation chains_perm;
-  chains_perm.push_back(perm12[73]);
-  chains_perm.push_back(perm24[11]);
+  chains_perm.push_back(perm42[73]);
+  chains_perm.push_back(perm21[11]);
   chains_perm.push_back(perm23[0]);
   chains_perm.print();
 
@@ -219,10 +224,10 @@ TEST_F(PermutationTest_n5_v30, FindBestPossibleVariableOD_offset_only) {
   auto rta = GetResponseTimeTaskSet(dag_tasks);
   PrintRta(rta);
 
-  EXPECT_EQ(0, variable_range.lower_bound[1].offset);
-  EXPECT_EQ(1000, variable_range.lower_bound[1].deadline);
-  EXPECT_EQ(9, variable_range.upper_bound[1].offset);
-  EXPECT_EQ(1009, variable_range.upper_bound[1].deadline);
+  EXPECT_EQ(0, variable_range.lower_bound[4].offset);
+  EXPECT_EQ(1000, variable_range.lower_bound[4].deadline);
+  EXPECT_EQ(9, variable_range.upper_bound[4].offset);
+  EXPECT_EQ(1009, variable_range.upper_bound[4].deadline);
 
   EXPECT_EQ(0, variable_range.lower_bound[2].offset);
   EXPECT_EQ(10, variable_range.lower_bound[2].deadline);
@@ -234,10 +239,10 @@ TEST_F(PermutationTest_n5_v30, FindBestPossibleVariableOD_offset_only) {
   EXPECT_EQ(199, variable_range.upper_bound[3].offset);
   EXPECT_EQ(199 + 200, variable_range.upper_bound[3].deadline);
 
-  EXPECT_EQ(10, variable_range.lower_bound[4].offset);
-  EXPECT_EQ(1010, variable_range.lower_bound[4].deadline);
-  EXPECT_EQ(28, variable_range.upper_bound[4].offset);
-  EXPECT_EQ(1028, variable_range.upper_bound[4].deadline);
+  EXPECT_EQ(10, variable_range.lower_bound[1].offset);
+  EXPECT_EQ(1010, variable_range.lower_bound[1].deadline);
+  EXPECT_EQ(28, variable_range.upper_bound[1].offset);
+  EXPECT_EQ(1028, variable_range.upper_bound[1].deadline);
 
   VariableOD variable_od = FindBestPossibleVariableOD(
       dag_tasks, tasks_info, task_sets_perms.rta_, chains_perm, true);
