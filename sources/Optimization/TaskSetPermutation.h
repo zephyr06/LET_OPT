@@ -28,10 +28,16 @@ class TaskSetPermutation {
   TaskSetPermutation(const DAG_Model& dag_tasks,
                      const std::vector<std::vector<int>>& chains);
 
+  enum InitialMethod { DefaultLET, Maia23 };
   template <typename ObjectiveFunction>
-  void InitializeSolutions() {
-    // best_yet_variable_od_ = VariableOD(dag_tasks_.GetTaskSet());
-    best_yet_variable_od_ = GetMaia23VariableOD(dag_tasks_, tasks_info_);
+  void InitializeSolutions(InitialMethod initial = DefaultLET) {
+    if (initial == DefaultLET)
+      best_yet_variable_od_ = VariableOD(dag_tasks_.GetTaskSet());
+    else if (initial == Maia23)
+      best_yet_variable_od_ = GetMaia23VariableOD(dag_tasks_, tasks_info_);
+    else {
+      CoutError("Unknown initial  method!");
+    }
     Schedule schedule_stand_let =
         Variable2Schedule(tasks_info_, best_yet_variable_od_);
     best_yet_chain_ = GetChainsPermFromVariable(
