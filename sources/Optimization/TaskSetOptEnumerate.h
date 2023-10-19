@@ -50,10 +50,12 @@ class TaskSetOptEnumerate : public TaskSetPermutation {
     if (res.first.valid_)  // if valid, we'll exam obj; otherwise, we'll
                            // just move forward
     {
-      if (GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT)
-        res.second += GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT * ObjectiveFunction::Jitter(
-            dag_tasks_, tasks_info_, chains_perm, res.first,
-            graph_of_all_ca_chains_.chains_);
+      if (IfSF_Trait(ObjectiveFunction::type_trait) &&
+          GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT)
+        res.second += GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT *
+                      ObjectiveFunction::Jitter(
+                          dag_tasks_, tasks_info_, chains_perm, res.first,
+                          graph_of_all_ca_chains_.chains_);
       if (res.second < best_yet_obj_) {
         best_yet_obj_ = res.second;
         best_yet_chain_ = chains_perm;
