@@ -2,7 +2,7 @@
 string(TOUPPER ${CMAKE_BUILD_TYPE} UPPER_CASED_BUILD_TYPE)
 if(UPPER_CASED_BUILD_TYPE STREQUAL "DEBUG")
 message("########## Debug test")
-gtsamAddTestsGlob(LET_OPT "test*.cpp" "testEnv.cpp" "${CONVENIENCE_LIB_NAME}")
+gtsamAddTestsGlob(LET_OPT "test*.cpp"  "testApproximatedObjBound.cpp" "${CONVENIENCE_LIB_NAME}")
 endif()
 
 

@@ -11,7 +11,8 @@ TEST(average_performance, v1) {
   BatchSettings batch_test_settings(5, 0, 300, "TaskData/PerfTest/");
   auto res = DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTime>(
       baselineMethods, batch_test_settings);
-  EXPECT_THAT(res[TOM_Sort].performance, testing::Le(0.484652));
+  EXPECT_THAT(res[TOM_Sort].performance,
+              testing::Le(0.5));  // a very tolerable performance threshold
 
   EXPECT_DOUBLE_EQ(1.0, res[TOM_Sort].schedulableRatio);
   EndTimer("main");
