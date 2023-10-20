@@ -11,14 +11,13 @@ class TaskSetOptEnumWSkip : public TaskSetOptEnumerate {
 
   template <typename ObjectiveFunction>
   ScheduleResult PerformOptimizationSkipInfeasible() {
+    // InitializeSolutions<ObjectiveFunction>(Maia23);
     InitializeSolutions<ObjectiveFunction>(Maia23);
+    if (IfSF_Trait(ObjectiveFunction::type_trait)) {
+      ReOrderTwoTaskPermutations();
+    }
     ChainsPermutation chains_perm;
     IterateAllPermsWSkip<ObjectiveFunction>(0, chains_perm);
-    std::cout << "Jitter after optimization: "
-              << ObjectiveFunction::Jitter(
-                     dag_tasks_, tasks_info_, best_yet_chain_,
-                     best_yet_variable_od_, graph_of_all_ca_chains_.chains_)
-              << "\n";
     return GetScheduleResult<ObjectiveFunction>();
   }
 
