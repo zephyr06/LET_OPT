@@ -148,25 +148,16 @@ def plot_Jitter_results(task_set_number_range, method_names, obj, exclude_time_o
 
 # if output_file_name is empty, default name settings will be used
 def plot_Timeout_rate(task_set_number_range, method_names, obj, exclude_time_out=False, output_file_name=""):
-    all_methods = method_names + ["TOM_BF_No_Jitter_Weight", "TOM_WSkip_No_Jitter_Weight"]
-    
     dataset_pd_obj, dataset_pd_jitter, dataset_pd_runtime, dataset_pd_timeout_rate = ReadOptResultsAllMethod(
-        all_methods, obj, task_set_number_range, exclude_time_out)
+        method_names, obj, task_set_number_range, exclude_time_out)
 
     plt.figure()
     ax = plt.subplot(111)
-    for i in range(len(all_methods)):
-        mar=marker_map[all_methods[i]]
-        col=color_map[all_methods[i]]
-        lab=baseline_method_labels[all_methods[i]]
-        marsize=marker_size_map[all_methods[i]]
-        linstyle="solid"
-        if all_methods[i] in ["TOM_BF_No_Jitter_Weight", "TOM_WSkip_No_Jitter_Weight"]:
-            linstyle = "dashdot"
-        if all_methods[i] in ["TOM_BF", "TOM_WSkip"]:
-            lab += " \u03C9=1"
-        splot = sns.lineplot(data=dataset_pd_timeout_rate, x="index", y=all_methods[i], marker=mar,
-                            color=col, label=lab, markersize=marsize, linestyle=linstyle)
+    for i in range(len(method_names)):
+        splot = sns.lineplot(data=dataset_pd_timeout_rate, x="index", y=method_names[i], marker=marker_map[method_names[i]],
+                             color=color_map[method_names[i]
+                                             ], label=baseline_method_labels[method_names[i]],
+                             markersize=marker_size_map[method_names[i]])  # , alpha=alpha_list[i])
         
     if obj == "SensorFusion":
         plt.xlabel("Number of Source Tasks per Merge", fontsize=axis_label_font_size)

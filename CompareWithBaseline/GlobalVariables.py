@@ -5,14 +5,14 @@ baseline_method_names = ["InitialMethod", "ImplicitCommunication", "Martinez18",
 baseline_method_labels = {"InitialMethod": "DefLET",
                           "ImplicitCommunication": "Implicit",
                           "Maia23": "Maia23",
-                          "TOM_BF": "fLET_BF",
-                          "TOM_WSkip": "fLET_backtracking",
-                          "TOM_Sort": "fLET_backtracking+",
+                          "TOM_BF": "fLET_GCP_Enum",
+                          "TOM_WSkip": "fLET_GCP_Ineq_Filter",
+                          "TOM_Sort": "fLET_GCP_SymbOpt",
                           "Martinez18": "Martinez18",
                           "TOM_Sort_Offset": "Martinez18_Alg1",
                           "Bardatsch16": "Bradatsch16",
-                          "TOM_BF_No_Jitter_Weight": "fLET_BF \u03C9=0",
-                          "TOM_WSkip_No_Jitter_Weight": "fLET_backtracking \u03C9=0"
+                          "TOM_BF_No_Jitter_Weight": "fLET_GCP_Enum \u03C9=0",
+                          "TOM_WSkip_No_Jitter_Weight": "fLET_GCP_Ineq_Filter \u03C9=0"
                           }
 
 marker_map = {"InitialMethod": "o",
