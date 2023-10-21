@@ -59,19 +59,19 @@ class TaskSetOptSorted_Offset : public TaskSetOptSorted {
 
   void FindPairPermutations();
 
-  template <typename ObjectiveFunction>
-  ScheduleResult PerformOptimizationSort() {
-    InitializeSolutions<ObjectiveFunction>(DefaultLET);
-    ChainsPermutation chains_perm;
-    IterateSortedPerms<ObjectiveFunction>(0, chains_perm);
-    std::cout << "The number of feasibile chains found: "
-              << feasible_chains_.size() << "\n";
-    std::cout << "Decrease succes: " << decrease_success
-              << ", Decrease Fail: " << decrease_fail << std::endl;
-    PrintFeasibleChainsRecord();
-    // return best_yet_obj_;
-    return GetScheduleResult<ObjectiveFunction>();
-  }
+  // template <typename ObjectiveFunction>
+  // ScheduleResult PerformOptimizationSort() {
+  //   InitializeSolutions<ObjectiveFunction>(DefaultLET);
+  //   ChainsPermutation chains_perm;
+  //   IterateSortedPerms<ObjectiveFunction>(0, chains_perm);
+  //   std::cout << "The number of feasibile chains found: "
+  //             << feasible_chains_.size() << "\n";
+  //   std::cout << "Decrease succes: " << decrease_success
+  //             << ", Decrease Fail: " << decrease_fail << std::endl;
+  //   PrintFeasibleChainsRecord();
+  //   // return best_yet_obj_;
+  //   return GetScheduleResult<ObjectiveFunction>();
+  // }
 };
 
 }  // namespace DAG_SPACE
