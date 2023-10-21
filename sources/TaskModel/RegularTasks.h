@@ -106,24 +106,7 @@ class Task {
   // modify public member priorityType_ to change how to calculate the value:
   // priority_
   // a larger return value means higher priority
-  double priority() const {
-    if (CompareStringNoCase(priorityType_, "RM")) {
-      if (period > 0)
-        return 1.0 / period +
-               float(id) / pow(10, 6);  // pow(10, 6) because the minimum
-                                        // possible period is 10^4; adding id
-                                        // into priority breaks the tie when
-                                        // different tasks have the same periods
-      else
-        CoutError("Period parameter less or equal to 0!");
-    } else if (CompareStringNoCase(priorityType_, "orig"))
-      return id * -1;
-    else if (CompareStringNoCase(priorityType_, "assigned"))
-      return priority_;
-    else
-      CoutError("Priority settings not recognized!");
-    return -1;
-  }
+  double priority() const;
   /**
    * only used in ReadTaskSet because the input parameter's type is int
    **/

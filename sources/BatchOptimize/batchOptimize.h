@@ -115,6 +115,7 @@ std::unordered_map<DAG_SPACE::BASELINEMETHODS, BatchResult> BatchOptimizeOrder(
     DAG_SPACE::DAG_Model dag_tasks =
         DAG_SPACE::ReadDAG_Tasks(path, GlobalVariablesDAGOpt::priorityMode,
                                  batch_test_settings.chainNum);
+    std::cout << Utilization(dag_tasks.GetTaskSet()) << "\n";
     if (IfSF_Trait(ObjectiveFunctionBase::type_trait))
       dag_tasks.chains_ = GetChainsForSF(dag_tasks);
     AssertBool(true, dag_tasks.chains_.size() > 0, __LINE__);
