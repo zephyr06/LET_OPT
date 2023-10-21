@@ -39,9 +39,13 @@ int main(int argc, char *argv[]) {
   batch_test_settings.chainNum = GlobalVariablesDAGOpt::CHAIN_NUMBER;
 
   std::vector<DAG_SPACE::BASELINEMETHODS> baselineMethods = {
-      DAG_SPACE::InitialMethod, DAG_SPACE::ImplicitCommunication,
-      DAG_SPACE::Maia23,        DAG_SPACE::TOM_BF,
-      DAG_SPACE::TOM_WSkip,     DAG_SPACE::TOM_Sort};
+      DAG_SPACE::InitialMethod,
+      DAG_SPACE::ImplicitCommunication,
+      DAG_SPACE::Maia23,
+      DAG_SPACE::TOM_BF,
+      DAG_SPACE::TOM_WSkip,
+      DAG_SPACE::TOM_Sort,
+      DAG_SPACE::PerformTOM_OPT_Sort_Maia23Initial};
   // DAG_SPACE::TOM_Sort_Bound  // , DAG_SPACE::TOM_Sort_ImpBound
 
   DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTime>(
