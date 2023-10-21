@@ -27,6 +27,7 @@ class TaskSetOptSorted : public TaskSetPermutation {
 
   template <typename ObjectiveFunction>
   ScheduleResult PerformOptimizationSort() {
+    InitializeSolutions<ObjectiveFunction>(DefaultLET);
     InitializeSolutions<ObjectiveFunction>(Maia23);
     ChainsPermutation chains_perm;
     IterateSortedPerms<ObjectiveFunction>(0, chains_perm);
