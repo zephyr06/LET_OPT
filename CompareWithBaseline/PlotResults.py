@@ -34,6 +34,8 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
 
     if (obj == "ReactionTime" or obj == "DataAge" or obj == "DataAgeOneChain"):
         splot.set_ylim([-62, 5])
+    elif obj == "SensorFusion":
+        splot.set_ylim([-20, 60])
     
     ax.get_legend().remove()
     # ax.set_title(obj + " Objective Performance")
@@ -118,13 +120,11 @@ def plot_Jitter_results(task_set_number_range, method_names, obj, exclude_time_o
         
     if obj == "SensorFusion":
         plt.xlabel("Number of Source Tasks per Merge", fontsize=axis_label_font_size)
+        splot.set_ylim([-35, 5]) 
     else:
         plt.xlabel("Number of Tasks", fontsize=axis_label_font_size)
         
-    if (obj == "ReactionTime" or obj == "DataAge" or obj == "DataAgeOneChain"):
-        plt.ylabel("Relative Gap of Jitter (%)", fontsize=axis_label_font_size)
-    elif obj == "SensorFusion":
-        plt.ylabel("Relative Gap of Jitter (%)", fontsize=axis_label_font_size)
+    plt.ylabel("Relative Gap of Jitter (%)", fontsize=axis_label_font_size)
     
     # ax.get_legend().remove()
     plt.legend(loc='upper right')
