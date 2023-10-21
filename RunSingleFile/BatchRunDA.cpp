@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
       DAG_SPACE::TOM_Sort,
       DAG_SPACE::TOM_Sort_Offset,
       DAG_SPACE::Bardatsch16,
-      DAG_SPACE::PerformTOM_OPT_Sort_Maia23Initial};
+      DAG_SPACE::TOM_Sort_Maia23Initial};
 
   DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjDataAge>(baselineMethods,
                                                        batch_test_settings);

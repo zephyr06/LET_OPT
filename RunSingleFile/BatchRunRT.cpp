@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
       //   DAG_SPACE::TOM_BF,
       //   DAG_SPACE::TOM_WSkip,
       DAG_SPACE::TOM_Sort
-      //   DAG_SPACE::PerformTOM_OPT_Sort_Maia23Initial
+      //   DAG_SPACE::TOM_Sort_Maia23Initial
   };
   // DAG_SPACE::TOM_Sort_Bound  // , DAG_SPACE::TOM_Sort_ImpBound
 
