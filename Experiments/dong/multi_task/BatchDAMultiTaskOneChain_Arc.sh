@@ -18,7 +18,7 @@ perform_optimization() {
 	## test in local
 	# bash SBatchDAMultiTask.sh $1 $MinFileIndex $files_per_task $MaxFileIndex
 	## launc on ARC
-	# sbatch -J DA1_${task_number}_LET_Batch --nodes=1 --ntasks-per-node=1 --cpus-per-task=$(((MaxFileIndex+files_per_task)/files_per_task*ThreadPerTask)) --time=${time_per_node}:0:0 --output=${output_file_name} SBatchDAMultiTaskOneChain.sh $1 $MinFileIndex $files_per_task $MaxFileIndex
+	sbatch -J DA1_${task_number}_LET_Batch --nodes=1 --ntasks-per-node=1 --cpus-per-task=$(((MaxFileIndex+files_per_task)/files_per_task*ThreadPerTask)) --time=${time_per_node}:0:0 --output=${output_file_name} SBatchDAMultiTaskOneChain.sh $1 $MinFileIndex $files_per_task $MaxFileIndex
 }
 
 
