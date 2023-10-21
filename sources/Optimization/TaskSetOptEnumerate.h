@@ -11,7 +11,7 @@ class TaskSetOptEnumerate : public TaskSetPermutation {
 
   template <typename ObjectiveFunction>
   ScheduleResult PerformOptimizationBF() {
-    InitializeSolutions<ObjectiveFunction>();
+    InitializeSolutions<ObjectiveFunction>(DefaultLET);
     ChainsPermutation chains_perm;
     IterateAllPermsBF<ObjectiveFunction>(0, chains_perm);
     // return std::make_pair(best_yet_variable_od_, best_yet_obj_);

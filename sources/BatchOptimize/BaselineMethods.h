@@ -16,7 +16,8 @@ enum BASELINEMETHODS {
   TOM_Sort_ImpBound,
   ImplicitCommunication,
   Bardatsch16,
-  Maia23
+  Maia23,
+  TOM_Sort_Maia23Initial
 };
 const std::vector<std::string> BaselineMethodNames = {
     "InitialMethod",
@@ -29,7 +30,8 @@ const std::vector<std::string> BaselineMethodNames = {
     "TOM_Sort_ImpBound",
     "ImplicitCommunication",
     "Bardatsch16",
-    "Maia23"};  // "TOM_BF_Approx",
+    "Maia23",
+    "TOM_Sort_Maia23Initial"};  // "TOM_BF_Approx",
 // "TOM_WSkip_Approx", "TOM_Sort_Approx",  "SA"
 
 }  // namespace DAG_SPACE
