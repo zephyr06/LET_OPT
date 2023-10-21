@@ -11,7 +11,7 @@ class TaskSetOptEnumWSkip : public TaskSetOptEnumerate {
 
   template <typename ObjectiveFunction>
   ScheduleResult PerformOptimizationSkipInfeasible() {
-    // InitializeSolutions<ObjectiveFunction>(Maia23);
+    InitializeSolutions<ObjectiveFunction>(DefaultLET);
     InitializeSolutions<ObjectiveFunction>(Maia23);
     // if (IfSF_Trait(ObjectiveFunction::type_trait)) {
     //   ReOrderTwoTaskPermutations();

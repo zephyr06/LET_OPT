@@ -28,31 +28,44 @@ class TaskSetPermutation {
   TaskSetPermutation(const DAG_Model& dag_tasks,
                      const std::vector<std::vector<int>>& chains);
 
-  enum InitialMethod { DefaultLET, Maia23 };
+  enum InitialMethod { DefaultLET, Maia23, Both };
+
   template <typename ObjectiveFunction>
   void InitializeSolutions(InitialMethod initial = DefaultLET) {
+    VariableOD variable_to_try;
+
     if (initial == DefaultLET)
-      best_yet_variable_od_ = VariableOD(dag_tasks_.GetTaskSet());
+      variable_to_try = VariableOD(dag_tasks_.GetTaskSet());
     else if (initial == Maia23)
-      best_yet_variable_od_ = GetMaia23VariableOD(dag_tasks_, tasks_info_);
+      variable_to_try = GetMaia23VariableOD(dag_tasks_, tasks_info_);
     else {
       CoutError("Unknown initial  method!");
     }
-    Schedule schedule_stand_let =
-        Variable2Schedule(tasks_info_, best_yet_variable_od_);
-    best_yet_chain_ = GetChainsPermFromVariable(
+
+    Schedule schedule_to_try = Variable2Schedule(tasks_info_, variable_to_try);
+    ChainsPermutation chain_to_try = GetChainsPermFromVariable(
         dag_tasks_, tasks_info_, graph_of_all_ca_chains_.chains_,
-        ObjectiveFunction::type_trait, schedule_stand_let);
-    best_yet_obj_ = ObjectiveFunction::Obj(
-        dag_tasks_, tasks_info_, best_yet_chain_, best_yet_variable_od_,
-        graph_of_all_ca_chains_.chains_);
+        ObjectiveFunction::type_trait, schedule_to_try);
+    TryUpdateBestYetResults<ObjectiveFunction>(chain_to_try, variable_to_try);
+  }
+
+  template <typename ObjectiveFunction>
+  void TryUpdateBestYetResults(const ChainsPermutation& chain_to_try,
+                               const VariableOD& variable_to_try) {
+    double obj_to_try = ObjectiveFunction::Obj(dag_tasks_, tasks_info_,
+                                               chain_to_try, variable_to_try,
+                                               graph_of_all_ca_chains_.chains_);
     if (IfSF_Trait(ObjectiveFunction::type_trait) &&
         GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT)
-      best_yet_obj_ +=
-          GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT *
-          ObjectiveFunction::Jitter(dag_tasks_, tasks_info_, best_yet_chain_,
-                                    best_yet_variable_od_,
-                                    graph_of_all_ca_chains_.chains_);
+      obj_to_try += GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT *
+                    ObjectiveFunction::Jitter(dag_tasks_, tasks_info_,
+                                              chain_to_try, variable_to_try,
+                                              graph_of_all_ca_chains_.chains_);
+    if (obj_to_try < best_yet_obj_) {
+      best_yet_obj_ = obj_to_try;
+      best_yet_variable_od_ = variable_to_try;
+      best_yet_chain_ = chain_to_try;
+    }
   }
 
   void FindPairPermutations();
