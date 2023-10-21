@@ -12,13 +12,15 @@ void LPOptimizer::Init() {
 #ifdef PROFILE_CODE
   BeginTimer("Init");
 #endif
-  env_ = IloEnv();
-  model_ = IloModel(env_);
-  cplexSolver_ = IloCplex(env_);
+  // env_ = IloEnv();
+  // model_ = IloModel(env_);
+  // cplexSolver_ = IloCplex(env_);
   cplexSolver_.setOut(env_.getNullStream());
   cplexSolver_.setParam(
       IloCplex::Param::Emphasis::MIP,
       5);  // emphasize speed than optimality during optimization
+  cplexSolver_.setParam(IloCplex::Param::Threads, 16);
+  cplexSolver_.setParam(IloCplex::Param::Parallel, -1);
   // constraint_array_(env_);
 #ifdef PROFILE_CODE
   EndTimer("Init");
@@ -40,6 +42,7 @@ void LPOptimizer::ClearCplexMemory() {
 
 std::pair<VariableOD, int> LPOptimizer::Optimize(
     const ChainsPermutation &chains_perm) {
+  Init();
   auto res = OptimizeWithoutClear(chains_perm);
   ClearCplexMemory();
   return res;
