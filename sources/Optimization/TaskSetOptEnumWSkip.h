@@ -13,9 +13,9 @@ class TaskSetOptEnumWSkip : public TaskSetOptEnumerate {
   ScheduleResult PerformOptimizationSkipInfeasible() {
     // InitializeSolutions<ObjectiveFunction>(Maia23);
     InitializeSolutions<ObjectiveFunction>(Maia23);
-    if (IfSF_Trait(ObjectiveFunction::type_trait)) {
-      ReOrderTwoTaskPermutations();
-    }
+    // if (IfSF_Trait(ObjectiveFunction::type_trait)) {
+    //   ReOrderTwoTaskPermutations();
+    // }
     ChainsPermutation chains_perm;
     IterateAllPermsWSkip<ObjectiveFunction>(0, chains_perm);
     return GetScheduleResult<ObjectiveFunction>();
