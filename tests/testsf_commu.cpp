@@ -441,6 +441,73 @@ TEST_F(PermutationTest_n3_v36, PerformImplicitCommuAnalysis) {
   EXPECT_EQ(9, res.obj_);
   EXPECT_EQ(8, res.jitter_);
 }
+
+class PermutationTest_n6_v3 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n6_v3");
+    type_trait = "SensorFusion";
+    dag_tasks.chains_ = GetChainsForSF(dag_tasks);
+  }
+
+ public:
+  std::string type_trait;
+};
+
+class PermutationTest_n21_v2 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n21_v2");
+    type_trait = "SensorFusion";
+    dag_tasks.chains_ = GetChainsForSF(dag_tasks);
+    TaskSetOptEnumWSkip tasks_opt_wskip(dag_tasks, dag_tasks.chains_,
+                                        type_trait);
+    perms = tasks_opt_wskip.adjacent_two_task_permutations_;
+  }
+
+ public:
+  std::string type_trait;
+  std::vector<TwoTaskPermutations> perms;
+};
+
+TEST_F(PermutationTest_n21_v2, SelectPermWithMostOverlap) {
+  std::vector<int> perm_to_add;
+  for (uint i = 1; i < perms.size(); i++) perm_to_add.push_back(i);
+  std::vector<int> task_id_count(tasks_info.N, 0);
+  UpdateTaskIdCount(0, perms, task_id_count);
+  EXPECT_EQ(1, task_id_count[1]);
+  EXPECT_EQ(1, task_id_count[16]);
+
+  int perm_id =
+      SelectPermWithMostOverlap(perms, perm_to_add, task_id_count, 16);
+  EXPECT_EQ(13, perms[perm_id].task_prev_id_);
+  UpdateTaskIdCount(perm_id, perms, task_id_count);
+  RemoveValue(perm_to_add, perm_id);
+
+  perm_id = SelectPermWithMostOverlap(perms, perm_to_add, task_id_count, 16);
+  EXPECT_EQ(10, perms[perm_id].task_prev_id_);
+}
+
+TEST_F(PermutationTest_n21_v2, ReOrderTwoTaskPermutations) {
+  TaskSetOptEnumWSkip tasks_opt_wskip(dag_tasks, dag_tasks.chains_, type_trait);
+  for (uint i = 0; i < tasks_opt_wskip.adjacent_two_task_permutations_.size();
+       i++) {
+    std::cout
+        << tasks_opt_wskip.adjacent_two_task_permutations_[i].task_prev_id_
+        << ", "
+        << tasks_opt_wskip.adjacent_two_task_permutations_[i].task_next_id_
+        << "\n";
+  }
+  std::cout << "\n\n\n";
+  tasks_opt_wskip.ReOrderTwoTaskPermutations();
+  for (uint i = 0; i < tasks_opt_wskip.adjacent_two_task_permutations_.size();
+       i++) {
+    std::cout
+        << tasks_opt_wskip.adjacent_two_task_permutations_[i].task_prev_id_
+        << ", "
+        << tasks_opt_wskip.adjacent_two_task_permutations_[i].task_next_id_
+        << "\n";
+  }
+}
+
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);

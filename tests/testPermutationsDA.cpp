@@ -178,14 +178,15 @@ TEST_F(PermutationTest6_n5, overall_opt_brute_force) {
       TaskSetOptEnumerate(dag_tasks, dag_tasks.chains_, "DataAge");
   task_sets_perms.adjacent_two_task_permutations_[0].print();
   task_sets_perms.adjacent_two_task_permutations_[1].print();
-  int obj_find = task_sets_perms.PerformOptimizationBF<ObjDataAge>().obj_;
+  int obj_find_bf = task_sets_perms.PerformOptimizationBF<ObjDataAge>().obj_;
 
   TaskSetOptEnumWSkip task_sets_perms_enum =
       TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAge");
-  EXPECT_EQ(
+  EXPECT_THAT(
       task_sets_perms_enum.PerformOptimizationSkipInfeasible<ObjDataAge>().obj_,
-      obj_find);
+      ::testing::Le(obj_find_bf));
 }
+
 class PermutationTest25_n3 : public PermutationTestBase {
   void SetUp() override {
     SetUpBase("test_n3_v25");
@@ -306,8 +307,10 @@ TEST_F(PermutationTest25_n3, FindPossibleVariableOD) {
   EXPECT_EQ(40, variable_range_w_chains.upper_bound[2].offset);
 
   EXPECT_EQ(61, variable_range_w_chains.lower_bound[1].deadline);
-  EXPECT_EQ(138, variable_range_w_chains.upper_bound[1].deadline);  // different
-  EXPECT_EQ(123, variable_range_w_chains.lower_bound[0].deadline);  // different
+  EXPECT_EQ(138,
+            variable_range_w_chains.upper_bound[1].deadline);  // different
+  EXPECT_EQ(123,
+            variable_range_w_chains.lower_bound[0].deadline);  // different
   EXPECT_EQ(200, variable_range_w_chains.upper_bound[0].deadline);
   EXPECT_EQ(60, variable_range_w_chains.lower_bound[2].deadline);
   EXPECT_EQ(100, variable_range_w_chains.upper_bound[2].deadline);

@@ -77,15 +77,17 @@ class TaskSetPermutation {
     res.jitter_ = ObjectiveFunction::Jitter(
         dag_tasks_, tasks_info_, best_yet_chain_, best_yet_variable_od_,
         graph_of_all_ca_chains_.chains_);
-    // res.obj_ = best_yet_obj_;
     res.obj_ = ObjectiveFunction::Obj(dag_tasks_, tasks_info_, best_yet_chain_,
                                       best_yet_variable_od_,
                                       graph_of_all_ca_chains_.chains_);
+    // std::cout << "Jitter after optimization: " << res.jitter_ << "\n";
     res.variable_opt_ = best_yet_variable_od_;
     res.schedulable_ = ExamSchedulabilityOptSol();
     return res;
   }
   // The following functions more related to optimization
+
+  void ReOrderTwoTaskPermutations();
 
   // data members
   TimerType start_time_;
@@ -104,6 +106,25 @@ class TaskSetPermutation {
   bool found_optimal_ = false;
 };
 
+// For ordering perms when optimizing SF *****************
+inline int CountOverlapScore(int perm_id,
+                             const std::vector<TwoTaskPermutations>& perms,
+                             const std::vector<int>& task_id_count) {
+  return task_id_count[perms[perm_id].task_next_id_] +
+         task_id_count[perms[perm_id].task_prev_id_];
+}
+inline void UpdateTaskIdCount(int perm_id,
+                              const std::vector<TwoTaskPermutations>& perms,
+                              std::vector<int>& task_id_count) {
+  task_id_count[perms[perm_id].task_prev_id_]++;
+  task_id_count[perms[perm_id].task_next_id_]++;
+}
+
+void RemoveValue(std::vector<int>& perm_to_add, int val);
+int SelectPermWithMostOverlap(const std::vector<TwoTaskPermutations>& perms,
+                              const std::vector<int>& perm_to_add,
+                              const std::vector<int>& task_id_count,
+                              int prev_sink_id);
 //   bool WhetherContainInfeasibleSubChains(
 //       const ChainsPermutation& chains_perm,
 //       const std::vector<std::vector<int>>& sub_chains);
