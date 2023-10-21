@@ -19,7 +19,7 @@ void LPOptimizer::Init() {
   cplexSolver_.setParam(
       IloCplex::Param::Emphasis::MIP,
       5);  // emphasize speed than optimality during optimization
-  cplexSolver_.setParam(IloCplex::Param::Threads, 16);
+  cplexSolver_.setParam(IloCplex::Param::Threads, 1);
   cplexSolver_.setParam(IloCplex::Param::Parallel, -1);
   // constraint_array_(env_);
 #ifdef PROFILE_CODE
