@@ -33,20 +33,9 @@ void AddTasksToRunQueue(RunQueue &run_queue, const DAG_Model &dag_tasks,
 Schedule SimulatedFTP_SingleCore(const DAG_Model &dag_tasks,
                                  const TaskSetInfoDerived &tasks_info,
                                  int processor_id) {
-  const TaskSet &tasks = dag_tasks.GetTaskSet();
-  RunQueue run_queue(tasks);
-  for (LLint time_now = 0; time_now <= tasks_info.hyper_period; time_now++) {
-    // first remove jobs that have been finished at this time
-    run_queue.RemoveFinishedJob(time_now);
-
-    // check whether to add new instances
-    if (time_now < tasks_info.hyper_period)
-      AddTasksToRunQueue(run_queue, dag_tasks, processor_id, time_now);
-
-    // Run jobs with highest priority
-    run_queue.RunJobHigestPriority(time_now);
-  }
-  return run_queue.GetSchedule();
+  VariableOD variable_default(dag_tasks.tasks);
+  return SimulatedFTP_SingleCore_OD(dag_tasks, tasks_info, processor_id,
+                                    variable_default);
 }
 
 std::vector<int> GetProcessorIds(const DAG_Model &dag_tasks) {
@@ -65,16 +54,8 @@ std::vector<int> GetProcessorIds(const DAG_Model &dag_tasks) {
 
 Schedule SimulateFixedPrioritySched(const DAG_Model &dag_tasks,
                                     const TaskSetInfoDerived &tasks_info) {
-  Schedule schedule_all;
-  schedule_all.reserve(tasks_info.length);
-  std::vector<int> processor_ids = GetProcessorIds(dag_tasks);
-  for (int processor_id : processor_ids) {
-    Schedule schedule_curr =
-        SimulatedFTP_SingleCore(dag_tasks, tasks_info, processor_id);
-    schedule_all.insert(schedule_curr.begin(), schedule_curr.end());
-  }
-
-  return schedule_all;
+  VariableOD variable_default(dag_tasks.tasks);
+  return SimulateFixedPrioritySched_OD(dag_tasks, tasks_info, variable_default);
 }
 
 // the following are similar code as above
