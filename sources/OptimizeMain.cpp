@@ -73,7 +73,8 @@ ScheduleResult PerformTOM_OPT_BF_SF(const DAG_Model& dag_tasks) {
   return res;
 }
 
-ScheduleResult PerformTOM_OPT_EnumW_Skip_SF(const DAG_Model& dag_tasks) {
+ScheduleResult PerformTOM_OPT_EnumW_Skip_SF(const DAG_Model& dag_tasks,
+                                            bool enable_extra_opt) {
   auto dags = ExtractDAGsWithIndependentForks(dag_tasks);
   ScheduleResult res;
   res.obj_ = 0;
@@ -82,6 +83,7 @@ ScheduleResult PerformTOM_OPT_EnumW_Skip_SF(const DAG_Model& dag_tasks) {
   for (const auto& dag : dags) {
     TaskSetOptEnumWSkip task_sets_perms =
         TaskSetOptEnumWSkip(dag, GetChainsForSF(dag), "SensorFusion");
+    if (enable_extra_opt) task_sets_perms.EnableExtraOptimization();
     ScheduleResult res_cur =
         task_sets_perms.PerformOptimizationSkipInfeasible<ObjSensorFusion>();
     res.obj_ += res_cur.obj_;

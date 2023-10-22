@@ -53,9 +53,6 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
     case TOM_Sort_Offset:
       res = PerformTOM_OPTOffset_Sort(dag_tasks);
       break;
-    case TOM_Sort_Bound:
-      res = PerformTOM_OPT_SortBound<ObjectiveFunctionBase>(dag_tasks);
-      break;
     case ImplicitCommunication:
       res = PerformImplicitCommuAnalysis<ObjectiveFunctionBase>(dag_tasks);
       break;

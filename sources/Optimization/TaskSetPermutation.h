@@ -102,6 +102,8 @@ class TaskSetPermutation {
 
   void ReOrderTwoTaskPermutations();
 
+  void EnableExtraOptimization() { enableExtraOpt_ = true; }
+
   // data members
   TimerType start_time_;
   DAG_Model dag_tasks_;
@@ -117,6 +119,7 @@ class TaskSetPermutation {
   std::string type_trait_;
   int infeasible_iteration_ = 0;
   bool found_optimal_ = false;
+  bool enableExtraOpt_ = false;
 };
 
 // For ordering perms when optimizing SF *****************

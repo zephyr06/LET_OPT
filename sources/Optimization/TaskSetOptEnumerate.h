@@ -47,7 +47,7 @@ class TaskSetOptEnumerate : public TaskSetPermutation {
         dag_tasks_, tasks_info_, chains_perm, graph_of_all_ca_chains_,
         ObjectiveFunction::type_trait, rta_);
 
-    if (res.first.valid_ && GlobalVariablesDAGOpt::EnableExtraOpt) {
+    if (res.first.valid_ && enableExtraOpt_) {
       std::pair<VariableOD, int> res2 = FindVirtualDeadlineWithLP(
           dag_tasks_, tasks_info_, res.first, graph_of_all_ca_chains_,
           ObjectiveFunction::type_trait);

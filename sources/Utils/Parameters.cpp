@@ -20,7 +20,6 @@ double SAMPLE_FEASIBLE_CHAINS =
 int FEASIBLE_CHAINS_MAX = loaded_doc["FEASIBLE_CHAINS_MAX"].as<int>();
 int FEASIBLE_INCOMPLETE_CHAINS_MAX =
     loaded_doc["FEASIBLE_INCOMPLETE_CHAINS_MAX"].as<int>();
-int EnableExtraOpt = loaded_doc["EnableExtraOpt"].as<int>();
 
 const double kCplexInequalityThreshold =
     loaded_doc["kCplexInequalityThreshold"].as<double>();

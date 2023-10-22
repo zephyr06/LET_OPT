@@ -11,7 +11,7 @@ class TaskSetOptSorted_Maia23 : public TaskSetOptSorted {
                           const std::vector<std::vector<int>>& chains,
                           const std::string& type_trait)
       : TaskSetOptSorted(dag_tasks, chains, type_trait) {
-    GlobalVariablesDAGOpt::EnableExtraOpt = 1;
+    EnableExtraOptimization();
   }
 };
 

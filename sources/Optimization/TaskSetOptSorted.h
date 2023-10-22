@@ -180,7 +180,7 @@ class TaskSetOptSorted : public TaskSetPermutation {
         dag_tasks_, tasks_info_, chains_perm, graph_of_all_ca_chains_,
         ObjectiveFunction::type_trait, rta_, optimize_offset_only_);
 
-    if (GlobalVariablesDAGOpt::EnableExtraOpt) {
+    if (enableExtraOpt_) {
       const VariableOD& variable_od = res.first;
       Schedule schedule_cur =
           SimulateFixedPrioritySched_OD(dag_tasks_, tasks_info_, variable_od);
