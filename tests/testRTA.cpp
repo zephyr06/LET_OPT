@@ -138,6 +138,26 @@ class PermutationTest6 : public ::testing::Test {
   TaskSet tasks;
   TaskSetInfoDerived tasks_info;
 };
+class PermutationTest_n6_v4 : public ::testing::Test {
+ protected:
+  void SetUp() override {
+    dag_tasks = ReadDAG_Tasks(
+        GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/test_n6_v4.csv", "RM",
+        1);
+    tasks = dag_tasks.GetTaskSet();
+    tasks_info = TaskSetInfoDerived(tasks);
+  };
+
+  DAG_Model dag_tasks;
+  TaskSet tasks;
+  TaskSetInfoDerived tasks_info;
+};
+
+TEST_F(PermutationTest_n6_v4, v1) {
+  EXPECT_EQ(4, GetResponseTime(dag_tasks, 1));
+  EXPECT_EQ(3, GetResponseTime(dag_tasks, 3));
+  EXPECT_EQ(2, GetResponseTime(dag_tasks, 4));
+}
 
 TEST_F(PermutationTest6, GetTask) {
   EXPECT_EQ(0, dag_tasks.GetTaskIndex(0));
