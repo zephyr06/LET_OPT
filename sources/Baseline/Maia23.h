@@ -14,7 +14,7 @@ VariableOD GetMaia23VariableOD(const DAG_Model& dag_tasks,
 
 VariableOD GetMaia23VariableOD(const DAG_Model& dag_tasks,
                                const TaskSetInfoDerived& tasks_info);
-                               
+
 template <typename ObjectiveFunctionBase>
 ScheduleResult PerformMaia23Analysis(const DAG_Model& dag_tasks) {
   auto start = std::chrono::high_resolution_clock::now();
@@ -40,5 +40,22 @@ ScheduleResult PerformMaia23Analysis(const DAG_Model& dag_tasks) {
       std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
   res.timeTaken_ = double(duration.count()) / 1e6;
   return res;
+}
+
+// TODO: test the funciton below!
+template <typename ObjectiveFunction>
+double ObtainObjAfterMaia(const VariableOD& variable_input,
+                          const DAG_Model& dag_tasks,
+                          const TaskSetInfoDerived& tasks_info) {
+  const VariableOD& variable_od = variable_input;
+  Schedule schedule_cur =
+      SimulateFixedPrioritySched_OD(dag_tasks, tasks_info, variable_od);
+  VariableOD variable_after_Maia =
+      GetMaia23VariableOD(dag_tasks, tasks_info, schedule_cur);
+  ChainsPermutation chains_perm =
+      GetChainsPermFromVariable(dag_tasks, tasks_info, dag_tasks.chains_,
+                                ObjectiveFunction::type_trait, schedule_cur);
+  return ObjectiveFunction::Obj(dag_tasks, tasks_info, chains_perm,
+                                variable_after_Maia, dag_tasks.chains_);
 }
 }  // namespace DAG_SPACE

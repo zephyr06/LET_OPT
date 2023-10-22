@@ -27,6 +27,152 @@ TEST_F(PermutationTest18_n3, SimulateFixedPrioritySched) {
   EXPECT_EQ(JobStartFinish(1, 4), schedule_actual[JobCEC(2, 0)]);
 }
 
+TEST_F(PermutationTest18_n3, SimulateFixedPrioritySched_OD_v1) {
+  VariableOD variable(dag_tasks.tasks);
+  variable[0].offset = 0;
+  variable[0].deadline = 1;
+  variable[1].offset = 5;
+  variable[0].deadline = 7;
+  variable[2].offset = 8;
+  variable[0].deadline = 12;
+  Schedule schedule_actual =
+      SimulateFixedPrioritySched_OD(dag_tasks, tasks_info, variable);
+
+  EXPECT_EQ(JobStartFinish(0, 1), schedule_actual[JobCEC(0, 0)]);
+  EXPECT_EQ(JobStartFinish(10, 11), schedule_actual[JobCEC(0, 1)]);
+  EXPECT_EQ(JobStartFinish(5, 7), schedule_actual[JobCEC(1, 0)]);
+  EXPECT_EQ(JobStartFinish(8, 12), schedule_actual[JobCEC(2, 0)]);
+}
+
+class PermutationTest_n3_v38 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n3_v38");
+    dag_tasks.chains_ = {{0, 1, 2}};
+    type_trait = "DataAge";
+  }
+
+ public:
+  std::string type_trait;
+};
+
+class PermutationTest_n5_v66 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_n5_v66");
+    dag_tasks.chains_ = {{0, 1, 2}};
+    type_trait = "ReactionTime";
+  }
+
+ public:
+  std::string type_trait;
+};
+
+TEST_F(PermutationTest_n5_v66, SimulateFixedPrioritySched) {
+  VariableOD variable(dag_tasks.tasks);
+  variable[0].offset = 0;
+  variable[0].deadline = 20;
+
+  variable[1].offset = 0;
+  variable[1].deadline = 40;
+
+  variable[2].offset = 9;
+  variable[2].deadline = 34;
+
+  variable[3].offset = 14;
+  variable[3].deadline = 20;
+
+  variable[4].offset = 0;
+  variable[4].deadline = 10;
+  Schedule schedule_cur =
+      SimulateFixedPrioritySched_OD(dag_tasks, tasks_info, variable);
+  PrintSchedule(schedule_cur);
+  VariableOD variable_after_Maia =
+      GetMaia23VariableOD(dag_tasks, tasks_info, schedule_cur);
+  EXPECT_EQ(0, variable_after_Maia[1].offset);
+  EXPECT_EQ(9, variable_after_Maia[1].deadline);
+  EXPECT_TRUE(CheckSchedulability(dag_tasks, tasks_info, schedule_cur,
+                                  variable_after_Maia));
+}
+
+TEST_F(PermutationTest_n3_v38, ObtainObjAfterMaia) {
+  VariableOD variable(dag_tasks.tasks);
+  variable[0].offset = 0;
+  variable[0].deadline = 1;
+  variable[1].offset = 11;
+  variable[1].deadline = 16;
+  variable[2].offset = 6;
+  variable[2].deadline = 9;
+  Schedule schedule_actual =
+      SimulateFixedPrioritySched_OD(dag_tasks, tasks_info, variable);
+
+  EXPECT_EQ(JobStartFinish(0, 1), schedule_actual[JobCEC(0, 0)]);
+  EXPECT_EQ(JobStartFinish(5, 6), schedule_actual[JobCEC(0, 1)]);
+  EXPECT_EQ(JobStartFinish(11, 13), schedule_actual[JobCEC(1, 0)]);
+  EXPECT_EQ(JobStartFinish(6, 8), schedule_actual[JobCEC(2, 0)]);
+  EXPECT_EQ(JobStartFinish(16, 18), schedule_actual[JobCEC(2, 1)]);
+  EXPECT_EQ(18,
+            ObtainObjAfterMaia<ObjDataAge>(variable, dag_tasks, tasks_info));
+}
+
+TEST_F(PermutationTest18_n3, CheckSchedulability) {
+  VariableOD variable(dag_tasks.tasks);
+  variable[0].offset = 0;
+  variable[0].deadline = 1;
+  variable[1].offset = 5;
+  variable[1].deadline = 7;
+  variable[2].offset = 8;
+  variable[2].deadline = 12;
+  Schedule schedule =
+      SimulateFixedPrioritySched_OD(dag_tasks, tasks_info, variable);
+  EXPECT_TRUE(CheckSchedulability(dag_tasks, tasks_info, schedule, variable));
+  schedule[JobCEC(0, 0)].finish = 11;
+  EXPECT_FALSE(CheckSchedulability(dag_tasks, tasks_info, schedule, variable));
+}
+TEST_F(PermutationTest18_n3, ObtainObjAfterMaia) {
+  VariableOD variable(dag_tasks.tasks);
+  variable[0].offset = 0;
+  variable[0].deadline = 1;
+  variable[1].offset = 5;
+  variable[1].deadline = 7;
+  variable[2].offset = 8;
+  variable[2].deadline = 12;
+  Schedule schedule_actual =
+      SimulateFixedPrioritySched_OD(dag_tasks, tasks_info, variable);
+
+  EXPECT_EQ(JobStartFinish(0, 1), schedule_actual[JobCEC(0, 0)]);
+  EXPECT_EQ(JobStartFinish(10, 11), schedule_actual[JobCEC(0, 1)]);
+  EXPECT_EQ(JobStartFinish(5, 7), schedule_actual[JobCEC(1, 0)]);
+  EXPECT_EQ(JobStartFinish(8, 12), schedule_actual[JobCEC(2, 0)]);
+  EXPECT_EQ(12,
+            ObtainObjAfterMaia<ObjDataAge>(variable, dag_tasks, tasks_info));
+}
+
+TEST_F(PermutationTest18_n3, SimulateFixedPrioritySched_OD_v2) {
+  VariableOD variable(dag_tasks.tasks);
+  variable[0].offset = 0;
+  variable[1].offset = 3;
+  variable[2].offset = 5;
+  Schedule schedule_actual =
+      SimulateFixedPrioritySched_OD(dag_tasks, tasks_info, variable);
+
+  EXPECT_EQ(JobStartFinish(0, 1), schedule_actual[JobCEC(0, 0)]);
+  EXPECT_EQ(JobStartFinish(10, 11), schedule_actual[JobCEC(0, 1)]);
+  EXPECT_EQ(JobStartFinish(3, 5), schedule_actual[JobCEC(1, 0)]);
+  EXPECT_EQ(JobStartFinish(5, 8), schedule_actual[JobCEC(2, 0)]);
+}
+TEST_F(PermutationTest18_n3, SimulateFixedPrioritySched_OD_v3) {
+  VariableOD variable(dag_tasks.tasks);
+  variable[0].offset = 0;
+  variable[1].offset = 3;
+  variable[2].offset = 3;
+  Schedule schedule_actual =
+      SimulateFixedPrioritySched_OD(dag_tasks, tasks_info, variable);
+
+  EXPECT_EQ(JobStartFinish(0, 1), schedule_actual[JobCEC(0, 0)]);
+  EXPECT_EQ(JobStartFinish(10, 11), schedule_actual[JobCEC(0, 1)]);
+  EXPECT_EQ(JobStartFinish(6, 8), schedule_actual[JobCEC(1, 0)]);
+  EXPECT_EQ(JobStartFinish(3, 6), schedule_actual[JobCEC(2, 0)]);
+}
+
 TEST_F(PermutationTest18_n3, GetMaia23VariableOD) {
   VariableOD variable_maia = GetMaia23VariableOD(dag_tasks, tasks_info);
   EXPECT_EQ(0, variable_maia[0].offset);

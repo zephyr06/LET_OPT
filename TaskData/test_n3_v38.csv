@@ -1,0 +1,9 @@
+JobID,Period,ExecutionTime,DeadLine,processorId
+0,5,1,5,1
+1,20,2,20,1
+2,10,2,10,1
+Note: *a,b means a->b, i.e., a writes data and b reads data from it
+@Chain:0, 1, 2, 
+*0,1
+*1,2
+
