@@ -9,6 +9,8 @@ struct JobStartFinish {
   JobStartFinish() {}
   JobStartFinish(int s, int f) : start(s), finish(f) {}
 
+  inline int length() const { return finish - start; }
+
   inline bool operator==(const JobStartFinish &other) const {
     return start == other.start && finish == other.finish;
   }
@@ -21,6 +23,10 @@ struct JobStartFinish {
 };
 
 typedef std::unordered_map<JobCEC, JobStartFinish> Schedule;
+
+std::vector<double> GetResponseTimeTaskSet(const DAG_Model &dag_tasks,
+                                           const TaskSetInfoDerived &tasks_info,
+                                           const Schedule &schedule);
 
 Schedule Variable2Schedule(const TaskSetInfoDerived &tasks_info,
                            const VariableOD &variable_od);

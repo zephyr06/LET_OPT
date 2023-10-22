@@ -27,6 +27,15 @@ TEST_F(PermutationTest18_n3, SimulateFixedPrioritySched) {
   EXPECT_EQ(JobStartFinish(1, 4), schedule_actual[JobCEC(2, 0)]);
 }
 
+TEST_F(PermutationTest18_n3, GetResponseTimeTaskSet) {
+  Schedule schedule_actual = SimulateFixedPrioritySched(dag_tasks, tasks_info);
+
+  std::vector<double> rta =
+      GetResponseTimeTaskSet(dag_tasks, tasks_info, schedule_actual);
+  EXPECT_EQ(1, rta[0]);
+  EXPECT_EQ(2, rta[1]);
+  EXPECT_EQ(3, rta[2]);
+}
 TEST_F(PermutationTest18_n3, SimulateFixedPrioritySched_OD_v1) {
   VariableOD variable(dag_tasks.tasks);
   variable[0].offset = 0;
@@ -105,6 +114,34 @@ TEST_F(PermutationTest_n5_v66, SimulateFixedPrioritySched) {
                                   variable_after_Maia));
 }
 
+TEST_F(PermutationTest_n5_v66, GetResponseTimeTaskSet) {
+  VariableOD variable(dag_tasks.tasks);
+  variable[0].offset = 0;
+  variable[0].deadline = 20;
+
+  variable[1].offset = 0;
+  variable[1].deadline = 40;
+
+  variable[2].offset = 9;
+  variable[2].deadline = 34;
+
+  variable[3].offset = 14;
+  variable[3].deadline = 20;
+
+  variable[4].offset = 0;
+  variable[4].deadline = 10;
+  Schedule schedule_actual =
+      SimulateFixedPrioritySched_OD(dag_tasks, tasks_info, variable);
+  PrintSchedule(schedule_actual);
+  std::vector<double> rta =
+      GetResponseTimeTaskSet(dag_tasks, tasks_info, schedule_actual);
+
+  EXPECT_EQ(5, rta[0]);
+  EXPECT_EQ(4, rta[1]);
+  EXPECT_EQ(2, rta[2]);
+  EXPECT_EQ(1, rta[3]);
+  EXPECT_EQ(5, rta[4]);
+}
 TEST_F(PermutationTest_n3_v38, ObtainObjAfterMaia) {
   VariableOD variable(dag_tasks.tasks);
   variable[0].offset = 0;
