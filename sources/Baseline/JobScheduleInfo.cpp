@@ -53,6 +53,9 @@ bool CheckSchedulability(const DAG_Model &dag_tasks,
       JobCEC job_curr(i, j);
       if (schedule.at(job_curr).finish >
           GetActivationTime(job_curr, tasks_info) + variable.at(i).deadline) {
+        PrintSchedule(schedule);
+        std::vector<int> rta =
+            GetResponseTimeTaskSet(dag_tasks, tasks_info, schedule);
         CoutWarning("Unschedulable after Maia!");
         return false;
       }
@@ -71,7 +74,9 @@ std::vector<int> GetResponseTimeTaskSet(const DAG_Model &dag_tasks,
          job_id < tasks_info.hyper_period / tasks_info.GetTask(task_id).period;
          job_id++) {
       JobCEC job_cur(task_id, job_id);
-      rta_cur = max(rta_cur, int(schedule.at(job_cur).length()));
+      int rta_cur_job =
+          schedule.at(job_cur).finish - GetActivationTime(job_cur, tasks_info);
+      rta_cur = max(rta_cur, rta_cur_job);
     }
     res[task_id] = rta_cur;
   }

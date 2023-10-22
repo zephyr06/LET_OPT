@@ -47,7 +47,23 @@ class TaskSetOptEnumerate : public TaskSetPermutation {
         dag_tasks_, tasks_info_, chains_perm, graph_of_all_ca_chains_,
         ObjectiveFunction::type_trait, rta_);
 
-     if (res.first.valid_)  // if valid, we'll exam obj; otherwise, we'll
+    if (res.first.valid_ && GlobalVariablesDAGOpt::EnableExtraOpt) {
+      std::pair<VariableOD, int> res2 = FindVirtualDeadlineWithLP(
+          dag_tasks_, tasks_info_, res.first, graph_of_all_ca_chains_,
+          ObjectiveFunction::type_trait);
+      if (res2.first.valid_ && res2.second < res.second) {
+        bool schedulable = CheckSchedulability(
+            dag_tasks_, tasks_info_,
+            SimulateFixedPrioritySched_OD(dag_tasks_, tasks_info_, res2.first),
+            res2.first);
+        if (!schedulable) {
+          CoutWarning("Unschedulable after Maia!");
+        }
+        res = res2;
+      }
+    }
+
+    if (res.first.valid_)  // if valid, we'll exam obj; otherwise, we'll
                            // just move forward
     {
       if (IfSF_Trait(ObjectiveFunction::type_trait) &&

@@ -196,24 +196,16 @@ inline std::pair<VariableOD, int> FindODWithLP(
   return lp_optimizer.Optimize(chains_perm);
 }
 
-inline std::pair<VariableOD, int> FindVirtualDeadlineWithLP(
+std::vector<int> GetRtaRelativeToOffset(const std::vector<int> &rta,
+                                        const VariableOD &variable_prev_op,
+                                        const TaskSetInfoDerived &tasks_info) ;
+                                        
+ std::pair<VariableOD, int> FindVirtualDeadlineWithLP(
     const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
     const VariableOD &variable_prev_op,
     const GraphOfChains &graph_of_all_ca_chains, const std::string &obj_trait,
     double optimize_jitter_weight =
-        GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT) {
-  Schedule schedule_prev_opt =
-      SimulateFixedPrioritySched_OD(dag_tasks, tasks_info, variable_prev_op);
-  std::vector<int> rta =
-      GetResponseTimeTaskSet(dag_tasks, tasks_info, schedule_prev_opt);
-  ChainsPermutation chains_perm = GetChainsPermFromVariable(
-      dag_tasks, tasks_info, dag_tasks.chains_, obj_trait, schedule_prev_opt);
-
-  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_of_all_ca_chains,
-                           obj_trait, rta, false, true, optimize_jitter_weight);
-  lp_optimizer.SetVariablePreOpt(variable_prev_op);
-  return lp_optimizer.Optimize(chains_perm);
-}
+        GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT) ;
 
 // inline int GetMinOffSet(int task_id, const DAG_Model &dag_tasks,
 //                         const TaskSetInfoDerived &tasks_info,

@@ -443,6 +443,38 @@ VariableOD LPOptimizer::ExtratOptSolution(IloNumArray &values_optimized) {
   return variable_od_opt;
 }
 
+std::vector<int> GetRtaRelativeToOffset(const std::vector<int> &rta,
+                                        const VariableOD &variable_prev_op,
+                                        const TaskSetInfoDerived &tasks_info) {
+  std::vector<int> res = rta;
+  for (int i = 0; i < tasks_info.N; i++) {
+    res[i] -= variable_prev_op.at(i).offset;
+  }
+  return res;
+}
+
+std::pair<VariableOD, int> FindVirtualDeadlineWithLP(
+    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+    const VariableOD &variable_prev_op,
+    const GraphOfChains &graph_of_all_ca_chains, const std::string &obj_trait,
+    double optimize_jitter_weight) {
+  Schedule schedule_prev_opt =
+      SimulateFixedPrioritySched_OD(dag_tasks, tasks_info, variable_prev_op);
+  std::vector<int> rta =
+      GetResponseTimeTaskSet(dag_tasks, tasks_info, schedule_prev_opt);
+  std::vector<int> rta_rel_offset =
+      GetRtaRelativeToOffset(rta, variable_prev_op, tasks_info);
+  ChainsPermutation chains_perm = GetChainsPermFromVariable(
+      dag_tasks, tasks_info, graph_of_all_ca_chains.chains_, obj_trait,
+      schedule_prev_opt);
+
+  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_of_all_ca_chains,
+                           obj_trait, rta_rel_offset, false, true,
+                           optimize_jitter_weight);
+  lp_optimizer.SetVariablePreOpt(variable_prev_op);
+  return lp_optimizer.Optimize(chains_perm);
+}
+
 // ****************following functions are commented**************
 
 // void LPOptimizer::AddTwoJob_ForkConstraint(const JobCEC &finish_job1,

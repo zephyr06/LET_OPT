@@ -33,8 +33,8 @@ TEST_F(PermutationTest18_n3, GetResponseTimeTaskSet) {
   std::vector<int> rta =
       GetResponseTimeTaskSet(dag_tasks, tasks_info, schedule_actual);
   EXPECT_EQ(1, rta[0]);
-  EXPECT_EQ(2, rta[1]);
-  EXPECT_EQ(3, rta[2]);
+  EXPECT_EQ(6, rta[1]);
+  EXPECT_EQ(4, rta[2]);
 }
 TEST_F(PermutationTest18_n3, SimulateFixedPrioritySched_OD_v1) {
   VariableOD variable(dag_tasks.tasks);
@@ -137,9 +137,9 @@ TEST_F(PermutationTest_n5_v66, GetResponseTimeTaskSet) {
       GetResponseTimeTaskSet(dag_tasks, tasks_info, schedule_actual);
 
   EXPECT_EQ(5, rta[0]);
-  EXPECT_EQ(4, rta[1]);
-  EXPECT_EQ(2, rta[2]);
-  EXPECT_EQ(1, rta[3]);
+  EXPECT_EQ(9, rta[1]);
+  EXPECT_EQ(11, rta[2]);
+  EXPECT_EQ(15, rta[3]);
   EXPECT_EQ(5, rta[4]);
 }
 TEST_F(PermutationTest_n3_v38, ObtainObjAfterMaia) {
