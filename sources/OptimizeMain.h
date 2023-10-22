@@ -6,6 +6,7 @@
 #include "sources/Optimization/TaskSetOptEnumWSkip.h"
 #include "sources/Optimization/TaskSetOptEnumerate.h"
 #include "sources/Optimization/TaskSetOptSorted.h"
+#include "sources/Optimization/TaskSetOptSorted_Maia23.h"
 #include "sources/Optimization/TaskSetOptSorted_Offset.h"
 
 namespace DAG_SPACE {
@@ -120,10 +121,10 @@ ScheduleResult PerformTOM_OPT_Sort(const DAG_Model& dag_tasks) {
 }
 
 template <typename ObjectiveFunction>
-ScheduleResult PerformTOM_OPT_Sort_Maia23Initial(const DAG_Model& dag_tasks) {
+ScheduleResult PerformTOM_OPT_Sort_Maia23(const DAG_Model& dag_tasks) {
   auto start = std::chrono::high_resolution_clock::now();
   ScheduleResult res;
-  TaskSetOptSorted task_sets_perms = TaskSetOptSorted(
+  TaskSetOptSorted_Maia23 task_sets_perms = TaskSetOptSorted_Maia23(
       dag_tasks, dag_tasks.chains_, ObjectiveFunction::type_trait);
   task_sets_perms.InitializeSolutions<ObjectiveFunction>(
       TaskSetPermutation::Maia23);

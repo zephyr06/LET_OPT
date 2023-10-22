@@ -164,13 +164,13 @@ TEST_F(PermutationTest6_n5, overall_opt_Sort) {
       TaskSetOptSorted(dag_tasks, dag_tasks.chains_, "DataAge");
   task_sets_perms.adjacent_two_task_permutations_[0].print();
   task_sets_perms.adjacent_two_task_permutations_[1].print();
-  int obj_find = task_sets_perms.PerformOptimizationSort<ObjDataAge>().obj_;
+  int obj_sort = task_sets_perms.PerformOptimizationSort<ObjDataAge>().obj_;
 
   TaskSetOptEnumWSkip task_sets_perms_enum =
       TaskSetOptEnumWSkip(dag_tasks, dag_tasks.chains_, "DataAge");
   EXPECT_EQ(
       task_sets_perms_enum.PerformOptimizationSkipInfeasible<ObjDataAge>().obj_,
-      obj_find);
+      obj_sort);
 }
 
 TEST_F(PermutationTest6_n5, overall_opt_brute_force) {

@@ -180,24 +180,6 @@ class TaskSetOptSorted : public TaskSetPermutation {
         dag_tasks_, tasks_info_, chains_perm, graph_of_all_ca_chains_,
         ObjectiveFunction::type_trait, rta_, optimize_offset_only_);
 
-    {
-      double obj_maia = ObtainObjAfterMaia<ObjectiveFunction>(
-          res.first, dag_tasks_, tasks_info_);
-      if (obj_maia < res.second) {
-        res.second = obj_maia;
-        Schedule schedule_cur =
-            SimulateFixedPrioritySched_OD(dag_tasks_, tasks_info_, res.first);
-        VariableOD variable_after_Maia =
-            GetMaia23VariableOD(dag_tasks_, tasks_info_, schedule_cur);
-        res.first = variable_after_Maia;
-        if (!CheckSchedulability(dag_tasks_, tasks_info_, schedule_cur,
-                                 variable_after_Maia)) {
-          CoutWarning("Unschedulable after Maia!");
-          int a = 1;
-        }
-      }
-    }
-
     if (res.first.valid_)  // if valid, we'll exam obj; otherwise, we'll
                            // just move forward
     {

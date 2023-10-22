@@ -87,8 +87,20 @@ TEST_F(PermutationTest_n5_v66, SimulateFixedPrioritySched) {
   PrintSchedule(schedule_cur);
   VariableOD variable_after_Maia =
       GetMaia23VariableOD(dag_tasks, tasks_info, schedule_cur);
+  EXPECT_EQ(0, variable_after_Maia[0].offset);
+  EXPECT_EQ(5, variable_after_Maia[0].deadline);
+
   EXPECT_EQ(0, variable_after_Maia[1].offset);
   EXPECT_EQ(9, variable_after_Maia[1].deadline);
+
+  EXPECT_EQ(9, variable_after_Maia[2].offset);
+  EXPECT_EQ(11, variable_after_Maia[2].deadline);
+
+  EXPECT_EQ(14, variable_after_Maia[3].offset);
+  EXPECT_EQ(15, variable_after_Maia[3].deadline);
+
+  EXPECT_EQ(0, variable_after_Maia[4].offset);
+  EXPECT_EQ(5, variable_after_Maia[4].deadline);
   EXPECT_TRUE(CheckSchedulability(dag_tasks, tasks_info, schedule_cur,
                                   variable_after_Maia));
 }
