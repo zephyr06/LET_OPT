@@ -38,7 +38,9 @@ Schedule VariableMart2Schedule(const TaskSetInfoDerived &tasks_info,
 
 void PrintSchedule(const Schedule &schedule);
 
-bool CheckSchedulability(const DAG_Model &dag_tasks, const Schedule &schedule);
+bool CheckSchedulability(const DAG_Model &dag_tasks,
+                         const TaskSetInfoDerived &tasks_info,
+                         const Schedule &schedule, const VariableOD &variable);
 
 struct JobScheduleInfo {
   JobScheduleInfo(JobCEC job) : job(job), accum_run_time(0) {}

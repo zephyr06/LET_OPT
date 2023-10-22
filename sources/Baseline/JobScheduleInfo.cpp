@@ -44,5 +44,20 @@ void PrintSchedule(const Schedule &schedule) {
   }
 }
 
-bool CheckSchedulability(const DAG_Model &dag_tasks, const Schedule &schedule);
+bool CheckSchedulability(const DAG_Model &dag_tasks,
+                         const TaskSetInfoDerived &tasks_info,
+                         const Schedule &schedule, const VariableOD &variable) {
+  for (int i = 0; i < tasks_info.N; i++) {
+    const Task &task_curr = tasks_info.GetTask(i);
+    for (int j = 0; j < int(tasks_info.hyper_period / task_curr.period); j++) {
+      JobCEC job_curr(i, j);
+      if (schedule.at(job_curr).finish >
+          GetActivationTime(job_curr, tasks_info) + variable.at(i).deadline) {
+        CoutWarning("Unschedulable after Maia!");
+        return false;
+      }
+    }
+  }
+  return true;
+}
 }  // namespace DAG_SPACE
