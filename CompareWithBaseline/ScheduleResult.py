@@ -44,7 +44,7 @@ def ReadOptResults(method_name="TOM_Sort", obj_type="DataAge", task_set_number=5
     files_all = os.listdir(data_set_folder)
     files_all.sort()
     for filename in files_all:
-        file_signature = method_name + "_" + obj_type
+        file_signature = "csv_" + method_name + "_" + obj_type
         if (filename.find(file_signature) != -1):
             file_path = os.path.join(data_set_folder, filename)
             res_vec.append(ReadScheduleResult(file_path))

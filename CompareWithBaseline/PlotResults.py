@@ -16,9 +16,8 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
     ax = plt.subplot(111)
     for i in range(len(method_names)):
         splot = sns.lineplot(data=dataset_pd_obj, x="index", y=method_names[i], marker=marker_map[method_names[i]],
-                             color=color_map[method_names[i]
-                                             ], label=baseline_method_labels[method_names[i]],
-                             markersize=marker_size_map[method_names[i]])  # , alpha=alpha_list[i])
+                             color=color_map[method_names[i]], label=baseline_method_labels[method_names[i]],
+                             markersize=marker_size_map[method_names[i]], linestyle = linestyle_map[method_names[i]])
         
     if obj == "SensorFusion":
         plt.xlabel("Number of Source Tasks per Merge", fontsize=axis_label_font_size)
@@ -37,7 +36,8 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
     elif obj == "SensorFusion":
         splot.set_ylim([-20, 60])
     
-    ax.get_legend().remove()
+    if not show_legend_mode:
+        ax.get_legend().remove()
     # ax.set_title(obj + " Objective Performance")
 
     if obj != "SensorFusion":
@@ -63,9 +63,8 @@ def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_
     ax = plt.subplot(111)
     for i in range(len(method_names)):
         splot = sns.lineplot(data=dataset_pd_runtime, x="index", y=method_names[i], marker=marker_map[method_names[i]],
-                             color=color_map[method_names[i]
-                                             ], label=baseline_method_labels[method_names[i]],
-                             markersize=marker_size_map[method_names[i]])  # , alpha=alpha_list[i])
+                             color=color_map[method_names[i]], label=baseline_method_labels[method_names[i]],
+                             markersize=marker_size_map[method_names[i]], linestyle = linestyle_map[method_names[i]]) 
     if obj == "SensorFusion":
         plt.xlabel("Number of Source Tasks per Merge", fontsize=axis_label_font_size)
     else:
@@ -75,7 +74,8 @@ def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_
     splot.set_ylim([1e-5, 5e3])
     splot.set(yscale="log")
     
-    ax.get_legend().remove()
+    if not show_legend_mode:
+        ax.get_legend().remove()
     # ax.set_title(obj + " Running Time")
     
     if obj != "SensorFusion":
@@ -109,14 +109,12 @@ def plot_Jitter_results(task_set_number_range, method_names, obj, exclude_time_o
         mar=marker_map[all_methods[i]]
         col=color_map[all_methods[i]]
         lab=baseline_method_labels[all_methods[i]]
-        marsize=marker_size_map[all_methods[i]]
-        linstyle="solid"
-        if all_methods[i] in ["TOM_BF_No_Jitter_Weight", "TOM_WSkip_No_Jitter_Weight"]:
-            linstyle = "dashdot"
+        msize=marker_size_map[all_methods[i]]
+        lstyle=linestyle_map[method_names[i]]
         if all_methods[i] in ["TOM_BF", "TOM_WSkip"]:
             lab += " \u03C9=1"
         splot = sns.lineplot(data=dataset_pd_jitter, x="index", y=all_methods[i], marker=mar,
-                            color=col, label=lab, markersize=marsize, linestyle=linstyle)
+                            color=col, label=lab, markersize=msize, linestyle=lstyle)
         
     if obj == "SensorFusion":
         plt.xlabel("Number of Source Tasks per Merge", fontsize=axis_label_font_size)
@@ -155,9 +153,8 @@ def plot_Timeout_rate(task_set_number_range, method_names, obj, exclude_time_out
     ax = plt.subplot(111)
     for i in range(len(method_names)):
         splot = sns.lineplot(data=dataset_pd_timeout_rate, x="index", y=method_names[i], marker=marker_map[method_names[i]],
-                             color=color_map[method_names[i]
-                                             ], label=baseline_method_labels[method_names[i]],
-                             markersize=marker_size_map[method_names[i]])  # , alpha=alpha_list[i])
+                             color=color_map[method_names[i]], label=baseline_method_labels[method_names[i]],
+                             markersize=marker_size_map[method_names[i]], linestyle = linestyle_map[method_names[i]])
         
     if obj == "SensorFusion":
         plt.xlabel("Number of Source Tasks per Merge", fontsize=axis_label_font_size)
@@ -166,7 +163,8 @@ def plot_Timeout_rate(task_set_number_range, method_names, obj, exclude_time_out
         
     plt.ylabel("Timeout Rate (%)", fontsize=axis_label_font_size)
     
-    # ax.get_legend().remove()
+    if not show_legend_mode:
+        ax.get_legend().remove()
     ax.set_title(obj)
 
     if obj != "SensorFusion":
@@ -186,8 +184,8 @@ def plot_Timeout_rate(task_set_number_range, method_names, obj, exclude_time_out
 
 
 def draw_RT_results(task_set_number_range):
-    method_names = ["InitialMethod", "Maia23", "ImplicitCommunication", 
-                    "TOM_BF", "TOM_WSkip", "TOM_Sort"]
+    method_names = ["InitialMethod", "Maia23", "ImplicitCommunication",
+                    "TOM_BF", "TOM_WSkip", "TOM_Sort", "TOM_Sort_Maia23"]
     plot_Obj_results(task_set_number_range, method_names, "ReactionTime")
     plot_Runtime_results(task_set_number_range, method_names, "ReactionTime")
     plot_Timeout_rate(task_set_number_range, method_names, "ReactionTime")
@@ -202,7 +200,7 @@ def draw_DA_resultsOneChain(task_set_number_range):
 
 def draw_DA_results(task_set_number_range):
     method_names = ["InitialMethod", "Maia23", "ImplicitCommunication", 
-                    "TOM_Sort_Offset", "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort"]
+                    "TOM_Sort_Offset", "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort", "TOM_Sort_Maia23"]
     plot_Obj_results(task_set_number_range, method_names, "DataAge")
     plot_Runtime_results(task_set_number_range, method_names, "DataAge")
     plot_Timeout_rate(task_set_number_range, method_names, "DataAge")

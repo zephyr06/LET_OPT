@@ -12,9 +12,9 @@ baseline_method_labels = {"InitialMethod": "DefLET",
                           "TOM_Sort_Offset": "Martinez18_Alg1",
                           "Bardatsch16": "Bradatsch16",
                           "TOM_BF_No_Jitter_Weight": "fLET_GCP_Enum \u03C9=0",
-                          "TOM_WSkip_No_Jitter_Weight": "fLET_GCP_Ineq_Filter \u03C9=0"
+                          "TOM_WSkip_No_Jitter_Weight": "fLET_GCP_Ineq_Filter \u03C9=0",
+                          "TOM_Sort_Maia23": "TOM_Sort_Maia23"
                           }
-
 marker_map = {"InitialMethod": "o",
               "ImplicitCommunication": "*",
               "Maia23": "v",
@@ -25,7 +25,9 @@ marker_map = {"InitialMethod": "o",
               "TOM_Sort_Offset": "P",
               "Bardatsch16": "X",
               "TOM_BF_No_Jitter_Weight": "D",
-              "TOM_WSkip_No_Jitter_Weight": "^"}
+              "TOM_WSkip_No_Jitter_Weight": "^",
+              "TOM_Sort_Maia23": "s"
+              }
 marker_size_map = {"InitialMethod": 8,
                    "ImplicitCommunication": 12,
                     "Maia23": 12,
@@ -36,15 +38,9 @@ marker_size_map = {"InitialMethod": 8,
                    "TOM_Sort_Offset": 8,
                    "Bardatsch16": 7,
                    "TOM_BF_No_Jitter_Weight": 8,
-                   "TOM_WSkip_No_Jitter_Weight": 12}
-# marker_size_map = {"InitialMethod": 6,
-#                    "ImplicitCommunication": 10,
-#                    "TOM_BF": 6,
-#                    "TOM_WSkip": 8,
-#                    "TOM_Sort": 6,
-#                    "Martinez18": 6,
-#                    "TOM_Sort_Offset": 6,
-#                    "Bardatsch16": 3}
+                   "TOM_WSkip_No_Jitter_Weight": 12,
+                   "TOM_Sort_Maia23": 7
+                   }
 color_map = {"InitialMethod": "#0084DB",
              "ImplicitCommunication": "#ffa64d",
              "Maia23": "#b544c7",
@@ -55,7 +51,23 @@ color_map = {"InitialMethod": "#0084DB",
              "TOM_Sort_Offset": "k",
              "Bardatsch16": "#00FFFF",
              "TOM_BF_No_Jitter_Weight": "#ff4d82",
-             "TOM_WSkip_No_Jitter_Weight": "#ab7c0f"}
+             "TOM_WSkip_No_Jitter_Weight": "#ab7c0f",
+             "TOM_Sort_Maia23": "#00b58e"
+            }
+
+linestyle_map = {"InitialMethod": "solid",
+                "ImplicitCommunication": "solid",
+                "Maia23": "solid",
+                "TOM_BF": "solid",
+                "TOM_WSkip": "solid",
+                "TOM_Sort": "solid",
+                "Martinez18": "solid",
+                "TOM_Sort_Offset": "solid",
+                "Bardatsch16": "solid",
+                "TOM_BF_No_Jitter_Weight": "dashdot",
+                "TOM_WSkip_No_Jitter_Weight": "dashdot",
+                "TOM_Sort_Maia23": "dashdot"
+                }
 
 # marker_list = ["o", "*", "D", "^", "s", "D", "P", "X"]
 # markersize_list = [8, 12, 10, 12, 8, 8, 8, 4]
@@ -74,3 +86,4 @@ axis_label_font_size=17
 tick_font_size=12
 
 verbose_mode = False
+show_legend_mode = True
