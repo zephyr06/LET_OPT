@@ -61,17 +61,17 @@ bool CheckSchedulability(const DAG_Model &dag_tasks,
   return true;
 }
 
-std::vector<double> GetResponseTimeTaskSet(const DAG_Model& dag_tasks,
-                                           const TaskSetInfoDerived& tasks_info,
-                                           const Schedule& schedule) {
-  std::vector<double> res(tasks_info.N, 0);
+std::vector<int> GetResponseTimeTaskSet(const DAG_Model &dag_tasks,
+                                        const TaskSetInfoDerived &tasks_info,
+                                        const Schedule &schedule) {
+  std::vector<int> res(tasks_info.N, 0);
   for (int task_id = 0; task_id < tasks_info.N; task_id++) {
-    double rta_cur = 0;
+    int rta_cur = 0;
     for (int job_id = 0;
          job_id < tasks_info.hyper_period / tasks_info.GetTask(task_id).period;
          job_id++) {
       JobCEC job_cur(task_id, job_id);
-      rta_cur = max(rta_cur, double(schedule.at(job_cur).length()));
+      rta_cur = max(rta_cur, int(schedule.at(job_cur).length()));
     }
     res[task_id] = rta_cur;
   }

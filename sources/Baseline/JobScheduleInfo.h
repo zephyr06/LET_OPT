@@ -24,7 +24,7 @@ struct JobStartFinish {
 
 typedef std::unordered_map<JobCEC, JobStartFinish> Schedule;
 
-std::vector<double> GetResponseTimeTaskSet(const DAG_Model &dag_tasks,
+std::vector<int> GetResponseTimeTaskSet(const DAG_Model &dag_tasks,
                                            const TaskSetInfoDerived &tasks_info,
                                            const Schedule &schedule);
 

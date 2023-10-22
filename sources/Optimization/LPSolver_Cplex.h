@@ -2,6 +2,8 @@
 
 #include "ilcplex/cplex.h"
 #include "ilcplex/ilocplex.h"
+#include "sources/Baseline/ImplicitCommunication/ScheduleSimulation.h"
+#include "sources/Baseline/JobCommunications.h"
 #include "sources/ObjectiveFunction/ObjectiveFunction.h"
 #include "sources/Permutations/ChainsPermutation.h"
 #include "sources/Permutations/GraphOfChains.h"
@@ -18,6 +20,7 @@ class LPOptimizer {
               const GraphOfChains &graph_of_all_ca_chains,
               const std::string &obj_trait, const std::vector<int> &rta,
               bool optimize_offset_only = false,
+              bool optimize_deadline_only = false,
               double optimize_jitter_weight =
                   GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT)
       : dag_tasks_(dag_tasks),
@@ -27,6 +30,7 @@ class LPOptimizer {
         obj_trait_(obj_trait),
         rta_(rta),
         optimize_offset_only_(optimize_offset_only),
+        optimize_deadline_only_(optimize_deadline_only),
         optimize_jitter_weight_(optimize_jitter_weight),
         // cplex's environments
         env_(IloEnv()),
@@ -51,6 +55,11 @@ class LPOptimizer {
 
   void AddVariablesOD(int number_of_tasks_to_opt);
   void AddConstantDeadlineConstraint();
+  void AddConstantOffsetConstraint();
+  inline void SetVariablePreOpt(const VariableOD &variable_pre_opt) {
+    variable_pre_opt_ = variable_pre_opt;
+  }
+
   void AddArtificialVariables();
   void AddPermutationInequalityConstraints(const ChainsPermutation &chains_perm,
                                            bool allow_partial_edges = false);
@@ -59,7 +68,8 @@ class LPOptimizer {
   void AddObjectiveFunctions(const ChainsPermutation &chains_perm);  // RTDA obj
 
   void AddSFObjectiveFunctions(const ChainsPermutation &chains_perm);
-  // void AddSFObjectiveFunctions_WithJitter(const ChainsPermutation &chains_perm);
+  // void AddSFObjectiveFunctions_WithJitter(const ChainsPermutation
+  // &chains_perm);
 
   void AddRTDAObjectiveFunctions(
       const ChainsPermutation &chains_perm);  // RTDA obj
@@ -155,7 +165,9 @@ class LPOptimizer {
   std::string obj_trait_;
   const std::vector<int> &rta_;
   bool optimize_offset_only_;
+  bool optimize_deadline_only_;
   double optimize_jitter_weight_;
+  VariableOD variable_pre_opt_;
 
   IloEnv env_;
   IloModel model_;
@@ -175,11 +187,31 @@ inline std::pair<VariableOD, int> FindODWithLP(
     const ChainsPermutation &chains_perm,
     const GraphOfChains &graph_of_all_ca_chains, const std::string &obj_trait,
     const std::vector<int> &rta, bool optimize_offset_only = false,
+    bool optimize_deadline_only = false,
     double optimize_jitter_weight =
         GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT) {
   LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_of_all_ca_chains,
                            obj_trait, rta, optimize_offset_only,
-                           optimize_jitter_weight);
+                           optimize_deadline_only, optimize_jitter_weight);
+  return lp_optimizer.Optimize(chains_perm);
+}
+
+inline std::pair<VariableOD, int> FindVirtualDeadlineWithLP(
+    const DAG_Model &dag_tasks, const TaskSetInfoDerived &tasks_info,
+    const VariableOD &variable_prev_op,
+    const GraphOfChains &graph_of_all_ca_chains, const std::string &obj_trait,
+    double optimize_jitter_weight =
+        GlobalVariablesDAGOpt::OPTIMIZE_JITTER_WEIGHT) {
+  Schedule schedule_prev_opt =
+      SimulateFixedPrioritySched_OD(dag_tasks, tasks_info, variable_prev_op);
+  std::vector<int> rta =
+      GetResponseTimeTaskSet(dag_tasks, tasks_info, schedule_prev_opt);
+  ChainsPermutation chains_perm = GetChainsPermFromVariable(
+      dag_tasks, tasks_info, dag_tasks.chains_, obj_trait, schedule_prev_opt);
+
+  LPOptimizer lp_optimizer(dag_tasks, tasks_info, graph_of_all_ca_chains,
+                           obj_trait, rta, false, true, optimize_jitter_weight);
+  lp_optimizer.SetVariablePreOpt(variable_prev_op);
   return lp_optimizer.Optimize(chains_perm);
 }
 

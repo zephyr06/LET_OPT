@@ -55,6 +55,7 @@ std::pair<VariableOD, int> LPOptimizer::OptimizeWithoutClear(
 #endif
   AddVariables();  // must be called first
   if (optimize_offset_only_) AddConstantDeadlineConstraint();
+  if (optimize_deadline_only_) AddConstantOffsetConstraint();
   if (!optimize_offset_only_) AddSchedulabilityConstraints();
   AddPermutationInequalityConstraints(chains_perm);
   AddObjectiveFunctions(chains_perm);
@@ -114,6 +115,16 @@ void LPOptimizer::AddConstantDeadlineConstraint() {
         varArray_[GetVariableIndexVirtualDeadline(task_id)] -
             varArray_[GetVariableIndexVirtualOffset(task_id)],
         deadline);
+    model_.add(myConstraint1);
+  }
+}
+
+void LPOptimizer::AddConstantOffsetConstraint() {
+  for (int task_id = 0; task_id < tasks_info_.N; task_id++) {
+    int deadline = tasks_info_.GetTask(task_id).deadline;
+    IloRange myConstraint1(env_, variable_pre_opt_[task_id].offset,
+                           varArray_[GetVariableIndexVirtualOffset(task_id)],
+                           variable_pre_opt_[task_id].offset);
     model_.add(myConstraint1);
   }
 }

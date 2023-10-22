@@ -30,7 +30,7 @@ TEST_F(PermutationTest18_n3, SimulateFixedPrioritySched) {
 TEST_F(PermutationTest18_n3, GetResponseTimeTaskSet) {
   Schedule schedule_actual = SimulateFixedPrioritySched(dag_tasks, tasks_info);
 
-  std::vector<double> rta =
+  std::vector<int> rta =
       GetResponseTimeTaskSet(dag_tasks, tasks_info, schedule_actual);
   EXPECT_EQ(1, rta[0]);
   EXPECT_EQ(2, rta[1]);
@@ -41,9 +41,9 @@ TEST_F(PermutationTest18_n3, SimulateFixedPrioritySched_OD_v1) {
   variable[0].offset = 0;
   variable[0].deadline = 1;
   variable[1].offset = 5;
-  variable[0].deadline = 7;
+  variable[1].deadline = 7;
   variable[2].offset = 8;
-  variable[0].deadline = 12;
+  variable[2].deadline = 12;
   Schedule schedule_actual =
       SimulateFixedPrioritySched_OD(dag_tasks, tasks_info, variable);
 
@@ -133,7 +133,7 @@ TEST_F(PermutationTest_n5_v66, GetResponseTimeTaskSet) {
   Schedule schedule_actual =
       SimulateFixedPrioritySched_OD(dag_tasks, tasks_info, variable);
   PrintSchedule(schedule_actual);
-  std::vector<double> rta =
+  std::vector<int> rta =
       GetResponseTimeTaskSet(dag_tasks, tasks_info, schedule_actual);
 
   EXPECT_EQ(5, rta[0]);

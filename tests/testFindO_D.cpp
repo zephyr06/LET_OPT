@@ -1,10 +1,11 @@
 #include "gmock/gmock.h"  // Brings in gMock.
-#include "sources/OptimizeMain.h"
 #include "sources/Optimization/Variable.h"
+#include "sources/OptimizeMain.h"
 #include "sources/Permutations/ChainsPermutation.h"
 #include "sources/Permutations/TwoTaskPermutations.h"
 #include "sources/RTA/RTA_LL.h"
 #include "sources/TaskModel/DAG_Model.h"
+#include "tests/testEnv.cpp"
 using namespace DAG_SPACE;
 
 class PermutationTest1 : public ::testing::Test {
@@ -136,6 +137,21 @@ TEST_F(PermutationTest1, FindODFromSingleChainPermutation_v2) {
 //     EXPECT_EQ(11, variable[2].offset);
 //     EXPECT_EQ(17, variable[2].deadline);
 // }
+
+TEST_F(PermutationTest1, FindVirtualDeadlineWithLP) {
+  GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
+  VariableOD variable(dag_tasks.tasks);
+  variable[0].offset = 0;
+  variable[0].deadline = 1;
+  variable[1].offset = 5;
+  variable[1].deadline = 10;
+  variable[2].offset = 1;
+  variable[2].deadline = 5;
+  auto res = FindVirtualDeadlineWithLP(dag_tasks, tasks_info, variable,
+                                       graph_of_all_ca_chains, "ReactionTime");
+  VariableOD variable_after_opt = res.first;
+  EXPECT_EQ(4, variable_after_opt[2].deadline);
+}
 
 class PermutationTest2 : public ::testing::Test {
  protected:
@@ -522,7 +538,35 @@ TEST_F(PermutationTest6, Find_OD) {
   EXPECT_TRUE(variable.valid_);
 }
 
-int main(int argc, char** argv) {
+class PermutationTest_n5_v66 : public PermutationTestBase {
+  void SetUp() override { SetUpBase("test_n5_v66"); }
+};
+
+TEST_F(PermutationTest_n5_v66, FindVirtualDeadlineWithLP) {
+  GraphOfChains graph_of_all_ca_chains(dag_tasks.chains_);
+  VariableOD variable(dag_tasks.tasks);
+  variable[0].offset = 0;
+  variable[0].deadline = 200;
+  variable[1].offset = 0;
+  variable[1].deadline = 500;
+
+  variable[2].offset = 11;  // RTA=2
+  variable[2].deadline = 20;
+
+  variable[3].offset = 5;  // RTA=1
+  variable[3].deadline = 11;
+
+  variable[4].offset = 0;  // RTA=5
+  variable[4].deadline = 5;
+  auto res = FindVirtualDeadlineWithLP(dag_tasks, tasks_info, variable,
+                                       graph_of_all_ca_chains, "ReactionTime");
+  VariableOD variable_after_opt = res.first;
+
+  EXPECT_EQ(13, variable_after_opt[2].deadline);
+  EXPECT_EQ(6, variable_after_opt[3].deadline);
+}
+
+int main(int argc, char **argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);
   return RUN_ALL_TESTS();
