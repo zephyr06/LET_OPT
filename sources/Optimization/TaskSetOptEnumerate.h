@@ -47,7 +47,7 @@ class TaskSetOptEnumerate : public TaskSetPermutation {
         dag_tasks_, tasks_info_, chains_perm, graph_of_all_ca_chains_,
         ObjectiveFunction::type_trait, rta_);
 
-    if (res.first.valid_)  // if valid, we'll exam obj; otherwise, we'll
+     if (res.first.valid_)  // if valid, we'll exam obj; otherwise, we'll
                            // just move forward
     {
       if (IfSF_Trait(ObjectiveFunction::type_trait) &&

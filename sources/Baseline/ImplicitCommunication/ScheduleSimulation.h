@@ -17,4 +17,12 @@ Schedule SimulatedFTP_SingleCore(const DAG_Model &dag_tasks,
 Schedule SimulateFixedPrioritySched(const DAG_Model &dag_tasks,
                                     const TaskSetInfoDerived &tasks_info);
 
+Schedule SimulatedFTP_SingleCore_OD(const DAG_Model &dag_tasks,
+                                    const TaskSetInfoDerived &tasks_info,
+                                    int processor_id,
+                                    const VariableOD &variable_od);
+
+Schedule SimulateFixedPrioritySched_OD(const DAG_Model &dag_tasks,
+                                       const TaskSetInfoDerived &tasks_info,
+                                       const VariableOD &variable_od);
 }  // namespace DAG_SPACE
