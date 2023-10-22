@@ -43,7 +43,6 @@ int main(int argc, char *argv[]) {
       DAG_SPACE::Maia23,         DAG_SPACE::TOM_BF,
       DAG_SPACE::TOM_WSkip,      DAG_SPACE::TOM_Sort,
       DAG_SPACE::TOM_Sort_Maia23};
-  // DAG_SPACE::TOM_Sort_Bound  // , DAG_SPACE::TOM_Sort_ImpBound
 
   DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTime>(
       baselineMethods, batch_test_settings);

@@ -34,12 +34,8 @@ int main(int argc, char *argv[]) {
   std::string obj_type = program.get<std::string>("--obj");
 
   std::vector<DAG_SPACE::BASELINEMETHODS> baselineMethods = {
-      DAG_SPACE::InitialMethod, 
-      DAG_SPACE::ImplicitCommunication,
-      DAG_SPACE::TOM_BF, 
-      DAG_SPACE::TOM_WSkip,
-      DAG_SPACE::TOM_Sort_Maia23Initial
-  };  // , DAG_SPACE::TOM_Sort_Bound
+      DAG_SPACE::InitialMethod, DAG_SPACE::ImplicitCommunication,
+      DAG_SPACE::TOM_BF, DAG_SPACE::TOM_WSkip, DAG_SPACE::TOM_WSkip_Maia23};
   DAG_SPACE::BatchSettings batch_test_settings(
       N, begin_index, end_index, "TaskData/N" + std::to_string(N) + "/");
 
