@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
 #endif
   auto dag_tasks =
       ReadDAG_Tasks(GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/" +
-                        "test_PaperExample2Chain" + ".csv",
+                        "test_PaperExample2Chain_v2" + ".csv",
                     GlobalVariablesDAGOpt::priorityMode, 2);
   const TaskSet& tasks = dag_tasks.GetTaskSet();
   TaskSetInfoDerived tasks_info(tasks);
@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
   res.variable_opt_.print();
 
   std::cout << "The SF obj after optimization is " << res.obj_ << "\n";
-  std::cout << "The SF jitter after optimization is " << res.obj_ << "\n";
+  std::cout << "The SF jitter after optimization is " << res.jitter_ << "\n";
 
 #ifdef PROFILE_CODE
   EndTimer("main");
