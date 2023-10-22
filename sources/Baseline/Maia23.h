@@ -9,8 +9,12 @@
 namespace DAG_SPACE {
 
 VariableOD GetMaia23VariableOD(const DAG_Model& dag_tasks,
-                               const TaskSetInfoDerived& tasks_info);
+                               const TaskSetInfoDerived& tasks_info,
+                               const Schedule& schedule);
 
+VariableOD GetMaia23VariableOD(const DAG_Model& dag_tasks,
+                               const TaskSetInfoDerived& tasks_info);
+                               
 template <typename ObjectiveFunctionBase>
 ScheduleResult PerformMaia23Analysis(const DAG_Model& dag_tasks) {
   auto start = std::chrono::high_resolution_clock::now();

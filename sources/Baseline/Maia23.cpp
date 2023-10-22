@@ -4,8 +4,8 @@
 namespace DAG_SPACE {
 
 VariableOD GetMaia23VariableOD(const DAG_Model& dag_tasks,
-                               const TaskSetInfoDerived& tasks_info) {
-  Schedule schedule = SimulateFixedPrioritySched(dag_tasks, tasks_info);
+                               const TaskSetInfoDerived& tasks_info,
+                               const Schedule& schedule) {
   VariableOD variable(dag_tasks.tasks);
   for (auto itr = schedule.begin(); itr != schedule.end(); itr++) {
     const JobCEC job_cur = itr->first;
@@ -22,4 +22,9 @@ VariableOD GetMaia23VariableOD(const DAG_Model& dag_tasks,
   return variable;
 }
 
+VariableOD GetMaia23VariableOD(const DAG_Model& dag_tasks,
+                               const TaskSetInfoDerived& tasks_info) {
+  Schedule schedule = SimulateFixedPrioritySched(dag_tasks, tasks_info);
+  return GetMaia23VariableOD(dag_tasks, tasks_info, schedule);
+}
 }  // namespace DAG_SPACE
