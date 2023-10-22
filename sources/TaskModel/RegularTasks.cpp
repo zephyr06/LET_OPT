@@ -25,10 +25,10 @@ double Task::priority() const {
   if (CompareStringNoCase(priorityType_, "RM")) {
     if (period > 0)
       return 1.0 / period +
-             float(1) / pow(10, 6);  // pow(10, 6) because the minimum
-                                     // possible period is 10^4; adding id
-                                     // into priority breaks the tie when
-                                     // different tasks have the same periods
+             float(id) / pow(10, 6);  // pow(10, 6) because the minimum
+                                      // possible period is 10^4; adding id
+                                      // into priority breaks the tie when
+                                      // different tasks have the same periods
     else
       CoutError("Period parameter less or equal to 0!");
   } else if (CompareStringNoCase(priorityType_, "orig"))
