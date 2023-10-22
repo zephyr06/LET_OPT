@@ -3,10 +3,15 @@
 using namespace DAG_SPACE;
 
 int main(int argc, char *argv[]) {
+  // DAG_Model dag_tasks =
+  //     ReadDAG_Tasks(GlobalVariablesDAGOpt::PROJECT_PATH +
+  //                       "TaskData/test_PaperExample2Chain_v2.csv",
+  //                   "RM", 1);
   DAG_Model dag_tasks =
-      ReadDAG_Tasks(GlobalVariablesDAGOpt::PROJECT_PATH +
-                        "TaskData/test_PaperExample2Chain_v2.csv",
+      ReadDAG_Tasks(GlobalVariablesDAGOpt::PROJECT_PATH + "TaskData/" +
+                        GlobalVariablesDAGOpt::testDataSetName + ".csv",
                     "RM", 1);
+
   ScheduleResult res;
 
   // case InitialMethod:
