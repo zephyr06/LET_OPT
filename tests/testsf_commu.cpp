@@ -509,6 +509,43 @@ TEST_F(PermutationTest_n21_v2, ReOrderTwoTaskPermutations) {
   }
 }
 
+class PermutationTest_test_PaperExample2Chain_v2 : public PermutationTestBase {
+  void SetUp() override {
+    SetUpBase("test_PaperExample2Chain_v2");
+    type_trait = "SensorFusion";
+    dag_tasks.chains_ = GetChainsForSF(dag_tasks);
+    TaskSetOptEnumWSkip tasks_opt_wskip(dag_tasks, dag_tasks.chains_,
+                                        type_trait);
+    perms = tasks_opt_wskip.adjacent_two_task_permutations_;
+  }
+
+ public:
+  std::string type_trait;
+  std::vector<TwoTaskPermutations> perms;
+};
+TEST_F(PermutationTest_test_PaperExample2Chain_v2, ReOrderTwoTaskPermutations) {
+  VariableOD variable(dag_tasks.tasks);
+  variable[0].offset = 0;
+  variable[0].deadline = 1;
+
+  variable[1].offset = 15;
+  variable[1].deadline = 20;
+
+  variable[2].offset = 0;
+  variable[2].deadline = 10;
+
+  variable[3].offset = 0;
+  variable[3].deadline = 15;
+
+  TaskSetOptEnumerate task_sets_perms =
+      TaskSetOptEnumerate(dag_tasks, GetChainsForSF(dag_tasks), "SensorFusion");
+  auto res_cur = task_sets_perms.PerformOptimizationBF<ObjSensorFusion>();
+
+  EXPECT_EQ(12, ObjSensorFusion::Jitter(
+                    dag_tasks, tasks_info, task_sets_perms.best_yet_chain_,
+                    task_sets_perms.best_yet_variable_od_, {}));
+}
+
 int main(int argc, char** argv) {
   // ::testing::InitGoogleTest(&argc, argv);
   ::testing::InitGoogleMock(&argc, argv);

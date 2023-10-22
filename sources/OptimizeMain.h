@@ -102,6 +102,12 @@ ScheduleResult PerformTOM_OPT_EnumW_Skip(const DAG_Model& dag_tasks) {
 }
 
 template <typename ObjectiveFunction>
+ScheduleResult PerformTOM_OPT_EnumW_Skip_Maia23(const DAG_Model& dag_tasks) {
+  GlobalVariablesDAGOpt::EnableExtraOpt = 1;
+  return PerformTOM_OPT_EnumW_Skip<ObjectiveFunction>(dag_tasks);
+}
+
+template <typename ObjectiveFunction>
 ScheduleResult PerformTOM_OPT_Sort(const DAG_Model& dag_tasks) {
   auto start = std::chrono::high_resolution_clock::now();
   ScheduleResult res;
@@ -122,23 +128,8 @@ ScheduleResult PerformTOM_OPT_Sort(const DAG_Model& dag_tasks) {
 
 template <typename ObjectiveFunction>
 ScheduleResult PerformTOM_OPT_Sort_Maia23(const DAG_Model& dag_tasks) {
-  auto start = std::chrono::high_resolution_clock::now();
-  ScheduleResult res;
-  TaskSetOptSorted_Maia23 task_sets_perms = TaskSetOptSorted_Maia23(
-      dag_tasks, dag_tasks.chains_, ObjectiveFunction::type_trait);
-  task_sets_perms.InitializeSolutions<ObjectiveFunction>(
-      TaskSetPermutation::Maia23);
-  res.obj_ = task_sets_perms.PerformOptimizationSort<ObjectiveFunction>().obj_;
-  if (res.obj_ >= 1e8) {
-    res.obj_ = PerformStandardLETAnalysis<ObjectiveFunction>(dag_tasks).obj_;
-  }
-  res.schedulable_ = task_sets_perms.ExamSchedulabilityOptSol();
-  auto stop = std::chrono::high_resolution_clock::now();
-  res.timeTaken_ = GetTimeTaken(start, stop);
-  res.variable_opt_ = task_sets_perms.best_yet_variable_od_;
-  res.obj_per_chain_ = task_sets_perms.GetOptObjPerChain<ObjectiveFunction>();
-  PrintResultAnalysis(task_sets_perms, res);
-  return res;
+  GlobalVariablesDAGOpt::EnableExtraOpt = 1;
+  return PerformTOM_OPT_Sort<ObjectiveFunction>(dag_tasks);
 }
 
 template <typename ObjectiveFunction>

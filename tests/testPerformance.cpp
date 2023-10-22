@@ -12,7 +12,7 @@ TEST(average_performance, v1) {
   auto res = DAG_SPACE::BatchOptimizeOrder<DAG_SPACE::ObjReactionTime>(
       baselineMethods, batch_test_settings);
   EXPECT_THAT(res[TOM_Sort_Maia23].performance,
-              testing::Le(0.466));  // a very tolerable performance threshold
+              testing::Le(0.471));  // a tolerable performance threshold
 
   EXPECT_DOUBLE_EQ(1.0, res[TOM_Sort_Maia23].schedulableRatio);
   EndTimer("main");

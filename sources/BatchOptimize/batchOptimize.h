@@ -41,6 +41,9 @@ DAG_SPACE::ScheduleResult PerformSingleScheduling(
     case TOM_Sort:
       res = PerformTOM_OPT_Sort<ObjectiveFunctionBase>(dag_tasks);
       break;
+    case TOM_WSkip_Maia23:
+      res = PerformTOM_OPT_EnumW_Skip_Maia23<ObjectiveFunctionBase>(dag_tasks);
+      break;
     case TOM_Sort_Maia23:
       res = PerformTOM_OPT_Sort_Maia23<ObjectiveFunctionBase>(dag_tasks);
       break;
