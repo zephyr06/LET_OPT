@@ -83,9 +83,8 @@ class TaskSetPermutation {
         dag_tasks_, tasks_info_, best_yet_chain_, best_yet_variable_od_,
         graph_of_all_ca_chains_.chains_);
   }
-
   template <typename ObjectiveFunction>
-  ScheduleResult GetScheduleResult() const {
+  ScheduleResult GetScheduleResultExceptSchedulability() const {
     ScheduleResult res;
     res.jitter_ = ObjectiveFunction::Jitter(
         dag_tasks_, tasks_info_, best_yet_chain_, best_yet_variable_od_,
@@ -93,11 +92,19 @@ class TaskSetPermutation {
     res.obj_ = ObjectiveFunction::Obj(dag_tasks_, tasks_info_, best_yet_chain_,
                                       best_yet_variable_od_,
                                       graph_of_all_ca_chains_.chains_);
-    // std::cout << "Jitter after optimization: " << res.jitter_ << "\n";
     res.variable_opt_ = best_yet_variable_od_;
+    // res.schedulable_ = ExamSchedulabilityOptSol();
+    return res;
+  }
+
+  template <typename ObjectiveFunction>
+  ScheduleResult GetScheduleResult() const {
+    ScheduleResult res =
+        GetScheduleResultExceptSchedulability<ObjectiveFunction>();
     res.schedulable_ = ExamSchedulabilityOptSol();
     return res;
   }
+
   // The following functions more related to optimization
 
   void ReOrderTwoTaskPermutations();
