@@ -32,7 +32,7 @@ int GetResponseTime(const DAG_Model &dag_tasks, int task_id) {
 #endif
   return res;
 }
-
+// return RTA ordered by task id;
 std::vector<int> GetResponseTimeTaskSet(const DAG_Model &dag_tasks) {
   std::vector<int> rta(dag_tasks.GetTaskSet().size());
   for (uint i = 0; i < rta.size(); i++) {

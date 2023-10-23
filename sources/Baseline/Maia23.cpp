@@ -6,7 +6,7 @@ namespace DAG_SPACE {
 VariableOD GetMaia23VariableOD(const DAG_Model& dag_tasks,
                                const TaskSetInfoDerived& tasks_info,
                                const Schedule& schedule) {
-  VariableOD variable(dag_tasks.tasks);
+  VariableOD variable(dag_tasks.GetTaskSet());
   for (uint i = 0; i < dag_tasks.tasks.size(); i++) {
     variable[i].offset = dag_tasks.GetTask(i).deadline;
     variable[i].deadline = 0;
