@@ -34,7 +34,7 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
     if (obj == "ReactionTime" or obj == "DataAge" or obj == "DataAgeOneChain"):
         splot.set_ylim([-62, 5])
     elif obj == "SensorFusion":
-        splot.set_ylim([-20, 60])
+        splot.set_ylim([-30, 60])
     
     if not show_legend_mode:
         ax.get_legend().remove()
@@ -110,7 +110,7 @@ def plot_Jitter_results(task_set_number_range, method_names, obj, exclude_time_o
         col=color_map[all_methods[i]]
         lab=baseline_method_labels[all_methods[i]]
         msize=marker_size_map[all_methods[i]]
-        lstyle=linestyle_map[method_names[i]]
+        lstyle=linestyle_map[all_methods[i]]
         if all_methods[i] in ["TOM_BF", "TOM_WSkip"]:
             lab += " \u03C9=1"
         splot = sns.lineplot(data=dataset_pd_jitter, x="index", y=all_methods[i], marker=mar,
@@ -118,7 +118,7 @@ def plot_Jitter_results(task_set_number_range, method_names, obj, exclude_time_o
         
     if obj == "SensorFusion":
         plt.xlabel("Number of Source Tasks per Merge", fontsize=axis_label_font_size)
-        splot.set_ylim([-35, 5]) 
+        splot.set_ylim([-50, 5]) 
     else:
         plt.xlabel("Number of Tasks", fontsize=axis_label_font_size)
         
@@ -193,7 +193,7 @@ def draw_RT_results(task_set_number_range):
 
 def draw_DA_resultsOneChain(task_set_number_range):
     method_names = ["InitialMethod", "Maia23", "ImplicitCommunication", "Martinez18",
-                    "TOM_Sort_Offset", "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort"]
+                    "TOM_Sort_Offset", "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort", "TOM_Sort_Maia23"]
     plot_Obj_results(task_set_number_range, method_names, "DataAgeOneChain", output_file_name="DataAgeOneChain")
     plot_Runtime_results(task_set_number_range, method_names, "DataAgeOneChain", output_file_name="DataAgeOneChain")
     plot_Timeout_rate(task_set_number_range, method_names, "DataAgeOneChain", output_file_name="DataAgeOneChain")
@@ -209,7 +209,7 @@ def draw_DA_results(task_set_number_range):
 
 def draw_SF_results(task_set_number_range, exclude_time_out=False):
     method_names = ["InitialMethod",
-                    "ImplicitCommunication", "TOM_BF", "TOM_WSkip"]
+                    "ImplicitCommunication", "TOM_BF", "TOM_WSkip", "TOM_WSkip_Maia23"]
     plot_Obj_results(task_set_number_range, method_names, "SensorFusion", exclude_time_out)
     plot_Jitter_results(task_set_number_range, method_names, "SensorFusion", exclude_time_out)
     plot_Runtime_results(task_set_number_range, method_names, "SensorFusion", exclude_time_out)
