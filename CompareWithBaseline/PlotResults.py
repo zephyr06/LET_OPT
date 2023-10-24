@@ -98,7 +98,7 @@ def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_
 
 # if output_file_name is empty, default name settings will be used
 def plot_Jitter_results(task_set_number_range, method_names, obj, exclude_time_out=False, output_file_name=""):
-    all_methods = method_names + ["TOM_BF_No_Jitter_Weight", "TOM_WSkip_No_Jitter_Weight"]
+    all_methods = method_names + ["TOM_BF_No_Jitter_Weight", "TOM_WSkip_No_Jitter_Weight", "TOM_WSkip_Maia23_No_Jitter_Weight"]
     
     dataset_pd_obj, dataset_pd_jitter, dataset_pd_runtime, dataset_pd_timeout_rate = ReadOptResultsAllMethod(
         all_methods, obj, task_set_number_range, exclude_time_out)
@@ -111,21 +111,23 @@ def plot_Jitter_results(task_set_number_range, method_names, obj, exclude_time_o
         lab=baseline_method_labels[all_methods[i]]
         msize=marker_size_map[all_methods[i]]
         lstyle=linestyle_map[all_methods[i]]
-        if all_methods[i] in ["TOM_BF", "TOM_WSkip"]:
+        if all_methods[i] in ["InitialMethod", "Maia23", "ImplicitCommunication"]:
+            lab = None
+        if all_methods[i] in ["TOM_BF", "TOM_WSkip", "TOM_WSkip_Maia23"]:
             lab += " \u03C9=1"
         splot = sns.lineplot(data=dataset_pd_jitter, x="index", y=all_methods[i], marker=mar,
                             color=col, label=lab, markersize=msize, linestyle=lstyle)
         
     if obj == "SensorFusion":
         plt.xlabel("Number of Source Tasks per Merge", fontsize=axis_label_font_size)
-        splot.set_ylim([-50, 5]) 
+        splot.set_ylim([-50, 15]) 
     else:
         plt.xlabel("Number of Tasks", fontsize=axis_label_font_size)
         
     plt.ylabel("Relative Gap of Jitter (%)", fontsize=axis_label_font_size)
     
     # ax.get_legend().remove()
-    plt.legend(loc='upper right')
+    plt.legend(ncol=2, loc='upper right', fontsize=10.8)
     # ax.set_title(obj + " Jitter Performance")
 
     if obj != "SensorFusion":
@@ -163,8 +165,8 @@ def plot_Timeout_rate(task_set_number_range, method_names, obj, exclude_time_out
         
     plt.ylabel("Timeout Rate (%)", fontsize=axis_label_font_size)
     
-    if not show_legend_mode:
-        ax.get_legend().remove()
+    # if not show_legend_mode:
+    #     ax.get_legend().remove()
     ax.set_title(obj)
 
     if obj != "SensorFusion":
@@ -193,14 +195,14 @@ def draw_RT_results(task_set_number_range):
 
 def draw_DA_resultsOneChain(task_set_number_range):
     method_names = ["InitialMethod", "Maia23", "ImplicitCommunication", "Martinez18",
-                    "TOM_Sort_Offset", "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort", "TOM_Sort_Maia23"]
+                    "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort", "TOM_Sort_Maia23"]
     plot_Obj_results(task_set_number_range, method_names, "DataAgeOneChain", output_file_name="DataAgeOneChain")
     plot_Runtime_results(task_set_number_range, method_names, "DataAgeOneChain", output_file_name="DataAgeOneChain")
     plot_Timeout_rate(task_set_number_range, method_names, "DataAgeOneChain", output_file_name="DataAgeOneChain")
 
 def draw_DA_results(task_set_number_range):
     method_names = ["InitialMethod", "Maia23", "ImplicitCommunication", 
-                    "TOM_Sort_Offset", "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort", "TOM_Sort_Maia23"]
+                    "Bardatsch16", "TOM_BF", "TOM_WSkip", "TOM_Sort", "TOM_Sort_Maia23"]
     plot_Obj_results(task_set_number_range, method_names, "DataAge")
     plot_Runtime_results(task_set_number_range, method_names, "DataAge")
     plot_Timeout_rate(task_set_number_range, method_names, "DataAge")
@@ -208,10 +210,10 @@ def draw_DA_results(task_set_number_range):
 
 
 def draw_SF_results(task_set_number_range, exclude_time_out=False):
-    method_names = ["InitialMethod",
-                    "ImplicitCommunication", "TOM_BF", "TOM_WSkip", "TOM_WSkip_Maia23"]
-    plot_Obj_results(task_set_number_range, method_names, "SensorFusion", exclude_time_out)
+    method_names = ["InitialMethod", "Maia23", "ImplicitCommunication",
+                    "TOM_BF", "TOM_WSkip", "TOM_WSkip_Maia23"]
     plot_Jitter_results(task_set_number_range, method_names, "SensorFusion", exclude_time_out)
+    plot_Obj_results(task_set_number_range, method_names, "SensorFusion", exclude_time_out)
     plot_Runtime_results(task_set_number_range, method_names, "SensorFusion", exclude_time_out)
     plot_Timeout_rate(task_set_number_range, method_names, "SensorFusion", exclude_time_out)
 

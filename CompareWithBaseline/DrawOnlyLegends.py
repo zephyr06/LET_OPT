@@ -24,7 +24,7 @@ for i in range(method_num):
 
 plt.legend( loc='lower center',  ncol=method_num, fontsize=14)
 # x0,x1 = 0.86124, 1.138
-x0,x1 = 0.782, 1.218
+x0,x1 = 0.783, 1.217
 y0,y1 = 0.9485, 0.9575
 bbox = Bbox([[x0,y0],[x1,y1]])
 bbox = bbox.transformed(ax.transData).transformed(fig.dpi_scale_trans.inverted())

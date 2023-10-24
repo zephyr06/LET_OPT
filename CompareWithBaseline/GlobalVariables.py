@@ -1,6 +1,6 @@
 import pathlib
 baseline_method_names = ["InitialMethod", "ImplicitCommunication", "Martinez18", 
-                         "TOM_Sort_Offset", "Bardatsch16", "Maia23", "TOM_BF", "TOM_WSkip", "TOM_Sort"]
+                         "Bardatsch16", "Maia23", "TOM_BF", "TOM_WSkip", "TOM_Sort", "TOM_Sort_Maia23"]
 
 baseline_method_labels = {"InitialMethod": "DefLET",
                           "ImplicitCommunication": "Implicit",
@@ -13,8 +13,9 @@ baseline_method_labels = {"InitialMethod": "DefLET",
                           "Bardatsch16": "Bradatsch16",
                           "TOM_BF_No_Jitter_Weight": "fLET_GCP_Enum \u03C9=0",
                           "TOM_WSkip_No_Jitter_Weight": "fLET_GCP_Ineq_Filter \u03C9=0",
-                          "TOM_Sort_Maia23": "TOM_Sort_Maia23",
-                          "TOM_WSkip_Maia23": "TOM_WSkip_Maia23"
+                          "TOM_WSkip_Maia23_No_Jitter_Weight": "fLET_GCP_Extra \u03C9=0",
+                          "TOM_Sort_Maia23": "fLET_GCP_Extra",
+                          "TOM_WSkip_Maia23": "fLET_GCP_Extra"
                           }
 marker_map = {"InitialMethod": "o",
               "ImplicitCommunication": "*",
@@ -27,10 +28,11 @@ marker_map = {"InitialMethod": "o",
               "Bardatsch16": "X",
               "TOM_BF_No_Jitter_Weight": "D",
               "TOM_WSkip_No_Jitter_Weight": "^",
+              "TOM_WSkip_Maia23_No_Jitter_Weight": "s",
               "TOM_Sort_Maia23": "s",
-              "TOM_WSkip_Maia23": "^"
+              "TOM_WSkip_Maia23": "s"
               }
-marker_size_map = {"InitialMethod": 8,
+marker_size_map = {"InitialMethod": 9,
                    "ImplicitCommunication": 12,
                     "Maia23": 12,
                    "TOM_BF": 8,
@@ -41,10 +43,11 @@ marker_size_map = {"InitialMethod": 8,
                    "Bardatsch16": 7,
                    "TOM_BF_No_Jitter_Weight": 8,
                    "TOM_WSkip_No_Jitter_Weight": 12,
+                   "TOM_WSkip_Maia23_No_Jitter_Weight": 7,
                    "TOM_Sort_Maia23": 7,
-                   "TOM_WSkip_Maia23": 12
+                   "TOM_WSkip_Maia23": 7
                    }
-color_map = {"InitialMethod": "#0084DB",
+color_map = {"InitialMethod": "#00b58e",
              "ImplicitCommunication": "#ffa64d",
              "Maia23": "#b544c7",
              "TOM_BF": "r",
@@ -52,11 +55,12 @@ color_map = {"InitialMethod": "#0084DB",
              "TOM_Sort": "limegreen",
              "Martinez18": "purple",
              "TOM_Sort_Offset": "k",
-             "Bardatsch16": "#00FFFF",
+             "Bardatsch16": "#eb4034",
              "TOM_BF_No_Jitter_Weight": "#ff4d82",
              "TOM_WSkip_No_Jitter_Weight": "#ab7c0f",
-             "TOM_Sort_Maia23": "#00b58e",
-             "TOM_WSkip_Maia23": "#0421de"
+             "TOM_WSkip_Maia23_No_Jitter_Weight": "#0084DB",
+             "TOM_Sort_Maia23": "#0556e3",
+             "TOM_WSkip_Maia23": "#0556e3"
             }
 
 linestyle_map = {"InitialMethod": "solid",
@@ -70,8 +74,9 @@ linestyle_map = {"InitialMethod": "solid",
                 "Bardatsch16": "solid",
                 "TOM_BF_No_Jitter_Weight": "dashdot",
                 "TOM_WSkip_No_Jitter_Weight": "dashdot",
-                "TOM_Sort_Maia23": "dashdot",
-                "TOM_WSkip_Maia23": "dashdot"
+                "TOM_WSkip_Maia23_No_Jitter_Weight": "dashdot",
+                "TOM_Sort_Maia23": "solid",
+                "TOM_WSkip_Maia23": "solid"
                 }
 
 # marker_list = ["o", "*", "D", "^", "s", "D", "P", "X"]
