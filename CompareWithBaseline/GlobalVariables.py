@@ -34,12 +34,12 @@ marker_map = {"InitialMethod": "o",
               }
 marker_size_map = {"InitialMethod": 9,
                    "ImplicitCommunication": 12,
-                    "Maia23": 12,
-                   "TOM_BF": 8,
-                   "TOM_WSkip": 12,
+                   "Maia23": 11,
+                   "TOM_BF": 9,
+                   "TOM_WSkip": 13,
                    "TOM_Sort": 7,
-                   "Martinez18": 8,
-                   "TOM_Sort_Offset": 8,
+                   "Martinez18": 6,
+                   "TOM_Sort_Offset": 7,
                    "Bardatsch16": 7,
                    "TOM_BF_No_Jitter_Weight": 8,
                    "TOM_WSkip_No_Jitter_Weight": 12,
@@ -77,6 +77,23 @@ linestyle_map = {"InitialMethod": "solid",
                 "TOM_WSkip_Maia23_No_Jitter_Weight": "dashdot",
                 "TOM_Sort_Maia23": "solid",
                 "TOM_WSkip_Maia23": "solid"
+                }
+
+
+alpha_map = {"InitialMethod": 1,
+                "ImplicitCommunication": 1,
+                "Maia23": 1,
+                "TOM_BF": 1,
+                "TOM_WSkip": 0.8,
+                "TOM_Sort": 0.8,
+                "Martinez18": 1,
+                "TOM_Sort_Offset": 1,
+                "Bardatsch16": 1,
+                "TOM_BF_No_Jitter_Weight": 1,
+                "TOM_WSkip_No_Jitter_Weight": 0.8,
+                "TOM_WSkip_Maia23_No_Jitter_Weight": 0.8,
+                "TOM_Sort_Maia23": 0.8,
+                "TOM_WSkip_Maia23": 0.8,
                 }
 
 # marker_list = ["o", "*", "D", "^", "s", "D", "P", "X"]

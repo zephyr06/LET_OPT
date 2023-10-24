@@ -17,7 +17,8 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
     for i in range(len(method_names)):
         splot = sns.lineplot(data=dataset_pd_obj, x="index", y=method_names[i], marker=marker_map[method_names[i]],
                              color=color_map[method_names[i]], label=baseline_method_labels[method_names[i]],
-                             markersize=marker_size_map[method_names[i]], linestyle = linestyle_map[method_names[i]])
+                             markersize=marker_size_map[method_names[i]], linestyle = linestyle_map[method_names[i]],
+                             alpha=alpha_map[method_names[i]])
         
     if obj == "SensorFusion":
         plt.xlabel("Number of Source Tasks per Merge", fontsize=axis_label_font_size)
@@ -64,7 +65,8 @@ def plot_Runtime_results(task_set_number_range, method_names, obj, exclude_time_
     for i in range(len(method_names)):
         splot = sns.lineplot(data=dataset_pd_runtime, x="index", y=method_names[i], marker=marker_map[method_names[i]],
                              color=color_map[method_names[i]], label=baseline_method_labels[method_names[i]],
-                             markersize=marker_size_map[method_names[i]], linestyle = linestyle_map[method_names[i]]) 
+                             markersize=marker_size_map[method_names[i]], linestyle = linestyle_map[method_names[i]],
+                             alpha=alpha_map[method_names[i]])
     if obj == "SensorFusion":
         plt.xlabel("Number of Source Tasks per Merge", fontsize=axis_label_font_size)
     else:
@@ -111,12 +113,13 @@ def plot_Jitter_results(task_set_number_range, method_names, obj, exclude_time_o
         lab=baseline_method_labels[all_methods[i]]
         msize=marker_size_map[all_methods[i]]
         lstyle=linestyle_map[all_methods[i]]
+        alp=alpha_map[all_methods[i]]
         if all_methods[i] in ["InitialMethod", "Maia23", "ImplicitCommunication"]:
             lab = None
         if all_methods[i] in ["TOM_BF", "TOM_WSkip", "TOM_WSkip_Maia23"]:
             lab += " \u03C9=1"
         splot = sns.lineplot(data=dataset_pd_jitter, x="index", y=all_methods[i], marker=mar,
-                            color=col, label=lab, markersize=msize, linestyle=lstyle)
+                            color=col, label=lab, markersize=msize, linestyle=lstyle, alpha=alp)
         
     if obj == "SensorFusion":
         plt.xlabel("Number of Source Tasks per Merge", fontsize=axis_label_font_size)
@@ -156,7 +159,8 @@ def plot_Timeout_rate(task_set_number_range, method_names, obj, exclude_time_out
     for i in range(len(method_names)):
         splot = sns.lineplot(data=dataset_pd_timeout_rate, x="index", y=method_names[i], marker=marker_map[method_names[i]],
                              color=color_map[method_names[i]], label=baseline_method_labels[method_names[i]],
-                             markersize=marker_size_map[method_names[i]], linestyle = linestyle_map[method_names[i]])
+                             markersize=marker_size_map[method_names[i]], linestyle = linestyle_map[method_names[i]],
+                             alpha=alpha_map[method_names[i]])
         
     if obj == "SensorFusion":
         plt.xlabel("Number of Source Tasks per Merge", fontsize=axis_label_font_size)
