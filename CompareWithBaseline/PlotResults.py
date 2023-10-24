@@ -15,6 +15,13 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
     plt.figure()
     ax = plt.subplot(111)
     for i in range(len(method_names)):
+        if method_names[i]=="Maia23" and obj == "SensorFusion":
+            splot = sns.lineplot(data=dataset_pd_obj, x="index", y=method_names[i], marker=marker_map[method_names[i]],
+                                color=color_map[method_names[i]], label=baseline_method_labels[method_names[i]],
+                                markersize=marker_size_map[method_names[i]]+2, linestyle = linestyle_map[method_names[i]],
+                                alpha=alpha_map[method_names[i]])
+            continue
+        
         splot = sns.lineplot(data=dataset_pd_obj, x="index", y=method_names[i], marker=marker_map[method_names[i]],
                              color=color_map[method_names[i]], label=baseline_method_labels[method_names[i]],
                              markersize=marker_size_map[method_names[i]], linestyle = linestyle_map[method_names[i]],
@@ -118,6 +125,8 @@ def plot_Jitter_results(task_set_number_range, method_names, obj, exclude_time_o
             lab = None
         if all_methods[i] in ["TOM_BF", "TOM_WSkip", "TOM_WSkip_Maia23"]:
             lab += " \u03C9=1"
+        if all_methods[i] == "Maia23":
+            msize += 2
         splot = sns.lineplot(data=dataset_pd_jitter, x="index", y=all_methods[i], marker=mar,
                             color=col, label=lab, markersize=msize, linestyle=lstyle, alpha=alp)
         

@@ -81,7 +81,7 @@ linestyle_map = {"InitialMethod": "solid",
 
 
 alpha_map = {"InitialMethod": 1,
-                "ImplicitCommunication": 1,
+                "ImplicitCommunication": 0.8,
                 "Maia23": 1,
                 "TOM_BF": 1,
                 "TOM_WSkip": 0.8,
