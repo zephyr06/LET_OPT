@@ -199,7 +199,7 @@ def plot_Timeout_rate(task_set_number_range, method_names, obj, exclude_time_out
 
 
 def draw_RT_results(task_set_number_range):
-    method_names = ["InitialMethod", "Maia23", "ImplicitCommunication",
+    method_names = ["InitialMethod", "Maia23", "ImplicitCommunication", "Bardatsch16",
                     "TOM_BF", "TOM_WSkip", "TOM_Sort", "TOM_Sort_Maia23"]
     plot_Obj_results(task_set_number_range, method_names, "ReactionTime")
     plot_Runtime_results(task_set_number_range, method_names, "ReactionTime")
