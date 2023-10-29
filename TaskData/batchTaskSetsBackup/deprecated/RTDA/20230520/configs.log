@@ -1,9 +1,0 @@
-TaskSet Creation Time: 20230520
-New TaskSet Configs:
-taskNumber_list: 5 10 15 20 25 30 35 40 45 50
-taskSetNumber: 1000
-per_core_utilization_min: 0.1
-per_core_utilization_max: 0.9
-parallelismFactor: 0.9
-chainLengthRatio: 0.25
-numCauseEffectChain: 3

@@ -26,10 +26,10 @@ if __name__ == "__main__":
     # task_set_number_range = [5, 10, 20, 30, 40]
     task_set_number_range = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
 
-    draw_RT_results(task_set_number_range)
-    draw_DA_results(task_set_number_range)
-    draw_DA_resultsOneChain(task_set_number_range)
+    # draw_RT_results(task_set_number_range)
+    # draw_DA_results(task_set_number_range)
+    # draw_DA_resultsOneChain(task_set_number_range)
     
     task_set_number_range = [2, 3, 4, 5, 6, 7, 8, 9]
-    # draw_SF_results(task_set_number_range, exclude_time_out=False)
+    draw_SF_results(task_set_number_range, exclude_time_out=False)
 
