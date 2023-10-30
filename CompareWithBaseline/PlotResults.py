@@ -39,7 +39,9 @@ def plot_Obj_results(task_set_number_range, method_names, obj, exclude_time_out=
     elif obj == "SensorFusion":
         plt.ylabel("Relative Gap of Time Disparity (%)", fontsize=axis_label_font_size)
 
-    if (obj == "ReactionTime" or obj == "DataAge" or obj == "DataAgeOneChain"):
+    if (obj == "ReactionTime"):
+        splot.set_ylim([-52, 5])
+    elif (obj == "DataAge" or obj == "DataAgeOneChain"):
         splot.set_ylim([-62, 5])
     elif obj == "SensorFusion":
         splot.set_ylim([-30, 60])
