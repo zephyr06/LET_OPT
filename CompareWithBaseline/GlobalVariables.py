@@ -18,7 +18,7 @@ baseline_method_labels = {"InitialMethod": "DefLET",
                           "TOM_WSkip_Maia23": "fLET_GCP_Extra"
                           }
 marker_map = {"InitialMethod": "o",
-              "ImplicitCommunication": "*",
+              "ImplicitCommunication": "o",
               "Maia23": "v",
               "TOM_BF": "d",
               "TOM_WSkip": "s",
@@ -28,12 +28,12 @@ marker_map = {"InitialMethod": "o",
               "Bardatsch16": "p",
               "TOM_BF_No_Jitter_Weight": "d",
               "TOM_WSkip_No_Jitter_Weight": "s",
-              "TOM_WSkip_Maia23_No_Jitter_Weight": "o",
-              "TOM_Sort_Maia23": "o",
-              "TOM_WSkip_Maia23": "o"
+              "TOM_WSkip_Maia23_No_Jitter_Weight": "*",
+              "TOM_Sort_Maia23": "*",
+              "TOM_WSkip_Maia23": "*"
               }
 marker_size_map = {"InitialMethod": 9,
-                   "ImplicitCommunication": 12,
+                   "ImplicitCommunication": 8,
                    "Maia23": 10,
                    "TOM_BF": 10,
                    "TOM_WSkip": 8,
@@ -43,12 +43,12 @@ marker_size_map = {"InitialMethod": 9,
                    "Bardatsch16": 7,
                    "TOM_BF_No_Jitter_Weight": 10,
                    "TOM_WSkip_No_Jitter_Weight": 8,
-                   "TOM_WSkip_Maia23_No_Jitter_Weight": 7,
-                   "TOM_Sort_Maia23": 7,
-                   "TOM_WSkip_Maia23": 7
+                   "TOM_WSkip_Maia23_No_Jitter_Weight": 12,
+                   "TOM_Sort_Maia23": 12,
+                   "TOM_WSkip_Maia23": 12
                    }
 color_map = {"InitialMethod": "#9bb324",
-             "Martinez18": "#a0b1ba",
+             "Martinez18": "#B26300",
              "Bardatsch16": "#a6761d",
              "ImplicitCommunication": "#ffc61e",
              "Maia23": "#f28522",
