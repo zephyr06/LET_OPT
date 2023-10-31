@@ -35,7 +35,8 @@ std::vector<JobCEC> GetPossibleReadingJobs_MartModel(
                           period_prev) -
                1;
        i <= std::ceil(float(job_max_start_time) / period_prev);
-       i++) {  // TODO: the upper-bound seem to be floor instead of ceil
+       i++) {  // TODO: consider trying the upper-bound to be floor instead of
+               // ceil?
     JobCEC job_prev_i(task_prev.id, i);
     int min_finish_prev = GetActivationTime(job_prev_i, tasksInfo) +
                           GetExecutionTime(job_prev_i, tasksInfo);

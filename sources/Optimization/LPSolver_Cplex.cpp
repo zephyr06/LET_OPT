@@ -107,7 +107,6 @@ void LPOptimizer::AddVariablesOD(int number_of_tasks_to_opt) {
 }
 
 void LPOptimizer::AddConstantDeadlineConstraint() {
-  // TODO: is this deadline setting correct?
   for (int task_id = 0; task_id < tasks_info_.N; task_id++) {
     int deadline = tasks_info_.GetTask(task_id).deadline;
     IloRange myConstraint1(
