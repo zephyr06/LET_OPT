@@ -20,6 +20,9 @@ Visualize/currGraph.gv
 **/currGraph.gv.pdf
 **/currGraph.gv
 
+sources/LP_Model.lp
+sources/Optimization/LP_Model.lp
+
 # ignore batch logs
 **/slurm-*.out
 **/Batch*.out
