@@ -47,6 +47,16 @@ int main(int argc, char *argv[]) {
   std::cout << Color::blue << "eLET_Sort_Offset, max Data Age: " << res.obj_
             << Color::def << "\n";
 
+  // case Bardatsch16
+  res = PerformBradatsch16LETAnalysis<ObjDataAge>(dag_tasks);
+  std::cout << Color::blue << "Bardatsch16, max Data Age: " << res.obj_
+            << Color::def << "\n";
+
+  // case Maia23
+  res = PerformMaia23Analysis<ObjDataAge>(dag_tasks);
+  std::cout << Color::blue << "Maia23, max Data Age: " << res.obj_ << Color::def
+            << "\n";
+
   // case ImplicitCommunication:
   res = PerformImplicitCommuAnalysis<ObjDataAge>(dag_tasks);
   std::cout << Color::blue

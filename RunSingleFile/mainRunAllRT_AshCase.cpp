@@ -35,6 +35,16 @@ int main(int argc, char *argv[]) {
   std::cout << Color::blue << "eLET_Sort, max Reaction Time: " << res.obj_
             << Color::def << "\n";
 
+  // case Bardatsch16
+  res = PerformBradatsch16LETAnalysis<ObjReactionTime>(dag_tasks);
+  std::cout << Color::blue << "Bardatsch16, max Reaction Time: " << res.obj_
+            << Color::def << "\n";
+
+  // case Maia23
+  res = PerformMaia23Analysis<ObjReactionTime>(dag_tasks);
+  std::cout << Color::blue << "Maia23, max Reaction Time: " << res.obj_
+            << Color::def << "\n";
+
   // case ImplicitCommunication:
   res = PerformImplicitCommuAnalysis<ObjReactionTime>(dag_tasks);
   std::cout << Color::blue
